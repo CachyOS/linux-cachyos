@@ -13,7 +13,7 @@ jobs:
       with:
           pkgdir: "linux-cachyos"
           namcapDisable: 1
-          makepkgArgs: "--skippgpcheck"
+          makepkgArgs: "--skipinteg"
           aurDeps: 1
   #  - name: Release
   #    uses: ncipollo/release-action@v1.8.10
