@@ -526,7 +526,7 @@ _package() {
 
 _package-headers() {
   pkgdesc="Headers and scripts for building modules for the ${pkgdesc}"
-  depends=("${pkgbase}=${pkgver}" "pahole")
+  depends=("pahole")
 
   cd "${srcdir:?}/linux-${pkgver}" || (
     echo -e "\E[1;31mCan't cd to ${srcdir:?}/linux-${pkgver} directory! Package linux headers failed! \E[0m"
