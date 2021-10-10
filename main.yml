@@ -1,0 +1,26 @@
+name: PKGBUILD CI
+on:
+  workflow_dispatch:
+jobs:
+  pkgbuild:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2.3.4
+    - name: Makepkg Build and Check
+      id: makepkg
+      uses: edlanglois/pkgbuild-action@v1.1.6
+      with:
+          pkgdir: "linux-cachyos"
+          namcapDisable: 1
+          makepkgArgs: "--skippgpcheck"
+          aurDeps: 1
+  #  - name: Release
+  #    uses: ncipollo/release-action@v1.8.10
+  #    with:
+  #        allowUpdates: 1
+  #        tag: "v5.14.11-1"
+  #        artifacts: "./*/*.zst"
+  #        token: ${{ secrets.GITHUB_TOKEN }}
+
+
