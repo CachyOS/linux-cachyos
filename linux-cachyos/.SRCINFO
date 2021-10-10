@@ -103,5 +103,4 @@ pkgname = linux-cachyos-lto
 
 pkgname = linux-cachyos-lto-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-bmq Kernel by CachyOS and with some other patchsets
-	depends = linux-cachyos-lto=5.14.11
 	depends = pahole
