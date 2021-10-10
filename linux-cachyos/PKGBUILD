@@ -46,7 +46,7 @@ _makenconfig=
 
 
 ## Apply Kernel automatic Optimization
-_use_auto_optimization=y
+_use_auto_optimization=
 
 ## Apply Kernel Optimization selecting
 _use_optimization_select=
@@ -79,7 +79,7 @@ _zstd_module_level='normal'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=
+_use_llvm_lto=y
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
