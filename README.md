@@ -2,7 +2,7 @@
 
 ## General Informations
 
-The CacULE CPU Scheduler is a improved alternative to CFS Patch-set which is based on interactivity score mechanism. The interactivity score is inspired by the ULE Scheduler (FreeBSD Scheduler). The goal of this scheduler is to enhance system performance, responsiveness and latency.
+The CacULE CPU Scheduler is a improved alternative to CFS Patch-set which is based on interactivity score mechanism. The interactivity score is inspired by the ULE Scheduler (FreeBSD Scheduler). The goal of this scheduler is to enhance system performance, responsiveness and latency.g
 
 ## Features
 
