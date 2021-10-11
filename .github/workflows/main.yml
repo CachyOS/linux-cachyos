@@ -3,16 +3,16 @@ on:
   workflow_dispatch:
 jobs:
   pkgbuild:
+    runs-on: ubuntu-latest
     steps:
-    runs-on: [self-hosted, linux, x64]
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Checkout
-      uses: actions/checkout@v2.3.4
-        run: |
+      run: |
          chmod +x ./script.sh
-         ./script.sh
-        shell: bash
+         sh script.sh
