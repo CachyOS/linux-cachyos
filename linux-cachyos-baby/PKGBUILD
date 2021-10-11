@@ -149,8 +149,6 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
         "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
         "${_patchsource}/0001-CK-TIMER.patch"
         "${_patchsource}/misc/amd/0006-amd-cppc.patch"
-        "${_patchsource}/misc/zen-tweaks-cacule.patch"
-        "${_patchsource}/ll-patches/0001-LL-kconfig-add-750Hz-timer-interrupt-kernel-config-o.patch"
         "${_patchsource}/ll-patches/0003-sched-core-nr_migrate-256-increases-number-of-tasks-.patch"
         "${_patchsource}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
         "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
@@ -664,8 +662,6 @@ md5sums=('0eba0d3a75f56ddbbb0f4265b35724c3'
          '581faf85cd625c41bbdd0cadbd0e451e'
          '04c5865e765e07cff0649824c2a8d810'
          '430972ae1e936f99d8dc2a1f4fdaf774'
-         '9d7612159f8745044254077ce8a76df6'
-         'f8e172e9ea554bbb1053eb122c3ace35'
          'af7328eb8c72c754e5bc8c7be1ca2f1c'
          'f0d84fc024b9933bc19db696e0393a4e'
          'e45c7962a78d6e82a0d3808868cd6ac0'
