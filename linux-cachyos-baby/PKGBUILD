@@ -63,7 +63,7 @@ _use_optimization_select=
 # ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
 # 'normal' - standard compression ratio
-_zstd_level='normal'
+_zstd_level='ultra'
 
 ### Selecting the ZSTD module compression level
 # If you want to use ZSTD compression,
@@ -86,7 +86,7 @@ _zstd_module_level='normal'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=y
+_use_llvm_lto=
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
@@ -147,7 +147,6 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
         "config"
 #        "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
         "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
-        "${_patchsource}/0001-CK-TIMER.patch"
         "${_patchsource}/0001-CK-TIMER.patch"
         "${_patchsource}/misc/amd/0006-amd-cppc.patch"
         "${_patchsource}/misc/zen-tweaks-cacule.patch"
@@ -663,7 +662,6 @@ _package-headers() {
 md5sums=('0eba0d3a75f56ddbbb0f4265b35724c3'
          'd93835cc970f8c135609081fec836139'
          '581faf85cd625c41bbdd0cadbd0e451e'
-         '04c5865e765e07cff0649824c2a8d810'
          '04c5865e765e07cff0649824c2a8d810'
          '430972ae1e936f99d8dc2a1f4fdaf774'
          '9d7612159f8745044254077ce8a76df6'

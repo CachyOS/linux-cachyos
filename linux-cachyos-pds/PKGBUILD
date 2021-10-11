@@ -3,11 +3,6 @@
 ### BUILD OPTIONS
 # Set the next two variables to ANYTHING that is not null to enable them
 
-# Selecting CacULE or CacULE-RDB scheduler, default:cacule
-_cpusched='cacule'
-#_cpusched='rdb'
-
-
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
@@ -113,22 +108,18 @@ _use_current=
 _makenconfig=
 
 
-if [ "$_cpusched" = "cacule" ]  && [ -n "$_use_llvm_lto" ]; then
-pkgbase=linux-cachyos-cacule-lto
-elif  [ "$_cpusched" = "rdb" ] && [ -n "$_use_llvm_lto" ]; then
-pkgbase=linux-cachyos-cacule-rdb-lto
-elif [ "$_cpusched" = "cacule" ]; then
-pkgbase=linux-cachyos-cacule
-elif [ "$_cpusched" = "rdb" ]; then
-pkgbase=linux-cachyos-cacule-rdb
+if [ -n "$_use_llvm_lto" ]; then
+pkgbase=linux-cachyos-pds-lto
+else
+pkgbase=linux-cachyos-pds
 fi
 pkgver=5.14.11
-pkgrel=2
+pkgrel=3
 arch=(x86_64 x86_64_v3)
-pkgdesc='Linux-CacULE Kernel by Hamad Marri and with some other patchsets'
+pkgdesc='Linux-bmq Kernel by CachyOS and with some other patchsets'
 _gittag=v${pkgver%.*}-${pkgver##*.}
 arch=('x86_64' 'x86_64_v3')
-url="https://github.com/ptr1337/linux-cacule"
+url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
 options=('!strip')
 makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
@@ -136,16 +127,13 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 if [ -n "$_use_llvm_lto" ]; then
 makedepends+=(clang llvm lld python)
 fi
-_caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE"
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
         "config"
 #        "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
         "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
-        "${_caculepatches}/v5.14/cacule-5.14-full.patch"
-        "${_patchsource}/0001-CK-TIMER.patch"
+        "${_patchsource}/0009-prjc_v5.14-r3.patch"
         "${_patchsource}/misc/amd/0006-amd-cppc.patch"
-        "${_patchsource}/misc/zen-tweaks-cacule.patch"
         "${_patchsource}/ll-patches/0001-LL-kconfig-add-750Hz-timer-interrupt-kernel-config-o.patch"
         "${_patchsource}/ll-patches/0003-sched-core-nr_migrate-256-increases-number-of-tasks-.patch"
         "${_patchsource}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
@@ -157,10 +145,10 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
         "${_patchsource}/futex-xanmod-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch"
         "${_patchsource}/futex2-xanmod-patches-v2/0001-futex2-resync-from-gitlab.collabora.com.patch"
         "${_patchsource}/ksmbd-patches-v17/0001-ksmbd-patches.patch"
+        "${_patchsource}/lru-patches-v4/0001-lru-patches.patch"
         "${_patchsource}/hwmon-patches/0001-hwmon-patches.patch"
         "${_patchsource}/lqx-patches/0001-lqx-patches.patch"
         "${_patchsource}/lrng-patches-v2/0001-lrng-patches.patch"
-        "${_patchsource}/lru-patches-v4/0001-lru-patches.patch"
         "${_patchsource}/pf-patches-v9/0001-pf-patches.patch"
         "${_patchsource}/xanmod-patches-v2/0001-xanmod-patches.patch"
         "${_patchsource}/zen-patches-v3/0001-zen-patches.patch"
@@ -447,8 +435,10 @@ prepare() {
 		echo "Enabling FULLCONENAT..."
 		scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
 		scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
-    echo "Enable CFS ZENIFY"
-  	scripts/config --enable CONFIG_ZEN_INTERACTIVE
+    echo "Enable PDS CPU scheduler..."
+    scripts/config --disable CONFIG_SCHED_ALT
+    scripts/config --disable CONFIG_SCHED_BMQ
+    scripts/config --enable CONFIG_SCHED_PDS
    echo "Setting performance governor..."
    scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
    scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
@@ -631,12 +621,10 @@ _package-headers() {
 }
 
 md5sums=('0eba0d3a75f56ddbbb0f4265b35724c3'
-         '9729fb979d57d62c95992ee6a2f3b709'
+         'cf19dc608f81ce6efb72e19035debed0'
          '581faf85cd625c41bbdd0cadbd0e451e'
-         '024a0126cfcd18e000a2241f35c4d69e'
-         '04c5865e765e07cff0649824c2a8d810'
+         'ff8c0963b6284f6b3940f983f3cb43d8'
          '430972ae1e936f99d8dc2a1f4fdaf774'
-         '9d7612159f8745044254077ce8a76df6'
          'f8e172e9ea554bbb1053eb122c3ace35'
          'af7328eb8c72c754e5bc8c7be1ca2f1c'
          'f0d84fc024b9933bc19db696e0393a4e'
@@ -648,10 +636,10 @@ md5sums=('0eba0d3a75f56ddbbb0f4265b35724c3'
          'fd934f7d11131d5a5043e4aea640583b'
          '8a96c5e8346bd5b430776ac8a41f96b0'
          'f71331c247285499ca42b63d707831a6'
+         '8adcaccbb5c0ebd4bc81144e16b92627'
          'bad682a72d2549f409caea361fb0456f'
          '6787c78ba3e7b0a34fbba9c50da7e3b4'
          '366c90b64f9582c0733b8fb607a07594'
-         '8adcaccbb5c0ebd4bc81144e16b92627'
          '607228871a4127c31baae7b1d66866bc'
          '28864f14bf33bad92e57bc48bc5c2c78'
          'cfef1423ad1e6aecad63f0d5eacaea37'
@@ -664,7 +652,6 @@ md5sums=('0eba0d3a75f56ddbbb0f4265b35724c3'
          '4c493a3e0f3486be8ad1b6c67c9c6917'
          '95eb4457f95f3f8dd153983612ee65c0'
          '21c98f19e883879dd3336c1fa143fd31')
-
 pkgname=("$pkgbase" "$pkgbase-headers" )
       for _p in "${pkgname[@]}"; do
             eval "package_$_p() {
