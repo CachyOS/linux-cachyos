@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-find . -name "PKGBUILD" | xargs -I {} sed -i 's/arch=(x86_64)/arch=(x86_64_v3)/' {}
-
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/arch=('x86_64')/arch=('x86_64_v3')/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
 
 
 files=$(find . -name "PKGBUILD")
@@ -10,10 +8,55 @@ files=$(find . -name "PKGBUILD")
 for f in $files
 do
         d=$(dirname $f)
+        echo "makepkg -src --sign --skipinteg --noconfirm $f"
         cd $d
-        docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3:latest
+
+        docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg
         docker rm dockerbuild
         cd ..
 done
 
 mv */*.tar.zst* /home/ptr1337/packages/
+
+
+
+
+
+find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU=y/GENERIC_CPU3=y/' {}
+
+files=$(find . -name "PKGBUILD")
+
+for f in $files
+do
+        d=$(dirname $f)
+        echo "makepkg -src --sign --skipinteg --noconfirm $f"
+        cd $d
+
+        docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
+        docker rm dockerbuild
+        cd ..
+done
+
+mv */*.tar.zst* /home/ptr1337/packages/
+
+
+
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto==y/" {}
+
+
+files=$(find . -name "PKGBUILD")
+
+for f in $files
+do
+        d=$(dirname $f)
+        echo "makepkg -src --sign --skipinteg --noconfirm $f"
+        cd $d
+
+        docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
+        docker rm dockerbuild
+        cd ..
+done
+
+mv */*.tar.zst* /home/ptr1337/packages/
+
+docker system prune -a --volumes
