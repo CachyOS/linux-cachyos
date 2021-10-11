@@ -489,7 +489,7 @@ build() {
     echo -e "\E[1;31mCan't cd to ${srcdir:?}/linux-${pkgver} directory! Build failed! \E[0m"
     exit 1
   )
-    make ${BUILD_FLAGS[*]} -j 24 all
+    make ${BUILD_FLAGS[*]} -j$(nproc) all
 }
 
 _package() {
