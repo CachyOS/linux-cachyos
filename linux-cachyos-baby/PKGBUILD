@@ -137,7 +137,7 @@ elif [ "$_cpusched" = "rdb" ]; then
 pkgbase=linux-cachyos-cacule-rdb
 fi
 pkgver=5.14.11
-pkgrel=2
+pkgrel=3
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-baby Kernel by CachyOS and with some other patches and other improvements'
 #_gittag=v${pkgver%.*}-${pkgver##*.}
@@ -155,7 +155,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
         "config"
 #        "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
         "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
-        "${_patchsource}/0001-CK-TIMER.patch"
+#        "${_patchsource}/0001-CK-TIMER.patch"
         "${_patchsource}/misc/amd/0006-amd-cppc.patch"
         "${_patchsource}/misc/0008-remove-LightNVM.patch"
         "${_patchsource}/ll-patches/0003-sched-core-nr_migrate-256-increases-number-of-tasks-.patch"
@@ -671,7 +671,6 @@ _package-headers() {
 md5sums=('0eba0d3a75f56ddbbb0f4265b35724c3'
          'd93835cc970f8c135609081fec836139'
          '581faf85cd625c41bbdd0cadbd0e451e'
-         '04c5865e765e07cff0649824c2a8d810'
          '430972ae1e936f99d8dc2a1f4fdaf774'
          'eb39a5681a153f5a1f5a67e8b9e957a5'
          'af7328eb8c72c754e5bc8c7be1ca2f1c'

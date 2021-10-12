@@ -133,7 +133,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
 #        "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
         "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
         "${_patchsource}/0009-prjc_v5.14-r3.patch"
-        "${_patchsource}/misc/0006-amd-cppc.patch"
+        "${_patchsource}/misc/amd/0006-amd-cppc.patch"
         "${_patchsource}/misc/0008-remove-LightNVM.patch"
 #        "${_patchsource}/0001-CK-TIMER.patch"
         "${_patchsource}/ll-patches/0001-LL-kconfig-add-750Hz-timer-interrupt-kernel-config-o.patch"
