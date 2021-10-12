@@ -458,7 +458,7 @@ prepare() {
    scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
    scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
    echo "Enable AMD PSTATE v3 driver"
-   Cscripts/config --enable CONFIG_X86_AMD_PSTATE
+   scripts/config --enable CONFIG_X86_AMD_PSTATE
 
 
 
