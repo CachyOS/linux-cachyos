@@ -113,8 +113,8 @@ pkgbase=linux-cachyos-pds-lto
 else
 pkgbase=linux-cachyos-pds
 fi
-pkgver=5.14.11
-pkgrel=4
+pkgver=5.14.12
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-pds Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -147,7 +147,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
         "${_patchsource}/futex2-xanmod-patches-v2/0001-futex2-resync-from-gitlab.collabora.com.patch"
         "${_patchsource}/ksmbd-patches-v17/0001-ksmbd-patches.patch"
         "${_patchsource}/lru-patches-v4/0001-lru-patches.patch"
-        "${_patchsource}/hwmon-patches/0001-hwmon-patches.patch"
+        "${_patchsource}/hwmon-patches-v2/0001-hwmon-patches.patch"
         "${_patchsource}/lqx-patches/0001-lqx-patches.patch"
         "${_patchsource}/lrng-patches-v2/0001-lrng-patches.patch"
         "${_patchsource}/pf-patches-v9/0001-pf-patches.patch"
@@ -155,7 +155,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
         "${_patchsource}/zen-patches-v3/0001-zen-patches.patch"
         "${_patchsource}/zstd-patches-v2/0001-zstd-patches.patch"
         "${_patchsource}/security-patches/0001-security-patches.patch"
-        "${_patchsource}/zstd-dev-patches-v6/0001-zstd-dev-patches.patch"
+        "${_patchsource}/zstd-upstream-patches-v6/0001-zstd-upstream-patches.patch"
         "${_patchsource}/ntfs3-patches-v14/0001-ntfs3-patches.patch"
         "${_patchsource}/0001-ksm.patch"
         "${_patchsource}/0001-cpu-patches.patch"
@@ -622,7 +622,7 @@ _package-headers() {
 
 }
 
-md5sums=('0eba0d3a75f56ddbbb0f4265b35724c3'
+md5sums=('a52286fe206a3f7664ca5a6c5995b9ed'
          'cf19dc608f81ce6efb72e19035debed0'
          '581faf85cd625c41bbdd0cadbd0e451e'
          'ff8c0963b6284f6b3940f983f3cb43d8'
@@ -640,7 +640,7 @@ md5sums=('0eba0d3a75f56ddbbb0f4265b35724c3'
          '8a96c5e8346bd5b430776ac8a41f96b0'
          'f71331c247285499ca42b63d707831a6'
          '8adcaccbb5c0ebd4bc81144e16b92627'
-         'bad682a72d2549f409caea361fb0456f'
+         '721b2f6181696a8f95355ca1ad31064f'
          '6787c78ba3e7b0a34fbba9c50da7e3b4'
          '366c90b64f9582c0733b8fb607a07594'
          '607228871a4127c31baae7b1d66866bc'
@@ -648,7 +648,7 @@ md5sums=('0eba0d3a75f56ddbbb0f4265b35724c3'
          'cfef1423ad1e6aecad63f0d5eacaea37'
          '808981a36c81165953017e5e432c1fa1'
          'f6a1c51adfc68fb7b52dc5715a9cb5a7'
-         '97d9c9da437152c2f1161e5da5b5d7d4'
+         '6bce25efd0395a4d0a9e0fc52e0d93e4'
          '0636779d32ba47bda25d3edb5fbd08c9'
          '566435a0444ee45816599f2e0e362c7a'
          'bb22330e270bf36ccf53cb04d6b496d2'
