@@ -128,7 +128,7 @@ elif [ "$_sched_baby" = "vrt" ]; then
 pkgbase=linux-cachyos-baby-rr
 fi
 pkgver=5.14.12
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-baby Kernel by CachyOS and with some other patches and other improvements'
 #_gittag=v${pkgver%.*}-${pkgver##*.}
@@ -660,7 +660,7 @@ _package-headers() {
 }
 
 md5sums=('a52286fe206a3f7664ca5a6c5995b9ed'
-         'd93835cc970f8c135609081fec836139'
+         '6918c6961e213ae5ee0c9d374bb9a06b'
          '581faf85cd625c41bbdd0cadbd0e451e'
          '430972ae1e936f99d8dc2a1f4fdaf774'
          'eb39a5681a153f5a1f5a67e8b9e957a5'
@@ -683,14 +683,14 @@ md5sums=('a52286fe206a3f7664ca5a6c5995b9ed'
          'cfef1423ad1e6aecad63f0d5eacaea37'
          '808981a36c81165953017e5e432c1fa1'
          'f6a1c51adfc68fb7b52dc5715a9cb5a7'
-         '6bce25efd0395a4d0a9e0fc52e0d93e4'
+         'f818b58bb2c6a30cd6fe88a8bd434b90'
          '0636779d32ba47bda25d3edb5fbd08c9'
          '566435a0444ee45816599f2e0e362c7a'
          'bb22330e270bf36ccf53cb04d6b496d2'
          '4c493a3e0f3486be8ad1b6c67c9c6917'
          '95eb4457f95f3f8dd153983612ee65c0'
          '21c98f19e883879dd3336c1fa143fd31'
-         '63ee6ec75b8867b24a573bbb5e413623')
+         '33d2a12bd688f79f453e71c3b4c22051')
 
 pkgname=("$pkgbase" "$pkgbase-headers" )
       for _p in "${pkgname[@]}"; do

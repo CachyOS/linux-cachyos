@@ -24,8 +24,9 @@ _winesync=y
 
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
 _2k_HZ_ticks=
-_1k_HZ_ticks=y
+_1k_HZ_ticks=
 _750_HZ_ticks=
+_600_HZ_ticks=y
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
@@ -123,7 +124,7 @@ elif [ "$_cpusched" = "rdb" ]; then
 pkgbase=linux-cachyos-cacule-rdb
 fi
 pkgver=5.14.12
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -144,11 +145,9 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
         "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
         "${_caculepatches}/v5.14/cacule-5.14-full.patch"
         "${_patchsource}/0001-CK-TIMER.patch"
-        "${_patchsource}/misc/0008-remove-LightNVM.patch"
+        "${_patchsource}/0001-preempt-hz-cfs.patch"
         "${_patchsource}/misc/amd/0006-amd-cppc.patch"
-        "${_patchsource}/misc/zen-tweaks-cacule.patch"
-        "${_patchsource}/ll-patches/0001-LL-kconfig-add-750Hz-timer-interrupt-kernel-config-o.patch"
-        "${_patchsource}/ll-patches/0003-sched-core-nr_migrate-256-increases-number-of-tasks-.patch"
+        "${_patchsource}/misc/0008-remove-LightNVM.patch"
         "${_patchsource}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
         "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
         "${_patchsource}/bbr2-patches/0001-bbr2-5.14-introduce-BBRv2.patch"
@@ -157,8 +156,8 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
         "${_patchsource}/fixes-miscellaneous-v6/0001-fixes-miscellaneous.patch"
         "${_patchsource}/futex-xanmod-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch"
         "${_patchsource}/futex2-xanmod-patches-v2/0001-futex2-resync-from-gitlab.collabora.com.patch"
-        "${_patchsource}/ksmbd-patches-v17/0001-ksmbd-patches.patch"
-        "${_patchsource}/hwmon-patches/0001-hwmon-patches.patch"
+        "${_patchsource}/ksmbd-patches-v18/0001-ksmbd-patches.patch"
+        "${_patchsource}/hwmon-patches-v5/0001-hwmon-patches.patch"
         "${_patchsource}/lqx-patches/0001-lqx-patches.patch"
         "${_patchsource}/lrng-patches-v2/0001-lrng-patches.patch"
         "${_patchsource}/lru-patches-v4/0001-lru-patches.patch"
@@ -264,6 +263,13 @@ prepare() {
             scripts/config --set-val CONFIG_HZ 750
           fi
 
+          ### Optionally set tickrate to 600HZ
+        if [ -n "$_600_HZ_ticks" ]; then
+          echo "Setting tick rate to 600HZ..."
+          scripts/config --disable CONFIG_HZ_300
+          scripts/config --enable CONFIG_HZ_600
+          scripts/config --set-val CONFIG_HZ 600
+        fi
         ### Optionally set tickrate to 500HZ
             if [ -n "$_500_HZ_ticks" ]; then
               echo "Setting tick rate to 500HZ..."
@@ -448,8 +454,6 @@ prepare() {
 		echo "Enabling FULLCONENAT..."
 		scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
 		scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
-    echo "Enable CFS ZENIFY"
-  	scripts/config --enable CONFIG_ZEN_INTERACTIVE
    echo "Setting performance governor..."
    scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
    scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
@@ -635,15 +639,13 @@ _package-headers() {
 }
 
 md5sums=('a52286fe206a3f7664ca5a6c5995b9ed'
-         '9729fb979d57d62c95992ee6a2f3b709'
+         '234d1fd2e734bdc3130673d3f7586728'
          '581faf85cd625c41bbdd0cadbd0e451e'
          '024a0126cfcd18e000a2241f35c4d69e'
          '04c5865e765e07cff0649824c2a8d810'
-         'eb39a5681a153f5a1f5a67e8b9e957a5'
+         'f88c3290ece724c81921059df14965cf'
          '430972ae1e936f99d8dc2a1f4fdaf774'
-         '9d7612159f8745044254077ce8a76df6'
-         'f8e172e9ea554bbb1053eb122c3ace35'
-         'af7328eb8c72c754e5bc8c7be1ca2f1c'
+         'eb39a5681a153f5a1f5a67e8b9e957a5'
          'f0d84fc024b9933bc19db696e0393a4e'
          'e45c7962a78d6e82a0d3808868cd6ac0'
          '196d6ac961497aa880264b83160eb140'
@@ -652,8 +654,8 @@ md5sums=('a52286fe206a3f7664ca5a6c5995b9ed'
          'f364618bad6154856085c7025d388d3b'
          'fd934f7d11131d5a5043e4aea640583b'
          '8a96c5e8346bd5b430776ac8a41f96b0'
-         'f71331c247285499ca42b63d707831a6'
-         'bad682a72d2549f409caea361fb0456f'
+         '1b82eb13c4d3eaa368340b5a4f514ed1'
+         '5c9334532387ae8df80cff9bb5890954'
          '6787c78ba3e7b0a34fbba9c50da7e3b4'
          '366c90b64f9582c0733b8fb607a07594'
          '8adcaccbb5c0ebd4bc81144e16b92627'
@@ -662,7 +664,7 @@ md5sums=('a52286fe206a3f7664ca5a6c5995b9ed'
          'cfef1423ad1e6aecad63f0d5eacaea37'
          '808981a36c81165953017e5e432c1fa1'
          'f6a1c51adfc68fb7b52dc5715a9cb5a7'
-         '6bce25efd0395a4d0a9e0fc52e0d93e4'
+         'f818b58bb2c6a30cd6fe88a8bd434b90'
          '0636779d32ba47bda25d3edb5fbd08c9'
          '566435a0444ee45816599f2e0e362c7a'
          'bb22330e270bf36ccf53cb04d6b496d2'
