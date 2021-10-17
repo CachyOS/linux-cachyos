@@ -1,7 +1,7 @@
-pkgbase = linux-cachyos-cacule-lto
+pkgbase = linux-cachyos-cacule
 	pkgdesc = Linux-cacule Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.14.12
-	pkgrel = 2
+	pkgver = 5.14.13
+	pkgrel = 1
 	url = https://github.com/ptr1337/linux-cacule
 	arch = x86_64
 	arch = x86_64_v3
@@ -18,12 +18,8 @@ pkgbase = linux-cachyos-cacule-lto
 	makedepends = perl
 	makedepends = tar
 	makedepends = xz
-	makedepends = clang
-	makedepends = llvm
-	makedepends = lld
-	makedepends = python
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.12.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.13.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/arch-patches-v10/0001-arch-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE/v5.14/cacule-5.14-full.patch
@@ -56,8 +52,8 @@ pkgbase = linux-cachyos-cacule-lto
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0001-winesync.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0001-v4l2loopback.patch
 	source = auto-cpu-optimization.sh
-	md5sums = a52286fe206a3f7664ca5a6c5995b9ed
-	md5sums = 234d1fd2e734bdc3130673d3f7586728
+	md5sums = dd8c7efa62d69eb9a50806f2b0d6da01
+	md5sums = 6918c6961e213ae5ee0c9d374bb9a06b
 	md5sums = 581faf85cd625c41bbdd0cadbd0e451e
 	md5sums = 024a0126cfcd18e000a2241f35c4d69e
 	md5sums = 04c5865e765e07cff0649824c2a8d810
@@ -90,7 +86,7 @@ pkgbase = linux-cachyos-cacule-lto
 	md5sums = 95eb4457f95f3f8dd153983612ee65c0
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-cacule-lto
+pkgname = linux-cachyos-cacule
 	pkgdesc = The Linux-cacule Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -101,7 +97,7 @@ pkgname = linux-cachyos-cacule-lto
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-cacule-lto-headers
+pkgname = linux-cachyos-cacule-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-cacule Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-cacule-lto=5.14.12
+	depends = linux-cachyos-cacule=5.14.13
 	depends = pahole
