@@ -5,9 +5,10 @@
 The CachyOS are improved kernels which improve the performance and other improvements. Following Scheduler are supported:
 
 - Standard Kernel Completely Fair Scheduler (CFS) - linux-cachyos
-- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-bmq
+- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
+- Baby Deadline Scheduler by Hamad Marri - linux-cachyos-baby
 
 All kernels are prebuilt in two different march versions (x86_64 and x86_64_v3) and also with the lto enabled kernels in the cachyos repo.
 
@@ -21,7 +22,7 @@ All kernels are prebuilt in two different march versions (x86_64 and x86_64_v3) 
 - Improved BFQ Scheduler
 - Latest LRU Patch-set
 - BBRv2 tcp_congestion_control
-- LLVM Thin LTO provided with *-lto Kernel (in the cahchyos-repo)
+- LLVM ThinLTO provided with *-lto Kernel (in the cacgyos-repo)
 - LRNG Framework (default)
 - FUTEX, WINESYNC & FUTEX2 patch-set
 - Android ANBOX patch-set
