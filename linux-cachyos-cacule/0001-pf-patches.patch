@@ -1,0 +1,928 @@
+From 15b92275d465bdd0c4c3f06f7a6d2405bfa6f066 Mon Sep 17 00:00:00 2001
+From: Charan Teja Reddy <charante@codeaurora.org>
+Date: Wed, 21 Jul 2021 17:43:19 +0530
+Subject: [PATCH 01/11] mm: compaction: optimize proactive compaction deferrals
+
+Vlastimil Babka figured out that when fragmentation score didn't go down
+across the proactive compaction i.e. when no progress is made, next wake
+up for proactive compaction is deferred for 1 <<
+COMPACT_MAX_DEFER_SHIFT, i.e. 64 times, with each wakeup interval of
+HPAGE_FRAG_CHECK_INTERVAL_MSEC(=500). In each of this wakeup, it just
+decrement 'proactive_defer' counter and goes sleep i.e. it is getting
+woken to just decrement a counter. The same deferral time can also
+achieved by simply doing the HPAGE_FRAG_CHECK_INTERVAL_MSEC <<
+COMPACT_MAX_DEFER_SHIFT thus unnecessary wakeup of kcompact thread is
+avoided thus also removes the need of 'proactive_defer' thread counter.
+
+Link: https://lore.kernel.org/linux-fsdevel/88abfdb6-2c13-b5a6-5b46-742d12d1c910@suse.cz/
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: David Rientjes <rientjes@google.com>
+Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
+Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
+---
+ mm/compaction.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
+
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 621508e..767f724 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2885,7 +2885,8 @@ static int kcompactd(void *p)
+ {
+ 	pg_data_t *pgdat = (pg_data_t *)p;
+ 	struct task_struct *tsk = current;
+-	unsigned int proactive_defer = 0;
++	long default_timeout = msecs_to_jiffies(HPAGE_FRAG_CHECK_INTERVAL_MSEC);
++	long timeout = default_timeout;
+ 
+ 	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
+ 
+@@ -2902,23 +2903,30 @@ static int kcompactd(void *p)
+ 
+ 		trace_mm_compaction_kcompactd_sleep(pgdat->node_id);
+ 		if (wait_event_freezable_timeout(pgdat->kcompactd_wait,
+-			kcompactd_work_requested(pgdat),
+-			msecs_to_jiffies(HPAGE_FRAG_CHECK_INTERVAL_MSEC))) {
++			kcompactd_work_requested(pgdat), timeout)) {
+ 
+ 			psi_memstall_enter(&pflags);
+ 			kcompactd_do_work(pgdat);
+ 			psi_memstall_leave(&pflags);
++			/*
++			 * Reset the timeout value. The defer timeout from
++			 * proactive compaction is lost here but that is fine
++			 * as the condition of the zone changing substantionally
++			 * then carrying on with the previous defer interval is
++			 * not useful.
++			 */
++			timeout = default_timeout;
+ 			continue;
+ 		}
+ 
+-		/* kcompactd wait timeout */
++		/*
++		 * Start the proactive work with default timeout. Based
++		 * on the fragmentation score, this timeout is updated.
++		 */
++		timeout = default_timeout;
+ 		if (should_proactive_compact_node(pgdat)) {
+ 			unsigned int prev_score, score;
+ 
+-			if (proactive_defer) {
+-				proactive_defer--;
+-				continue;
+-			}
+ 			prev_score = fragmentation_score_node(pgdat);
+ 			proactive_compact_node(pgdat);
+ 			score = fragmentation_score_node(pgdat);
+@@ -2926,8 +2934,9 @@ static int kcompactd(void *p)
+ 			 * Defer proactive compaction if the fragmentation
+ 			 * score did not go down i.e. no progress made.
+ 			 */
+-			proactive_defer = score < prev_score ?
+-					0 : 1 << COMPACT_MAX_DEFER_SHIFT;
++			if (unlikely(score >= prev_score))
++				timeout =
++				   default_timeout << COMPACT_MAX_DEFER_SHIFT;
+ 		}
+ 	}
+ 
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 3fabc3d4c136a0707ff11b4ad46fc95bd0ff28f2 Mon Sep 17 00:00:00 2001
+From: Charan Teja Reddy <charante@codeaurora.org>
+Date: Fri, 30 Jul 2021 19:23:27 +0530
+Subject: [PATCH 02/11] mm: compaction: support triggering of proactive
+ compaction by user
+
+The proactive compaction[1] gets triggered for every 500msec and run
+compaction on the node for COMPACTION_HPAGE_ORDER (usually order-9)
+pages based on the value set to sysctl.compaction_proactiveness.
+Triggering the compaction for every 500msec in search of
+COMPACTION_HPAGE_ORDER pages is not needed for all applications,
+especially on the embedded system usecases which may have few MB's of
+RAM. Enabling the proactive compaction in its state will endup in
+running almost always on such systems.
+
+Other side, proactive compaction can still be very much useful for
+getting a set of higher order pages in some controllable
+manner(controlled by using the sysctl.compaction_proactiveness). So, on
+systems where enabling the proactive compaction always may proove not
+required, can trigger the same from user space on write to its sysctl
+interface. As an example, say app launcher decide to launch the memory
+heavy application which can be launched fast if it gets more higher
+order pages thus launcher can prepare the system in advance by
+triggering the proactive compaction from userspace.
+
+This triggering of proactive compaction is done on a write to
+sysctl.compaction_proactiveness by user.
+
+[1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
+---
+ Documentation/admin-guide/sysctl/vm.rst |  3 +-
+ include/linux/compaction.h              |  2 ++
+ include/linux/mmzone.h                  |  1 +
+ kernel/sysctl.c                         |  2 +-
+ mm/compaction.c                         | 38 +++++++++++++++++++++++--
+ 5 files changed, 42 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+index 003d5cc..4d4a07a 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -118,7 +118,8 @@ compaction_proactiveness
+ 
+ This tunable takes a value in the range [0, 100] with a default value of
+ 20. This tunable determines how aggressively compaction is done in the
+-background. Setting it to 0 disables proactive compaction.
++background. Write of non zero value to this tunable will immediately
++trigger the proactive compaction. Setting it to 0 disables proactive compaction.
+ 
+ Note that compaction has a non-trivial system-wide impact as pages
+ belonging to different processes are moved around, which could also lead
+diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+index c24098c..34bce35 100644
+--- a/include/linux/compaction.h
++++ b/include/linux/compaction.h
+@@ -84,6 +84,8 @@ static inline unsigned long compact_gap(unsigned int order)
+ extern unsigned int sysctl_compaction_proactiveness;
+ extern int sysctl_compaction_handler(struct ctl_table *table, int write,
+ 			void *buffer, size_t *length, loff_t *ppos);
++extern int compaction_proactiveness_sysctl_handler(struct ctl_table *table,
++		int write, void *buffer, size_t *length, loff_t *ppos);
+ extern int sysctl_extfrag_threshold;
+ extern int sysctl_compact_unevictable_allowed;
+ 
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index fcb5355..fe96425 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -846,6 +846,7 @@ typedef struct pglist_data {
+ 	enum zone_type kcompactd_highest_zoneidx;
+ 	wait_queue_head_t kcompactd_wait;
+ 	struct task_struct *kcompactd;
++	bool proactive_compact_trigger;
+ #endif
+ 	/*
+ 	 * This is a per-node reserve of pages that are not available
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 272f4a2..297f0b3 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2871,7 +2871,7 @@ static struct ctl_table vm_table[] = {
+ 		.data		= &sysctl_compaction_proactiveness,
+ 		.maxlen		= sizeof(sysctl_compaction_proactiveness),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
++		.proc_handler	= compaction_proactiveness_sysctl_handler,
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= &one_hundred,
+ 	},
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 767f724..38f1727 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2706,6 +2706,30 @@ static void compact_nodes(void)
+  */
+ unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
+ 
++int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
++		void *buffer, size_t *length, loff_t *ppos)
++{
++	int rc, nid;
++
++	rc = proc_dointvec_minmax(table, write, buffer, length, ppos);
++	if (rc)
++		return rc;
++
++	if (write && sysctl_compaction_proactiveness) {
++		for_each_online_node(nid) {
++			pg_data_t *pgdat = NODE_DATA(nid);
++
++			if (pgdat->proactive_compact_trigger)
++				continue;
++
++			pgdat->proactive_compact_trigger = true;
++			wake_up_interruptible(&pgdat->kcompactd_wait);
++		}
++	}
++
++	return 0;
++}
++
+ /*
+  * This is the entry point for compacting all nodes via
+  * /proc/sys/vm/compact_memory
+@@ -2750,7 +2774,8 @@ void compaction_unregister_node(struct node *node)
+ 
+ static inline bool kcompactd_work_requested(pg_data_t *pgdat)
+ {
+-	return pgdat->kcompactd_max_order > 0 || kthread_should_stop();
++	return pgdat->kcompactd_max_order > 0 || kthread_should_stop() ||
++		pgdat->proactive_compact_trigger;
+ }
+ 
+ static bool kcompactd_node_suitable(pg_data_t *pgdat)
+@@ -2901,9 +2926,16 @@ static int kcompactd(void *p)
+ 	while (!kthread_should_stop()) {
+ 		unsigned long pflags;
+ 
++		/*
++		 * Avoid the unnecessary wakeup for proactive compaction
++		 * when it is disabled.
++		 */
++		if (!sysctl_compaction_proactiveness)
++			timeout = MAX_SCHEDULE_TIMEOUT;
+ 		trace_mm_compaction_kcompactd_sleep(pgdat->node_id);
+ 		if (wait_event_freezable_timeout(pgdat->kcompactd_wait,
+-			kcompactd_work_requested(pgdat), timeout)) {
++			kcompactd_work_requested(pgdat), timeout) &&
++			!pgdat->proactive_compact_trigger) {
+ 
+ 			psi_memstall_enter(&pflags);
+ 			kcompactd_do_work(pgdat);
+@@ -2938,6 +2970,8 @@ static int kcompactd(void *p)
+ 				timeout =
+ 				   default_timeout << COMPACT_MAX_DEFER_SHIFT;
+ 		}
++		if (unlikely(pgdat->proactive_compact_trigger))
++			pgdat->proactive_compact_trigger = false;
+ 	}
+ 
+ 	return 0;
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 5d0315a5179ae92c7a7512555ef0ffb52aa005ab Mon Sep 17 00:00:00 2001
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Sat, 5 Dec 2020 17:19:18 +0100
+Subject: [PATCH 03/11] genirq, i2c: Provide and use generic_dispatch_irq()
+
+Carlos reported that on his system booting with 'threadirqs' on the command
+line result in the following warning:
+
+irq 31 handler irq_default_primary_handler+0x0/0x10 enabled interrupts
+WARNING: CPU: 2 PID: 989 at kernel/irq/handle.c:153 __handle_irq_event_percpu+0x19f/0x1b0
+
+The reason is in the i2c stack:
+
+    i801_isr()
+      i801_host_notify_isr()
+        i2c_handle_smbus_host_notify()
+          generic_handle_irq()
+
+and that explodes with forced interrupt threading because it's called with
+interrupts enabled.
+
+It would be possible to set IRQF_NO_THREAD on the i801 interrupt to exclude
+it from force threading, but that would break on RT and require a larger
+update.
+
+It's also unclear whether there are other drivers which can reach that code
+path via i2c_slave_host_notify_cb(). As there are enough i2c drivers which
+use threaded interrupt handlers by default it seems not completely
+impossible that this can happen even without force threaded interrupts.
+
+For a quick fix provide a wrapper around generic_handle_irq() which has a
+local_irq_save/restore() around the invocation and use it in the i2c code.
+
+Reported-by: Carlos Jimenez <javashin1986@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1873673
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=202453
+Link: https://lore.kernel.org/lkml/20201204201930.vtvitsq6xcftjj3o@spock.localdomain/
+Signed-off-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+---
+ drivers/i2c/i2c-core-base.c |  2 +-
+ include/linux/irqdesc.h     |  1 +
+ kernel/irq/irqdesc.c        | 21 +++++++++++++++++++++
+ 3 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 84f12bf..06b00ca 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1520,7 +1520,7 @@ int i2c_handle_smbus_host_notify(struct i2c_adapter *adap, unsigned short addr)
+ 	if (irq <= 0)
+ 		return -ENXIO;
+ 
+-	generic_handle_irq(irq);
++	generic_dispatch_irq(irq);
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/irqdesc.h b/include/linux/irqdesc.h
+index 59aea39..f10ab73 100644
+--- a/include/linux/irqdesc.h
++++ b/include/linux/irqdesc.h
+@@ -160,6 +160,7 @@ static inline void generic_handle_irq_desc(struct irq_desc *desc)
+ 
+ int handle_irq_desc(struct irq_desc *desc);
+ int generic_handle_irq(unsigned int irq);
++int generic_dispatch_irq(unsigned int irq);
+ 
+ #ifdef CONFIG_IRQ_DOMAIN
+ /*
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index fadb937..9d4a19c 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -676,6 +676,27 @@ int generic_handle_domain_irq(struct irq_domain *domain, unsigned int hwirq)
+ }
+ EXPORT_SYMBOL_GPL(generic_handle_domain_irq);
+ 
++/**
++ * generic_dispatch_irq - Dispatch an interrupt from an interrupt handler
++ * @irq:	The irq number to handle
++ *
++ * A wrapper around generic_handle_irq() which ensures that interrupts are
++ * disabled when the primary handler of the dispatched irq is invoked.
++ * This is useful for interrupt handlers with dispatching to be safe for
++ * the forced threaded case.
++ */
++int generic_dispatch_irq(unsigned int irq)
++{
++	unsigned long flags;
++	int ret;
++
++	local_irq_save(flags);
++	ret = generic_handle_irq(irq);
++	local_irq_restore(flags);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(generic_dispatch_irq);
++
+ #ifdef CONFIG_HANDLE_DOMAIN_IRQ
+ /**
+  * handle_domain_irq - Invoke the handler for a HW irq belonging to a domain,
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 5a6468fb2beb303c188bcb3fb540a5fc6eb07584 Mon Sep 17 00:00:00 2001
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Mon, 7 Jun 2021 16:45:45 +0200
+Subject: [PATCH 04/11] mac80211: minstrel_ht: force ampdu_len to be > 0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is a hack.
+
+Work around the following crash:
+
+```
+divide error: 0000 [#1] PREEMPT SMP PTI
+CPU: 2 PID: 683 Comm: mt76-tx phy0 Tainted: G         C        5.12.0-pf4 #1
+Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./J3710-ITX, BIOS P1.50 04/16/2018
+RIP: 0010:minstrel_ht_get_tp_avg+0xb1/0x100 [mac80211]
+…
+Call Trace:
+ minstrel_ht_update_stats+0x1fe/0x1320 [mac80211]
+ minstrel_ht_tx_status+0x67f/0x710 [mac80211]
+ rate_control_tx_status+0x6e/0xb0 [mac80211]
+ ieee80211_tx_status_ext+0x22e/0xb00 [mac80211]
+ ieee80211_tx_status+0x7d/0xa0 [mac80211]
+ mt76_tx_status_unlock+0x83/0xa0 [mt76]
+ mt76x02_send_tx_status+0x1b7/0x400 [mt76x02_lib]
+ mt76x02_tx_worker+0x8f/0xd0 [mt76x02_lib]
+ __mt76_worker_fn+0x78/0xb0 [mt76]
+ kthread+0x183/0x1b0
+ ret_from_fork+0x22/0x30
+```
+
+Link: https://lore.kernel.org/lkml/20210529165728.bskaozwtmwxnvucx@spock.localdomain/
+Signed-off-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+---
+ net/mac80211/rc80211_minstrel_ht.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/net/mac80211/rc80211_minstrel_ht.c b/net/mac80211/rc80211_minstrel_ht.c
+index 72b44d4..4d1a15e 100644
+--- a/net/mac80211/rc80211_minstrel_ht.c
++++ b/net/mac80211/rc80211_minstrel_ht.c
+@@ -440,8 +440,13 @@ minstrel_ht_get_tp_avg(struct minstrel_ht_sta *mi, int group, int rate,
+ 
+ 	if (minstrel_ht_is_legacy_group(group))
+ 		overhead = mi->overhead_legacy;
+-	else
++	else {
+ 		ampdu_len = minstrel_ht_avg_ampdu_len(mi);
++		if (unlikely(!ampdu_len)) {
++			pr_err_once("minstrel_ht_get_tp_avg: ampdu_len == 0!");
++			ampdu_len = 1;
++		}
++	}
+ 
+ 	nsecs = 1000 * overhead / ampdu_len;
+ 	nsecs += minstrel_mcs_groups[group].duration[rate] <<
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 96215618858a30d715c38209b54fcae2a8de44a3 Mon Sep 17 00:00:00 2001
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Tue, 13 Jul 2021 10:27:20 +0200
+Subject: [PATCH 05/11] net: replace WARN_ONCE with pr_warn_once
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is a hack.
+
+Work around the following warning:
+
+```
+igb_poll+0x0/0x13f0 [igb] exceeded budget in poll
+WARNING: CPU: 1 PID: 43231 at net/core/netpoll.c:154 netpoll_poll_dev+0x18a/0x1a0
+…
+Call Trace:
+ netpoll_send_skb+0x1a0/0x260
+ write_msg+0xd8/0xf0 [netconsole]
+ console_unlock+0x3f2/0x710
+ suspend_devices_and_enter+0x2a9/0x7f0
+ pm_suspend.cold+0x321/0x36c
+ state_store+0x96/0x130
+ kernfs_fop_write_iter+0x11c/0x1b0
+ new_sync_write+0x15b/0x1f0
+ vfs_write+0x1b5/0x2b0
+ __x64_sys_write+0x6c/0xf0
+```
+
+and turn it into a simple message.
+
+This happens on resume from suspend with netconsole enabled.
+
+Link: https://lists.osuosl.org/pipermail/intel-wired-lan/Week-of-Mon-20210503/024220.html
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=212573
+Signed-off-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+---
+ net/core/netpoll.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index edfc0f8..7aaaeec 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -152,7 +152,8 @@ static void poll_one_napi(struct napi_struct *napi)
+ 	 * indicate that we are clearing the Tx path only.
+ 	 */
+ 	work = napi->poll(napi, 0);
+-	WARN_ONCE(work, "%pS exceeded budget in poll\n", napi->poll);
++	if (unlikely(work))
++		pr_warn_once("%pS exceeded budget in poll\n", napi->poll);
+ 	trace_napi_poll(napi, work, 0);
+ 
+ 	clear_bit(NAPI_STATE_NPSVC, &napi->state);
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 11dda59ffb3356dedc5e9edb2cca6a70efa7932b Mon Sep 17 00:00:00 2001
+From: Deepak Sharma <deepak.sharma@amd.com>
+Date: Wed, 18 Aug 2021 17:43:05 -0700
+Subject: [PATCH 06/11] x86/ACPI/State: Optimize C3 entry on AMD CPUs
+
+AMD CPU which support C3 shares cache. Its not necessary to flush the
+caches in software before entering C3. This will cause performance drop
+for the cores which share some caches. ARB_DIS is not used with current
+AMD C state implementation. So set related flags correctly.
+
+Signed-off-by: Deepak Sharma <deepak.sharma@amd.com>
+---
+ arch/x86/kernel/acpi/cstate.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
+index 7de599e..62a5986 100644
+--- a/arch/x86/kernel/acpi/cstate.c
++++ b/arch/x86/kernel/acpi/cstate.c
+@@ -79,6 +79,21 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
+ 		 */
+ 		flags->bm_control = 0;
+ 	}
++	if (c->x86_vendor == X86_VENDOR_AMD) {
++		/*
++		 * For all AMD CPUs that support C3, caches should not be
++		 * flushed by software while entering C3 type state. Set
++		 * bm->check to 1 so that kernel doesn't need to execute
++		 * cache flush operation.
++		 */
++		flags->bm_check = 1;
++		/*
++		 * In current AMD C state implementation ARB_DIS is no longer
++		 * used. So set bm_control to zero to indicate ARB_DIS is not
++		 * required while entering C3 type state.
++		 */
++		flags->bm_control = 0;
++	}
+ }
+ EXPORT_SYMBOL(acpi_processor_power_init_bm_check);
+ 
+-- 
+2.33.0.610.gcefe983a32
+
+
+From fba97558e110654294c66e85a701fafe92a41bdd Mon Sep 17 00:00:00 2001
+From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Tue, 27 Jul 2021 12:48:40 +0200
+Subject: [PATCH 07/11] namei: add mapping aware lookup helper
+
+Various filesystems rely on the lookup_one_len() helper to lookup a
+single path component relative to a well-known starting point. Allow
+such filesystems to support idmapped mounts by adding a version of this
+helper to take the idmap into account when calling inode_permission().
+This change is a required to let btrfs (and other filesystems) support
+idmapped mounts.
+
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+---
+ fs/namei.c            | 43 +++++++++++++++++++++++++++++++++++++------
+ include/linux/namei.h |  1 +
+ 2 files changed, 38 insertions(+), 6 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index bf6d8a7..902df46 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2575,8 +2575,9 @@ int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
+ }
+ EXPORT_SYMBOL(vfs_path_lookup);
+ 
+-static int lookup_one_len_common(const char *name, struct dentry *base,
+-				 int len, struct qstr *this)
++static int lookup_one_common(struct user_namespace *mnt_userns,
++			     const char *name, struct dentry *base, int len,
++			     struct qstr *this)
+ {
+ 	this->name = name;
+ 	this->len = len;
+@@ -2604,7 +2605,7 @@ static int lookup_one_len_common(const char *name, struct dentry *base,
+ 			return err;
+ 	}
+ 
+-	return inode_permission(&init_user_ns, base->d_inode, MAY_EXEC);
++	return inode_permission(mnt_userns, base->d_inode, MAY_EXEC);
+ }
+ 
+ /**
+@@ -2628,7 +2629,7 @@ struct dentry *try_lookup_one_len(const char *name, struct dentry *base, int len
+ 
+ 	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
+ 
+-	err = lookup_one_len_common(name, base, len, &this);
++	err = lookup_one_common(&init_user_ns, name, base, len, &this);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+@@ -2655,7 +2656,7 @@ struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
+ 
+ 	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
+ 
+-	err = lookup_one_len_common(name, base, len, &this);
++	err = lookup_one_common(&init_user_ns, name, base, len, &this);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+@@ -2664,6 +2665,36 @@ struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
+ }
+ EXPORT_SYMBOL(lookup_one_len);
+ 
++/**
++ * lookup_one - filesystem helper to lookup single pathname component
++ * @mnt_userns:	user namespace of the mount the lookup is performed from
++ * @name:	pathname component to lookup
++ * @base:	base directory to lookup from
++ * @len:	maximum length @len should be interpreted to
++ *
++ * Note that this routine is purely a helper for filesystem usage and should
++ * not be called by generic code.
++ *
++ * The caller must hold base->i_mutex.
++ */
++struct dentry *lookup_one(struct user_namespace *mnt_userns, const char *name,
++			  struct dentry *base, int len)
++{
++	struct dentry *dentry;
++	struct qstr this;
++	int err;
++
++	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
++
++	err = lookup_one_common(mnt_userns, name, base, len, &this);
++	if (err)
++		return ERR_PTR(err);
++
++	dentry = lookup_dcache(&this, base, 0);
++	return dentry ? dentry : __lookup_slow(&this, base, 0);
++}
++EXPORT_SYMBOL(lookup_one);
++
+ /**
+  * lookup_one_len_unlocked - filesystem helper to lookup single pathname component
+  * @name:	pathname component to lookup
+@@ -2683,7 +2714,7 @@ struct dentry *lookup_one_len_unlocked(const char *name,
+ 	int err;
+ 	struct dentry *ret;
+ 
+-	err = lookup_one_len_common(name, base, len, &this);
++	err = lookup_one_common(&init_user_ns, name, base, len, &this);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index be9a2b3..e89329b 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -68,6 +68,7 @@ extern struct dentry *try_lookup_one_len(const char *, struct dentry *, int);
+ extern struct dentry *lookup_one_len(const char *, struct dentry *, int);
+ extern struct dentry *lookup_one_len_unlocked(const char *, struct dentry *, int);
+ extern struct dentry *lookup_positive_unlocked(const char *, struct dentry *, int);
++struct dentry *lookup_one(struct user_namespace *, const char *, struct dentry *, int);
+ 
+ extern int follow_down_one(struct path *);
+ extern int follow_down(struct path *);
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 0895286d04a29d21e34d158479914136d9da3b0b Mon Sep 17 00:00:00 2001
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Fri, 24 Sep 2021 22:02:32 +0200
+Subject: [PATCH 08/11] mac80211: rate: replace WARN_ON with pr_warn
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is a hack.
+
+Work around the following warning:
+
+```
+WARNING: CPU: 0 PID: 680 at net/mac80211/rate.c:671 ieee80211_get_tx_rates+0xa9c/0xb60 [mac80211]
+…
+Call Trace:
+<IRQ>
+ath_tx_start+0x122/0x2d0 [ath9k]
+ath9k_tx+0xd5/0x220 [ath9k]
+__ieee80211_tx+0x2ea/0x3b0 [mac80211]
+ieee80211_tx+0x11a/0x150 [mac80211]
+ieee80211_tx_pending+0xc2/0x2f0 [mac80211]
+tasklet_action_common.constprop.0+0x137/0x190
+__do_softirq+0xd1/0x2c6
+do_softirq+0x79/0xa0
+</IRQ>
+__local_bh_enable_ip+0x57/0x70
+irq_forced_thread_fn+0x7b/0x90
+irq_thread+0x203/0x2b0
+kthread+0x1b1/0x1e0
+ret_from_fork+0x22/0x30
+```
+
+and turn it into a simple message.
+
+This happens with the following hardware:
+
+```
+02:00.0 Network controller: Qualcomm Atheros AR9462 Wireless Network Adapter (rev 01)
+```
+
+running in AP mode using hostapd starting from v5.14.
+
+Signed-off-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+---
+ net/mac80211/rate.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/mac80211/rate.c b/net/mac80211/rate.c
+index 8c64161..1464a63 100644
+--- a/net/mac80211/rate.c
++++ b/net/mac80211/rate.c
+@@ -664,7 +664,8 @@ static void rate_fixup_ratelist(struct ieee80211_vif *vif,
+ 		 * needs to be fixed.
+ 		 */
+ 		if (rates[i].flags & IEEE80211_TX_RC_MCS) {
+-			WARN_ON(rates[i].idx > 76);
++			if (unlikely(rates[i].idx > 76))
++				pr_warn("rates[%d].idx == %d > 76\n", i, rates[i].idx);
+ 
+ 			if (!(rates[i].flags & IEEE80211_TX_RC_USE_RTS_CTS) &&
+ 			    info->control.use_cts_prot)
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 66542b5b48e62014ed1694fd1a126b61eee34b63 Mon Sep 17 00:00:00 2001
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Fri, 1 Oct 2021 22:45:10 +0200
+Subject: [PATCH 09/11] mac80211: airtime: replace WARN_ON_ONCE with
+ pr_warn_once
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is a hack.
+
+Work around the following warning:
+
+```
+WARNING: CPU: 3 PID: 684 at net/mac80211/airtime.c:456 ieee80211_calc_rx_airtime+0x12d/0x1d0 [mac80211]
+…
+Call Trace:
+ieee80211_calc_tx_airtime+0x10c/0x1b0 [mac80211]
+mt76x02_send_tx_status+0x1de/0x400 [mt76x02_lib]
+mt76x02_tx_worker+0x8f/0xd0 [mt76x02_lib]
+__mt76_worker_fn+0x4c/0x80 [mt76]
+kthread+0x1b1/0x1e0
+ret_from_fork+0x22/0x30
+```
+
+and turn it into a simple message.
+
+This happens with the following hardware:
+
+```
+01:00.0 Network controller: MEDIATEK Corp. MT7612E 802.11acbgn PCI Express Wireless Network Adapter
+```
+
+running in AP mode using hostapd.
+
+Signed-off-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+---
+ net/mac80211/airtime.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/net/mac80211/airtime.c b/net/mac80211/airtime.c
+index 26d2f8b..f55c2f4 100644
+--- a/net/mac80211/airtime.c
++++ b/net/mac80211/airtime.c
+@@ -453,9 +453,17 @@ static u32 ieee80211_get_rate_duration(struct ieee80211_hw *hw,
+ 		return 0;
+ 	}
+ 
+-	if (WARN_ON_ONCE((status->encoding != RX_ENC_HE && streams > 4) ||
+-			 (status->encoding == RX_ENC_HE && streams > 8)))
++	if (unlikely(status->encoding != RX_ENC_HE && streams > 4)) {
++		pr_warn_once("status->encoding != RX_ENC_HE (%u != %d) && streams > 4 (%d > 4)\n",
++			     status->encoding, RX_ENC_HE, streams);
+ 		return 0;
++	}
++
++	if (unlikely(status->encoding == RX_ENC_HE && streams > 8)) {
++		pr_warn_once("status->encoding == RX_ENC_HE (%u == %d) && streams > 8 (%d > 8)\n",
++			     status->encoding, RX_ENC_HE, streams);
++		return 0;
++	}
+ 
+ 	duration = airtime_mcs_groups[group].duration[idx];
+ 	duration <<= airtime_mcs_groups[group].shift;
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 111e01861df874e399227868bc740b8afb30502c Mon Sep 17 00:00:00 2001
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Sun, 3 Oct 2021 22:34:51 +0200
+Subject: [PATCH 10/11] mac80211: rate: replace WARN_ON_ONCE with pr_warn_once
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is a hack.
+
+Work around the following warning:
+
+```
+WARNING: CPU: 2 PID: 656 at net/mac80211/rate.c:693 ieee80211_get_tx_rates+0xa3b/0xb50 [mac80211]
+…
+Call Trace:
+<IRQ>
+ath_tx_start+0x122/0x2d0 [ath9k]
+ath9k_tx+0xd5/0x220 [ath9k]
+__ieee80211_tx+0x2ea/0x3b0 [mac80211]
+ieee80211_tx+0x11a/0x150 [mac80211]
+ieee80211_tx_pending+0xc2/0x2f0 [mac80211]
+tasklet_action_common.constprop.0+0x137/0x190
+__do_softirq+0xd1/0x2c6
+do_softirq+0x79/0xa0
+</IRQ>
+__local_bh_enable_ip+0x57/0x70
+irq_forced_thread_fn+0x7b/0x90
+irq_thread+0x203/0x2b0
+kthread+0x1b1/0x1e0
+ret_from_fork+0x22/0x30
+```
+
+and turn it into a simple message.
+
+This happens with the following hardware:
+
+```
+02:00.0 Network controller: Qualcomm Atheros AR9462 Wireless Network Adapter (rev 01)
+```
+
+running in AP mode using hostapd.
+
+Signed-off-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+---
+ net/mac80211/rate.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/mac80211/rate.c b/net/mac80211/rate.c
+index 1464a63..9acd44a 100644
+--- a/net/mac80211/rate.c
++++ b/net/mac80211/rate.c
+@@ -686,7 +686,9 @@ static void rate_fixup_ratelist(struct ieee80211_vif *vif,
+ 		}
+ 
+ 		/* RC is busted */
+-		if (WARN_ON_ONCE(rates[i].idx >= sband->n_bitrates)) {
++		if (unlikely(rates[i].idx >= sband->n_bitrates)) {
++			pr_warn_once("rates[%d].idx == %d >= sband->n_bitrates == %d\n",
++						 i, rates[i].idx, sband->n_bitrates);
+ 			rates[i].idx = -1;
+ 			continue;
+ 		}
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 3e870afadcc6dc1356828466f7ee3dcaf44c6e56 Mon Sep 17 00:00:00 2001
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Thu, 7 Oct 2021 15:42:19 +0200
+Subject: [PATCH 11/11] mac80211: rate: replace WARN_ON with pr_warn
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is a hack.
+
+Work around the following warning:
+
+```
+WARNING: CPU: 2 PID: 656 at net/mac80211/rate.c:682 ieee80211_get_tx_rates+0x604/0xb50 [mac80211]
+…
+Call Trace:
+ <IRQ>
+ ath_tx_start+0x122/0x2d0 [ath9k]
+ ath9k_tx+0xd5/0x220 [ath9k]
+ __ieee80211_tx+0x2ea/0x3b0 [mac80211]
+ ieee80211_tx+0x11a/0x150 [mac80211]
+ ieee80211_tx_pending+0xc2/0x2f0 [mac80211]
+ tasklet_action_common.constprop.0+0x137/0x190
+ __do_softirq+0xd1/0x2c6
+ do_softirq+0x79/0xa0
+ </IRQ>
+ __local_bh_enable_ip+0x57/0x70
+ irq_forced_thread_fn+0x7b/0x90
+ irq_thread+0x203/0x2b0
+ kthread+0x1b1/0x1e0
+ ret_from_fork+0x22/0x30
+```
+
+and turn it into a simple message.
+
+This happens with the following hardware:
+
+```
+02:00.0 Network controller: Qualcomm Atheros AR9462 Wireless Network Adapter (rev 01)
+```
+
+running in AP mode using hostapd.
+
+Signed-off-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+---
+ net/mac80211/rate.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/mac80211/rate.c b/net/mac80211/rate.c
+index 9acd44a..0793f18 100644
+--- a/net/mac80211/rate.c
++++ b/net/mac80211/rate.c
+@@ -675,7 +675,9 @@ static void rate_fixup_ratelist(struct ieee80211_vif *vif,
+ 		}
+ 
+ 		if (rates[i].flags & IEEE80211_TX_RC_VHT_MCS) {
+-			WARN_ON(ieee80211_rate_get_vht_mcs(&rates[i]) > 9);
++			if (unlikely(ieee80211_rate_get_vht_mcs(&rates[i]) > 9))
++				pr_warn("ieee80211_rate_get_vht_mcs(&rates[%d]) == %d > 9\n",
++					i, ieee80211_rate_get_vht_mcs(&rates[i]));
+ 			continue;
+ 		}
+ 
+-- 
+2.33.0.610.gcefe983a32
+

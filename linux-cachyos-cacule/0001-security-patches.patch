@@ -1,0 +1,2865 @@
+From 66796eb71e057fd0222a6892ba4a5fea5da0e88f Mon Sep 17 00:00:00 2001
+From: John Wood <john.wood@gmx.com>
+Date: Sat, 5 Jun 2021 17:03:58 +0200
+Subject: [PATCH 1/8] security: Add LSM hook at the point where a task gets a
+ fatal signal
+
+Add a security hook that allows a LSM to be notified when a task gets a
+fatal signal. This patch is a previous step on the way to compute the
+task crash period by the "brute" LSM (linux security module to detect
+and mitigate fork brute force attack against vulnerable userspace
+processes).
+
+Signed-off-by: John Wood <john.wood@gmx.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+---
+ include/linux/lsm_hook_defs.h | 1 +
+ include/linux/lsm_hooks.h     | 4 ++++
+ include/linux/security.h      | 4 ++++
+ kernel/signal.c               | 1 +
+ security/security.c           | 5 +++++
+ 5 files changed, 15 insertions(+)
+
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 2adeea44c..4e8826de7 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -225,6 +225,7 @@ LSM_HOOK(int, -ENOSYS, task_prctl, int option, unsigned long arg2,
+ 	 unsigned long arg3, unsigned long arg4, unsigned long arg5)
+ LSM_HOOK(void, LSM_RET_VOID, task_to_inode, struct task_struct *p,
+ 	 struct inode *inode)
++LSM_HOOK(void, LSM_RET_VOID, task_fatal_signal, const kernel_siginfo_t *siginfo)
+ LSM_HOOK(int, 0, ipc_permission, struct kern_ipc_perm *ipcp, short flag)
+ LSM_HOOK(void, LSM_RET_VOID, ipc_getsecid, struct kern_ipc_perm *ipcp,
+ 	 u32 *secid)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 5c4c5c060..fc8bef0f1 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -799,6 +799,10 @@
+  *	security attributes, e.g. for /proc/pid inodes.
+  *	@p contains the task_struct for the task.
+  *	@inode contains the inode structure for the inode.
++ * @task_fatal_signal:
++ *	This hook allows security modules to be notified when a task gets a
++ *	fatal signal.
++ *	@siginfo contains the signal information.
+  *
+  * Security hooks for Netlink messaging.
+  *
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5b7288521..592552478 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -434,6 +434,7 @@ int security_task_kill(struct task_struct *p, struct kernel_siginfo *info,
+ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 			unsigned long arg4, unsigned long arg5);
+ void security_task_to_inode(struct task_struct *p, struct inode *inode);
++void security_task_fatal_signal(const kernel_siginfo_t *siginfo);
+ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
+ void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
+ int security_msg_msg_alloc(struct msg_msg *msg);
+@@ -1184,6 +1185,9 @@ static inline int security_task_prctl(int option, unsigned long arg2,
+ static inline void security_task_to_inode(struct task_struct *p, struct inode *inode)
+ { }
+ 
++static inline void security_task_fatal_signal(const kernel_siginfo_t *siginfo)
++{ }
++
+ static inline int security_ipc_permission(struct kern_ipc_perm *ipcp,
+ 					  short flag)
+ {
+diff --git a/kernel/signal.c b/kernel/signal.c
+index a3229add4..ab0b99b8d 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2777,6 +2777,7 @@ bool get_signal(struct ksignal *ksig)
+ 		/*
+ 		 * Anything else is fatal, maybe with a core dump.
+ 		 */
++		security_task_fatal_signal(&ksig->info);
+ 		current->flags |= PF_SIGNALED;
+ 
+ 		if (sig_kernel_coredump(signr)) {
+diff --git a/security/security.c b/security/security.c
+index 9ffa9e9c5..01acbcd97 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1892,6 +1892,11 @@ void security_task_to_inode(struct task_struct *p, struct inode *inode)
+ 	call_void_hook(task_to_inode, p, inode);
+ }
+ 
++void security_task_fatal_signal(const kernel_siginfo_t *siginfo)
++{
++	call_void_hook(task_fatal_signal, siginfo);
++}
++
+ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
+ {
+ 	return call_int_hook(ipc_permission, 0, ipcp, flag);
+-- 
+2.33.0
+
+
+From aa62253aa769a2d4da9ba80b99b00e77335626c9 Mon Sep 17 00:00:00 2001
+From: John Wood <john.wood@gmx.com>
+Date: Sat, 5 Jun 2021 17:03:59 +0200
+Subject: [PATCH 2/8] security/brute: Define a LSM and add sysctl attributes
+
+Add a new Kconfig file to define a menu entry under "Security options"
+to enable the "Fork brute force attack detection and mitigation"
+feature.
+
+The detection of a brute force attack can be based on the number of
+faults per application and its crash rate.
+
+There are two types of brute force attacks that can be detected. The
+first one is a slow brute force attack that is detected if the maximum
+number of faults per fork hierarchy is reached. The second type is a
+fast brute force attack that is detected if the application crash period
+falls below a certain threshold.
+
+The application crash period must be a value that is not prone to change
+due to spurious data and follows the real crash period. So, to compute
+it, the exponential moving average (EMA) will be used.
+
+This kind of average defines a weight (between 0 and 1) for the new
+value to add and applies the remainder of the weight to the current
+average value. This way, some spurious data will not excessively modify
+the average and only if the new values are persistent, the moving
+average will tend towards them.
+
+Mathematically the application crash period's EMA can be expressed as
+follows:
+
+period_ema = period * weight + period_ema * (1 - weight)
+
+Moreover, it is important to note that a minimum number of faults is
+needed to guarantee a trend in the crash period when the EMA is used.
+
+So, based on all the previous information define a LSM with five sysctl
+attributes that will be used to fine tune the attack detection.
+
+ema_weight_numerator
+ema_weight_denominator
+max_faults
+min_faults
+crash_period_threshold
+
+This patch is a previous step on the way to fine tune the attack
+detection.
+
+Signed-off-by: John Wood <john.wood@gmx.com>
+---
+ security/Kconfig        |  11 +--
+ security/Makefile       |   2 +
+ security/brute/Kconfig  |  14 ++++
+ security/brute/Makefile |   2 +
+ security/brute/brute.c  | 147 ++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 171 insertions(+), 5 deletions(-)
+ create mode 100644 security/brute/Kconfig
+ create mode 100644 security/brute/Makefile
+ create mode 100644 security/brute/brute.c
+
+diff --git a/security/Kconfig b/security/Kconfig
+index 0ced7fd33..2df1727f2 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -241,6 +241,7 @@ source "security/lockdown/Kconfig"
+ source "security/landlock/Kconfig"
+ 
+ source "security/integrity/Kconfig"
++source "security/brute/Kconfig"
+ 
+ choice
+ 	prompt "First legacy 'major LSM' to be initialized"
+@@ -278,11 +279,11 @@ endchoice
+ 
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+-	default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+-	default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+-	default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
+-	default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
++	default "landlock,lockdown,brute,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
++	default "landlock,lockdown,brute,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
++	default "landlock,lockdown,brute,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
++	default "landlock,lockdown,brute,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
++	default "landlock,lockdown,brute,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list will be ignored. This can be
+diff --git a/security/Makefile b/security/Makefile
+index 47e432900..94d325256 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -14,6 +14,7 @@ subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
+ subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
+ subdir-$(CONFIG_BPF_LSM)		+= bpf
+ subdir-$(CONFIG_SECURITY_LANDLOCK)	+= landlock
++subdir-$(CONFIG_SECURITY_FORK_BRUTE)	+= brute
+ 
+ # always enable default capabilities
+ obj-y					+= commoncap.o
+@@ -34,6 +35,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+= bpf/
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
++obj-$(CONFIG_SECURITY_FORK_BRUTE)	+= brute/
+ 
+ # Object integrity file lists
+ subdir-$(CONFIG_INTEGRITY)		+= integrity
+diff --git a/security/brute/Kconfig b/security/brute/Kconfig
+new file mode 100644
+index 000000000..5da314d22
+--- /dev/null
++++ b/security/brute/Kconfig
+@@ -0,0 +1,14 @@
++# SPDX-License-Identifier: GPL-2.0
++config SECURITY_FORK_BRUTE
++	bool "Fork brute force attack detection and mitigation"
++	depends on SECURITY
++	help
++	  This is an LSM that stops any fork brute force attack against
++	  vulnerable userspace processes. The detection method is based on
++	  the application crash period and as a mitigation procedure all the
++	  offending tasks are killed. Also, the executable file involved in the
++	  attack will be marked as "not allowed" and new execve system calls
++	  using this file will fail. Like capabilities, this security module
++	  stacks with other LSMs.
++
++	  If you are unsure how to answer this question, answer N.
+diff --git a/security/brute/Makefile b/security/brute/Makefile
+new file mode 100644
+index 000000000..d3f233a13
+--- /dev/null
++++ b/security/brute/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_SECURITY_FORK_BRUTE) += brute.o
+diff --git a/security/brute/brute.c b/security/brute/brute.c
+new file mode 100644
+index 000000000..0edb89a58
+--- /dev/null
++++ b/security/brute/brute.c
+@@ -0,0 +1,147 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/lsm_hooks.h>
++#include <linux/sysctl.h>
++
++/**
++ * DOC: brute_ema_weight_numerator
++ *
++ * Weight's numerator of EMA.
++ */
++static unsigned int brute_ema_weight_numerator __read_mostly = 7;
++
++/**
++ * DOC: brute_ema_weight_denominator
++ *
++ * Weight's denominator of EMA.
++ */
++static unsigned int brute_ema_weight_denominator __read_mostly = 10;
++
++/**
++ * DOC: brute_max_faults
++ *
++ * Maximum number of faults.
++ *
++ * If a brute force attack is running slowly for a long time, the application
++ * crash period's EMA is not suitable for the detection. This type of attack
++ * must be detected using a maximum number of faults.
++ */
++static unsigned int brute_max_faults __read_mostly = 200;
++
++/**
++ * DOC: brute_min_faults
++ *
++ * Minimum number of faults.
++ *
++ * The application crash period's EMA cannot be used until a minimum number of
++ * data has been applied to it. This constraint allows getting a trend when this
++ * moving average is used.
++ */
++static unsigned int brute_min_faults __read_mostly = 5;
++
++/**
++ * DOC: brute_crash_period_threshold
++ *
++ * Application crash period threshold.
++ *
++ * A fast brute force attack is detected when the application crash period falls
++ * below this threshold. The units are expressed in seconds.
++ */
++static unsigned int brute_crash_period_threshold __read_mostly = 30;
++
++#ifdef CONFIG_SYSCTL
++static unsigned int uint_max = UINT_MAX;
++#define SYSCTL_UINT_MAX (&uint_max)
++
++/*
++ * brute_sysctl_path - Sysctl attributes path.
++ */
++static struct ctl_path brute_sysctl_path[] = {
++	{ .procname = "kernel", },
++	{ .procname = "brute", },
++	{ }
++};
++
++/*
++ * brute_sysctl_table - Sysctl attributes.
++ */
++static struct ctl_table brute_sysctl_table[] = {
++	{
++		.procname	= "ema_weight_numerator",
++		.data		= &brute_ema_weight_numerator,
++		.maxlen		= sizeof(brute_ema_weight_numerator),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= &brute_ema_weight_denominator,
++	},
++	{
++		.procname	= "ema_weight_denominator",
++		.data		= &brute_ema_weight_denominator,
++		.maxlen		= sizeof(brute_ema_weight_denominator),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1		= &brute_ema_weight_numerator,
++		.extra2		= SYSCTL_UINT_MAX,
++	},
++	{
++		.procname	= "max_faults",
++		.data		= &brute_max_faults,
++		.maxlen		= sizeof(brute_max_faults),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1		= &brute_min_faults,
++		.extra2		= SYSCTL_UINT_MAX,
++	},
++	{
++		.procname	= "min_faults",
++		.data		= &brute_min_faults,
++		.maxlen		= sizeof(brute_min_faults),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1		= SYSCTL_ONE,
++		.extra2		= &brute_max_faults,
++	},
++	{
++		.procname	= "crash_period_threshold",
++		.data		= &brute_crash_period_threshold,
++		.maxlen		= sizeof(brute_crash_period_threshold),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1		= SYSCTL_ONE,
++		.extra2		= SYSCTL_UINT_MAX,
++	},
++	{ }
++};
++
++/**
++ * brute_init_sysctl() - Initialize the sysctl interface.
++ */
++static void __init brute_init_sysctl(void)
++{
++	if (!register_sysctl_paths(brute_sysctl_path, brute_sysctl_table))
++		panic("sysctl registration failed\n");
++}
++
++#else
++static inline void brute_init_sysctl(void) { }
++#endif /* CONFIG_SYSCTL */
++
++/**
++ * brute_init() - Initialize the brute LSM.
++ *
++ * Return: Always returns zero.
++ */
++static int __init brute_init(void)
++{
++	pr_info("becoming mindful\n");
++	brute_init_sysctl();
++	return 0;
++}
++
++DEFINE_LSM(brute) = {
++	.name = KBUILD_MODNAME,
++	.init = brute_init,
++};
+-- 
+2.33.0
+
+
+From cb744d44d764c1a6fb2dbe707c3d8ba23749ecda Mon Sep 17 00:00:00 2001
+From: John Wood <john.wood@gmx.com>
+Date: Sat, 5 Jun 2021 17:04:00 +0200
+Subject: [PATCH 3/8] security/brute: Detect a brute force attack
+
+For a correct management of a fork brute force attack it is necessary to
+track all the information related to the application crashes. To do so,
+use the extended attributes (xattr) of the executable files and define a
+statistical data structure to hold all the necessary information shared
+by all the fork hierarchy processes. This info is the number of crashes,
+the last crash timestamp and the crash period's moving average.
+
+The same can be achieved using a pointer to the fork hierarchy
+statistical data held by the task_struct structure. But this has an
+important drawback: a brute force attack that happens through the execve
+system call losts the faults info since these statistics are freed when
+the fork hierarchy disappears. Using this method makes not possible to
+manage this attack type that can be successfully treated using extended
+attributes.
+
+Also, to avoid false positives during the attack detection it is
+necessary to narrow the possible cases. So, only the following scenarios
+are taken into account:
+
+1.- Launching (fork()/exec()) a setuid/setgid process repeatedly until a
+    desirable memory layout is got (e.g. Stack Clash).
+2.- Connecting to an exec()ing network daemon (e.g. xinetd) repeatedly
+    until a desirable memory layout is got (e.g. what CTFs do for simple
+    network service).
+3.- Launching processes without exec() (e.g. Android Zygote) and
+    exposing state to attack a sibling.
+4.- Connecting to a fork()ing network daemon (e.g. apache) repeatedly
+    until the previously shared memory layout of all the other children
+    is exposed (e.g. kind of related to HeartBleed).
+
+In each case, a privilege boundary has been crossed:
+
+Case 1: setuid/setgid process
+Case 2: network to local
+Case 3: privilege changes
+Case 4: network to local
+
+To mark that a privilege boundary has been crossed it is only necessary
+to create a new stats for the executable file via the extended attribute
+and only if it has no previous statistical data. This is done using four
+different LSM hooks, one per privilege boundary:
+
+setuid/setgid process --> bprm_creds_from_file hook (based on secureexec
+                          flag).
+network to local -------> socket_accept hook (taking into account only
+                          external connections).
+privilege changes ------> task_fix_setuid and task_fix_setgid hooks.
+
+To detect a brute force attack it is necessary that the executable file
+statistics be updated in every fatal crash and the most important data
+to update is the application crash period. To do so, use the new
+"task_fatal_signal" LSM hook added in a previous step.
+
+The application crash period must be a value that is not prone to change
+due to spurious data and follows the real crash period. So, to compute
+it, the exponential moving average (EMA) is used.
+
+Based on the updated statistics two different attacks can be handled. A
+slow brute force attack that is detected if the maximum number of faults
+per fork hierarchy is reached and a fast brute force attack that is
+detected if the application crash period falls below a certain
+threshold.
+
+Moreover, only the signals delivered by the kernel are taken into
+account with the exception of the SIGABRT signal since the latter is
+used by glibc for stack canary, malloc, etc failures, which may indicate
+that a mitigation has been triggered.
+
+Signed-off-by: John Wood <john.wood@gmx.com>
+---
+ include/uapi/linux/xattr.h |   3 +
+ security/brute/brute.c     | 500 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 503 insertions(+)
+
+diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
+index 9463db2df..ce1c8497d 100644
+--- a/include/uapi/linux/xattr.h
++++ b/include/uapi/linux/xattr.h
+@@ -76,6 +76,9 @@
+ #define XATTR_CAPS_SUFFIX "capability"
+ #define XATTR_NAME_CAPS XATTR_SECURITY_PREFIX XATTR_CAPS_SUFFIX
+ 
++#define XATTR_BRUTE_SUFFIX "brute"
++#define XATTR_NAME_BRUTE XATTR_SECURITY_PREFIX XATTR_BRUTE_SUFFIX
++
+ #define XATTR_POSIX_ACL_ACCESS  "posix_acl_access"
+ #define XATTR_NAME_POSIX_ACL_ACCESS XATTR_SYSTEM_PREFIX XATTR_POSIX_ACL_ACCESS
+ #define XATTR_POSIX_ACL_DEFAULT  "posix_acl_default"
+diff --git a/security/brute/brute.c b/security/brute/brute.c
+index 0edb89a58..03bebfd1e 100644
+--- a/security/brute/brute.c
++++ b/security/brute/brute.c
+@@ -2,8 +2,85 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/binfmts.h>
+ #include <linux/lsm_hooks.h>
+ #include <linux/sysctl.h>
++#include <linux/xattr.h>
++#include <net/ipv6.h>
++#include <net/sock.h>
++
++/**
++ * struct brute_stats - Fork brute force attack statistics.
++ * @faults: Number of crashes.
++ * @nsecs: Last crash timestamp as the number of nanoseconds in the
++ *         International Atomic Time (TAI) reference.
++ * @period: Crash period's moving average.
++ * @flags: Statistics flags as a whole.
++ * @not_allowed: Not allowed executable file flag.
++ * @unused: Remaining unused flags.
++ *
++ * This structure holds the statistical data shared by all the fork hierarchy
++ * processes.
++ */
++struct brute_stats {
++	u32 faults;
++	u64 nsecs;
++	u64 period;
++	union {
++		u8 flags;
++		struct {
++			u8 not_allowed : 1;
++			u8 unused : 7;
++		};
++	};
++};
++
++/**
++ * struct brute_raw_stats - Raw fork brute force attack statistics.
++ * @faults: Number of crashes.
++ * @nsecs: Last crash timestamp as the number of nanoseconds in the
++ *         International Atomic Time (TAI) reference.
++ * @period: Crash period's moving average.
++ * @flags: Statistics flags.
++ *
++ * This structure holds the statistical data on disk as an extended attribute.
++ * Since the filesystems on which extended attributes are stored might also be
++ * used on architectures with a different byte order and machine word size, care
++ * should be taken to store attribute values in an architecture-independent
++ * format.
++ */
++struct brute_raw_stats {
++	__le32 faults;
++	__le64 nsecs;
++	__le64 period;
++	u8 flags;
++} __packed;
++
++/**
++ * brute_get_current_exe_file() - Get the current task's executable file.
++ *
++ * Since all the kernel threads associated with a task share the same executable
++ * file, get the thread group leader's executable file.
++ *
++ * Context: The file must be released via fput().
++ * Return: NULL if the current task has no associated executable file. A pointer
++ *         to the executable file otherwise.
++ */
++static struct file *brute_get_current_exe_file(void)
++{
++	struct task_struct *task = current;
++	struct file *exe_file;
++
++	rcu_read_lock();
++	if (!thread_group_leader(task))
++		task = rcu_dereference(task->group_leader);
++	get_task_struct(task);
++	rcu_read_unlock();
++
++	exe_file = get_task_exe_file(task);
++	put_task_struct(task);
++	return exe_file;
++}
+ 
+ /**
+  * DOC: brute_ema_weight_numerator
+@@ -19,6 +96,18 @@ static unsigned int brute_ema_weight_numerator __read_mostly = 7;
+  */
+ static unsigned int brute_ema_weight_denominator __read_mostly = 10;
+ 
++/**
++ * brute_mul_by_ema_weight() - Multiply by EMA weight.
++ * @value: Value to multiply by EMA weight.
++ *
++ * Return: The result of the multiplication operation.
++ */
++static inline u64 brute_mul_by_ema_weight(u64 value)
++{
++	return mul_u64_u32_div(value, brute_ema_weight_numerator,
++			       brute_ema_weight_denominator);
++}
++
+ /**
+  * DOC: brute_max_faults
+  *
+@@ -30,6 +119,56 @@ static unsigned int brute_ema_weight_denominator __read_mostly = 10;
+  */
+ static unsigned int brute_max_faults __read_mostly = 200;
+ 
++/**
++ * brute_update_crash_period() - Update the application crash period.
++ * @stats: Statistics that hold the application crash period to update. Cannot
++ *         be NULL.
++ *
++ * The application crash period must be a value that is not prone to change due
++ * to spurious data and follows the real crash period. So, to compute it, the
++ * exponential moving average (EMA) is used.
++ *
++ * This kind of average defines a weight (between 0 and 1) for the new value to
++ * add and applies the remainder of the weight to the current average value.
++ * This way, some spurious data will not excessively modify the average and only
++ * if the new values are persistent, the moving average will tend towards them.
++ *
++ * Mathematically the application crash period's EMA can be expressed as
++ * follows:
++ *
++ * period_ema = period * weight + period_ema * (1 - weight)
++ *
++ * If the operations are applied:
++ *
++ * period_ema = period * weight + period_ema - period_ema * weight
++ *
++ * If the operands are ordered:
++ *
++ * period_ema = period_ema - period_ema * weight + period * weight
++ *
++ * Finally, this formula can be written as follows:
++ *
++ * period_ema -= period_ema * weight;
++ * period_ema += period * weight;
++ */
++static void brute_update_crash_period(struct brute_stats *stats)
++{
++	u64 current_period;
++	u64 now = ktime_get_clocktai_ns();
++
++	if (stats->faults >= (u32)brute_max_faults)
++		return;
++
++	if (stats->nsecs) {
++		current_period = now > stats->nsecs ? now - stats->nsecs : 0;
++		stats->period -= brute_mul_by_ema_weight(stats->period);
++		stats->period += brute_mul_by_ema_weight(current_period);
++	}
++
++	stats->nsecs = now;
++	stats->faults += 1;
++}
++
+ /**
+  * DOC: brute_min_faults
+  *
+@@ -51,6 +190,365 @@ static unsigned int brute_min_faults __read_mostly = 5;
+  */
+ static unsigned int brute_crash_period_threshold __read_mostly = 30;
+ 
++/**
++ * brute_attack_running() - Test if a brute force attack is happening.
++ * @stats: Statistical data shared by all the fork hierarchy processes. Cannot
++ *         be NULL.
++ *
++ * The decision if a brute force attack is running is based on the statistical
++ * data shared by all the fork hierarchy processes.
++ *
++ * There are two types of brute force attacks that can be detected using the
++ * statistical data. The first one is a slow brute force attack that is detected
++ * if the maximum number of faults per fork hierarchy is reached. The second
++ * type is a fast brute force attack that is detected if the application crash
++ * period falls below a certain threshold.
++ *
++ * Moreover, it is important to note that no attacks will be detected until a
++ * minimum number of faults have occurred. This allows to have a trend in the
++ * crash period when the EMA is used.
++ *
++ * Return: True if a brute force attack is happening. False otherwise.
++ */
++static bool brute_attack_running(const struct brute_stats *stats)
++{
++	u64 threshold;
++
++	if (stats->faults < (u32)brute_min_faults)
++		return false;
++
++	if (stats->faults >= (u32)brute_max_faults)
++		return true;
++
++	threshold = (u64)brute_crash_period_threshold * (u64)NSEC_PER_SEC;
++	return stats->period < threshold;
++}
++
++/**
++ * brute_print_attack_running() - Warn about a fork brute force attack.
++ */
++static inline void brute_print_attack_running(void)
++{
++	pr_warn("fork brute force attack detected [pid %d: %s]\n", current->pid,
++		current->comm);
++}
++
++/**
++ * brute_get_xattr_stats() - Get the stats from an extended attribute.
++ * @dentry: The dentry of the file to get the extended attribute.
++ * @inode: The inode of the file to get the extended attribute.
++ * @stats: The stats where to store the info obtained from the extended
++ *         attribute. Cannot be NULL.
++ *
++ * Return: An error code if it is not possible to get the statistical data. Zero
++ *         otherwise.
++ */
++static int brute_get_xattr_stats(struct dentry *dentry, struct inode *inode,
++				 struct brute_stats *stats)
++{
++	int rc;
++	struct brute_raw_stats raw_stats;
++
++	rc = __vfs_getxattr(dentry, inode, XATTR_NAME_BRUTE, &raw_stats,
++			    sizeof(raw_stats));
++	if (rc < 0)
++		return rc;
++
++	stats->faults = le32_to_cpu(raw_stats.faults);
++	stats->nsecs = le64_to_cpu(raw_stats.nsecs);
++	stats->period = le64_to_cpu(raw_stats.period);
++	stats->flags = raw_stats.flags;
++	return 0;
++}
++
++/**
++ * brute_set_xattr_stats() - Set the stats to an extended attribute.
++ * @dentry: The dentry of the file to set the extended attribute.
++ * @inode: The inode of the file to set the extended attribute.
++ * @stats: The stats from where to extract the info to set the extended attribute.
++ *         Cannot be NULL.
++ *
++ * Return: An error code if it is not possible to set the statistical data. Zero
++ *         otherwise.
++ */
++static int brute_set_xattr_stats(struct dentry *dentry, struct inode *inode,
++				 const struct brute_stats *stats)
++{
++	struct brute_raw_stats raw_stats;
++
++	raw_stats.faults = cpu_to_le32(stats->faults);
++	raw_stats.nsecs = cpu_to_le64(stats->nsecs);
++	raw_stats.period = cpu_to_le64(stats->period);
++	raw_stats.flags = stats->flags;
++
++	return __vfs_setxattr(&init_user_ns, dentry, inode, XATTR_NAME_BRUTE,
++			      &raw_stats, sizeof(raw_stats), 0);
++}
++
++/**
++ * brute_update_xattr_stats() - Update the stats of a file.
++ * @file: The file that holds the statistical data to update. Cannot be NULL.
++ *
++ * For a correct management of a fork brute force attack it is only necessary to
++ * update the statistics and test if an attack is happening based on these data.
++ * It is important to note that if the file has no stats nothing is updated nor
++ * created. This way, the scenario where an application has not crossed any
++ * privilege boundary is avoided since the existence of the extended attribute
++ * denotes the crossing of bounds.
++ */
++static void brute_update_xattr_stats(const struct file *file)
++{
++	struct dentry *dentry = file_dentry(file);
++	struct inode *inode = file_inode(file);
++	struct brute_stats stats;
++	int rc;
++
++	inode_lock(inode);
++	rc = brute_get_xattr_stats(dentry, inode, &stats);
++	WARN_ON_ONCE(rc && rc != -ENODATA);
++	if (rc) {
++		inode_unlock(inode);
++		return;
++	}
++
++	brute_update_crash_period(&stats);
++	if (brute_attack_running(&stats)) {
++		brute_print_attack_running();
++		stats.not_allowed = true;
++	}
++
++	rc = brute_set_xattr_stats(dentry, inode, &stats);
++	WARN_ON_ONCE(rc);
++	inode_unlock(inode);
++}
++
++/**
++ * brute_reset_stats() - Reset the statistical data.
++ * @stats: Statistics to be reset. Cannot be NULL.
++ */
++static inline void brute_reset_stats(struct brute_stats *stats)
++{
++	memset(stats, 0, sizeof(*stats));
++}
++
++/**
++ * brute_new_xattr_stats() - New statistics for a file.
++ * @file: The file in which to create the new statistical data. Cannot be NULL.
++ *
++ * Only if the file has no statistical data create it. This function will be
++ * called to mark that a privilege boundary has been crossed so, if new stats
++ * are required, they do not contain any useful data. The existence of the
++ * extended attribute denotes the crossing of privilege bounds.
++ *
++ * Return: An error code if it is not possible to get or set the statistical
++ *         data. Zero otherwise.
++ */
++static int brute_new_xattr_stats(const struct file *file)
++{
++	struct dentry *dentry = file_dentry(file);
++	struct inode *inode = file_inode(file);
++	struct brute_stats stats;
++	int rc;
++
++	inode_lock(inode);
++	rc = brute_get_xattr_stats(dentry, inode, &stats);
++	if (rc && rc != -ENODATA)
++		goto unlock;
++
++	if (rc == -ENODATA) {
++		brute_reset_stats(&stats);
++		rc = brute_set_xattr_stats(dentry, inode, &stats);
++		if (rc)
++			goto unlock;
++	}
++
++unlock:
++	inode_unlock(inode);
++	return rc;
++}
++
++/**
++ * brute_current_new_xattr_stats() - New stats for the current task's exe file.
++ *
++ * Return: An error code if it is not possible to get or set the statistical
++ *         data. Zero otherwise.
++ */
++static int brute_current_new_xattr_stats(void)
++{
++	struct file *exe_file;
++	int rc;
++
++	exe_file = brute_get_current_exe_file();
++	if (WARN_ON_ONCE(!exe_file))
++		return -ENOENT;
++
++	rc = brute_new_xattr_stats(exe_file);
++	WARN_ON_ONCE(rc);
++	fput(exe_file);
++	return rc;
++}
++
++/**
++ * brute_signal_from_user() - Test if a signal is coming from userspace.
++ * @siginfo: Contains the signal information.
++ *
++ * To avoid false positives during the attack detection it is necessary to
++ * narrow the possible cases. So, only the signals delivered by the kernel are
++ * taken into account with the exception of the SIGABRT signal since the latter
++ * is used by glibc for stack canary, malloc, etc failures, which may indicate
++ * that a mitigation has been triggered.
++ *
++ * Return: True if the signal is coming from usersapce. False otherwise.
++ */
++static inline bool brute_signal_from_user(const kernel_siginfo_t *siginfo)
++{
++	return siginfo->si_signo == SIGKILL && siginfo->si_code != SIGABRT;
++}
++
++/**
++ * brute_task_fatal_signal() - Target for the task_fatal_signal hook.
++ * @siginfo: Contains the signal information.
++ *
++ * To detect a brute force attack it is necessary, as a first step, to test in
++ * every fatal crash if the signal is delibered by the kernel. If so, update the
++ * statistics and act based on these data.
++ */
++static void brute_task_fatal_signal(const kernel_siginfo_t *siginfo)
++{
++	struct file *exe_file;
++
++	if (brute_signal_from_user(siginfo))
++		return;
++
++	exe_file = brute_get_current_exe_file();
++	if (WARN_ON_ONCE(!exe_file))
++		return;
++
++	brute_update_xattr_stats(exe_file);
++	fput(exe_file);
++}
++
++/**
++ * brute_task_execve() - Target for the bprm_creds_from_file hook.
++ * @bprm: Contains the linux_binprm structure.
++ * @file: Binary that will be executed without an interpreter.
++ *
++ * This hook is useful to mark that a privilege boundary (setuid/setgid process)
++ * has been crossed. This is done based on the "secureexec" flag.
++ *
++ * To be defensive return an error code if it is not possible to get or set the
++ * stats using an extended attribute since this blocks the execution of the
++ * file. This scenario is treated as an attack.
++ *
++ * It is important to note that here the brute_new_xattr_stats function could be
++ * used with a previous test of the secureexec flag. However it is better to use
++ * the basic xattr functions since in a future commit a test if the execution is
++ * allowed (via the brute_stats::not_allowed flag) will be necessary. This way,
++ * the stats of the file will be get only once.
++ *
++ * Return: An error code if it is not possible to get or set the statistical
++ *         data. Zero otherwise.
++ */
++static int brute_task_execve(struct linux_binprm *bprm, struct file *file)
++{
++	struct dentry *dentry = file_dentry(bprm->file);
++	struct inode *inode = file_inode(bprm->file);
++	struct brute_stats stats;
++	int rc;
++
++	inode_lock(inode);
++	rc = brute_get_xattr_stats(dentry, inode, &stats);
++	if (WARN_ON_ONCE(rc && rc != -ENODATA))
++		goto unlock;
++
++	if (rc == -ENODATA && bprm->secureexec) {
++		brute_reset_stats(&stats);
++		rc = brute_set_xattr_stats(dentry, inode, &stats);
++		if (WARN_ON_ONCE(rc))
++			goto unlock;
++	}
++
++	rc = 0;
++unlock:
++	inode_unlock(inode);
++	return rc;
++}
++
++/**
++ * brute_task_change_priv() - Target for the task_fix_setid hooks.
++ * @new: The set of credentials that will be installed.
++ * @old: The set of credentials that are being replaced.
++ * @flags: Contains one of the LSM_SETID_* values.
++ *
++ * This hook is useful to mark that a privilege boundary (privilege changes) has
++ * been crossed.
++ *
++ * Return: An error code if it is not possible to get or set the statistical
++ *         data. Zero otherwise.
++ */
++static int brute_task_change_priv(struct cred *new, const struct cred *old, int flags)
++{
++	return brute_current_new_xattr_stats();
++}
++
++#ifdef CONFIG_IPV6
++/**
++ * brute_local_ipv6_rcv_saddr() - Test if an ipv6 rcv_saddr is local.
++ * @sk: The sock that contains the ipv6 address.
++ *
++ * Return: True if the ipv6 rcv_saddr is local. False otherwise.
++ */
++static inline bool brute_local_ipv6_rcv_saddr(const struct sock *sk)
++{
++	return ipv6_addr_equal(&sk->sk_v6_rcv_saddr, &in6addr_loopback);
++}
++#else
++static inline bool brute_local_ipv6_rcv_saddr(const struct sock *sk)
++{
++	return false;
++}
++#endif /* CONFIG_IPV6 */
++
++#ifdef CONFIG_SECURITY_NETWORK
++/**
++ * brute_socket_accept() - Target for the socket_accept hook.
++ * @sock: Contains the listening socket structure.
++ * @newsock: Contains the newly created server socket for connection.
++ *
++ * This hook is useful to mark that a privilege boundary (network to local) has
++ * been crossed. This is done only if the listening socket accepts external
++ * connections. The sockets for inter-process communication (IPC) and those that
++ * are listening on loopback addresses are not taken into account.
++ *
++ * Return: An error code if it is not possible to get or set the statistical
++ *         data. Zero otherwise.
++ */
++static int brute_socket_accept(struct socket *sock, struct socket *newsock)
++{
++	struct sock *sk = sock->sk;
++
++	if (sk->sk_family == AF_UNIX || sk->sk_family == AF_NETLINK ||
++	    sk->sk_rcv_saddr == htonl(INADDR_LOOPBACK) ||
++	    brute_local_ipv6_rcv_saddr(sk))
++		return 0;
++
++	return brute_current_new_xattr_stats();
++}
++#endif /* CONFIG_SECURITY_NETWORK */
++
++/*
++ * brute_hooks - Targets for the LSM's hooks.
++ */
++static struct security_hook_list brute_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(task_fatal_signal, brute_task_fatal_signal),
++	LSM_HOOK_INIT(bprm_creds_from_file, brute_task_execve),
++	LSM_HOOK_INIT(task_fix_setuid, brute_task_change_priv),
++	LSM_HOOK_INIT(task_fix_setgid, brute_task_change_priv),
++#ifdef CONFIG_SECURITY_NETWORK
++	LSM_HOOK_INIT(socket_accept, brute_socket_accept),
++#endif
++};
++
+ #ifdef CONFIG_SYSCTL
+ static unsigned int uint_max = UINT_MAX;
+ #define SYSCTL_UINT_MAX (&uint_max)
+@@ -137,6 +635,8 @@ static inline void brute_init_sysctl(void) { }
+ static int __init brute_init(void)
+ {
+ 	pr_info("becoming mindful\n");
++	security_add_hooks(brute_hooks, ARRAY_SIZE(brute_hooks),
++			   KBUILD_MODNAME);
+ 	brute_init_sysctl();
+ 	return 0;
+ }
+-- 
+2.33.0
+
+
+From b64c83a895b47931eaf64ba9b2c83666106e43cd Mon Sep 17 00:00:00 2001
+From: John Wood <john.wood@gmx.com>
+Date: Sat, 5 Jun 2021 17:04:01 +0200
+Subject: [PATCH 4/8] security/brute: Mitigate a brute force attack
+
+When a brute force attack is detected all the offending tasks involved
+in the attack must be killed. In other words, it is necessary to kill
+all the tasks that are executing the same file that is running during
+the brute force attack.
+
+Also, to prevent the executable involved in the attack from being
+respawned by a supervisor, and thus prevent a brute force attack from
+being started again, test the "not_allowed" flag and avoid the file
+execution based on this.
+
+Signed-off-by: John Wood <john.wood@gmx.com>
+---
+ security/brute/brute.c | 113 +++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 102 insertions(+), 11 deletions(-)
+
+diff --git a/security/brute/brute.c b/security/brute/brute.c
+index 03bebfd1e..4e0fd2399 100644
+--- a/security/brute/brute.c
++++ b/security/brute/brute.c
+@@ -233,6 +233,88 @@ static inline void brute_print_attack_running(void)
+ 		current->comm);
+ }
+ 
++/**
++ * brute_print_file_not_allowed() - Warn about a file not allowed.
++ * @dentry: The dentry of the file not allowed.
++ */
++static void brute_print_file_not_allowed(struct dentry *dentry)
++{
++	char *buf, *path;
++
++	buf = __getname();
++	if (WARN_ON_ONCE(!buf))
++		return;
++
++	path = dentry_path_raw(dentry, buf, PATH_MAX);
++	if (WARN_ON_ONCE(IS_ERR(path)))
++		goto free;
++
++	pr_warn_ratelimited("%s not allowed\n", path);
++free:
++	__putname(buf);
++}
++
++/**
++ * brute_is_same_file() - Test if two files are the same.
++ * @file1: First file to compare. Cannot be NULL.
++ * @file2: Second file to compare. Cannot be NULL.
++ *
++ * Two files are the same if they have the same inode number and the same block
++ * device.
++ *
++ * Return: True if the two files are the same. False otherwise.
++ */
++static inline bool brute_is_same_file(const struct file *file1,
++				      const struct file *file2)
++{
++	struct inode *inode1 = file_inode(file1);
++	struct inode *inode2 = file_inode(file2);
++
++	return inode1->i_ino == inode2->i_ino &&
++		inode1->i_sb->s_dev == inode2->i_sb->s_dev;
++}
++
++/**
++ * brute_kill_offending_tasks() - Kill the offending tasks.
++ * @file: The file executed during a brute force attack. Cannot be NULL.
++ *
++ * When a brute force attack is detected all the offending tasks involved in the
++ * attack must be killed. In other words, it is necessary to kill all the tasks
++ * that are executing the same file that is running during the brute force
++ * attack. Moreover, the processes that have the same group_leader that the
++ * current task must be avoided since they are in the path to be killed.
++ *
++ * The for_each_process loop is protected by the tasklist_lock acquired in read
++ * mode instead of rcu_read_lock to avoid that the newly created processes
++ * escape this RCU read lock.
++ */
++static void brute_kill_offending_tasks(const struct file *file)
++{
++	struct task_struct *task;
++	struct file *exe_file;
++	bool is_same_file;
++
++	read_lock(&tasklist_lock);
++	for_each_process(task) {
++		if (task->group_leader == current->group_leader)
++			continue;
++
++		exe_file = get_task_exe_file(task);
++		if (!exe_file)
++			continue;
++
++		is_same_file = brute_is_same_file(exe_file, file);
++		fput(exe_file);
++		if (!is_same_file)
++			continue;
++
++		do_send_sig_info(SIGKILL, SEND_SIG_PRIV, task, PIDTYPE_PID);
++		pr_warn_ratelimited("offending process %d [%s] killed\n",
++				    task->pid, task->comm);
++	}
++	read_unlock(&tasklist_lock);
++}
++
+ /**
+  * brute_get_xattr_stats() - Get the stats from an extended attribute.
+  * @dentry: The dentry of the file to get the extended attribute.
+@@ -295,6 +377,10 @@ static int brute_set_xattr_stats(struct dentry *dentry, struct inode *inode,
+  * created. This way, the scenario where an application has not crossed any
+  * privilege boundary is avoided since the existence of the extended attribute
+  * denotes the crossing of bounds.
++ *
++ * Also, do not update the statistics if the execution of the file is not
++ * allowed and kill all the offending tasks when a brute force attack is
++ * detected.
+  */
+ static void brute_update_xattr_stats(const struct file *file)
+ {
+@@ -306,7 +392,7 @@ static void brute_update_xattr_stats(const struct file *file)
+ 	inode_lock(inode);
+ 	rc = brute_get_xattr_stats(dentry, inode, &stats);
+ 	WARN_ON_ONCE(rc && rc != -ENODATA);
+-	if (rc) {
++	if (rc || (!rc && stats.not_allowed)) {
+ 		inode_unlock(inode);
+ 		return;
+ 	}
+@@ -320,6 +406,9 @@ static void brute_update_xattr_stats(const struct file *file)
+ 	rc = brute_set_xattr_stats(dentry, inode, &stats);
+ 	WARN_ON_ONCE(rc);
+ 	inode_unlock(inode);
++
++	if (stats.not_allowed)
++		brute_kill_offending_tasks(file);
+ }
+ 
+ /**
+@@ -433,21 +522,17 @@ static void brute_task_fatal_signal(const kernel_siginfo_t *siginfo)
+  * @bprm: Contains the linux_binprm structure.
+  * @file: Binary that will be executed without an interpreter.
+  *
+- * This hook is useful to mark that a privilege boundary (setuid/setgid process)
+- * has been crossed. This is done based on the "secureexec" flag.
++ * If there are statistics, test the "not_allowed" flag and avoid the file
++ * execution based on this. Also, this hook is useful to mark that a privilege
++ * boundary (setuid/setgid process) has been crossed. This is done based on the
++ * "secureexec" flag.
+  *
+  * To be defensive return an error code if it is not possible to get or set the
+  * stats using an extended attribute since this blocks the execution of the
+  * file. This scenario is treated as an attack.
+  *
+- * It is important to note that here the brute_new_xattr_stats function could be
+- * used with a previous test of the secureexec flag. However it is better to use
+- * the basic xattr functions since in a future commit a test if the execution is
+- * allowed (via the brute_stats::not_allowed flag) will be necessary. This way,
+- * the stats of the file will be get only once.
+- *
+- * Return: An error code if it is not possible to get or set the statistical
+- *         data. Zero otherwise.
++ * Return: -EPERM if the execution of the file is not allowed. An error code if
++ *         it is not possible to get or set the statistical data. Zero otherwise.
+  */
+ static int brute_task_execve(struct linux_binprm *bprm, struct file *file)
+ {
+@@ -461,6 +546,12 @@ static int brute_task_execve(struct linux_binprm *bprm, struct file *file)
+ 	if (WARN_ON_ONCE(rc && rc != -ENODATA))
+ 		goto unlock;
+ 
++	if (!rc && stats.not_allowed) {
++		brute_print_file_not_allowed(dentry);
++		rc = -EPERM;
++		goto unlock;
++	}
++
+ 	if (rc == -ENODATA && bprm->secureexec) {
+ 		brute_reset_stats(&stats);
+ 		rc = brute_set_xattr_stats(dentry, inode, &stats);
+-- 
+2.33.0
+
+
+From c4ba95a9e30e9431e037b5e33de156dda5dc8cca Mon Sep 17 00:00:00 2001
+From: John Wood <john.wood@gmx.com>
+Date: Sat, 5 Jun 2021 17:04:02 +0200
+Subject: [PATCH 5/8] security/brute: Notify to userspace "task killed"
+
+Add a new SIGCHLD si_code to notify to userspace, using the "waitid"
+system call, that a task has been killed by Brute LSM to mitigate a
+brute force attack.
+
+This is useful to supervisors in order to decide if a process that has
+been killed to avoid an attack needs to be respawned. This way, it is
+possible to avoid the scenario where a brute force attack can be
+continued due to the respawn of a process. Although the xattr of the
+executable is accessible from userspace, in complex daemons this file
+may not be visible directly by the supervisor as it may be run through
+some wrapper. So, the waitid notification is necessary.
+
+To achieve this, use the task_struct security blob to hold a flag that
+shows when a task has been killed by Brute LSM, and also, test this flag
+in the "wait_task_zombie" and "do_notify_parent" functions.
+
+Suggested-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: John Wood <john.wood@gmx.com>
+---
+ arch/x86/kernel/signal_compat.c    |  2 +-
+ include/brute/brute.h              | 16 ++++++++
+ include/uapi/asm-generic/siginfo.h |  3 +-
+ kernel/exit.c                      |  6 ++-
+ kernel/signal.c                    |  4 +-
+ security/brute/brute.c             | 59 +++++++++++++++++++++++++++++-
+ 6 files changed, 85 insertions(+), 5 deletions(-)
+ create mode 100644 include/brute/brute.h
+
+diff --git a/arch/x86/kernel/signal_compat.c b/arch/x86/kernel/signal_compat.c
+index 06743ec05..d4656f1b6 100644
+--- a/arch/x86/kernel/signal_compat.c
++++ b/arch/x86/kernel/signal_compat.c
+@@ -30,7 +30,7 @@ static inline void signal_compat_build_tests(void)
+ 	BUILD_BUG_ON(NSIGSEGV != 9);
+ 	BUILD_BUG_ON(NSIGBUS  != 5);
+ 	BUILD_BUG_ON(NSIGTRAP != 6);
+-	BUILD_BUG_ON(NSIGCHLD != 6);
++	BUILD_BUG_ON(NSIGCHLD != 7);
+ 	BUILD_BUG_ON(NSIGSYS  != 2);
+ 
+ 	/* This is part of the ABI and can never change in size: */
+diff --git a/include/brute/brute.h b/include/brute/brute.h
+new file mode 100644
+index 000000000..8531a7038
+--- /dev/null
++++ b/include/brute/brute.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _BRUTE_H_
++#define _BRUTE_H_
++
++#include <linux/sched.h>
++
++#ifdef CONFIG_SECURITY_FORK_BRUTE
++bool brute_task_killed(const struct task_struct *task);
++#else
++static inline bool brute_task_killed(const struct task_struct *task)
++{
++	return false;
++}
++#endif
++
++#endif /* _BRUTE_H_ */
+diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
+index 5a3c221f4..ffc3ed2d4 100644
+--- a/include/uapi/asm-generic/siginfo.h
++++ b/include/uapi/asm-generic/siginfo.h
+@@ -274,7 +274,8 @@ typedef struct siginfo {
+ #define CLD_TRAPPED	4	/* traced child has trapped */
+ #define CLD_STOPPED	5	/* child has stopped */
+ #define CLD_CONTINUED	6	/* stopped child has continued */
+-#define NSIGCHLD	6
++#define CLD_BRUTE	7	/* child was killed by brute LSM */
++#define NSIGCHLD	7
+ 
+ /*
+  * SIGPOLL (or any other signal without signal specific si_codes) si_codes
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 9a89e7f36..3cd8e81e0 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -69,6 +69,8 @@
+ #include <asm/unistd.h>
+ #include <asm/mmu_context.h>
+ 
++#include <brute/brute.h>
++
+ static void __unhash_process(struct task_struct *p, bool group_dead)
+ {
+ 	nr_threads--;
+@@ -1000,6 +1002,7 @@ static int wait_task_zombie(struct wait_opts *wo, struct task_struct *p)
+ 	pid_t pid = task_pid_vnr(p);
+ 	uid_t uid = from_kuid_munged(current_user_ns(), task_uid(p));
+ 	struct waitid_info *infop;
++	bool killed_by_brute = brute_task_killed(p);
+ 
+ 	if (!likely(wo->wo_flags & WEXITED))
+ 		return 0;
+@@ -1113,7 +1116,8 @@ static int wait_task_zombie(struct wait_opts *wo, struct task_struct *p)
+ 			infop->cause = CLD_EXITED;
+ 			infop->status = status >> 8;
+ 		} else {
+-			infop->cause = (status & 0x80) ? CLD_DUMPED : CLD_KILLED;
++			infop->cause = (status & 0x80) ? CLD_DUMPED :
++				killed_by_brute ? CLD_BRUTE : CLD_KILLED;
+ 			infop->status = status & 0x7f;
+ 		}
+ 		infop->pid = pid;
+diff --git a/kernel/signal.c b/kernel/signal.c
+index ab0b99b8d..fe9e9fbd1 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -55,6 +55,8 @@
+ #include <asm/siginfo.h>
+ #include <asm/cacheflush.h>
+ 
++#include <brute/brute.h>
++
+ /*
+  * SLAB caches for signal bits.
+  */
+@@ -1985,7 +1987,7 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
+ 	if (tsk->exit_code & 0x80)
+ 		info.si_code = CLD_DUMPED;
+ 	else if (tsk->exit_code & 0x7f)
+-		info.si_code = CLD_KILLED;
++		info.si_code = brute_task_killed(tsk) ? CLD_BRUTE : CLD_KILLED;
+ 	else {
+ 		info.si_code = CLD_EXITED;
+ 		info.si_status = tsk->exit_code >> 8;
+diff --git a/security/brute/brute.c b/security/brute/brute.c
+index 4e0fd2399..e5c9098ad 100644
+--- a/security/brute/brute.c
++++ b/security/brute/brute.c
+@@ -56,6 +56,59 @@ struct brute_raw_stats {
+ 	u8 flags;
+ } __packed;
+ 
++/**
++ * struct brute_task - Task info.
++ * @killed: Task killed to mitigate a brute force attack.
++ */
++struct brute_task {
++	u8 killed : 1;
++};
++
++/*
++ * brute_blob_sizes - LSM blob sizes.
++ */
++static struct lsm_blob_sizes brute_blob_sizes __lsm_ro_after_init = {
++	.lbs_task = sizeof(struct brute_task),
++};
++
++/**
++ * brute_task() - Get the task info.
++ * @task: The task to get the info.
++ *
++ * Return: A pointer to the brute_task structure.
++ */
++static inline struct brute_task *brute_task(const struct task_struct *task)
++{
++	return task->security + brute_blob_sizes.lbs_task;
++}
++
++/**
++ * brute_set_task_killed() - Set task killed to mitigate a brute force attack.
++ * @task: The task to set.
++ */
++static inline void brute_set_task_killed(struct task_struct *task)
++{
++	struct brute_task *task_info;
++
++	task_info = brute_task(task);
++	task_info->killed = true;
++}
++
++/**
++ * brute_task_killed() - Test if a task has been killed to mitigate an attack.
++ * @task: The task to test.
++ *
++ * Return: True if the task has been killed to mitigate a brute force attack.
++ *         False otherwise.
++ */
++inline bool brute_task_killed(const struct task_struct *task)
++{
++	struct brute_task *task_info;
++
++	task_info = brute_task(task);
++	return task_info->killed;
++}
++
+ /**
+  * brute_get_current_exe_file() - Get the current task's executable file.
+  *
+@@ -296,8 +349,10 @@ static void brute_kill_offending_tasks(const struct file *file)
+ 
+ 	read_lock(&tasklist_lock);
+ 	for_each_process(task) {
+-		if (task->group_leader == current->group_leader)
++		if (task->group_leader == current->group_leader) {
++			brute_set_task_killed(task);
+ 			continue;
++		}
+ 
+ 		exe_file = get_task_exe_file(task);
+ 		if (!exe_file)
+@@ -311,6 +366,7 @@ static void brute_kill_offending_tasks(const struct file *file)
+ 		do_send_sig_info(SIGKILL, SEND_SIG_PRIV, task, PIDTYPE_PID);
+ 		pr_warn_ratelimited("offending process %d [%s] killed\n",
+ 				    task->pid, task->comm);
++		brute_set_task_killed(task);
+ 	}
+ 	read_unlock(&tasklist_lock);
+ }
+@@ -735,4 +791,5 @@ static int __init brute_init(void)
+ DEFINE_LSM(brute) = {
+ 	.name = KBUILD_MODNAME,
+ 	.init = brute_init,
++	.blobs = &brute_blob_sizes,
+ };
+-- 
+2.33.0
+
+
+From 3d71419c51a97241dce6c5fc4fc6b1a46e47ad8e Mon Sep 17 00:00:00 2001
+From: John Wood <john.wood@gmx.com>
+Date: Sat, 5 Jun 2021 17:04:03 +0200
+Subject: [PATCH 6/8] selftests/brute: Add tests for the Brute LSM
+
+Add tests to check the Brute LSM functionality and cover fork/exec brute
+force attacks crossing the following privilege boundaries:
+
+1.- setuid process
+2.- privilege changes
+3.- network to local
+
+Also, as a first step check that fork/exec brute force attacks without
+crossing any privilege boundary already commented doesn't trigger the
+detection and mitigation stage.
+
+Moreover, test if the userspace notification, via "waitid" system call,
+is sent when an attack is mitigated (to inform that all the offending
+tasks involved in the attack have been killed by Brute LSM).
+
+Once a brute force attack is detected, the "test" executable is marked
+as "not allowed". To start again a new test, use the "rmxattr" app to
+revert this state. This way, all the tests can be run using the same
+binary.
+
+Signed-off-by: John Wood <john.wood@gmx.com>
+---
+ tools/testing/selftests/Makefile         |   1 +
+ tools/testing/selftests/brute/.gitignore |   3 +
+ tools/testing/selftests/brute/Makefile   |   5 +
+ tools/testing/selftests/brute/config     |   1 +
+ tools/testing/selftests/brute/exec.c     |  46 ++
+ tools/testing/selftests/brute/rmxattr.c  |  34 ++
+ tools/testing/selftests/brute/test.c     | 507 +++++++++++++++++++++++
+ tools/testing/selftests/brute/test.sh    | 269 ++++++++++++
+ 8 files changed, 866 insertions(+)
+ create mode 100644 tools/testing/selftests/brute/.gitignore
+ create mode 100644 tools/testing/selftests/brute/Makefile
+ create mode 100644 tools/testing/selftests/brute/config
+ create mode 100644 tools/testing/selftests/brute/exec.c
+ create mode 100644 tools/testing/selftests/brute/rmxattr.c
+ create mode 100644 tools/testing/selftests/brute/test.c
+ create mode 100755 tools/testing/selftests/brute/test.sh
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index fb010a35d..5b1e22352 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -2,6 +2,7 @@
+ TARGETS = arm64
+ TARGETS += bpf
+ TARGETS += breakpoints
++TARGETS += brute
+ TARGETS += capabilities
+ TARGETS += cgroup
+ TARGETS += clone3
+diff --git a/tools/testing/selftests/brute/.gitignore b/tools/testing/selftests/brute/.gitignore
+new file mode 100644
+index 000000000..a02aa7924
+--- /dev/null
++++ b/tools/testing/selftests/brute/.gitignore
+@@ -0,0 +1,3 @@
++exec
++rmxattr
++test
+diff --git a/tools/testing/selftests/brute/Makefile b/tools/testing/selftests/brute/Makefile
+new file mode 100644
+index 000000000..3975338c1
+--- /dev/null
++++ b/tools/testing/selftests/brute/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++CFLAGS += -Wall -O2
++TEST_PROGS := test.sh
++TEST_GEN_FILES := exec rmxattr test
++include ../lib.mk
+diff --git a/tools/testing/selftests/brute/config b/tools/testing/selftests/brute/config
+new file mode 100644
+index 000000000..3587b7bf6
+--- /dev/null
++++ b/tools/testing/selftests/brute/config
+@@ -0,0 +1 @@
++CONFIG_SECURITY_FORK_BRUTE=y
+diff --git a/tools/testing/selftests/brute/exec.c b/tools/testing/selftests/brute/exec.c
+new file mode 100644
+index 000000000..a7fc5705f
+--- /dev/null
++++ b/tools/testing/selftests/brute/exec.c
+@@ -0,0 +1,46 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <libgen.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <unistd.h>
++
++static __attribute__((noreturn)) void error_failure(const char *message)
++{
++	perror(message);
++	exit(EXIT_FAILURE);
++}
++
++#define PROG_NAME basename(argv[0])
++#define CLD_BRUTE	7	/* child was killed by brute LSM */
++
++int main(int argc, char **argv)
++{
++	pid_t pid;
++	int rc;
++	siginfo_t siginfo;
++
++	if (argc < 2) {
++		printf("Usage: %s <EXECUTABLE>\n", PROG_NAME);
++		exit(EXIT_FAILURE);
++	}
++
++	pid = fork();
++	if (pid < 0)
++		error_failure("fork");
++
++	/* Child process */
++	if (!pid) {
++		execve(argv[1], &argv[1], NULL);
++		error_failure("execve");
++	}
++
++	/* Parent process */
++	rc = waitid(P_PID, pid, &siginfo, WEXITED);
++	if (rc)
++		error_failure("waitid");
++
++	return siginfo.si_code != CLD_BRUTE;
++}
+diff --git a/tools/testing/selftests/brute/rmxattr.c b/tools/testing/selftests/brute/rmxattr.c
+new file mode 100644
+index 000000000..9ed90409d
+--- /dev/null
++++ b/tools/testing/selftests/brute/rmxattr.c
+@@ -0,0 +1,34 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <libgen.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/xattr.h>
++
++static __attribute__((noreturn)) void error_failure(const char *message)
++{
++	perror(message);
++	exit(EXIT_FAILURE);
++}
++
++#define PROG_NAME basename(argv[0])
++
++#define XATTR_SECURITY_PREFIX "security."
++#define XATTR_BRUTE_SUFFIX "brute"
++#define XATTR_NAME_BRUTE XATTR_SECURITY_PREFIX XATTR_BRUTE_SUFFIX
++
++int main(int argc, char **argv)
++{
++	int rc;
++
++	if (argc < 2) {
++		printf("Usage: %s <FILE>\n", PROG_NAME);
++		exit(EXIT_FAILURE);
++	}
++
++	rc = removexattr(argv[1], XATTR_NAME_BRUTE);
++	if (rc)
++		error_failure("removexattr");
++
++	return EXIT_SUCCESS;
++}
+diff --git a/tools/testing/selftests/brute/test.c b/tools/testing/selftests/brute/test.c
+new file mode 100644
+index 000000000..44c32f446
+--- /dev/null
++++ b/tools/testing/selftests/brute/test.c
+@@ -0,0 +1,507 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <arpa/inet.h>
++#include <errno.h>
++#include <libgen.h>
++#include <pwd.h>
++#include <signal.h>
++#include <stdbool.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/socket.h>
++#include <sys/time.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <unistd.h>
++
++static const char *message = "message";
++
++enum mode {
++	MODE_NONE,
++	MODE_CRASH,
++	MODE_SERVER_CRASH,
++	MODE_CLIENT,
++};
++
++enum crash_after {
++	CRASH_AFTER_NONE,
++	CRASH_AFTER_FORK,
++	CRASH_AFTER_EXEC,
++};
++
++enum signal_from {
++	SIGNAL_FROM_NONE,
++	SIGNAL_FROM_USER,
++	SIGNAL_FROM_KERNEL,
++};
++
++struct args {
++	uint32_t ip;
++	uint16_t port;
++	int counter;
++	long timeout;
++	enum mode mode;
++	enum crash_after crash_after;
++	enum signal_from signal_from;
++	unsigned char has_counter : 1;
++	unsigned char has_change_priv : 1;
++	unsigned char has_ip : 1;
++	unsigned char has_port : 1;
++	unsigned char has_timeout : 1;
++};
++
++#define OPT_STRING "hm:c:s:n:Ca:p:t:"
++
++static void usage(const char *prog)
++{
++	printf("Usage: %s <OPTIONS>\n", prog);
++	printf("OPTIONS:\n");
++	printf("  -h: Show this help and exit. Optional.\n");
++	printf("  -m (crash | server_crash | client): Mode. Required.\n");
++	printf("Options for crash mode:\n");
++	printf("  -c (fork | exec): Crash after. Optional.\n");
++	printf("  -s (user | kernel): Signal from. Required.\n");
++	printf("  -n counter: Number of crashes.\n");
++	printf("              Required if the option -c is used.\n");
++	printf("              Not used without the option -c.\n");
++	printf("              Range from 1 to INT_MAX.\n");
++	printf("  -C: Change privileges before crash. Optional.\n");
++	printf("Options for server_crash mode:\n");
++	printf("  -a ip: Ip v4 address to accept. Required.\n");
++	printf("  -p port: Port number. Required.\n");
++	printf("           Range from 1 to UINT16_MAX.\n");
++	printf("  -t secs: Accept timeout. Required.\n");
++	printf("           Range from 1 to LONG_MAX.\n");
++	printf("  -c (fork | exec): Crash after. Required.\n");
++	printf("  -s (user | kernel): Signal from. Required.\n");
++	printf("  -n counter: Number of crashes. Required.\n");
++	printf("              Range from 1 to INT_MAX.\n");
++	printf("Options for client mode:\n");
++	printf("  -a ip: Ip v4 address to connect. Required.\n");
++	printf("  -p port: Port number. Required.\n");
++	printf("           Range from 1 to UINT16_MAX.\n");
++	printf("  -t secs: Connect timeout. Required.\n");
++	printf("           Range from 1 to LONG_MAX.\n");
++}
++
++static __attribute__((noreturn)) void info_failure(const char *message,
++						   const char *prog)
++{
++	printf("%s\n", message);
++	usage(prog);
++	exit(EXIT_FAILURE);
++}
++
++static enum mode get_mode(const char *text, const char *prog)
++{
++	if (!strcmp(text, "crash"))
++		return MODE_CRASH;
++
++	if (!strcmp(text, "server_crash"))
++		return MODE_SERVER_CRASH;
++
++	if (!strcmp(text, "client"))
++		return MODE_CLIENT;
++
++	info_failure("Invalid mode option [-m].", prog);
++}
++
++static enum crash_after get_crash_after(const char *text, const char *prog)
++{
++	if (!strcmp(text, "fork"))
++		return CRASH_AFTER_FORK;
++
++	if (!strcmp(text, "exec"))
++		return CRASH_AFTER_EXEC;
++
++	info_failure("Invalid crash after option [-c].", prog);
++}
++
++static enum signal_from get_signal_from(const char *text, const char *prog)
++{
++	if (!strcmp(text, "user"))
++		return SIGNAL_FROM_USER;
++
++	if (!strcmp(text, "kernel"))
++		return SIGNAL_FROM_KERNEL;
++
++	info_failure("Invalid signal from option [-s]", prog);
++}
++
++static int get_counter(const char *text, const char *prog)
++{
++	int counter;
++
++	counter = atoi(text);
++	if (counter > 0)
++		return counter;
++
++	info_failure("Invalid counter option [-n].", prog);
++}
++
++static __attribute__((noreturn)) void error_failure(const char *message)
++{
++	perror(message);
++	exit(EXIT_FAILURE);
++}
++
++static uint32_t get_ip(const char *text, const char *prog)
++{
++	int ret;
++	uint32_t ip;
++
++	ret = inet_pton(AF_INET, text, &ip);
++	if (!ret)
++		info_failure("Invalid ip option [-a].", prog);
++	else if (ret < 0)
++		error_failure("inet_pton");
++
++	return ip;
++}
++
++static uint16_t get_port(const char *text, const char *prog)
++{
++	long port;
++
++	port = atol(text);
++	if ((port > 0) && (port <= UINT16_MAX))
++		return htons(port);
++
++	info_failure("Invalid port option [-p].", prog);
++}
++
++static long get_timeout(const char *text, const char *prog)
++{
++	long timeout;
++
++	timeout = atol(text);
++	if (timeout > 0)
++		return timeout;
++
++	info_failure("Invalid timeout option [-t].", prog);
++}
++
++static void check_args(const struct args *args, const char *prog)
++{
++	if (args->mode == MODE_CRASH && args->crash_after != CRASH_AFTER_NONE &&
++	    args->signal_from != SIGNAL_FROM_NONE && args->has_counter &&
++	    !args->has_ip && !args->has_port && !args->has_timeout)
++		return;
++
++	if (args->mode == MODE_CRASH && args->signal_from != SIGNAL_FROM_NONE &&
++	    args->crash_after == CRASH_AFTER_NONE && !args->has_counter &&
++	    !args->has_ip && !args->has_port && !args->has_timeout)
++		return;
++
++	if (args->mode == MODE_SERVER_CRASH && args->has_ip && args->has_port &&
++	    args->has_timeout && args->crash_after != CRASH_AFTER_NONE &&
++	    args->signal_from != SIGNAL_FROM_NONE && args->has_counter &&
++	    !args->has_change_priv)
++		return;
++
++	if (args->mode == MODE_CLIENT && args->has_ip && args->has_port &&
++	    args->has_timeout && args->crash_after == CRASH_AFTER_NONE &&
++	    args->signal_from == SIGNAL_FROM_NONE && !args->has_counter &&
++	    !args->has_change_priv)
++		return;
++
++	info_failure("Invalid use of options.", prog);
++}
++
++static uid_t get_non_root_uid(void)
++{
++	struct passwd *pwent;
++	uid_t uid;
++
++	while (true) {
++		errno = 0;
++		pwent = getpwent();
++		if (!pwent) {
++			if (errno) {
++				perror("getpwent");
++				endpwent();
++				exit(EXIT_FAILURE);
++			}
++			break;
++		}
++
++		if (pwent->pw_uid) {
++			uid = pwent->pw_uid;
++			endpwent();
++			return uid;
++		}
++	}
++
++	endpwent();
++	printf("A user different of root is needed.\n");
++	exit(EXIT_FAILURE);
++}
++
++static inline void do_sigsegv(void)
++{
++	int *p = NULL;
++	*p = 0;
++}
++
++static void do_sigkill(void)
++{
++	int ret;
++
++	ret = kill(getpid(), SIGKILL);
++	if (ret)
++		error_failure("kill");
++}
++
++static void crash(enum signal_from signal_from, bool change_priv)
++{
++	int ret;
++
++	if (change_priv) {
++		ret = setuid(get_non_root_uid());
++		if (ret)
++			error_failure("setuid");
++	}
++
++	if (signal_from == SIGNAL_FROM_KERNEL)
++		do_sigsegv();
++
++	do_sigkill();
++}
++
++static void execve_crash(char *const argv[])
++{
++	execve(argv[0], argv, NULL);
++	error_failure("execve");
++}
++
++static void exec_crash_user(void)
++{
++	char *const argv[] = {
++		"./test", "-m", "crash", "-s", "user", NULL,
++	};
++
++	execve_crash(argv);
++}
++
++static void exec_crash_user_change_priv(void)
++{
++	char *const argv[] = {
++		"./test", "-m", "crash", "-s", "user", "-C", NULL,
++	};
++
++	execve_crash(argv);
++}
++
++static void exec_crash_kernel(void)
++{
++	char *const argv[] = {
++		"./test", "-m", "crash", "-s", "kernel", NULL,
++	};
++
++	execve_crash(argv);
++}
++
++static void exec_crash_kernel_change_priv(void)
++{
++	char *const argv[] = {
++		"./test", "-m", "crash", "-s", "kernel", "-C", NULL,
++	};
++
++	execve_crash(argv);
++}
++
++static void exec_crash(enum signal_from signal_from, bool change_priv)
++{
++	if (signal_from == SIGNAL_FROM_USER && !change_priv)
++		exec_crash_user();
++	if (signal_from == SIGNAL_FROM_USER && change_priv)
++		exec_crash_user_change_priv();
++	if (signal_from == SIGNAL_FROM_KERNEL && !change_priv)
++		exec_crash_kernel();
++	if (signal_from == SIGNAL_FROM_KERNEL && change_priv)
++		exec_crash_kernel_change_priv();
++}
++
++static void do_crash(enum crash_after crash_after, enum signal_from signal_from,
++		     int counter, bool change_priv)
++{
++	pid_t pid;
++	int status;
++
++	if (crash_after == CRASH_AFTER_NONE)
++		crash(signal_from, change_priv);
++
++	while (counter > 0) {
++		pid = fork();
++		if (pid < 0)
++			error_failure("fork");
++
++		/* Child process */
++		if (!pid) {
++			if (crash_after == CRASH_AFTER_FORK)
++				crash(signal_from, change_priv);
++
++			exec_crash(signal_from, change_priv);
++		}
++
++		/* Parent process */
++		counter -= 1;
++		pid = waitpid(pid, &status, 0);
++		if (pid < 0)
++			error_failure("waitpid");
++	}
++}
++
++static __attribute__((noreturn)) void error_close_failure(const char *message,
++							  int fd)
++{
++	perror(message);
++	close(fd);
++	exit(EXIT_FAILURE);
++}
++
++static void do_server(uint32_t ip, uint16_t port, long accept_timeout)
++{
++	int sockfd;
++	int ret;
++	struct sockaddr_in address;
++	struct timeval timeout;
++	int newsockfd;
++
++	sockfd = socket(AF_INET, SOCK_STREAM, 0);
++	if (sockfd < 0)
++		error_failure("socket");
++
++	address.sin_family = AF_INET;
++	address.sin_addr.s_addr = ip;
++	address.sin_port = port;
++
++	ret = bind(sockfd, (const struct sockaddr *)&address, sizeof(address));
++	if (ret)
++		error_close_failure("bind", sockfd);
++
++	ret = listen(sockfd, 1);
++	if (ret)
++		error_close_failure("listen", sockfd);
++
++	timeout.tv_sec = accept_timeout;
++	timeout.tv_usec = 0;
++	ret = setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO,
++			 (const struct timeval *)&timeout, sizeof(timeout));
++	if (ret)
++		error_close_failure("setsockopt", sockfd);
++
++	newsockfd = accept(sockfd, NULL, NULL);
++	if (newsockfd < 0)
++		error_close_failure("accept", sockfd);
++
++	close(sockfd);
++	close(newsockfd);
++}
++
++static void do_client(uint32_t ip, uint16_t port, long connect_timeout)
++{
++	int sockfd;
++	int ret;
++	struct timeval timeout;
++	struct sockaddr_in address;
++
++	sockfd = socket(AF_INET, SOCK_STREAM, 0);
++	if (sockfd < 0)
++		error_failure("socket");
++
++	timeout.tv_sec = connect_timeout;
++	timeout.tv_usec = 0;
++	ret = setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO,
++			 (const struct timeval *)&timeout, sizeof(timeout));
++	if (ret)
++		error_close_failure("setsockopt", sockfd);
++
++	address.sin_family = AF_INET;
++	address.sin_addr.s_addr = ip;
++	address.sin_port = port;
++
++	ret = connect(sockfd, (const struct sockaddr *)&address,
++		      sizeof(address));
++	if (ret)
++		error_close_failure("connect", sockfd);
++
++	ret = write(sockfd, message, strlen(message));
++	if (ret < 0)
++		error_close_failure("write", sockfd);
++
++	close(sockfd);
++}
++
++#define PROG_NAME basename(argv[0])
++
++int main(int argc, char **argv)
++{
++	int opt;
++	struct args args = {
++		.mode = MODE_NONE,
++		.crash_after = CRASH_AFTER_NONE,
++		.signal_from = SIGNAL_FROM_NONE,
++		.has_counter = false,
++		.has_change_priv = false,
++		.has_ip = false,
++		.has_port = false,
++		.has_timeout = false,
++	};
++
++	while ((opt = getopt(argc, argv, OPT_STRING)) != -1) {
++		switch (opt) {
++		case 'h':
++			usage(PROG_NAME);
++			return EXIT_SUCCESS;
++		case 'm':
++			args.mode = get_mode(optarg, PROG_NAME);
++			break;
++		case 'c':
++			args.crash_after = get_crash_after(optarg, PROG_NAME);
++			break;
++		case 's':
++			args.signal_from = get_signal_from(optarg, PROG_NAME);
++			break;
++		case 'n':
++			args.counter = get_counter(optarg, PROG_NAME);
++			args.has_counter = true;
++			break;
++		case 'C':
++			args.has_change_priv = true;
++			break;
++		case 'a':
++			args.ip = get_ip(optarg, PROG_NAME);
++			args.has_ip = true;
++			break;
++		case 'p':
++			args.port = get_port(optarg, PROG_NAME);
++			args.has_port = true;
++			break;
++		case 't':
++			args.timeout = get_timeout(optarg, PROG_NAME);
++			args.has_timeout = true;
++			break;
++		default:
++			usage(PROG_NAME);
++			return EXIT_FAILURE;
++		}
++	}
++
++	check_args(&args, PROG_NAME);
++
++	if (args.mode == MODE_CRASH) {
++		do_crash(args.crash_after, args.signal_from, args.counter,
++			 args.has_change_priv);
++	} else if (args.mode == MODE_SERVER_CRASH) {
++		do_server(args.ip, args.port, args.timeout);
++		do_crash(args.crash_after, args.signal_from, args.counter,
++			 false);
++	} else if (args.mode == MODE_CLIENT) {
++		do_client(args.ip, args.port, args.timeout);
++	}
++
++	return EXIT_SUCCESS;
++}
+diff --git a/tools/testing/selftests/brute/test.sh b/tools/testing/selftests/brute/test.sh
+new file mode 100755
+index 000000000..393b651ab
+--- /dev/null
++++ b/tools/testing/selftests/brute/test.sh
+@@ -0,0 +1,269 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++
++TCID="test.sh"
++
++KSFT_PASS=0
++KSFT_FAIL=1
++KSFT_SKIP=4
++
++errno=$KSFT_PASS
++
++check_root()
++{
++	local uid=$(id -u)
++	if [ $uid -ne 0 ]; then
++		echo $TCID: must be run as root >&2
++		exit $KSFT_SKIP
++	fi
++}
++
++tmp_files_setup()
++{
++	DMESG=$(mktemp --tmpdir -t brute-dmesg-XXXXXX)
++}
++
++tmp_files_cleanup()
++{
++	rm -f "$DMESG"
++}
++
++save_dmesg()
++{
++	dmesg > "$DMESG"
++}
++
++count_attack_matches()
++{
++	dmesg | comm --nocheck-order -13 "$DMESG" - | \
++		grep "brute: fork brute force attack detected" | wc -l
++}
++
++assert_equal()
++{
++	local val1=$1
++	local val2=$2
++
++	if [ $val1 -eq $val2 ]; then
++		echo "$TCID: $message [PASS]"
++	else
++		echo "$TCID: $message [FAIL]"
++		errno=$KSFT_FAIL
++	fi
++}
++
++test_fork_user()
++{
++	COUNTER=20
++
++	save_dmesg
++	./test -m crash -c fork -s user -n $COUNTER
++	count=$(count_attack_matches)
++
++	message="fork attack (user signals, no bounds crossed)"
++	assert_equal $count 0
++}
++
++test_fork_kernel()
++{
++	save_dmesg
++	./test -m crash -c fork -s kernel -n $COUNTER
++	count=$(count_attack_matches)
++
++	message="fork attack (kernel signals, no bounds crossed)"
++	assert_equal $count 0
++}
++
++test_exec_user()
++{
++	save_dmesg
++	./test -m crash -c exec -s user -n $COUNTER
++	count=$(count_attack_matches)
++
++	message="exec attack (user signals, no bounds crossed)"
++	assert_equal $count 0
++}
++
++test_exec_kernel()
++{
++	save_dmesg
++	./test -m crash -c exec -s kernel -n $COUNTER
++	count=$(count_attack_matches)
++
++	message="exec attack (kernel signals, no bounds crossed)"
++	assert_equal $count 0
++}
++
++assert_not_equal()
++{
++	local val1=$1
++	local val2=$2
++
++	if [ $val1 -ne $val2 ]; then
++		echo $TCID: $message [PASS]
++	else
++		echo $TCID: $message [FAIL]
++		errno=$KSFT_FAIL
++	fi
++}
++
++remove_xattr()
++{
++	./rmxattr test >/dev/null 2>&1
++}
++
++test_fork_kernel_setuid()
++{
++	save_dmesg
++	chmod u+s test
++	./test -m crash -c fork -s kernel -n $COUNTER
++	chmod u-s test
++	count=$(count_attack_matches)
++
++	message="fork attack (kernel signals, setuid binary)"
++	assert_not_equal $count 0
++	remove_xattr
++}
++
++test_exec_kernel_setuid()
++{
++	save_dmesg
++	chmod u+s test
++	./test -m crash -c exec -s kernel -n $COUNTER
++	chmod u-s test
++	count=$(count_attack_matches)
++
++	message="exec attack (kernel signals, setuid binary)"
++	assert_not_equal $count 0
++	remove_xattr
++}
++
++test_fork_kernel_change_priv()
++{
++	save_dmesg
++	./test -m crash -c fork -s kernel -n $COUNTER -C
++	count=$(count_attack_matches)
++
++	message="fork attack (kernel signals, change privileges)"
++	assert_not_equal $count 0
++	remove_xattr
++}
++
++test_exec_kernel_change_priv()
++{
++	save_dmesg
++	./test -m crash -c exec -s kernel -n $COUNTER -C
++	count=$(count_attack_matches)
++
++	message="exec attack (kernel signals, change privileges)"
++	assert_not_equal $count 0
++	remove_xattr
++}
++
++network_ns_setup()
++{
++	local vnet_name=$1
++	local veth_name=$2
++	local ip_src=$3
++	local ip_dst=$4
++
++	ip netns add $vnet_name
++	ip link set $veth_name netns $vnet_name
++	ip -n $vnet_name addr add $ip_src/24 dev $veth_name
++	ip -n $vnet_name link set $veth_name up
++	ip -n $vnet_name route add $ip_dst/24 dev $veth_name
++}
++
++network_setup()
++{
++	VETH0_NAME=veth0
++	VNET0_NAME=vnet0
++	VNET0_IP=10.0.1.0
++	VETH1_NAME=veth1
++	VNET1_NAME=vnet1
++	VNET1_IP=10.0.2.0
++
++	ip link add $VETH0_NAME type veth peer name $VETH1_NAME
++	network_ns_setup $VNET0_NAME $VETH0_NAME $VNET0_IP $VNET1_IP
++	network_ns_setup $VNET1_NAME $VETH1_NAME $VNET1_IP $VNET0_IP
++}
++
++test_fork_kernel_network_to_local()
++{
++	INADDR_ANY=0.0.0.0
++	PORT=65535
++	TIMEOUT=5
++
++	save_dmesg
++	ip netns exec $VNET0_NAME ./test -m server_crash -a $INADDR_ANY \
++		-p $PORT -t $TIMEOUT -c fork -s kernel -n $COUNTER &
++	sleep 1
++	ip netns exec $VNET1_NAME ./test -m client -a $VNET0_IP -p $PORT \
++		-t $TIMEOUT
++	sleep 1
++	count=$(count_attack_matches)
++
++	message="fork attack (kernel signals, network to local)"
++	assert_not_equal $count 0
++	remove_xattr
++}
++
++test_exec_kernel_network_to_local()
++{
++	save_dmesg
++	ip netns exec $VNET0_NAME ./test -m server_crash -a $INADDR_ANY \
++		-p $PORT -t $TIMEOUT -c exec -s kernel -n $COUNTER &
++	sleep 1
++	ip netns exec $VNET1_NAME ./test -m client -a $VNET0_IP -p $PORT \
++		-t $TIMEOUT
++	sleep 1
++	count=$(count_attack_matches)
++
++	message="exec attack (kernel signals, network to local)"
++	assert_not_equal $count 0
++	remove_xattr
++}
++
++network_cleanup()
++{
++	ip netns del $VNET0_NAME >/dev/null 2>&1
++	ip netns del $VNET1_NAME >/dev/null 2>&1
++	ip link delete $VETH0_NAME >/dev/null 2>&1
++	ip link delete $VETH1_NAME >/dev/null 2>&1
++}
++
++test_waitid()
++{
++	./exec test -m crash -c fork -s kernel -n $COUNTER -C
++	local rc=$?
++
++	message="notification to userspace via waitid system call"
++	assert_equal $rc 0
++	remove_xattr
++}
++
++cleanup()
++{
++        network_cleanup
++	tmp_files_cleanup
++	chmod u-s test
++	remove_xattr
++}
++trap cleanup EXIT
++
++check_root
++tmp_files_setup
++test_fork_user
++test_fork_kernel
++test_exec_user
++test_exec_kernel
++test_fork_kernel_setuid
++test_exec_kernel_setuid
++test_fork_kernel_change_priv
++test_exec_kernel_change_priv
++network_setup
++test_fork_kernel_network_to_local
++test_exec_kernel_network_to_local
++network_cleanup
++test_waitid
++exit $errno
+-- 
+2.33.0
+
+
+From 919cc234905dfd706d714c81caeeb9cd93cfee24 Mon Sep 17 00:00:00 2001
+From: John Wood <john.wood@gmx.com>
+Date: Sat, 5 Jun 2021 17:04:04 +0200
+Subject: [PATCH 7/8] Documentation: Add documentation for the Brute LSM
+
+Add some info detailing what is the Brute LSM, its motivation, weak
+points of existing implementations, proposed solutions, notifications,
+enabling, disabling, configuration and self-tests.
+
+Signed-off-by: John Wood <john.wood@gmx.com>
+---
+ Documentation/admin-guide/LSM/Brute.rst | 359 ++++++++++++++++++++++++
+ Documentation/admin-guide/LSM/index.rst |   1 +
+ security/brute/Kconfig                  |   3 +-
+ 3 files changed, 362 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/admin-guide/LSM/Brute.rst
+
+diff --git a/Documentation/admin-guide/LSM/Brute.rst b/Documentation/admin-guide/LSM/Brute.rst
+new file mode 100644
+index 000000000..087da9c07
+--- /dev/null
++++ b/Documentation/admin-guide/LSM/Brute.rst
+@@ -0,0 +1,359 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=====
++Brute
++=====
++
++Brute is a Linux Security Module that detects and mitigates fork brute force
++attacks against vulnerable userspace processes.
++
++
++Motivation
++==========
++
++Attacks against vulnerable userspace applications with the purpose to break ASLR
++or bypass canaries traditionally use some level of brute force with the help of
++the fork system call. This is possible since when creating a new process using
++fork its memory contents are the same as those of the parent process (the
++process that called the fork system call). So, the attacker can test the memory
++infinite times to find the correct memory values or the correct memory addresses
++without worrying about crashing the application.
++
++Based on the above scenario it would be nice to have this detected and
++mitigated, and this is the goal of this implementation. Specifically the
++following attacks are expected to be detected:
++
++ 1. Launching (fork()/exec()) a setuid/setgid process repeatedly until a
++    desirable memory layout is got (e.g. Stack Clash).
++ 2. Connecting to an exec()ing network daemon (e.g. xinetd) repeatedly until a
++    desirable memory layout is got (e.g. what CTFs do for simple network
++    service).
++ 3. Launching processes without exec() (e.g. Android Zygote) and exposing state
++    to attack a sibling.
++ 4. Connecting to a fork()ing network daemon (e.g. apache) repeatedly until the
++    previously shared memory layout of all the other children is exposed (e.g.
++    kind of related to HeartBleed).
++
++In each case, a privilege boundary has been crossed:
++
++ | Case 1: setuid/setgid process
++ | Case 2: network to local
++ | Case 3: privilege changes
++ | Case 4: network to local
++
++So, what really needs to be detected are fork/exec brute force attacks that
++cross any of the commented bounds.
++
++
++Other implementations
++=====================
++
++The public version of grsecurity, as a summary, is based on the idea of delaying
++the fork system call if a child died due to some fatal signal (``SIGSEGV``,
++``SIGBUS``, ``SIGKILL`` or ``SIGILL``). This has some issues:
++
++Bad practices
++-------------
++
++Adding delays to the kernel is, in general, a bad idea.
++
++Scenarios not detected (false negatives)
++----------------------------------------
++
++This protection acts only when the fork system call is called after a child has
++crashed. So, it would still be possible for an attacker to fork a big amount of
++children (in the order of thousands), then probe all of them, and finally wait
++the protection time before repeating the steps.
++
++Moreover, this method is based on the idea that the protection doesn't act if
++the parent crashes. So, it would still be possible for an attacker to fork a
++process and probe itself. Then, fork the child process and probe itself again.
++This way, these steps can be repeated infinite times without any mitigation.
++
++Scenarios detected (false positives)
++------------------------------------
++
++Scenarios where an application rarely fails for reasons unrelated to a real
++attack.
++
++
++This implementation
++===================
++
++The main idea behind this implementation is to improve the existing ones
++focusing on the weak points annotated before. Basically, the adopted solution is
++to detect a fast crash rate instead of only one simple crash and to detect both
++the crash of parent and child processes. Also, fine tune the detection focusing
++on privilege boundary crossing. And finally, as a mitigation method, kill all
++the offending tasks involved in the attack and mark the executable as "not
++allowed" (to block the following executions) instead of using delays.
++
++To achieve this goal, and going into more details, this implementation is based
++on the use of some statistical data shared across all the processes that can
++have the same memory contents. Or in other words, a statistical data shared
++between all the fork hierarchy processes after an execve system call.
++
++The purpose of these statistics is, basically, collect all the necessary info to
++compute the application crash period in order to detect an attack. To track all
++this information, the extended attributes (xattr) of the executable files are
++used. More specifically, the name of the attribute is "brute" and uses the
++"security" namespace. So, the full xattr name for the Brute LSM is:
++
++ ``security.brute``
++
++The same can be achieved using a pointer to the fork hierarchy statistical data
++held by the ``task_struct`` structure, but this has an important drawback: a
++brute force attack that happens through the execve system call losts the faults
++info since these statistics are freed when the fork hierarchy disappears. Using
++the last method (pointer in the ``task_struct`` structure) makes not possible to
++manage this attack type that can be successfully treated using extended
++attributes.
++
++To detect a brute force attack it is necessary that the statistics shared by all
++the fork hierarchy processes be updated in every fatal crash and the most
++important data to update is the application crash period.
++
++The crash period is the time between two consecutive faults, but this also has a
++drawback: if an application crashes twice in a short period of time for some
++reason unrelated to a real attack, a false positive will be triggered. To avoid
++this scenario the exponential moving average (EMA) is used. This way, the
++application crash period will be a value that is not prone to change due to
++spurious data and follows the real crash period.
++
++These statistics are stored in the executables using the extended attributes
++feature. So, the detection and mitigation of brute force attacks using this LSM
++it is only feasible in filesystems that support xattr.
++
++.. kernel-doc:: security/brute/brute.c
++   :identifiers: brute_raw_stats
++
++This is a fixed sized struct with a very small footprint. So, in reference to
++memory usage, it is not expected to have problems storing it as an extended
++attribute.
++
++Concerning to access rights to this statistical data, as stated above, the
++"security" namespace is used. Since no custom policy, related to this extended
++attribute, has been implemented for the Brute LSM, all processes have read
++access to these statistics, and write access is limited to processes that have
++the ``CAP_SYS_ADMIN`` capability.
++
++Attack detection
++----------------
++
++There are two types of brute force attacks that need to be detected. The first
++one is an attack that happens through the fork system call and the second one is
++an attack that happens through the execve system call. Moreover, these two
++attack types have two variants. A slow brute force attack that is detected if a
++maximum number of faults per fork hierarchy is reached and a fast brute force
++attack that is detected if the application crash period falls below a certain
++threshold.
++
++Attack mitigation
++-----------------
++
++Once an attack has been detected, this is mitigated killing all the offending
++tasks involved. Or in other words, once an attack has been detected, this is
++mitigated killing all the processes that are executing the same file that is
++running during the brute force attack. Also, to prevent the executable involved
++in the attack from being respawned by a supervisor, and thus prevent a brute
++force attack from being started again, the file is marked as "not allowed" and
++the following executions are avoided based on this mark. This method allows
++supervisors to implement their own policy: they can read the statistics, know if
++the executable is blocked by the Brute LSM and why, and act based on this
++information. If they want to respawn the offending executable it is only
++necessary to remove the "``security.brute``" extended attribute and thus remove
++the statistical data.
++
++Fine tuning the attack detection
++--------------------------------
++
++To avoid false positives during the attack detection it is necessary to narrow
++the possible cases. To do so, and based on the threat scenarios that we want to
++detect, this implementation also focuses on the crossing of privilege bounds.
++
++To be precise, only the following privilege bounds are taken into account:
++
++ 1. setuid/setgid process
++ 2. network to local
++ 3. privilege changes
++
++Moreover, only the fatal signals delivered by the kernel are taken into account
++avoiding the fatal signals sent by userspace applications (with the exception of
++the ``SIGABRT`` user signal since this is used by glibc for stack canary,
++malloc, etc. failures, which may indicate that a mitigation has been triggered).
++
++Userspace notification via waitid() system call
++-----------------------------------------------
++
++Although the xattr of the executable is accessible from userspace, in complex
++daemons this file may not be visible directly by the supervisor as it may be run
++through some wrapper. So, an extension to the ``waitid()`` system call has been
++added.
++
++ ``int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);``
++
++Upon successful return, ``waitid()`` fills in the ``siginfo_t`` structure
++pointed to by ``infop``, but now, the ``si_code`` field can be:
++
++ ``CLD_BRUTE``: child was killed by brute LSM. Defined as value 7.
++
++in addition to the following codes:
++
++ | ``CLD_EXITED``: child has called exit. Defined as value 1.
++ | ``CLD_KILLED``: child was killed by signal. Defined as value 2.
++ | ``CLD_DUMPED``: child terminated abnormally. Defined as value 3.
++ | ``CLD_TRAPPED``: traced child has trapped. Defined as value 4.
++ | ``CLD_STOPPED``: child has stopped. Defined as value 5.
++ | ``CLD_CONTINUED``: stopped child has continued. Defined as value 6.
++
++Exponential moving average (EMA)
++--------------------------------
++
++This kind of average defines a weight (between 0 and 1) for the new value to add
++and applies the remainder of the weight to the current average value. This way,
++some spurious data will not excessively modify the average and only if the new
++values are persistent, the moving average will tend towards them.
++
++Mathematically the application crash period's EMA can be expressed as follows:
++
++ period_ema = period * weight + period_ema * (1 - weight)
++
++Related to the attack detection, the EMA must guarantee that not many crashes
++are needed. To demonstrate this, the scenario where an application has failed
++and then has been running without any crashes for a month, will be used.
++
++The period's EMA can be written now as:
++
++ period_ema[i] = period[i] * weight + period_ema[i - 1] * (1 - weight)
++
++If the new crash periods have insignificant values related to the first crash
++period (a month in this case), the formula can be rewritten as:
++
++ period_ema[i] = period_ema[i - 1] * (1 - weight)
++
++And by extension:
++
++ | period_ema[i - 1] = period_ema[i - 2] * (1 - weight)
++ | period_ema[i - 2] = period_ema[i - 3] * (1 - weight)
++ | period_ema[i - 3] = period_ema[i - 4] * (1 - weight)
++
++So, if the substitution is made:
++
++ | period_ema[i] = period_ema[i - 1] * (1 - weight)
++ | period_ema[i] = period_ema[i - 2] * (1 - weight)\ :sup:`2`
++ | period_ema[i] = period_ema[i - 3] * (1 - weight)\ :sup:`3`
++ | period_ema[i] = period_ema[i - 4] * (1 - weight)\ :sup:`4`
++
++And in a more generic form:
++
++ period_ema[i] = period_ema[i - n] * (1 - weight)\ :sup:`n`
++
++Where "n" represents the number of iterations to obtain an EMA value. Or in
++other words, the number of crashes to detect an attack.
++
++So, if we isolate the number of crashes:
++
++ | period_ema[i] / period_ema[i - n] = (1 - weight)\ :sup:`n`
++ | log(period_ema[i] / period_ema[i - n]) = log((1 - weight)\ :sup:`n`)
++ | log(period_ema[i] / period_ema[i - n]) = n * log(1 - weight)
++ | n = log(period_ema[i] / period_ema[i - n]) / log(1 - weight)
++
++Then, in the commented scenario (an application has failed and then has been
++running without any crashes for a month), the approximate number of crashes to
++detect an attack (using the default implementation values for the weight and the
++crash period threshold) is:
++
++ | weight = 7 / 10
++ | crash_period_threshold = 30 seconds
++
++ | n = log(crash_period_threshold / seconds_per_month) / log(1 - weight)
++ | n = log(30 / (30 * 24 * 3600)) / log(1 - 0.7)
++ | n = 9.44
++
++So, with 10 crashes for this scenario an attack will be detected. If these steps
++are repeated for different scenarios and the results are collected:
++
++ ======================== =====================================
++ time without any crashes number of crashes to detect an attack
++ ======================== =====================================
++ 1 month                  9.44
++ 1 year                   11.50
++ 10 years                 13.42
++ ======================== =====================================
++
++However, this computation has a drawback. The first data added to the EMA not
++obtains a real average showing a trend. So the solution is simple, the EMA needs
++a minimum number of data to be able to be interpreted. This way, the case where
++a few first faults are fast enough followed by no crashes is avoided.
++
++Per system enabling/disabling
++-----------------------------
++
++This feature can be enabled at build time using the
++``CONFIG_SECURITY_FORK_BRUTE`` option or using the visual config application
++under the following menu:
++
++ Security options  ``--->`` Fork brute force attack detection and mitigation
++
++Also, at boot time, this feature can be disable too, by changing the "``lsm=``"
++boot parameter.
++
++Per system configuration
++------------------------
++
++To customize the detection's sensibility there are five new sysctl attributes
++for the Brute LSM that are accessible through the following path:
++
++ ``/proc/sys/kernel/brute/``
++
++More specifically, the files and their description are:
++
++**ema_weight_numerator**
++
++ .. kernel-doc:: security/brute/brute.c
++    :doc: brute_ema_weight_numerator
++
++**ema_weight_denominator**
++
++ .. kernel-doc:: security/brute/brute.c
++    :doc: brute_ema_weight_denominator
++
++**max_faults**
++
++ .. kernel-doc:: security/brute/brute.c
++    :doc: brute_max_faults
++
++**min_faults**
++
++ .. kernel-doc:: security/brute/brute.c
++    :doc: brute_min_faults
++
++**crash_period_threshold**
++
++ .. kernel-doc:: security/brute/brute.c
++    :doc: brute_crash_period_threshold
++
++Kernel selftests
++----------------
++
++To validate all the expectations about this implementation, there is a set of
++selftests. This tests cover fork/exec brute force attacks crossing the following
++privilege boundaries:
++
++ 1. setuid process
++ 2. privilege changes
++ 3. network to local
++
++Also, there are some tests to check that fork/exec brute force attacks without
++crossing any privilege boundary already commented doesn't trigger the detection
++and mitigation stage. Moreover, a test to verify the userspace notification via
++the ``waitid()`` system call has also been added.
++
++To build the tests:
++ ``make -C tools/testing/selftests/ TARGETS=brute``
++
++To run the tests:
++ ``make -C tools/testing/selftests TARGETS=brute run_tests``
++
++To package the tests:
++ ``make -C tools/testing/selftests TARGETS=brute gen_tar``
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+index a6ba95fba..1f68982bb 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -41,6 +41,7 @@ subdirectories.
+    :maxdepth: 1
+ 
+    apparmor
++   Brute
+    LoadPin
+    SELinux
+    Smack
+diff --git a/security/brute/Kconfig b/security/brute/Kconfig
+index 5da314d22..d2dd33b08 100644
+--- a/security/brute/Kconfig
++++ b/security/brute/Kconfig
+@@ -9,6 +9,7 @@ config SECURITY_FORK_BRUTE
+ 	  offending tasks are killed. Also, the executable file involved in the
+ 	  attack will be marked as "not allowed" and new execve system calls
+ 	  using this file will fail. Like capabilities, this security module
+-	  stacks with other LSMs.
++	  stacks with other LSMs. Further information can be found in
++	  Documentation/admin-guide/LSM/Brute.rst.
+ 
+ 	  If you are unsure how to answer this question, answer N.
+-- 
+2.33.0
+
+
+From a915f93d33a223a59531f6005b972898e34905d1 Mon Sep 17 00:00:00 2001
+From: John Wood <john.wood@gmx.com>
+Date: Sat, 5 Jun 2021 17:04:05 +0200
+Subject: [PATCH 8/8] MAINTAINERS: Add a new entry for the Brute LSM
+
+In order to maintain the code for the Brute LSM add a new entry to the
+maintainers list.
+
+Signed-off-by: John Wood <john.wood@gmx.com>
+---
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d7b4f3287..4b77f63be 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3914,6 +3914,14 @@ L:	netdev@vger.kernel.org
+ S:	Supported
+ F:	drivers/net/ethernet/brocade/bna/
+ 
++BRUTE SECURITY MODULE
++M:	John Wood <john.wood@gmx.com>
++S:	Maintained
++F:	Documentation/admin-guide/LSM/Brute.rst
++F:	include/brute/
++F:	security/brute/
++F:	tools/testing/selftests/brute/
++
+ BSG (block layer generic sg v4 driver)
+ M:	FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+ L:	linux-scsi@vger.kernel.org
+-- 
+2.33.0
+

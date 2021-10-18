@@ -1,0 +1,543 @@
+From c471b33656fcf36a9b04c9d4efe8c8e534f5cf3d Mon Sep 17 00:00:00 2001
+From: "Jan Alexander Steffens (heftig)" <jan.steffens@gmail.com>
+Date: Mon, 16 Sep 2019 04:53:20 +0200
+Subject: [PATCH 1/6] ZEN: Add sysctl and CONFIG to disallow unprivileged
+ CLONE_NEWUSER
+
+Our default behavior continues to match the vanilla kernel.
+---
+ include/linux/user_namespace.h |  4 ++++
+ init/Kconfig                   | 16 ++++++++++++++++
+ kernel/fork.c                  | 14 ++++++++++++++
+ kernel/sysctl.c                | 12 ++++++++++++
+ kernel/user_namespace.c        |  7 +++++++
+ 5 files changed, 53 insertions(+)
+
+diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+index eb70cabe6..dda54e3bc 100644
+--- a/include/linux/user_namespace.h
++++ b/include/linux/user_namespace.h
+@@ -137,6 +137,8 @@ static inline void set_rlimit_ucount_max(struct user_namespace *ns,
+ 
+ #ifdef CONFIG_USER_NS
+ 
++extern int unprivileged_userns_clone;
++
+ static inline struct user_namespace *get_user_ns(struct user_namespace *ns)
+ {
+ 	if (ns)
+@@ -170,6 +172,8 @@ extern bool current_in_userns(const struct user_namespace *target_ns);
+ struct ns_common *ns_get_owner(struct ns_common *ns);
+ #else
+ 
++#define unprivileged_userns_clone 0
++
+ static inline struct user_namespace *get_user_ns(struct user_namespace *ns)
+ {
+ 	return &init_user_ns;
+diff --git a/init/Kconfig b/init/Kconfig
+index 55f9f7738..33c6a820a 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1198,6 +1198,22 @@ config USER_NS
+ 
+ 	  If unsure, say N.
+ 
++config USER_NS_UNPRIVILEGED
++	bool "Allow unprivileged users to create namespaces"
++	default y
++	depends on USER_NS
++	help
++	  When disabled, unprivileged users will not be able to create
++	  new namespaces. Allowing users to create their own namespaces
++	  has been part of several recent local privilege escalation
++	  exploits, so if you need user namespaces but are
++	  paranoid^Wsecurity-conscious you want to disable this.
++
++	  This setting can be overridden at runtime via the
++	  kernel.unprivileged_userns_clone sysctl.
++
++	  If unsure, say Y.
++
+ config PID_NS
+ 	bool "PID Namespaces"
+ 	default y
+diff --git a/kernel/fork.c b/kernel/fork.c
+index cbba21e3a..7267d46c2 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -98,6 +98,10 @@
+ #include <linux/io_uring.h>
+ #include <linux/bpf.h>
+ 
++#ifdef CONFIG_USER_NS
++#include <linux/user_namespace.h>
++#endif
++
+ #include <asm/pgalloc.h>
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -1877,6 +1881,10 @@ static __latent_entropy struct task_struct *copy_process(
+ 	if ((clone_flags & (CLONE_NEWUSER|CLONE_FS)) == (CLONE_NEWUSER|CLONE_FS))
+ 		return ERR_PTR(-EINVAL);
+ 
++	if ((clone_flags & CLONE_NEWUSER) && !unprivileged_userns_clone)
++		if (!capable(CAP_SYS_ADMIN))
++			return ERR_PTR(-EPERM);
++
+ 	/*
+ 	 * Thread groups must share signals as well, and detached threads
+ 	 * can only be started up within the thread group.
+@@ -2981,6 +2989,12 @@ int ksys_unshare(unsigned long unshare_flags)
+ 	if (unshare_flags & CLONE_NEWNS)
+ 		unshare_flags |= CLONE_FS;
+ 
++	if ((unshare_flags & CLONE_NEWUSER) && !unprivileged_userns_clone) {
++		err = -EPERM;
++		if (!capable(CAP_SYS_ADMIN))
++			goto bad_unshare_out;
++	}
++
+ 	err = check_unshare_flags(unshare_flags);
+ 	if (err)
+ 		goto bad_unshare_out;
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 272f4a272..760e8a2d8 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -105,6 +105,9 @@
+ #ifdef CONFIG_LOCKUP_DETECTOR
+ #include <linux/nmi.h>
+ #endif
++#ifdef CONFIG_USER_NS
++#include <linux/user_namespace.h>
++#endif
+ 
+ #if defined(CONFIG_SYSCTL)
+ 
+@@ -1908,6 +1911,15 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec,
+ 	},
+ #endif
++#ifdef CONFIG_USER_NS
++	{
++		.procname	= "unprivileged_userns_clone",
++		.data		= &unprivileged_userns_clone,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++#endif
+ #ifdef CONFIG_PROC_SYSCTL
+ 	{
+ 		.procname	= "tainted",
+diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+index ef82d401d..5a6c2e071 100644
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -21,6 +21,13 @@
+ #include <linux/bsearch.h>
+ #include <linux/sort.h>
+ 
++/* sysctl */
++#ifdef CONFIG_USER_NS_UNPRIVILEGED
++int unprivileged_userns_clone = 1;
++#else
++int unprivileged_userns_clone;
++#endif
++
+ static struct kmem_cache *user_ns_cachep __read_mostly;
+ static DEFINE_MUTEX(userns_state_mutex);
+ 
+-- 
+2.33.0.610.gcefe983a32
+
+
+From a35416843425c58b27cfc74cdf6690cf38bd1132 Mon Sep 17 00:00:00 2001
+From: Wai Paulo Valerio Wang <waicool20@gmail.com>
+Date: Thu, 8 Jul 2021 04:00:59 +0800
+Subject: [PATCH 2/6] Bluetooth: btusb: Add support for IMC Networks Mediatek
+ Chip
+
+This add supports for IMC Networks Wireless_Device Media Chip
+which contains the MT7921 chipset.
+
+$ lsusb
+
+Bus 001 Device 004: ID 13d3:3563 IMC Networks Wireless_Device
+
+$ cat /sys/kernel/debug/usb/devices
+
+T:  Bus=01 Lev=01 Prnt=01 Port=03 Cnt=03 Dev#=  4 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=13d3 ProdID=3563 Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
+
+Signed-off-by: Wai Paulo Valerio Wang <waicool20@gmail.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+For: https://bugs.archlinux.org/task/72138
+---
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index bd37d6fb8..e13a510e1 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -414,6 +414,9 @@ static const struct usb_device_id blacklist_table[] = {
+ 	{ USB_DEVICE(0x04ca, 0x3802), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
++	{ USB_DEVICE(0x13d3, 0x3563), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH |
++						     BTUSB_VALID_LE_STATES },
+ 
+ 	/* Additional Realtek 8723AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0930, 0x021d), .driver_info = BTUSB_REALTEK },
+-- 
+2.33.0.610.gcefe983a32
+
+
+From f5f857a8e729566e9bd5cc2323e8e3d60aa42736 Mon Sep 17 00:00:00 2001
+From: Aaron Ma <aaron.ma@canonical.com>
+Date: Fri, 23 Jul 2021 01:17:18 +0800
+Subject: [PATCH 3/6] Bluetooth: btusb: Add support for Foxconn Mediatek Chip
+
+Add support for another Foxconn / Hon Hai device with MT7921 chip.
+
+T:  Bus=05 Lev=01 Prnt=01 Port=03 Cnt=02 Dev#=  3 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0489 ProdID=e0cd Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
+
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+For: https://bugs.archlinux.org/task/72138
+---
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index e13a510e1..aac732cc9 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -417,6 +417,9 @@ static const struct usb_device_id blacklist_table[] = {
+ 	{ USB_DEVICE(0x13d3, 0x3563), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
++	{ USB_DEVICE(0x0489, 0xe0cd), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH |
++						     BTUSB_VALID_LE_STATES },
+ 
+ 	/* Additional Realtek 8723AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0930, 0x021d), .driver_info = BTUSB_REALTEK },
+-- 
+2.33.0.610.gcefe983a32
+
+
+From d18d916893112fdfc2c5d979d5f8c8d8b786aa66 Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 9 Aug 2021 09:18:27 +0200
+Subject: [PATCH 4/6] ALSA: pcm: Check mmap capability of runtime dma buffer at
+ first
+
+Currently we check only the substream->dma_buffer as the preset of the
+buffer configuration for verifying the availability of mmap.  But a
+few drivers rather set up the buffer in the own way without the
+standard buffer preallocation using substream->dma_buffer, and they
+miss the proper checks.  (Now it's working more or less fine as most
+of them are running only on x86).
+
+Actually, they may set up the runtime dma_buffer (referred via
+snd_pcm_get_dma_buf()) at the open callback, though.  That is, this
+could have been used as the primary source.
+
+This patch changes the hw_support_mmap() function to check the runtime
+dma buffer at first.  It's usually NULL with the standard buffer
+preallocation, and in that case, we continue checking
+substream->dma_buffer as fallback.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: https://bugs.archlinux.org/task/72059
+---
+ sound/core/pcm_native.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index 71323d807..dc9fa312f 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -243,13 +243,18 @@ int snd_pcm_info_user(struct snd_pcm_substream *substream,
+ 
+ static bool hw_support_mmap(struct snd_pcm_substream *substream)
+ {
++	struct snd_dma_buffer *dmabuf;
++
+ 	if (!(substream->runtime->hw.info & SNDRV_PCM_INFO_MMAP))
+ 		return false;
+ 
+ 	if (substream->ops->mmap || substream->ops->page)
+ 		return true;
+ 
+-	switch (substream->dma_buffer.dev.type) {
++	dmabuf = snd_pcm_get_dma_buf(substream);
++	if (!dmabuf)
++		dmabuf = &substream->dma_buffer;
++	switch (dmabuf->dev.type) {
+ 	case SNDRV_DMA_TYPE_UNKNOWN:
+ 		/* we can't know the device, so just assume that the driver does
+ 		 * everything right
+@@ -259,7 +264,7 @@ static bool hw_support_mmap(struct snd_pcm_substream *substream)
+ 	case SNDRV_DMA_TYPE_VMALLOC:
+ 		return true;
+ 	default:
+-		return dma_can_mmap(substream->dma_buffer.dev.dev);
++		return dma_can_mmap(dmabuf->dev.dev);
+ 	}
+ }
+ 
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 9cbcebf8f7a026c7e8ff8e60a6584ccc3872386a Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 9 Aug 2021 09:18:28 +0200
+Subject: [PATCH 5/6] ALSA: pci: rme: Set up buffer type properly
+
+Although the regression of the mmap was fixed in the recent commit
+dc0dc8a73e8e ("ALSA: pcm: Fix mmap breakage without explicit buffer
+setup"), RME9652 and HDSP drivers have still potential issues with
+their mmap handling.  Namely, they use the default mmap handler
+without the standard buffer preallocation, and PCM core wouldn't use
+the coherent DMA mapping.  It's practically OK on x86, but on some
+exotic architectures, it wouldn't work.
+
+This patch addresses the potential breakage by replacing the buffer
+setup with the proper macro.  It also simplifies the source code,
+too.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: https://bugs.archlinux.org/task/72059
+---
+ sound/pci/rme9652/hdsp.c    | 6 ++----
+ sound/pci/rme9652/rme9652.c | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
+index 8457a4bbc..22b8b3357 100644
+--- a/sound/pci/rme9652/hdsp.c
++++ b/sound/pci/rme9652/hdsp.c
+@@ -4518,8 +4518,7 @@ static int snd_hdsp_playback_open(struct snd_pcm_substream *substream)
+ 	snd_pcm_set_sync(substream);
+ 
+         runtime->hw = snd_hdsp_playback_subinfo;
+-	runtime->dma_area = hdsp->playback_buffer;
+-	runtime->dma_bytes = HDSP_DMA_AREA_BYTES;
++	snd_pcm_set_runtime_buffer(substream, &hdsp->playback_dma_buf);
+ 
+ 	hdsp->playback_pid = current->pid;
+ 	hdsp->playback_substream = substream;
+@@ -4595,8 +4594,7 @@ static int snd_hdsp_capture_open(struct snd_pcm_substream *substream)
+ 	snd_pcm_set_sync(substream);
+ 
+ 	runtime->hw = snd_hdsp_capture_subinfo;
+-	runtime->dma_area = hdsp->capture_buffer;
+-	runtime->dma_bytes = HDSP_DMA_AREA_BYTES;
++	snd_pcm_set_runtime_buffer(substream, &hdsp->capture_dma_buf);
+ 
+ 	hdsp->capture_pid = current->pid;
+ 	hdsp->capture_substream = substream;
+diff --git a/sound/pci/rme9652/rme9652.c b/sound/pci/rme9652/rme9652.c
+index f1aad3876..9ad253392 100644
+--- a/sound/pci/rme9652/rme9652.c
++++ b/sound/pci/rme9652/rme9652.c
+@@ -2279,8 +2279,7 @@ static int snd_rme9652_playback_open(struct snd_pcm_substream *substream)
+ 	snd_pcm_set_sync(substream);
+ 
+         runtime->hw = snd_rme9652_playback_subinfo;
+-	runtime->dma_area = rme9652->playback_buffer;
+-	runtime->dma_bytes = RME9652_DMA_AREA_BYTES;
++	snd_pcm_set_runtime_buffer(substream, &rme9652->playback_dma_buf);
+ 
+ 	if (rme9652->capture_substream == NULL) {
+ 		rme9652_stop(rme9652);
+@@ -2339,8 +2338,7 @@ static int snd_rme9652_capture_open(struct snd_pcm_substream *substream)
+ 	snd_pcm_set_sync(substream);
+ 
+ 	runtime->hw = snd_rme9652_capture_subinfo;
+-	runtime->dma_area = rme9652->capture_buffer;
+-	runtime->dma_bytes = RME9652_DMA_AREA_BYTES;
++	snd_pcm_set_runtime_buffer(substream, &rme9652->capture_dma_buf);
+ 
+ 	if (rme9652->playback_substream == NULL) {
+ 		rme9652_stop(rme9652);
+-- 
+2.33.0.610.gcefe983a32
+
+
+From 8e1b2c7ad5795e342cbaebb47536c400b47c9c4f Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 9 Aug 2021 09:18:29 +0200
+Subject: [PATCH 6/6] ALSA: pci: cs46xx: Fix set up buffer type properly
+
+CS46xx driver switches the buffer depending on the number of periods,
+and in some cases it switches to the own buffer without updating the
+buffer type properly.  This may cause a problem with the mmap on
+exotic architectures that require the own mmap call for the coherent
+DMA buffer.
+
+This patch addresses the potential breakage by replacing the buffer
+setup with the proper macro.  It also simplifies the source code,
+too.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: https://bugs.archlinux.org/task/72059
+---
+ sound/pci/cs46xx/cs46xx_lib.c | 30 ++++++++----------------------
+ 1 file changed, 8 insertions(+), 22 deletions(-)
+
+diff --git a/sound/pci/cs46xx/cs46xx_lib.c b/sound/pci/cs46xx/cs46xx_lib.c
+index 1e1eb17f8..d43927dcd 100644
+--- a/sound/pci/cs46xx/cs46xx_lib.c
++++ b/sound/pci/cs46xx/cs46xx_lib.c
+@@ -1121,9 +1121,7 @@ static int snd_cs46xx_playback_hw_params(struct snd_pcm_substream *substream,
+ 	if (params_periods(hw_params) == CS46XX_FRAGS) {
+ 		if (runtime->dma_area != cpcm->hw_buf.area)
+ 			snd_pcm_lib_free_pages(substream);
+-		runtime->dma_area = cpcm->hw_buf.area;
+-		runtime->dma_addr = cpcm->hw_buf.addr;
+-		runtime->dma_bytes = cpcm->hw_buf.bytes;
++		snd_pcm_set_runtime_buffer(substream, &cpcm->hw_buf);
+ 
+ 
+ #ifdef CONFIG_SND_CS46XX_NEW_DSP
+@@ -1143,11 +1141,8 @@ static int snd_cs46xx_playback_hw_params(struct snd_pcm_substream *substream,
+ #endif
+ 
+ 	} else {
+-		if (runtime->dma_area == cpcm->hw_buf.area) {
+-			runtime->dma_area = NULL;
+-			runtime->dma_addr = 0;
+-			runtime->dma_bytes = 0;
+-		}
++		if (runtime->dma_area == cpcm->hw_buf.area)
++			snd_pcm_set_runtime_buffer(substream, NULL);
+ 		err = snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(hw_params));
+ 		if (err < 0) {
+ #ifdef CONFIG_SND_CS46XX_NEW_DSP
+@@ -1196,9 +1191,7 @@ static int snd_cs46xx_playback_hw_free(struct snd_pcm_substream *substream)
+ 	if (runtime->dma_area != cpcm->hw_buf.area)
+ 		snd_pcm_lib_free_pages(substream);
+     
+-	runtime->dma_area = NULL;
+-	runtime->dma_addr = 0;
+-	runtime->dma_bytes = 0;
++	snd_pcm_set_runtime_buffer(substream, NULL);
+ 
+ 	return 0;
+ }
+@@ -1287,16 +1280,11 @@ static int snd_cs46xx_capture_hw_params(struct snd_pcm_substream *substream,
+ 	if (runtime->periods == CS46XX_FRAGS) {
+ 		if (runtime->dma_area != chip->capt.hw_buf.area)
+ 			snd_pcm_lib_free_pages(substream);
+-		runtime->dma_area = chip->capt.hw_buf.area;
+-		runtime->dma_addr = chip->capt.hw_buf.addr;
+-		runtime->dma_bytes = chip->capt.hw_buf.bytes;
++		snd_pcm_set_runtime_buffer(substream, &chip->capt.hw_buf);
+ 		substream->ops = &snd_cs46xx_capture_ops;
+ 	} else {
+-		if (runtime->dma_area == chip->capt.hw_buf.area) {
+-			runtime->dma_area = NULL;
+-			runtime->dma_addr = 0;
+-			runtime->dma_bytes = 0;
+-		}
++		if (runtime->dma_area == chip->capt.hw_buf.area)
++			snd_pcm_set_runtime_buffer(substream, NULL);
+ 		err = snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(hw_params));
+ 		if (err < 0)
+ 			return err;
+@@ -1313,9 +1301,7 @@ static int snd_cs46xx_capture_hw_free(struct snd_pcm_substream *substream)
+ 
+ 	if (runtime->dma_area != chip->capt.hw_buf.area)
+ 		snd_pcm_lib_free_pages(substream);
+-	runtime->dma_area = NULL;
+-	runtime->dma_addr = 0;
+-	runtime->dma_bytes = 0;
++	snd_pcm_set_runtime_buffer(substream, NULL);
+ 
+ 	return 0;
+ }
+-- 
+2.33.0.610.gcefe983a32
+

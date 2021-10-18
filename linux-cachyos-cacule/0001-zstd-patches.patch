@@ -1,0 +1,317 @@
+From 6b2528a677260c67d04d373a70b18ea3f011d53a Mon Sep 17 00:00:00 2001
+From: torvic9 <torvic9@mailbox.org>
+Date: Fri, 9 Apr 2021 11:21:18 +0200
+Subject: [PATCH 1/5] kbuild: allow setting zstd compression level for modules
+
+Zstd offers a very fine-grained control of compression ratios.
+Add a Kconfig option that allows setting the desired compression
+level for module compression.
+
+Based on linux-kbuild.
+
+Signed-off-by: torvic9 <torvic9@mailbox.org>
+---
+ init/Kconfig             | 8 ++++++++
+ scripts/Makefile.modinst | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/init/Kconfig b/init/Kconfig
+index 55f9f77..3b685dd 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2250,6 +2250,14 @@ config MODULE_COMPRESS_ZSTD
+ 
+ endchoice
+ 
++config MODULE_COMPRESS_ZSTD_LEVEL
++    int "Compression level (1-19)"
++    depends on MODULE_COMPRESS_ZSTD
++    range 1 19
++    default 3
++    help
++        Compression level used by zstd for compressing modules.
++
+ config MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS
+ 	bool "Allow loading of modules with missing namespace imports"
+ 	help
+diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
+index ff9b09e..0a0db22 100644
+--- a/scripts/Makefile.modinst
++++ b/scripts/Makefile.modinst
+@@ -97,7 +97,7 @@ quiet_cmd_gzip = GZIP    $@
+ quiet_cmd_xz = XZ      $@
+       cmd_xz = $(XZ) --lzma2=dict=2MiB -f $<
+ quiet_cmd_zstd = ZSTD    $@
+-      cmd_zstd = $(ZSTD) -T0 --rm -f -q $<
++      cmd_zstd = $(ZSTD) -$(CONFIG_MODULE_COMPRESS_ZSTD_LEVEL) -T0 --rm -f -q $<
+ 
+ $(dst)/%.ko.gz: $(dst)/%.ko FORCE
+ 	$(call cmd,gzip)
+-- 
+2.33.0.113.g6c40894d24
+
+
+From 2af9692f0f669fd3746e66ce6a9c575a82ded75c Mon Sep 17 00:00:00 2001
+From: torvic9 <torvic9@mailbox.org>
+Date: Fri, 9 Apr 2021 11:25:21 +0200
+Subject: [PATCH 2/5] kbuild: allow setting zstd compression level for kernel
+
+In a similar way to the first patch in this series, add another Kconfig
+option that allows setting the zstd compression level for the kernel
+as well.
+This enables users to choose either a compression level between 1 and 19,
+or instead use the highest possible level (ultra-22).
+Also add '-T0' parameter in both cases.
+
+Signed-off-by: torvic9 <torvic9@mailbox.org>
+---
+ arch/x86/boot/compressed/Makefile |  5 +++++
+ init/Kconfig                      | 19 +++++++++++++++++++
+ scripts/Makefile.lib              |  4 ++--
+ 3 files changed, 26 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 431bf7f..f10ddb6 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -132,8 +132,13 @@ $(obj)/vmlinux.bin.lzo: $(vmlinux.bin.all-y) FORCE
+ 	$(call if_changed,lzo)
+ $(obj)/vmlinux.bin.lz4: $(vmlinux.bin.all-y) FORCE
+ 	$(call if_changed,lz4)
++ifdef CONFIG_KERNEL_ZSTD_ULTRA
+ $(obj)/vmlinux.bin.zst: $(vmlinux.bin.all-y) FORCE
+ 	$(call if_changed,zstd22)
++else
++$(obj)/vmlinux.bin.zst: $(vmlinux.bin.all-y) FORCE
++	$(call if_changed,zstd)
++endif
+ 
+ suffix-$(CONFIG_KERNEL_GZIP)	:= gz
+ suffix-$(CONFIG_KERNEL_BZIP2)	:= bz2
+diff --git a/init/Kconfig b/init/Kconfig
+index 3b685dd..029da55 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -315,6 +315,25 @@ config KERNEL_UNCOMPRESSED
+ 
+ endchoice
+ 
++menu "ZSTD compression options"
++    depends on KERNEL_ZSTD
++
++config KERNEL_ZSTD_LEVEL
++    int "Compression level (1-19)"
++    range 1 19
++    default 19
++    help
++        Choose a compression level for zstd kernel compression.
++        Default is 19.
++
++config KERNEL_ZSTD_LEVEL_ULTRA
++    bool "Ultra compression"
++    help
++        Selecting this overrides the chosen compression level and enables
++        the highest possible compression level for zstd (ultra-22).
++
++endmenu
++
+ config DEFAULT_INIT
+ 	string "Default init path"
+ 	default ""
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 1095055..5bf17c1 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -480,10 +480,10 @@ quiet_cmd_xzmisc = XZMISC  $@
+ # be used because it would require zstd to allocate a 128 MB buffer.
+ 
+ quiet_cmd_zstd = ZSTD    $@
+-      cmd_zstd = { cat $(real-prereqs) | $(ZSTD) -19; $(size_append); } > $@
++      cmd_zstd = { cat $(real-prereqs) | $(ZSTD) -$(CONFIG_KERNEL_ZSTD_LEVEL) -T0; $(size_append); } > $@
+ 
+ quiet_cmd_zstd22 = ZSTD22  $@
+-      cmd_zstd22 = { cat $(real-prereqs) | $(ZSTD) -22 --ultra; $(size_append); } > $@
++      cmd_zstd22 = { cat $(real-prereqs) | $(ZSTD) -22 --ultra -T0; $(size_append); } > $@
+ 
+ # ASM offsets
+ # ---------------------------------------------------------------------------
+-- 
+2.33.0.113.g6c40894d24
+
+
+From a7c5c947d9daf2034c8f63dbcbe2991b85b36831 Mon Sep 17 00:00:00 2001
+From: Piotr Gorski <lucjan.lucjanov@gmail.com>
+Date: Fri, 9 Apr 2021 15:39:11 +0200
+Subject: [PATCH 3/5] kbuild: optimize zstd compression settings
+
+The --zstd=wlog=21 option is equivalent to --lzma2=dict=2MiB used in XZ compression.
+So let's unify the various compression options.
+
+Signed-off-by: Piotr Gorski <lucjan.lucjanov@gmail.com>
+---
+ init/Kconfig             | 2 +-
+ scripts/Makefile.modinst | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/init/Kconfig b/init/Kconfig
+index 029da55..18ed9d5 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2273,7 +2273,7 @@ config MODULE_COMPRESS_ZSTD_LEVEL
+     int "Compression level (1-19)"
+     depends on MODULE_COMPRESS_ZSTD
+     range 1 19
+-    default 3
++    default 9
+     help
+         Compression level used by zstd for compressing modules.
+ 
+diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
+index 0a0db22..8eeee2b 100644
+--- a/scripts/Makefile.modinst
++++ b/scripts/Makefile.modinst
+@@ -97,7 +97,7 @@ quiet_cmd_gzip = GZIP    $@
+ quiet_cmd_xz = XZ      $@
+       cmd_xz = $(XZ) --lzma2=dict=2MiB -f $<
+ quiet_cmd_zstd = ZSTD    $@
+-      cmd_zstd = $(ZSTD) -$(CONFIG_MODULE_COMPRESS_ZSTD_LEVEL) -T0 --rm -f -q $<
++      cmd_zstd = $(ZSTD) -$(CONFIG_MODULE_COMPRESS_ZSTD_LEVEL) --zstd=wlog=21 -T0 --rm -f -q $<
+ 
+ $(dst)/%.ko.gz: $(dst)/%.ko FORCE
+ 	$(call cmd,gzip)
+-- 
+2.33.0.113.g6c40894d24
+
+
+From 3fad23d9bf6ba8e329e97199c2bb271ea8015338 Mon Sep 17 00:00:00 2001
+From: Piotr Gorski <lucjan.lucjanov@gmail.com>
+Date: Wed, 30 Jun 2021 17:22:44 +0200
+Subject: [PATCH 4/5] kbuild: allow setting ultra zstd compression level for
+ modules
+
+This patch enables users to choose either a compression level between 1 and 19,
+or instead use the highest possible level (ultra 20-22).
+
+Signed-off-by: Piotr Gorski <lucjan.lucjanov@gmail.com>
+---
+ init/Kconfig             | 14 ++++++++++++++
+ scripts/Makefile.modinst |  5 +++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/init/Kconfig b/init/Kconfig
+index 18ed9d5..608b4e5 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2269,6 +2269,12 @@ config MODULE_COMPRESS_ZSTD
+ 
+ endchoice
+ 
++config MODULE_COMPRESS_ZSTD_ULTRA
++	depends on MODULE_COMPRESS_ZSTD
++	bool "Enable ZSTD ultra compression"
++	help
++	  Compress modules with ZSTD using the highest possible compression.
++
+ config MODULE_COMPRESS_ZSTD_LEVEL
+     int "Compression level (1-19)"
+     depends on MODULE_COMPRESS_ZSTD
+@@ -2277,6 +2283,14 @@ config MODULE_COMPRESS_ZSTD_LEVEL
+     help
+         Compression level used by zstd for compressing modules.
+ 
++config MODULE_COMPRESS_ZSTD_LEVEL_ULTRA
++    int "Compression level (20-22)"
++    depends on MODULE_COMPRESS_ZSTD_ULTRA
++    range 20 22
++    default 20
++    help
++        Ultra compression level used by zstd for compressing modules.
++
+ config MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS
+ 	bool "Allow loading of modules with missing namespace imports"
+ 	help
+diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
+index 8eeee2b..35148a7 100644
+--- a/scripts/Makefile.modinst
++++ b/scripts/Makefile.modinst
+@@ -96,8 +96,13 @@ quiet_cmd_gzip = GZIP    $@
+       cmd_gzip = $(KGZIP) -n -f $<
+ quiet_cmd_xz = XZ      $@
+       cmd_xz = $(XZ) --lzma2=dict=2MiB -f $<
++ifdef CONFIG_MODULE_COMPRESS_ZSTD_ULTRA
++quiet_cmd_zstd = ZSTD    $@
++      cmd_zstd = $(ZSTD) -$(CONFIG_MODULE_COMPRESS_ZSTD_LEVEL_ULTRA) --ultra --zstd=wlog=21 -T0 --rm -f -q $<
++else
+ quiet_cmd_zstd = ZSTD    $@
+       cmd_zstd = $(ZSTD) -$(CONFIG_MODULE_COMPRESS_ZSTD_LEVEL) --zstd=wlog=21 -T0 --rm -f -q $<
++endif
+ 
+ $(dst)/%.ko.gz: $(dst)/%.ko FORCE
+ 	$(call cmd,gzip)
+-- 
+2.33.0.113.g6c40894d24
+
+
+From d9f873b024ad8a5e41399c2f18ea5853be25111f Mon Sep 17 00:00:00 2001
+From: Piotr Gorski <lucjan.lucjanov@gmail.com>
+Date: Tue, 27 Jul 2021 19:56:35 +0200
+Subject: [PATCH 5/5] kbuild: add menu for ZSTD module compression options
+
+Signed-off-by: Piotr Gorski <lucjan.lucjanov@gmail.com>
+---
+ init/Kconfig | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
+
+diff --git a/init/Kconfig b/init/Kconfig
+index 608b4e5..2192ff3 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2269,27 +2269,30 @@ config MODULE_COMPRESS_ZSTD
+ 
+ endchoice
+ 
++menu "ZSTD module compression options"
++    depends on MODULE_COMPRESS_ZSTD
++
++config MODULE_COMPRESS_ZSTD_LEVEL
++	int "Compression level (1-19)"
++	range 1 19
++	default 9
++	help
++	  Compression level used by zstd for compressing modules.
++
+ config MODULE_COMPRESS_ZSTD_ULTRA
+-	depends on MODULE_COMPRESS_ZSTD
+ 	bool "Enable ZSTD ultra compression"
+ 	help
+ 	  Compress modules with ZSTD using the highest possible compression.
+ 
+-config MODULE_COMPRESS_ZSTD_LEVEL
+-    int "Compression level (1-19)"
+-    depends on MODULE_COMPRESS_ZSTD
+-    range 1 19
+-    default 9
+-    help
+-        Compression level used by zstd for compressing modules.
+-
+ config MODULE_COMPRESS_ZSTD_LEVEL_ULTRA
+-    int "Compression level (20-22)"
+-    depends on MODULE_COMPRESS_ZSTD_ULTRA
+-    range 20 22
+-    default 20
+-    help
+-        Ultra compression level used by zstd for compressing modules.
++	int "Compression level (20-22)"
++	depends on MODULE_COMPRESS_ZSTD_ULTRA
++	range 20 22
++	default 20
++	help
++	  Ultra compression level used by zstd for compressing modules.
++
++endmenu
+ 
+ config MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS
+ 	bool "Allow loading of modules with missing namespace imports"
+-- 
+2.33.0.113.g6c40894d24
+

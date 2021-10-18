@@ -1,0 +1,214 @@
+From b6fdf30b920ce64dde0e89e9285b60c7f7e7be0b Mon Sep 17 00:00:00 2001
+From: Piotr Gorski <lucjan.lucjanov@gmail.com>
+Date: Mon, 28 Jun 2021 13:48:36 +0200
+Subject: [PATCH] android: export symbold and enable building ashmem and binder
+ as modules
+
+Signed-off-by: Piotr Gorski <lucjan.lucjanov@gmail.com>
+---
+ drivers/android/Kconfig          | 2 +-
+ drivers/android/Makefile         | 7 ++++---
+ drivers/android/binder_alloc.c   | 2 +-
+ drivers/staging/android/Kconfig  | 2 +-
+ drivers/staging/android/Makefile | 3 ++-
+ drivers/staging/android/ashmem.c | 3 +++
+ fs/file.c                        | 1 +
+ kernel/fork.c                    | 1 +
+ kernel/sched/core.c              | 1 +
+ kernel/task_work.c               | 1 +
+ mm/memory.c                      | 1 +
+ mm/shmem.c                       | 1 +
+ security/security.c              | 4 ++++
+ 13 files changed, 22 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/android/Kconfig b/drivers/android/Kconfig
+index 53b22e262..f3c50236e 100644
+--- a/drivers/android/Kconfig
++++ b/drivers/android/Kconfig
+@@ -9,7 +9,7 @@ config ANDROID
+ if ANDROID
+ 
+ config ANDROID_BINDER_IPC
+-	bool "Android Binder IPC Driver"
++	tristate "Android Binder IPC Driver"
+ 	depends on MMU
+ 	default n
+ 	help
+diff --git a/drivers/android/Makefile b/drivers/android/Makefile
+index c9d3d0c99..55411d9a9 100644
+--- a/drivers/android/Makefile
++++ b/drivers/android/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ ccflags-y += -I$(src)			# needed for trace events
+ 
+-obj-$(CONFIG_ANDROID_BINDERFS)		+= binderfs.o
+-obj-$(CONFIG_ANDROID_BINDER_IPC)	+= binder.o binder_alloc.o
+-obj-$(CONFIG_ANDROID_BINDER_IPC_SELFTEST) += binder_alloc_selftest.o
++obj-$(CONFIG_ANDROID_BINDER_IPC)	+= binder_linux.o
++binder_linux-y := binder.o binder_alloc.o
++binder_linux-$(CONFIG_ANDROID_BINDERFS)	+= binderfs.o
++binder_linux-$(CONFIG_ANDROID_BINDER_IPC_SELFTEST) += binder_alloc_selftest.o
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index 340515f54..9ad238768 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -38,7 +38,7 @@ enum {
+ };
+ static uint32_t binder_alloc_debug_mask = BINDER_DEBUG_USER_ERROR;
+ 
+-module_param_named(debug_mask, binder_alloc_debug_mask,
++module_param_named(alloc_debug_mask, binder_alloc_debug_mask,
+ 		   uint, 0644);
+ 
+ #define binder_alloc_debug(mask, x...) \
+diff --git a/drivers/staging/android/Kconfig b/drivers/staging/android/Kconfig
+index 70498adb1..5c35653ed 100644
+--- a/drivers/staging/android/Kconfig
++++ b/drivers/staging/android/Kconfig
+@@ -4,7 +4,7 @@ menu "Android"
+ if ANDROID
+ 
+ config ASHMEM
+-	bool "Enable the Anonymous Shared Memory Subsystem"
++	tristate "Enable the Anonymous Shared Memory Subsystem"
+ 	depends on SHMEM
+ 	help
+ 	  The ashmem subsystem is a new shared memory allocator, similar to
+diff --git a/drivers/staging/android/Makefile b/drivers/staging/android/Makefile
+index e9a55a5e6..60cb8eacc 100644
+--- a/drivers/staging/android/Makefile
++++ b/drivers/staging/android/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+ ccflags-y += -I$(src)			# needed for trace events
+ 
+-obj-$(CONFIG_ASHMEM)			+= ashmem.o
++obj-$(CONFIG_ASHMEM)			+= ashmem_linux.o
++ashmem_linux-y				+= ashmem.o
+diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+index ddbde3f84..2a92b0a74 100644
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -24,6 +24,7 @@
+ #include <linux/bitops.h>
+ #include <linux/mutex.h>
+ #include <linux/shmem_fs.h>
++#include <linux/module.h>
+ #include "ashmem.h"
+ 
+ #define ASHMEM_NAME_PREFIX "dev/ashmem/"
+@@ -968,3 +969,5 @@ static int __init ashmem_init(void)
+ 	return ret;
+ }
+ device_initcall(ashmem_init);
++
++MODULE_LICENSE("GPL v2");
+diff --git a/fs/file.c b/fs/file.c
+index 86dc9956a..3cc1867f2 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -771,6 +771,7 @@ int __close_fd_get_file(unsigned int fd, struct file **res)
+ 	*res = NULL;
+ 	return -ENOENT;
+ }
++EXPORT_SYMBOL(close_fd_get_file);
+ 
+ /*
+  * variant of close_fd that gets a ref on the file for later fput.
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 44f4c2d83..a346efd0e 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1139,6 +1139,7 @@ void mmput_async(struct mm_struct *mm)
+ 		schedule_work(&mm->async_put_work);
+ 	}
+ }
++EXPORT_SYMBOL_GPL(mmput_async);
+ #endif
+ 
+ /**
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f3b27c6c5..932fb6324 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6658,6 +6658,7 @@ int can_nice(const struct task_struct *p, const int nice)
+ 	return (nice_rlim <= task_rlimit(p, RLIMIT_NICE) ||
+ 		capable(CAP_SYS_NICE));
+ }
++EXPORT_SYMBOL_GPL(can_nice);
+ 
+ #ifdef __ARCH_WANT_SYS_NICE
+ 
+diff --git a/kernel/task_work.c b/kernel/task_work.c
+index 1698fbe6f..90000404a 100644
+--- a/kernel/task_work.c
++++ b/kernel/task_work.c
+@@ -60,6 +60,7 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL(task_work_add);
+ 
+ /**
+  * task_work_cancel_match - cancel a pending work added by task_work_add()
+diff --git a/mm/memory.c b/mm/memory.c
+index 25fc46e87..b302a0bc8 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1655,6 +1655,7 @@ void zap_page_range(struct vm_area_struct *vma, unsigned long start,
+ 	mmu_notifier_invalidate_range_end(&range);
+ 	tlb_finish_mmu(&tlb);
+ }
++EXPORT_SYMBOL_GPL(zap_page_range);
+ 
+ /**
+  * zap_page_range_single - remove user pages in a given range
+diff --git a/mm/shmem.c b/mm/shmem.c
+index dacda7463..5525d5abb 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4187,6 +4187,7 @@ int shmem_zero_setup(struct vm_area_struct *vma)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(shmem_zero_setup);
+ 
+ /**
+  * shmem_read_mapping_page_gfp - read into page cache, using specified page allocation flags.
+diff --git a/security/security.c b/security/security.c
+index 9ffa9e9c5..4dfd046c9 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -751,24 +751,28 @@ int security_binder_set_context_mgr(struct task_struct *mgr)
+ {
+ 	return call_int_hook(binder_set_context_mgr, 0, mgr);
+ }
++EXPORT_SYMBOL_GPL(security_binder_set_context_mgr);
+ 
+ int security_binder_transaction(struct task_struct *from,
+ 				struct task_struct *to)
+ {
+ 	return call_int_hook(binder_transaction, 0, from, to);
+ }
++EXPORT_SYMBOL_GPL(security_binder_transaction);
+ 
+ int security_binder_transfer_binder(struct task_struct *from,
+ 				    struct task_struct *to)
+ {
+ 	return call_int_hook(binder_transfer_binder, 0, from, to);
+ }
++EXPORT_SYMBOL_GPL(security_binder_transfer_binder);
+ 
+ int security_binder_transfer_file(struct task_struct *from,
+ 				  struct task_struct *to, struct file *file)
+ {
+ 	return call_int_hook(binder_transfer_file, 0, from, to, file);
+ }
++EXPORT_SYMBOL_GPL(security_binder_transfer_file);
+ 
+ int security_ptrace_access_check(struct task_struct *child, unsigned int mode)
+ {
+-- 
+2.33.0
+
