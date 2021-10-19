@@ -4,8 +4,8 @@
 # Set the next two variables to ANYTHING that is not null to enable them
 
 # Selecting CacULE or CacULE-RDB scheduler, default:cacule
-#_cpusched='cacule'
-_cpusched='rdb'
+_cpusched='cacule'
+#_cpusched='rdb'
 
 
 # NUMA is optimized for multi-socket motherboards.
@@ -85,7 +85,7 @@ _zstd_module_level='normal'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=y
+_use_llvm_lto=
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
@@ -111,7 +111,7 @@ _localmodcfg=
 _use_current=
 
 # Tweak kernel options prior to a build via nconfig
-_makenconfig=y
+_makenconfig=
 
 
 if [ "$_cpusched" = "cacule" ]  && [ -n "$_use_llvm_lto" ]; then
@@ -149,15 +149,19 @@ source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "${_caculepatches}/v5.15/cacule-5.15-full.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-zstd.patch"
-  "${_patchsource}/0003-mm.patch"
-  "${_patchsource}/0004-lrng.patch"
-  "${_patchsource}/0005-fixes.patch"
-  "${_patchsource}/0007-bfq.patch"
-  "${_patchsource}/0008-cpu-arches.patch"
-  #  "${_patchsource}/0009-clearlinux.patch"
-  "${_patchsource}/0010-preempt-hz-cfs.patch"
+  "${_patchsource}/0001-mm.patch"
+  "${_patchsource}/0001-lrng.patch"
+  "${_patchsource}/0001-fixes.patch"
+  "${_patchsource}/0001-futex.patch"
+  "${_patchsource}/0001-cpu.patch"
+  "${_patchsource}/0001-hwmon.patch"
+  "${_patchsource}/0001-sitemap.patch"
+  "${_patchsource}/0001-bitops.patch"
+  "${_patchsource}/0001-disable-SCHEDUTIL.patch"
+  #  "${_patchsource}/0001-clearlinux.patch"
+  "${_patchsource}/0001-hz-dynamicpreept.patch"
   "${_patchsource}/misc/0002-init-Kconfig-enable-O3-for-all-arches.patch"
-  "${_patchsource}/misc/amd/0006-amd-cppc.patch"
+  "${_patchsource}/0001-pstate.patch"
   "auto-cpu-optimization.sh"
 )
 if [ -n "$_use_llvm_lto" ]; then
@@ -469,7 +473,7 @@ prepare() {
 build() {
   cd $_srcname
 
-  make ${BUILD_FLAGS[*]} all
+  make ${BUILD_FLAGS[*]} -j$(nproc) all
 }
 
 _package() {
@@ -588,16 +592,20 @@ done
 
 
 md5sums=('3577e4e5970c537de05e0a96ade385b5'
-         'fa6b45fa35f1f8b0283429ac9db069e9'
-         '0d27a2f6ac0b39eb8a441d9b879bcf55'
-         '422fe01f2e2b1ba1c2b9174fa1a75e40'
-         'dd7088b6dbdb3223f7ce44ca3ac6a2a4'
+         'f3f883a7af43bd61c84c9a892c32573e'
+         'afdbe964cd00357ef7248553ab9db091'
+         '2a8097ba46be56fbbe3967e9c34c9a0b'
+         'e6c5e75b6e71f7a3d81f5dbad64188a8'
          'e422617aff583cec11129e0f185e9549'
-         '14499396b682683e3413d5e585110684'
+         '7d5cf45bcce33f1ed82f660efb089d3c'
          'acbaad682b7660e691d756680a8a3274'
-         'd513cd85a62af5147bdff447d604c70f'
+         'b2a3fe5958abed934b14c345ab32a698'
          'ff4b20b981d9ae0bdda68f012b03e756'
+         '9788f0fb9ae2b72bd8bdab660c8cbddc'
+         '41f2c3ccfdef3ed7ceb43a345841933c'
+         '02ce3ecc02498f26a18a02717f808432'
+         '95243b2c7d4d3e56a38fabc85786afcc'
          'f88c3290ece724c81921059df14965cf'
          'ceb9020f754c9a0c3f526b38abc714dd'
-         '430972ae1e936f99d8dc2a1f4fdaf774'
+         '373a1df8cddeb7807b6adf7b2ab03bc2'
          '21c98f19e883879dd3336c1fa143fd31')
