@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-git clone https://aur.archlinux.org/linux-cacule.git
-git clone https://aur.archlinux.org/linux-cacule-rdb.git
-
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
 
 
