@@ -1,8 +1,8 @@
-pkgbase = linux-cachyos-pds
-	pkgdesc = Linux-pds Kernel by CachyOS and with some other patches and other improvements
+pkgbase = linux-cacule
+	pkgdesc = Linux-cacule Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.14.14
 	pkgrel = 1
-	url = https://github.com/CachyOS/linux-cachyos
+	url = https://github.com/ptr1337/linux-cacule
 	arch = x86_64
 	arch = x86_64_v3
 	license = GPL2
@@ -22,7 +22,8 @@ pkgbase = linux-cachyos-pds
 	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.14.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/arch-patches-v10/0001-arch-patches.patch
-	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0009-prjc_v5.14-r3.patch
+	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE/v5.14/cacule-5.14-full.patch
+	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0001-CK-TIMER.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0001-preempt-hz-cfs.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/cpufreq-patches/0001-cpufreq-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/misc/0008-remove-LightNVM.patch
@@ -52,9 +53,10 @@ pkgbase = linux-cachyos-pds
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0001-v4l2loopback.patch
 	source = auto-cpu-optimization.sh
 	md5sums = 9646d53502447936773c65cac149572c
-	md5sums = 6918c6961e213ae5ee0c9d374bb9a06b
+	md5sums = 8323695696b586914cfbcc332776ee1a
 	md5sums = 581faf85cd625c41bbdd0cadbd0e451e
-	md5sums = ff8c0963b6284f6b3940f983f3cb43d8
+	md5sums = 024a0126cfcd18e000a2241f35c4d69e
+	md5sums = 04c5865e765e07cff0649824c2a8d810
 	md5sums = f88c3290ece724c81921059df14965cf
 	md5sums = b87b77bd4273817f2b792d6fe965e417
 	md5sums = eb39a5681a153f5a1f5a67e8b9e957a5
@@ -84,8 +86,8 @@ pkgbase = linux-cachyos-pds
 	md5sums = 95eb4457f95f3f8dd153983612ee65c0
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-pds
-	pkgdesc = The Linux-pds Kernel by CachyOS and with some other patches and other improvements kernel and modules
+pkgname = linux-cacule
+	pkgdesc = The Linux-cacule Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
 	depends = initramfs
@@ -95,7 +97,7 @@ pkgname = linux-cachyos-pds
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-pds-headers
-	pkgdesc = Headers and scripts for building modules for the Linux-pds Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-pds=5.14.14
+pkgname = linux-cacule-headers
+	pkgdesc = Headers and scripts for building modules for the Linux-cacule Kernel by CachyOS and with some other patches and other improvements
+	depends = linux-cacule=5.14.14
 	depends = pahole

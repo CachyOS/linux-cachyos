@@ -47,10 +47,6 @@ _lrng_enable=y
 ## Samba3 Server
 _ksmbd_enable=
 
-# Tweak kernel options prior to a build via nconfig
-_makenconfig=
-
-
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
 
@@ -123,8 +119,8 @@ elif [ "$_cpusched" = "cacule" ]; then
 elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb
 fi
-pkgver=5.14.13
-pkgrel=2
+pkgver=5.14.14
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -141,7 +137,6 @@ _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
-  #        "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
   "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
   "${_caculepatches}/v5.14/cacule-5.14-full.patch"
   "${_patchsource}/0001-CK-TIMER.patch"
@@ -183,11 +178,11 @@ if [ -n "$_use_pgo" ]; then
 fi
 
 if [ -n "$_use_llvm_lto" ]; then
-  LLVMOPTS="LLVM=1 LLVM_IAS=1"
-  CLANGOPTS="CC=clang LD=ld.lld"
-else
-  LLVMOPTS=""
-  CLANGOPTS=""
+
+  BUILD_FLAGS=(
+    LLVM=1
+    LLVM_IAS=1
+  )
 fi
 
 export KBUILD_BUILD_HOST=archlinux
@@ -499,11 +494,11 @@ prepare() {
   fi
 
   echo "Applying default config..."
-  make $LLVMOPTS olddefconfig
-  make $LLVMOPTS -s kernelrelease > version
+  make ${BUILD_FLAGS[*]} olddefconfig
+  make ${BUILD_FLAGS[*]} -s kernelrelease > version
   echo "Prepared $pkgbase version $(<version)"
 
-  [[ -z "$_makenconfig" ]] || $LLVMOPTS nconfig
+  [[ -z "$_makenconfig" ]] || make ${BUILD_FLAGS[*]} nconfig
 
   ### Save configuration for later reuse
   cp -Tf ./.config "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
@@ -514,7 +509,7 @@ build() {
     echo -e "\E[1;31mCan't cd to ${srcdir:?}/linux-${pkgver} directory! Build failed! \E[0m"
     exit 1
   )
-  make $LLVMOPTS -j$(nproc) all
+  make ${BUILD_FLAGS[*]} -j$(nproc) all
 }
 
 _package() {
@@ -542,7 +537,7 @@ _package() {
   echo "${pkgbase}" | install -Dm644 /dev/stdin "${modulesdir}/pkgbase"
 
   echo "Installing modules..."
-  make  $CLANGOPTS INSTALL_MOD_PATH="${pkgdir:?}/usr" INSTALL_MOD_STRIP=1 modules_install
+  make  ${BUILD_FLAGS[*]} INSTALL_MOD_PATH="${pkgdir:?}/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
   rm "${modulesdir}/"{source,build}
@@ -636,7 +631,7 @@ _package-headers() {
 
 }
 
-md5sums=('dd8c7efa62d69eb9a50806f2b0d6da01'
+md5sums=('9646d53502447936773c65cac149572c'
          '6918c6961e213ae5ee0c9d374bb9a06b'
          '581faf85cd625c41bbdd0cadbd0e451e'
          '024a0126cfcd18e000a2241f35c4d69e'

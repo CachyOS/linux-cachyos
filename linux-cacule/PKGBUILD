@@ -3,12 +3,9 @@
 ### BUILD OPTIONS
 # Set the next two variables to ANYTHING that is not null to enable them
 
-## Choose which flavor of the baby scheduler, defailt is dl
-# Available options:
-# _sched_baby='dl'
-# _sched_baby='vrt'
-# _sched_baby='rr'
-_sched_baby='dl'
+# Selecting CacULE or CacULE-RDB scheduler, default:cacule
+_cpusched='cacule'
+#_cpusched='rdb'
 
 
 # NUMA is optimized for multi-socket motherboards.
@@ -26,8 +23,10 @@ _futex2=y
 _winesync=y
 
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
+_2k_HZ_ticks=
 _1k_HZ_ticks=
-_803_HZ_ticks=y
+_750_HZ_ticks=
+_600_HZ_ticks=y
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
@@ -47,10 +46,6 @@ _lrng_enable=y
 
 ## Samba3 Server
 _ksmbd_enable=
-
-# Tweak kernel options prior to a build via nconfig
-_makenconfig=
-
 
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
@@ -114,26 +109,23 @@ _use_current=
 # Tweak kernel options prior to a build via nconfig
 _makenconfig=
 
-if [ "$_sched_baby" = "dl" ] && [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-baby-lto
-elif  [ "$_sched_baby" = "vrt" ] && [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-cacule-baby-vrt-lto
-elif  [ "$_sched_baby" = "rr" ] && [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-baby-rr-lto
-elif [ "$_sched_baby" = "dl" ]; then
-  pkgbase=linux-cachyos-baby
-elif [ "$_sched_baby" = "vrt" ]; then
-  pkgbase=linux-cachyos-cacule-baby-vrt
-elif [ "$_sched_baby" = "rr" ]; then
-  pkgbase=linux-cachyos-baby-rr
+
+if [ "$_cpusched" = "cacule" ]  && [ -n "$_use_llvm_lto" ]; then
+  pkgbase=linux-cacule-lto
+elif  [ "$_cpusched" = "rdb" ] && [ -n "$_use_llvm_lto" ]; then
+  pkgbase=linux-cacule-rdb-lto
+elif [ "$_cpusched" = "cacule" ]; then
+  pkgbase=linux-cacule
+elif [ "$_cpusched" = "rdb" ]; then
+  pkgbase=linux-cacule-rdb
 fi
 pkgver=5.14.14
 pkgrel=1
 arch=(x86_64 x86_64_v3)
-pkgdesc='Linux-baby Kernel by CachyOS and with some other patches and other improvements'
-#_gittag=v${pkgver%.*}-${pkgver##*.}
+pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
+_gittag=v${pkgver%.*}-${pkgver##*.}
 arch=('x86_64' 'x86_64_v3')
-url="https://github.com/CachyOS/linux-cachyos"
+url="https://github.com/ptr1337/linux-cacule"
 license=('GPL2')
 options=('!strip')
 makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
@@ -141,10 +133,13 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
+_caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE"
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
   "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
+  "${_caculepatches}/v5.14/cacule-5.14-full.patch"
+  "${_patchsource}/0001-CK-TIMER.patch"
   "${_patchsource}/0001-preempt-hz-cfs.patch"
   "${_patchsource}/cpufreq-patches/0001-cpufreq-patches.patch"
   "${_patchsource}/misc/0008-remove-LightNVM.patch"
@@ -174,24 +169,6 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-v4l2loopback.patch"
   "auto-cpu-optimization.sh"
 )
-
-
-if  [ "$_sched_baby" = "rr" ]; then
-  source+=("${_patchsource}/baby/baby-rr-5.14.patch")
-  md5sums+=("SKIP")
-elif
-
-[ "$_sched_baby" = "vrt" ]; then
-  source+=("${_patchsource}/baby/baby-vrt-5.14.patch")
-  md5sums+=("SKIP")
-elif
-
-[ "$_sched_baby" = "dl" ]; then
-  source+=("${_patchsource}/baby/baby-dl-5.14.patch")
-  md5sums+=("SKIP")
-
-
-fi
 if [ -n "$_use_cfi" ]; then
   source+=("${_patchsource}/0002-clang-cfi.patch")
 fi
@@ -257,6 +234,13 @@ prepare() {
     source "${startdir}"/configure
     cpu_arch
   fi
+  ### Optionally set tickrate to 2000HZ
+  if [ -n "$_2k_HZ_ticks" ]; then
+    echo "Setting tick rate to 2k..."
+    scripts/config --disable CONFIG_HZ_300
+    scripts/config --enable CONFIG_HZ_2000
+    scripts/config --set-val CONFIG_HZ 2000
+  fi
 
   ### Optionally set tickrate to 1000
   if [ -n "$_1k_HZ_ticks" ]; then
@@ -266,14 +250,21 @@ prepare() {
     scripts/config --set-val CONFIG_HZ 1000
   fi
 
-  ### Optionally set tickrate to 803Hz
-  if [ -n "$_803_HZ_ticks" ]; then
-    echo "Setting tick rate to 803HZ..."
+  ### Optionally set tickrate to 750HZ
+  if [ -n "$_750_HZ_ticks" ]; then
+    echo "Setting tick rate to 750HZ..."
     scripts/config --disable CONFIG_HZ_300
-    scripts/config --enable CONFIG_HZ_803
-    scripts/config --set-val CONFIG_HZ 803
+    scripts/config --enable CONFIG_HZ_750
+    scripts/config --set-val CONFIG_HZ 750
   fi
 
+  ### Optionally set tickrate to 600HZ
+  if [ -n "$_600_HZ_ticks" ]; then
+    echo "Setting tick rate to 600HZ..."
+    scripts/config --disable CONFIG_HZ_300
+    scripts/config --enable CONFIG_HZ_600
+    scripts/config --set-val CONFIG_HZ 600
+  fi
   ### Optionally set tickrate to 500HZ
   if [ -n "$_500_HZ_ticks" ]; then
     echo "Setting tick rate to 500HZ..."
@@ -386,6 +377,17 @@ prepare() {
   if [ -n "$_use_llvm_lto" ]; then
     scripts/config --disable CONFIG_LTO_NONE
   fi
+  if [ "$_cpusched" = "cacule" ]; then
+    echo "Selecting CacULE scheduler..."
+    scripts/config --enable CONFIG_CACULE_SCHED
+    scripts/config --disable CONFIG_CACULE_RDB
+  fi
+  if [ "$_cpusched" = "rdb" ]; then
+    echo "Enabling CacULE-RDB scheduler..."
+    scripts/config --enable CONFIG_CACULE_SCHED
+    scripts/config --enable CONFIG_CACULE_RDB
+    scripts/config --set-val CONFIG_RDB_INTERVAL 19
+  fi
 
   ### Enable SMB3 Kernel Server
   if [ -n "$_ksmbd_enable" ]; then
@@ -445,8 +447,6 @@ prepare() {
   echo "Enabling FULLCONENAT..."
   scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
   scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
-  echo "Enable CFS ZENIFY"
-  scripts/config --enable CONFIG_ZEN_INTERACTIVE
   echo "Setting performance governor..."
   scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
   scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
@@ -454,43 +454,17 @@ prepare() {
   scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-  echo "Enable AMD PSTATE v3 driver"
-  scripts/config --enable CONFIG_X86_AMD_PSTATe
+  echo "Enable AMD PSTATE v2 driver"
+  scripts/config --enable CONFIG_X86_AMD_PSTATE
 
 
 
-  echo "Disable NUMA"
+  ### Optionally disable NUMA for 64-bit kernels only
+  # (x86 kernels do not support NUMA)
   if [ -n "$_NUMAdisable" ]; then
     echo "Disabling NUMA from kernel config..."
     scripts/config --disable CONFIG_NUMA
   fi
-
-  echo "Change config for baby scheduler"
-  scripts/config --enable CONFIG_HZ_PERIODIC
-  scripts/config --disable CONFIG_NO_HZ_IDLE
-  scripts/config --disable CONFIG_NO_HZ_FULL
-  scripts/config --disable CONFIG_NO_HZ
-  scripts/config --disable CONFIG_EXPERT
-  scripts/config --disable CONFIG_DEBUG_KERNEL
-  scripts/config --disable CONFIG_SCHED_DEBUG
-  scripts/config --disable CONFIG_SCHEDSTATS
-  scripts/config --disable NO_HZ
-  scripts/config --disable SCHED_AUTOGROUP
-  scripts/config --disable CGROUP_SCHED
-  scripts/config --disable UCLAMP_TASK
-  scripts/config --disable SCHED_CORE
-  scripts/config --enable CONFIG_BS_SCHED
-  scripts/config --disable CONFIG_HIGH_RES_TIMERS
-
-
-  echo "Setting performance governor..."
-  scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
-  scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_ONDEMAND
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-
 
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
@@ -563,7 +537,7 @@ _package() {
   echo "${pkgbase}" | install -Dm644 /dev/stdin "${modulesdir}/pkgbase"
 
   echo "Installing modules..."
-  make ${BUILD_FLAGS[*]} INSTALL_MOD_PATH="${pkgdir:?}/usr" INSTALL_MOD_STRIP=1 modules_install
+  make  ${BUILD_FLAGS[*]} INSTALL_MOD_PATH="${pkgdir:?}/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
   rm "${modulesdir}/"{source,build}
@@ -657,38 +631,39 @@ _package-headers() {
 
 }
 
-md5sums=('dd8c7efa62d69eb9a50806f2b0d6da01'
-  '6918c6961e213ae5ee0c9d374bb9a06b'
-  '581faf85cd625c41bbdd0cadbd0e451e'
-  'f88c3290ece724c81921059df14965cf'
-  'b87b77bd4273817f2b792d6fe965e417'
-  'eb39a5681a153f5a1f5a67e8b9e957a5'
-  'f0d84fc024b9933bc19db696e0393a4e'
-  'e45c7962a78d6e82a0d3808868cd6ac0'
-  '196d6ac961497aa880264b83160eb140'
-  '1eaf224f9f46096efb75c153b712d702'
-  '87c3ca227283a573646377e5d7e31089'
-  '7c0ff8bd5d8f1069ab34aec2060109c9'
-  'fd934f7d11131d5a5043e4aea640583b'
-  '8a96c5e8346bd5b430776ac8a41f96b0'
-  'c5cc719fcd48592d437610c19b9a997b'
-  '5c9334532387ae8df80cff9bb5890954'
-  '6787c78ba3e7b0a34fbba9c50da7e3b4'
-  '366c90b64f9582c0733b8fb607a07594'
-  '8adcaccbb5c0ebd4bc81144e16b92627'
-  '607228871a4127c31baae7b1d66866bc'
-  '28864f14bf33bad92e57bc48bc5c2c78'
-  'cfef1423ad1e6aecad63f0d5eacaea37'
-  '808981a36c81165953017e5e432c1fa1'
-  'f6a1c51adfc68fb7b52dc5715a9cb5a7'
-  'f818b58bb2c6a30cd6fe88a8bd434b90'
-  '0636779d32ba47bda25d3edb5fbd08c9'
-  '566435a0444ee45816599f2e0e362c7a'
-  'bb22330e270bf36ccf53cb04d6b496d2'
-  '4c493a3e0f3486be8ad1b6c67c9c6917'
-  '95eb4457f95f3f8dd153983612ee65c0'
-  '21c98f19e883879dd3336c1fa143fd31'
-'33d2a12bd688f79f453e71c3b4c22051')
+md5sums=('9646d53502447936773c65cac149572c'
+         '8323695696b586914cfbcc332776ee1a'
+         '581faf85cd625c41bbdd0cadbd0e451e'
+         '024a0126cfcd18e000a2241f35c4d69e'
+         '04c5865e765e07cff0649824c2a8d810'
+         'f88c3290ece724c81921059df14965cf'
+         'b87b77bd4273817f2b792d6fe965e417'
+         'eb39a5681a153f5a1f5a67e8b9e957a5'
+         'f0d84fc024b9933bc19db696e0393a4e'
+         'e45c7962a78d6e82a0d3808868cd6ac0'
+         '196d6ac961497aa880264b83160eb140'
+         '1eaf224f9f46096efb75c153b712d702'
+         '87c3ca227283a573646377e5d7e31089'
+         '7c0ff8bd5d8f1069ab34aec2060109c9'
+         'fd934f7d11131d5a5043e4aea640583b'
+         '8a96c5e8346bd5b430776ac8a41f96b0'
+         'c5cc719fcd48592d437610c19b9a997b'
+         '5c9334532387ae8df80cff9bb5890954'
+         '6787c78ba3e7b0a34fbba9c50da7e3b4'
+         '366c90b64f9582c0733b8fb607a07594'
+         '8adcaccbb5c0ebd4bc81144e16b92627'
+         '607228871a4127c31baae7b1d66866bc'
+         '28864f14bf33bad92e57bc48bc5c2c78'
+         'cfef1423ad1e6aecad63f0d5eacaea37'
+         '808981a36c81165953017e5e432c1fa1'
+         'f6a1c51adfc68fb7b52dc5715a9cb5a7'
+         'f818b58bb2c6a30cd6fe88a8bd434b90'
+         '0636779d32ba47bda25d3edb5fbd08c9'
+         '566435a0444ee45816599f2e0e362c7a'
+         'bb22330e270bf36ccf53cb04d6b496d2'
+         '4c493a3e0f3486be8ad1b6c67c9c6917'
+         '95eb4457f95f3f8dd153983612ee65c0'
+         '21c98f19e883879dd3336c1fa143fd31')
 
 pkgname=("$pkgbase" "$pkgbase-headers" )
 for _p in "${pkgname[@]}"; do

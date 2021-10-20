@@ -18,11 +18,11 @@ All kernels are prebuilt in two different march versions (x86_64 and x86_64_v3) 
 - 5 Different scheduler are supported, CacULE-,CFS-,baby-,bmq- and pds scheduler
 - GCC/CLANG Optimization with automatically found cpu arch or also selectable cpu arch
 - Choose between LLVM/LTO or GCC
-- Choose between 500Hz, , 750 Hz (defaut), 1000Hz, 2000Hz
+- Choose between 500Hz, , 600 Hz (defaut),750Hz, 1000Hz, 2000Hz
 - Improved BFQ Scheduler
 - Latest LRU Patch-set
 - BBRv2 tcp_congestion_control
-- LLVM ThinLTO provided with *-lto Kernel (in the cacgyos-repo)
+- LLVM ThinLTO provided with \*-lto Kernel (in the cachyos-repo)
 - LRNG Framework (default)
 - FUTEX, WINESYNC & FUTEX2 patch-set
 - Android ANBOX patch-set
@@ -78,7 +78,7 @@ cd repo
 sudo ./cachyos-repo.sh
 ```
 
---------------------------------------------------------------------------------
+---
 
 --
 
@@ -114,7 +114,7 @@ sudo ./cachyos-repo.sh
   ``\`
 ````
 
---------------------------------------------------------------------------------
+---
 
 ```
 This script will also backup your old pacman.conf.

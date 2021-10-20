@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-baby
 	pkgdesc = Linux-baby Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.14.13
-	pkgrel = 2
+	pkgver = 5.14.14
+	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -19,7 +19,7 @@ pkgbase = linux-cachyos-baby
 	makedepends = tar
 	makedepends = xz
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.13.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.14.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/arch-patches-v10/0001-arch-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0001-preempt-hz-cfs.patch
@@ -97,5 +97,5 @@ pkgname = linux-cachyos-baby
 
 pkgname = linux-cachyos-baby-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-baby Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-baby=5.14.13
+	depends = linux-cachyos-baby=5.14.14
 	depends = pahole

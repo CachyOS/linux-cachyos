@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-bmq
 	pkgdesc = Linux-bmq Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.14.13
-	pkgrel = 2
+	pkgver = 5.14.14
+	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -19,7 +19,7 @@ pkgbase = linux-cachyos-bmq
 	makedepends = tar
 	makedepends = xz
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.13.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.14.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/arch-patches-v10/0001-arch-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0009-prjc_v5.14-r3.patch
@@ -51,7 +51,7 @@ pkgbase = linux-cachyos-bmq
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0001-winesync.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0001-v4l2loopback.patch
 	source = auto-cpu-optimization.sh
-	md5sums = dd8c7efa62d69eb9a50806f2b0d6da01
+	md5sums = 9646d53502447936773c65cac149572c
 	md5sums = 6918c6961e213ae5ee0c9d374bb9a06b
 	md5sums = 581faf85cd625c41bbdd0cadbd0e451e
 	md5sums = ff8c0963b6284f6b3940f983f3cb43d8
@@ -97,5 +97,5 @@ pkgname = linux-cachyos-bmq
 
 pkgname = linux-cachyos-bmq-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-bmq Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-bmq=5.14.13
+	depends = linux-cachyos-bmq=5.14.14
 	depends = pahole
