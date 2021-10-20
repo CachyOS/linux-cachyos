@@ -128,7 +128,7 @@ elif [ "$_sched_baby" = "rr" ]; then
   pkgbase=linux-cachyos-baby-rr
 fi
 pkgver=5.14.14
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-baby Kernel by CachyOS and with some other patches and other improvements'
 #_gittag=v${pkgver%.*}-${pkgver##*.}
@@ -148,11 +148,14 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-preempt-hz-cfs.patch"
   "${_patchsource}/cpufreq-patches/0001-cpufreq-patches.patch"
   "${_patchsource}/misc/0008-remove-LightNVM.patch"
+  "${_patchsource}/0001-slub.patch"
+  "${_patchsource}/misc/amd/0011-amd-ptdma.patch"
+  "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/bbr2-patches/0001-bbr2-5.14-introduce-BBRv2.patch"
   "${_patchsource}/block-patches-v2/0001-block-patches.patch"
-  "${_patchsource}/btrfs-patches-v8/0001-btrfs-patches.patch"
+  "${_patchsource}/btrfs-patches-v9/0001-btrfs-patches.patch"
   "${_patchsource}/fixes-miscellaneous-v7/0001-fixes-miscellaneous.patch"
   "${_patchsource}/futex-xanmod-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch"
   "${_patchsource}/futex2-xanmod-patches-v2/0001-futex2-resync-from-gitlab.collabora.com.patch"
@@ -454,8 +457,9 @@ prepare() {
   scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-  echo "Enable AMD PSTATE v3 driver"
-  scripts/config --enable CONFIG_X86_AMD_PSTATe
+  echo "Enable AMD PSTATE v2 driver"
+  scripts/config --enable CONFIG_X86_AMD_PSTATE
+  scripts/config --enable CONFIG_AMD_PTDMA
 
 
 
@@ -480,17 +484,7 @@ prepare() {
   scripts/config --disable UCLAMP_TASK
   scripts/config --disable SCHED_CORE
   scripts/config --enable CONFIG_BS_SCHED
-  scripts/config --disable CONFIG_HIGH_RES_TIMERS
-
-
-  echo "Setting performance governor..."
-  scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
-  scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_ONDEMAND
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-
+  scripts/config --enable CONFIG_HIGH_RES_TIMERS
 
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
@@ -657,38 +651,41 @@ _package-headers() {
 
 }
 
-md5sums=('dd8c7efa62d69eb9a50806f2b0d6da01'
-  '6918c6961e213ae5ee0c9d374bb9a06b'
-  '581faf85cd625c41bbdd0cadbd0e451e'
-  'f88c3290ece724c81921059df14965cf'
-  'b87b77bd4273817f2b792d6fe965e417'
-  'eb39a5681a153f5a1f5a67e8b9e957a5'
-  'f0d84fc024b9933bc19db696e0393a4e'
-  'e45c7962a78d6e82a0d3808868cd6ac0'
-  '196d6ac961497aa880264b83160eb140'
-  '1eaf224f9f46096efb75c153b712d702'
-  '87c3ca227283a573646377e5d7e31089'
-  '7c0ff8bd5d8f1069ab34aec2060109c9'
-  'fd934f7d11131d5a5043e4aea640583b'
-  '8a96c5e8346bd5b430776ac8a41f96b0'
-  'c5cc719fcd48592d437610c19b9a997b'
-  '5c9334532387ae8df80cff9bb5890954'
-  '6787c78ba3e7b0a34fbba9c50da7e3b4'
-  '366c90b64f9582c0733b8fb607a07594'
-  '8adcaccbb5c0ebd4bc81144e16b92627'
-  '607228871a4127c31baae7b1d66866bc'
-  '28864f14bf33bad92e57bc48bc5c2c78'
-  'cfef1423ad1e6aecad63f0d5eacaea37'
-  '808981a36c81165953017e5e432c1fa1'
-  'f6a1c51adfc68fb7b52dc5715a9cb5a7'
-  'f818b58bb2c6a30cd6fe88a8bd434b90'
-  '0636779d32ba47bda25d3edb5fbd08c9'
-  '566435a0444ee45816599f2e0e362c7a'
-  'bb22330e270bf36ccf53cb04d6b496d2'
-  '4c493a3e0f3486be8ad1b6c67c9c6917'
-  '95eb4457f95f3f8dd153983612ee65c0'
-  '21c98f19e883879dd3336c1fa143fd31'
-'33d2a12bd688f79f453e71c3b4c22051')
+md5sums=('9646d53502447936773c65cac149572c'
+         '6918c6961e213ae5ee0c9d374bb9a06b'
+         '581faf85cd625c41bbdd0cadbd0e451e'
+         'f88c3290ece724c81921059df14965cf'
+         'b87b77bd4273817f2b792d6fe965e417'
+         'eb39a5681a153f5a1f5a67e8b9e957a5'
+         '0464f6f1267bae4d87ee97a305d32467'
+         'e2a4af58b9d784226792fdc71d2cabba'
+         '54f750c0e08b4e5b51a49c494a6891d6'
+         'f0d84fc024b9933bc19db696e0393a4e'
+         'e45c7962a78d6e82a0d3808868cd6ac0'
+         '196d6ac961497aa880264b83160eb140'
+         '1eaf224f9f46096efb75c153b712d702'
+         '08183676295d4a89a2c65b1bc326ae3f'
+         '7c0ff8bd5d8f1069ab34aec2060109c9'
+         'fd934f7d11131d5a5043e4aea640583b'
+         '8a96c5e8346bd5b430776ac8a41f96b0'
+         'c5cc719fcd48592d437610c19b9a997b'
+         '5c9334532387ae8df80cff9bb5890954'
+         '6787c78ba3e7b0a34fbba9c50da7e3b4'
+         '366c90b64f9582c0733b8fb607a07594'
+         '8adcaccbb5c0ebd4bc81144e16b92627'
+         '607228871a4127c31baae7b1d66866bc'
+         '28864f14bf33bad92e57bc48bc5c2c78'
+         'cfef1423ad1e6aecad63f0d5eacaea37'
+         '808981a36c81165953017e5e432c1fa1'
+         'f6a1c51adfc68fb7b52dc5715a9cb5a7'
+         'f818b58bb2c6a30cd6fe88a8bd434b90'
+         '0636779d32ba47bda25d3edb5fbd08c9'
+         '566435a0444ee45816599f2e0e362c7a'
+         'bb22330e270bf36ccf53cb04d6b496d2'
+         '4c493a3e0f3486be8ad1b6c67c9c6917'
+         '95eb4457f95f3f8dd153983612ee65c0'
+         '21c98f19e883879dd3336c1fa143fd31'
+         '33d2a12bd688f79f453e71c3b4c22051')
 
 pkgname=("$pkgbase" "$pkgbase-headers" )
 for _p in "${pkgname[@]}"; do

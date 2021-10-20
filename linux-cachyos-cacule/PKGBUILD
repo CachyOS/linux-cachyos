@@ -120,7 +120,7 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb
 fi
 pkgver=5.14.14
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -143,11 +143,14 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-preempt-hz-cfs.patch"
   "${_patchsource}/cpufreq-patches/0001-cpufreq-patches.patch"
   "${_patchsource}/misc/0008-remove-LightNVM.patch"
+  "${_patchsource}/0001-slub.patch"
+  "${_patchsource}/misc/amd/0011-amd-ptdma.patch"
+  "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/bbr2-patches/0001-bbr2-5.14-introduce-BBRv2.patch"
   "${_patchsource}/block-patches-v2/0001-block-patches.patch"
-  "${_patchsource}/btrfs-patches-v8/0001-btrfs-patches.patch"
+  "${_patchsource}/btrfs-patches-v9/0001-btrfs-patches.patch"
   "${_patchsource}/fixes-miscellaneous-v7/0001-fixes-miscellaneous.patch"
   "${_patchsource}/futex-xanmod-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch"
   "${_patchsource}/futex2-xanmod-patches-v2/0001-futex2-resync-from-gitlab.collabora.com.patch"
@@ -456,7 +459,7 @@ prepare() {
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
   echo "Enable AMD PSTATE v2 driver"
   scripts/config --enable CONFIG_X86_AMD_PSTATE
-
+  scripts/config --enable CONFIG_AMD_PTDMA
 
 
   ### Optionally disable NUMA for 64-bit kernels only
@@ -639,11 +642,14 @@ md5sums=('9646d53502447936773c65cac149572c'
          'f88c3290ece724c81921059df14965cf'
          'b87b77bd4273817f2b792d6fe965e417'
          'eb39a5681a153f5a1f5a67e8b9e957a5'
+         '0464f6f1267bae4d87ee97a305d32467'
+         'e2a4af58b9d784226792fdc71d2cabba'
+         '54f750c0e08b4e5b51a49c494a6891d6'
          'f0d84fc024b9933bc19db696e0393a4e'
          'e45c7962a78d6e82a0d3808868cd6ac0'
          '196d6ac961497aa880264b83160eb140'
          '1eaf224f9f46096efb75c153b712d702'
-         '87c3ca227283a573646377e5d7e31089'
+         '08183676295d4a89a2c65b1bc326ae3f'
          '7c0ff8bd5d8f1069ab34aec2060109c9'
          'fd934f7d11131d5a5043e4aea640583b'
          '8a96c5e8346bd5b430776ac8a41f96b0'
