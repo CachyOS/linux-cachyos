@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-TT
+pkgbase = linux-cachyos-tt
 	pkgdesc = Linux-TT Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.14.14
 	pkgrel = 1
@@ -88,7 +88,7 @@ pkgbase = linux-cachyos-TT
 	md5sums = 95eb4457f95f3f8dd153983612ee65c0
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-TT
+pkgname = linux-cachyos-tt
 	pkgdesc = The Linux-TT Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -99,7 +99,7 @@ pkgname = linux-cachyos-TT
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-TT-headers
+pkgname = linux-cachyos-tt-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-TT Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-TT=5.14.14
+	depends = linux-cachyos-tt=5.14.14
 	depends = pahole

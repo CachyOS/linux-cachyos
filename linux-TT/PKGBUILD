@@ -107,9 +107,9 @@ _use_current=
 _makenconfig=
 
 if [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-TT-lto
+  pkgbase=linux-tt-lto
 else
-  pkgbase=linux-TT
+  pkgbase=linux-tt
 fi
 pkgver=5.14.14
 pkgrel=1
