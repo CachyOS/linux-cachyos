@@ -8,6 +8,7 @@
 # _sched_baby='dl'
 # _sched_baby='vrt'
 # _sched_baby='rr'
+# _sched_babby='hrrm'
 _sched_baby='dl'
 
 
@@ -120,15 +121,21 @@ elif  [ "$_sched_baby" = "vrt" ] && [ -n "$_use_llvm_lto" ]; then
   pkgbase=linux-cachyos-cacule-baby-vrt-lto
 elif  [ "$_sched_baby" = "rr" ] && [ -n "$_use_llvm_lto" ]; then
   pkgbase=linux-cachyos-baby-rr-lto
+elif  [ "$_sched_baby" = "hrrn" ] && [ -n "$_use_llvm_lto" ]; then
+  pkgbase=linux-cachyos-baby-rr-lto
+elif  [ "$_sched_baby" = "tt" ] && [ -n "$_use_llvm_lto" ]; then
+  pkgbase=linux-cachyos-baby-rr-lto
 elif [ "$_sched_baby" = "dl" ]; then
   pkgbase=linux-cachyos-baby
 elif [ "$_sched_baby" = "vrt" ]; then
   pkgbase=linux-cachyos-cacule-baby-vrt
 elif [ "$_sched_baby" = "rr" ]; then
   pkgbase=linux-cachyos-baby-rr
+elif [ "$_sched_baby" = "hrrn" ]; then
+  pkgbase=linux-cachyos-baby-hrn
 fi
 pkgver=5.14.14
-pkgrel=2
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-baby Kernel by CachyOS and with some other patches and other improvements'
 #_gittag=v${pkgver%.*}-${pkgver##*.}
@@ -150,7 +157,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/misc/0008-remove-LightNVM.patch"
   "${_patchsource}/0001-slub.patch"
   "${_patchsource}/misc/amd/0011-amd-ptdma.patch"
-  "${_patchsource}/0001-clearlinux-patches.patch"
+#  "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/bbr2-patches/0001-bbr2-5.14-introduce-BBRv2.patch"
@@ -186,6 +193,16 @@ elif
 
 [ "$_sched_baby" = "vrt" ]; then
   source+=("${_patchsource}/baby/baby-vrt-5.14.patch")
+  md5sums+=("SKIP")
+elif
+
+[ "$_sched_baby" = "hrrn" ]; then
+  source+=("${_patchsource}/baby/baby-hrrn-5.14.patch")
+  md5sums+=("SKIP")
+elif
+
+[ "$_sched_baby" = "tt" ]; then
+  source+=("${_patchsource}/baby/baby-tt-5.14.patch")
   md5sums+=("SKIP")
 elif
 
@@ -448,8 +465,6 @@ prepare() {
   echo "Enabling FULLCONENAT..."
   scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
   scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
-  echo "Enable CFS ZENIFY"
-  scripts/config --enable CONFIG_ZEN_INTERACTIVE
   echo "Setting performance governor..."
   scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
   scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
@@ -485,6 +500,12 @@ prepare() {
   scripts/config --disable SCHED_CORE
   scripts/config --enable CONFIG_BS_SCHED
   scripts/config --enable CONFIG_HIGH_RES_TIMERS
+  echo "Enable Anbox"
+  scripts/config --enable CONFIG_ASHMEM
+  scripts/config --enable CONFIG_ANDROID
+  scripts/config --enable CONFIG_ANDROID_BINDER_IPC
+  scripts/config --enable CONFIG_ANDROID_BINDERFS
+  scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
 
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191

@@ -4,8 +4,8 @@
 # Set the next two variables to ANYTHING that is not null to enable them
 
 # Selecting CacULE or CacULE-RDB scheduler, default:cacule
-_cpusched='cacule'
-#_cpusched='rdb'
+#_cpusched='cacule'
+_cpusched='rdb'
 
 
 # NUMA is optimized for multi-socket motherboards.
@@ -81,7 +81,7 @@ _zstd_module_level='normal'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=
+_use_llvm_lto=y
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
@@ -120,7 +120,7 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb
 fi
 pkgver=5.14.14
-pkgrel=2
+pkgrel=3
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -460,6 +460,12 @@ prepare() {
   echo "Enable AMD PSTATE v2 driver"
   scripts/config --enable CONFIG_X86_AMD_PSTATE
   scripts/config --enable CONFIG_AMD_PTDMA
+  echo "Enable Anbox"
+  scripts/config --enable CONFIG_ASHMEM
+  scripts/config --enable CONFIG_ANDROID
+  scripts/config --enable CONFIG_ANDROID_BINDER_IPC
+  scripts/config --enable CONFIG_ANDROID_BINDERFS
+  scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
 
 
   ### Optionally disable NUMA for 64-bit kernels only
