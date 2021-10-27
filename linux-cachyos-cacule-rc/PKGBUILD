@@ -14,10 +14,10 @@ _cpusched='cfs'
 _NUMAdisable=y
 
 # Enable fsync
-_fsync=y
+_fsync=
 
 #enable futex2
-_futex2=y
+_futex2=
 
 #enable winesync
 _winesync=y
@@ -26,23 +26,23 @@ _winesync=y
 _2k_HZ_ticks=
 _1k_HZ_ticks=
 _750_HZ_ticks=
-_600_HZ_ticks=y
+_600_HZ_ticks=
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
-_mq_deadline_disable=y
+_mq_deadline_disable=
 
 ### Disable Kyber I/O scheduler
-_kyber_disable=y
+_kyber_disable=
 
 ### Enable protect file mappings under memory pressure
 _mm_protect=y
 
 ### Enable multigenerational LRU
-_lru_enable=y
+_lru_enable=
 
 ### Enable Linux Random Number Generator
-_lrng_enable=y
+_lrng_enable=
 
 ## Samba3 Server
 _ksmbd_enable=
@@ -81,7 +81,7 @@ _zstd_module_level='normal'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=
+_use_llvm_lto=y
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
@@ -149,14 +149,13 @@ source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-zstd-dev.patch"
   "${_patchsource}/0001-mm.patch"
-  "${_patchsource}/0001-lrng.patch"
+#  "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-fixes.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-sitemap.patch"
   "${_patchsource}/0001-bitops.patch"
-  "${_patchsource}/0001-zram.patch"
-  "${_patchsource}/0001-disable-SCHEDUTIL.patch"
+#  "${_patchsource}/0001-zram.patch"
   "${_patchsource}/cfs.patch"
   "${_patchsource}/0001-pstate.patch"
   "auto-cpu-optimization.sh"
