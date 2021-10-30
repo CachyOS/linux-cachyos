@@ -120,7 +120,7 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb
 fi
 pkgver=5.14.15
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -137,6 +137,7 @@ _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
+  "${_patchsource}/0001-5.14.15-fixes.patch"
   "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
   "${_caculepatches}/v5.14/cacule-5.14-full.patch"
   "${_patchsource}/0001-CK-TIMER.patch"
@@ -641,6 +642,7 @@ _package-headers() {
 
 md5sums=('54c6f1371128e1a80dd700f52223aa64'
          '6529bd047a9c58dd974669dff7e9e638'
+         '2808a1675cdd369bb0e26f3d44050fc0'
          '581faf85cd625c41bbdd0cadbd0e451e'
          '355493924bbb428dfc2255d5a30c68d0'
          '04c5865e765e07cff0649824c2a8d810'

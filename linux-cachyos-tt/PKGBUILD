@@ -112,7 +112,7 @@ else
   pkgbase=linux-cachyos-tt
 fi
 pkgver=5.14.15
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-TT Kernel by CachyOS and with some other patches and other improvements'
 #_gittag=v${pkgver%.*}-${pkgver##*.}
@@ -128,12 +128,12 @@ fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
+  "${_patchsource}/0001-5.14.15-fixes.patch"
+  "${_patchsource}/TT-Scheduler/0001-tt-5.14.patch"
   "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
-  "https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/TT/0001-Add-differnt-Hz-values-for-testing.patch"
-#  "${_patchsource}/amd64-patches/0001-AMD-PERF-PATCH.patch"
+  #  "${_patchsource}/amd64-patches/0001-AMD-PERF-PATCH.patch"
   "${_patchsource}/cpufreq-patches/0001-cpufreq-patches.patch"
   "${_patchsource}/misc/0008-remove-LightNVM.patch"
- # "${_patchsource}/0001-slub.patch"
   "${_patchsource}/amd64-patches/0001-amd64-patches.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
@@ -621,8 +621,9 @@ _package-headers() {
 
 md5sums=('54c6f1371128e1a80dd700f52223aa64'
          'b09057d8f5bd130039a6dc4e79c5dd9d'
+         '2808a1675cdd369bb0e26f3d44050fc0'
+         'f734c35a75c77b96193e86e307836ae5'
          '581faf85cd625c41bbdd0cadbd0e451e'
-         'e3fb2b27e176c9dea04881bec354b82b'
          'b87b77bd4273817f2b792d6fe965e417'
          'eb39a5681a153f5a1f5a67e8b9e957a5'
          'b1274beeffe2ef126cc67f0b3f50dbbd'

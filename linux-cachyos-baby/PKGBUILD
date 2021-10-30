@@ -135,7 +135,7 @@ elif [ "$_sched_baby" = "hrrn" ]; then
   pkgbase=linux-cachyos-baby-hrn
 fi
 pkgver=5.14.15
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-baby Kernel by CachyOS and with some other patches and other improvements'
 #_gittag=v${pkgver%.*}-${pkgver##*.}
@@ -151,6 +151,7 @@ fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
+  "${_patchsource}/0001-5.14.15-fixes.patch"
   "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
   "${_patchsource}/cpufreq-patches/0001-cpufreq-patches.patch"
   "${_patchsource}/misc/0008-remove-LightNVM.patch"
@@ -672,6 +673,7 @@ _package-headers() {
 
 md5sums=('54c6f1371128e1a80dd700f52223aa64'
          'b09057d8f5bd130039a6dc4e79c5dd9d'
+         '2808a1675cdd369bb0e26f3d44050fc0'
          '581faf85cd625c41bbdd0cadbd0e451e'
          'b87b77bd4273817f2b792d6fe965e417'
          'eb39a5681a153f5a1f5a67e8b9e957a5'

@@ -4,9 +4,8 @@
 # Set the next two variables to ANYTHING that is not null to enable them
 
 # Selecting CacULE or CacULE-RDB scheduler, default:cacule
-#_cpusched='cacule'
 #_cpusched='rdb'
-_cpusched='cfs'
+#_cpusched='tt'
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -14,10 +13,10 @@ _cpusched='cfs'
 _NUMAdisable=y
 
 # Enable fsync
-_fsync=
+_fsync=y
 
 #enable futex2
-_futex2=
+_futex2=y
 
 #enable winesync
 _winesync=y
@@ -26,26 +25,30 @@ _winesync=y
 _2k_HZ_ticks=
 _1k_HZ_ticks=
 _750_HZ_ticks=
-_600_HZ_ticks=
+_600_HZ_ticks=y
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
-_mq_deadline_disable=
+_mq_deadline_disable=y
 
 ### Disable Kyber I/O scheduler
-_kyber_disable=
+_kyber_disable=y
 
 ### Enable protect file mappings under memory pressure
 _mm_protect=y
 
 ### Enable multigenerational LRU
-_lru_enable=
+_lru_enable=y
 
 ### Enable Linux Random Number Generator
-_lrng_enable=
+_lrng_enable=y
 
 ## Samba3 Server
 _ksmbd_enable=
+
+# Tweak kernel options prior to a build via nconfig
+_makenconfig=y
+
 
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
@@ -84,7 +87,7 @@ _fork_brute=
 _use_llvm_lto=y
 
 # Enable it for using the LLVM CFI PATCH for a better security
-_use_cfi=
+_use_cfi=y
 
 ## Enable PGO (patch is failing when cfi is also used)
 _use_pgo=
@@ -110,19 +113,7 @@ _use_current=
 _makenconfig=y
 
 
-if [ "$_cpusched" = "cacule" ]  && [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-cacule-rc-lto
-elif  [ "$_cpusched" = "rdb" ] && [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-rc-rdb-lto
-elif  [ "$_cpusched" = "cfs" ] && [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-lto-rc
-elif [ "$_cpusched" = "cacule" ]; then
-  pkgbase=linux-cachyos-rc
-elif [ "$_cpusched" = "rdb" ]; then
-  pkgbase=linux-cachyos-rdb-rc
-elif [ "$_cpusched" = "cfs" ]; then
-  pkgbase=linux-cachyos-cfs-rc
-fi
+pkgbase=linux-cacule
 _major=5.15
 #_minor=1
 #_minorc=$((_minor+1))
@@ -131,7 +122,7 @@ pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 _stablerc=${_major}-${_rcver}
 _srcname=linux-${_stablerc}
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux-CacULE Kernel-RC by Hamad Marri and with some other patchsets'
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/cachyos/linux-cachyos"
@@ -146,18 +137,19 @@ _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
+  "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
+  "${_patchsource}/0001-amdpstate.patch"
   "${_patchsource}/0001-bbr2.patch"
-  "${_patchsource}/0001-zstd-dev.patch"
+  "${_patchsource}/0001-zstd.patch"
   "${_patchsource}/0001-mm.patch"
-#  "${_patchsource}/0001-lrng.patch"
+  "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-fixes.patch"
+  "${_patchsource}/0001-futex.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-sitemap.patch"
   "${_patchsource}/0001-bitops.patch"
-#  "${_patchsource}/0001-zram.patch"
-  "${_patchsource}/cfs.patch"
-  "${_patchsource}/0001-pstate.patch"
+  "${_patchsource}/0001-var.patch"
   "auto-cpu-optimization.sh"
 )
 if [ -n "$_use_llvm_lto" ]; then
@@ -416,17 +408,8 @@ prepare() {
   echo "Enabling FULLCONENAT..."
   scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
   scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
-  echo "Setting performance governor..."
-  scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
-  scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_PERFORMANCE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_ONDEMAND
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
   echo "Enable AMD PSTATE v2 driver"
   scripts/config --enable CONFIG_X86_AMD_PSTATE
-
 
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
@@ -589,18 +572,18 @@ done
 
 
 md5sums=('9d41c6fb84bd69b5e477c7cd302b0e4f'
-         '68f75878e157109443f6ce84655698dd'
+         '18aaf622d2e8292feec718c754a58ab3'
+         '146bf117e5aef77478aca8e2422d2554'
+         'a5cedf5e8027082246f9a485baf859c1'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
-         'e1a81b31c49278a74fddc67652a81785'
+         'e6c5e75b6e71f7a3d81f5dbad64188a8'
          'e422617aff583cec11129e0f185e9549'
          '7d5cf45bcce33f1ed82f660efb089d3c'
          'acbaad682b7660e691d756680a8a3274'
+         '7fa046fd98013a89ed5f57b18c612068'
          'ba2b51078c24de01aa604d24673326d6'
          '9788f0fb9ae2b72bd8bdab660c8cbddc'
          '41f2c3ccfdef3ed7ceb43a345841933c'
          '02ce3ecc02498f26a18a02717f808432'
-         '281aa269dfda2e45ea823382459cc934'
-         '95243b2c7d4d3e56a38fabc85786afcc'
-         'cc09e1371622949ad5e515c27defc75b'
-         '373a1df8cddeb7807b6adf7b2ab03bc2'
+         'bf01cd68a9f188bd9baa891f1c07ad30'
          '21c98f19e883879dd3336c1fa143fd31')

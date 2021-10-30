@@ -1,7 +1,7 @@
-pkgbase = linux-cachyos-cacule-rdb
+pkgbase = linux-cachyos-cacule
 	pkgdesc = Linux-cacule Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.14.15
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/ptr1337/linux-cacule
 	arch = x86_64
 	arch = x86_64_v3
@@ -21,6 +21,7 @@ pkgbase = linux-cachyos-cacule-rdb
 	options = !strip
 	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.15.tar.xz
 	source = config
+	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0001-5.14.15-fixes.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/arch-patches-v10/0001-arch-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE/v5.14/cacule-5.14-full.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14/0001-CK-TIMER.patch
@@ -56,6 +57,7 @@ pkgbase = linux-cachyos-cacule-rdb
 	source = auto-cpu-optimization.sh
 	md5sums = 54c6f1371128e1a80dd700f52223aa64
 	md5sums = 6529bd047a9c58dd974669dff7e9e638
+	md5sums = 2808a1675cdd369bb0e26f3d44050fc0
 	md5sums = 581faf85cd625c41bbdd0cadbd0e451e
 	md5sums = 355493924bbb428dfc2255d5a30c68d0
 	md5sums = 04c5865e765e07cff0649824c2a8d810
@@ -90,7 +92,7 @@ pkgbase = linux-cachyos-cacule-rdb
 	md5sums = 95eb4457f95f3f8dd153983612ee65c0
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-cacule-rdb
+pkgname = linux-cachyos-cacule
 	pkgdesc = The Linux-cacule Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -101,7 +103,7 @@ pkgname = linux-cachyos-cacule-rdb
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-cacule-rdb-headers
+pkgname = linux-cachyos-cacule-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-cacule Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-cacule-rdb=5.14.15
+	depends = linux-cachyos-cacule=5.14.15
 	depends = pahole

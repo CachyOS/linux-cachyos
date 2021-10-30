@@ -113,7 +113,7 @@ else
   pkgbase=linux-cachyos
 fi
 pkgver=5.14.15
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -129,12 +129,12 @@ fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
+  "${_patchsource}/0001-5.14.15-fixes.patch"
   "${_patchsource}/0001-CK-TIMER.patch"
   "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
   "${_patchsource}/0001-preempt-hz-cfs.patch"
   "${_patchsource}/cpufreq-patches/0001-cpufreq-patches.patch"
   "${_patchsource}/misc/0008-remove-LightNVM.patch"
-#  "${_patchsource}/0001-slub.patch"
   "${_patchsource}/amd64-patches/0001-amd64-patches.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
@@ -623,6 +623,7 @@ _package-headers() {
 
 md5sums=('54c6f1371128e1a80dd700f52223aa64'
          'b09057d8f5bd130039a6dc4e79c5dd9d'
+         '2808a1675cdd369bb0e26f3d44050fc0'
          '04c5865e765e07cff0649824c2a8d810'
          '581faf85cd625c41bbdd0cadbd0e451e'
          'f88c3290ece724c81921059df14965cf'
@@ -655,6 +656,8 @@ md5sums=('54c6f1371128e1a80dd700f52223aa64'
          '4c493a3e0f3486be8ad1b6c67c9c6917'
          '95eb4457f95f3f8dd153983612ee65c0'
          '21c98f19e883879dd3336c1fa143fd31')
+
+
 pkgname=("$pkgbase" "$pkgbase-headers" )
 for _p in "${pkgname[@]}"; do
   eval "package_$_p() {

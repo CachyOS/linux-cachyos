@@ -1,5 +1,5 @@
 pkgbase = linux-cacule
-	pkgdesc = Linux-CacULE Kernel-RC by Hamad Marri and with some other patchsets
+	pkgdesc = Linux-CachyOS Kernel-RC by Hamad Marri and with some other patchsets
 	pkgver = 5.15.rc7
 	pkgrel = 2
 	url = https://github.com/cachyos/linux-cachyos
@@ -18,10 +18,6 @@ pkgbase = linux-cacule
 	makedepends = perl
 	makedepends = tar
 	makedepends = xz
-	makedepends = clang
-	makedepends = llvm
-	makedepends = lld
-	makedepends = python
 	options = !strip
 	source = https://git.kernel.org/torvalds/t/linux-5.15-rc7.tar.gz
 	source = config
@@ -57,7 +53,7 @@ pkgbase = linux-cacule
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
 pkgname = linux-cacule
-	pkgdesc = The Linux-CacULE Kernel-RC by Hamad Marri and with some other patchsets kernel and modules
+	pkgdesc = The Linux-CachyOS Kernel-RC by Hamad Marri and with some other patchsets kernel and modules
 	depends = coreutils
 	depends = kmod
 	depends = initramfs
@@ -66,6 +62,6 @@ pkgname = linux-cacule
 	optdepends = modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig
 
 pkgname = linux-cacule-headers
-	pkgdesc = Headers and scripts for building modules for the Linux-CacULE Kernel-RC by Hamad Marri and with some other patchsets kernel
+	pkgdesc = Headers and scripts for building modules for the Linux-CachyOS Kernel-RC by Hamad Marri and with some other patchsets kernel
 	depends = linux-cacule=5.15.rc7
 	depends = pahole
