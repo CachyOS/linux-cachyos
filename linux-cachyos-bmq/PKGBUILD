@@ -114,8 +114,8 @@ if [ -n "$_use_llvm_lto" ]; then
 else
   pkgbase=linux-cachyos-bmq
 fi
-pkgver=5.14.15
-pkgrel=2
+pkgver=5.15
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-bmq Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -128,41 +128,24 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
-_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14"
+_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
-  "${_patchsource}/0001-5.14.15-fixes.patch"
-  "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
-  "${_patchsource}/0009-prjc_v5.14-r3.patch"
-  "${_patchsource}/0001-preempt-hz-cfs.patch"
-  "${_patchsource}/cpufreq-patches/0001-cpufreq-patches.patch"
-  "${_patchsource}/misc/0008-remove-LightNVM.patch"
-#  "${_patchsource}/0001-slub.patch"
-  "${_patchsource}/amd64-patches/0001-amd64-patches.patch"
-  "${_patchsource}/0001-clearlinux.patch"
-  "${_patchsource}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
-  "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
-  "${_patchsource}/bbr2-patches/0001-bbr2-5.14-introduce-BBRv2.patch"
-  "${_patchsource}/block-patches-v2/0001-block-patches.patch"
-  "${_patchsource}/btrfs-patches-v9/0001-btrfs-patches.patch"
-  "${_patchsource}/fixes-miscellaneous-v8/0001-fixes-miscellaneous.patch"
-  "${_patchsource}/futex-xanmod-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch"
-  "${_patchsource}/futex2-xanmod-patches-v2/0001-futex2-resync-from-gitlab.collabora.com.patch"
-  "${_patchsource}/ksmbd-patches-v20/0001-ksmbd-patches.patch"
-  "${_patchsource}/hwmon-patches-v6/0001-hwmon-patches.patch"
-  "${_patchsource}/lqx-patches/0001-lqx-patches.patch"
-  "${_patchsource}/lrng-patches-v3/0001-lrng-patches.patch"
-  "${_patchsource}/lru-patches-v4/0001-lru-patches.patch"
-  "${_patchsource}/pf-patches-v9/0001-pf-patches.patch"
-  "${_patchsource}/xanmod-patches-v2/0001-xanmod-patches.patch"
-  "${_patchsource}/zen-patches-v4/0001-zen-patches.patch"
-  "${_patchsource}/zstd-patches-v2/0001-zstd-patches.patch"
-  "${_patchsource}/security-patches/0001-security-patches.patch"
-  "${_patchsource}/zstd-upstream-patches-v7/0001-zstd-upstream-patches.patch"
-  "${_patchsource}/ntfs3-patches-v14/0001-ntfs3-patches.patch"
-  "${_patchsource}/0001-ksm.patch"
-  "${_patchsource}/0001-cpu-patches.patch"
-  "${_patchsource}/0001-winesync.patch"
+  "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
+  "${_patchsource}/0001-amd64-patches.patch"
+#  "${_patchsource}/0001-btrfs.patch"
+  "${_patchsource}/0001-amdpstate.patch"
+  "${_patchsource}/0001-bbr2.patch"
+  "${_patchsource}/0001-zstd.patch"
+  "${_patchsource}/0001-mm.patch"
+  "${_patchsource}/0001-lrng.patch"
+  "${_patchsource}/0001-fixes.patch"
+  "${_patchsource}/0001-futex.patch"
+  "${_patchsource}/0001-cpu.patch"
+  "${_patchsource}/0001-hwmon.patch"
+  "${_patchsource}/0001-sitemap.patch"
+  "${_patchsource}/0001-bitops.patch"
+  "${_patchsource}/0001-var.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "auto-cpu-optimization.sh"
 )

@@ -8,7 +8,7 @@
 # _sched_baby='dl'
 # _sched_baby='vrt'
 # _sched_baby='rr'
-# _sched_babby='hrrm'
+# _sched_baby='hrrm'
 _sched_baby='dl'
 
 
@@ -134,8 +134,8 @@ elif [ "$_sched_baby" = "rr" ]; then
 elif [ "$_sched_baby" = "hrrn" ]; then
   pkgbase=linux-cachyos-baby-hrn
 fi
-pkgver=5.14.15
-pkgrel=2
+pkgver=5.15
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-baby Kernel by CachyOS and with some other patches and other improvements'
 #_gittag=v${pkgver%.*}-${pkgver##*.}
@@ -148,38 +148,24 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
-_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.14"
+_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
-  "${_patchsource}/0001-5.14.15-fixes.patch"
-  "${_patchsource}/arch-patches-v10/0001-arch-patches.patch"
-  "${_patchsource}/cpufreq-patches/0001-cpufreq-patches.patch"
-  "${_patchsource}/misc/0008-remove-LightNVM.patch"
-  "${_patchsource}/amd64-patches/0001-amd64-patches.patch"
-  "${_patchsource}/0001-clearlinux-patches.patch"
-  "${_patchsource}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
-  "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
-  "${_patchsource}/bbr2-patches/0001-bbr2-5.14-introduce-BBRv2.patch"
-  "${_patchsource}/block-patches-v2/0001-block-patches.patch"
-  "${_patchsource}/btrfs-patches-v9/0001-btrfs-patches.patch"
-  "${_patchsource}/fixes-miscellaneous-v8/0001-fixes-miscellaneous.patch"
-  "${_patchsource}/futex-xanmod-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch"
-  "${_patchsource}/futex2-xanmod-patches-v2/0001-futex2-resync-from-gitlab.collabora.com.patch"
-  "${_patchsource}/ksmbd-patches-v20/0001-ksmbd-patches.patch"
-  "${_patchsource}/hwmon-patches-v6/0001-hwmon-patches.patch"
-  "${_patchsource}/lqx-patches/0001-lqx-patches.patch"
-  "${_patchsource}/lrng-patches-v3/0001-lrng-patches.patch"
-  "${_patchsource}/lru-patches-v4/0001-lru-patches.patch"
-  "${_patchsource}/pf-patches-v9/0001-pf-patches.patch"
-  "${_patchsource}/xanmod-patches-v2/0001-xanmod-patches.patch"
-  "${_patchsource}/zen-patches-v4/0001-zen-patches.patch"
-  "${_patchsource}/zstd-patches-v2/0001-zstd-patches.patch"
-  "${_patchsource}/security-patches/0001-security-patches.patch"
-  "${_patchsource}/zstd-upstream-patches-v7/0001-zstd-upstream-patches.patch"
-  "${_patchsource}/ntfs3-patches-v14/0001-ntfs3-patches.patch"
-  "${_patchsource}/0001-ksm.patch"
-  "${_patchsource}/0001-cpu-patches.patch"
-  "${_patchsource}/0001-winesync.patch"
+#  "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
+  "${_patchsource}/0001-amd64-patches.patch"
+#  "${_patchsource}/0001-btrfs.patch"
+  "${_patchsource}/0001-amdpstate.patch"
+  "${_patchsource}/0001-bbr2.patch"
+  "${_patchsource}/0001-zstd.patch"
+  "${_patchsource}/0001-mm.patch"
+  "${_patchsource}/0001-lrng.patch"
+  "${_patchsource}/0001-fixes.patch"
+  "${_patchsource}/0001-futex.patch"
+  "${_patchsource}/0001-cpu.patch"
+  "${_patchsource}/0001-hwmon.patch"
+  "${_patchsource}/0001-sitemap.patch"
+  "${_patchsource}/0001-bitops.patch"
+  "${_patchsource}/0001-var.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "auto-cpu-optimization.sh"
 )
@@ -505,6 +491,11 @@ prepare() {
   scripts/config --enable CONFIG_ANDROID_BINDER_IPC
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
+  echo "Enable NTFS"
+  scripts/config --enable CONFIG_NTFS3_FS_POSIX_ACL
+  scripts/config --enable CONFIG_NTFS3_FS
+  scripts/config --enable CONFIG_NTFS3_64BIT_CLUSTER
+  scripts/config --enable CONFIG_NTFS3_LZX_XPRESS
 
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
@@ -671,37 +662,21 @@ _package-headers() {
 
 }
 
-md5sums=('54c6f1371128e1a80dd700f52223aa64'
-         'b09057d8f5bd130039a6dc4e79c5dd9d'
-         '2808a1675cdd369bb0e26f3d44050fc0'
-         '581faf85cd625c41bbdd0cadbd0e451e'
-         'b87b77bd4273817f2b792d6fe965e417'
-         'eb39a5681a153f5a1f5a67e8b9e957a5'
-         'b1274beeffe2ef126cc67f0b3f50dbbd'
-         '54f750c0e08b4e5b51a49c494a6891d6'
-         'f0d84fc024b9933bc19db696e0393a4e'
-         'e45c7962a78d6e82a0d3808868cd6ac0'
-         '196d6ac961497aa880264b83160eb140'
-         '1eaf224f9f46096efb75c153b712d702'
-         '08183676295d4a89a2c65b1bc326ae3f'
-         'a4008ce93063573f7f1baaeb4ed3b12d'
-         'fd934f7d11131d5a5043e4aea640583b'
-         '8a96c5e8346bd5b430776ac8a41f96b0'
-         '67f36f551469ac2d7176cbb4c61872ff'
-         '7b5a8b5c7531a316618e6a4d529f8505'
-         '6787c78ba3e7b0a34fbba9c50da7e3b4'
-         '30fb6c409c94cae36e150ec88ae8f74e'
-         '8adcaccbb5c0ebd4bc81144e16b92627'
-         '607228871a4127c31baae7b1d66866bc'
-         '28864f14bf33bad92e57bc48bc5c2c78'
-         'b90912780974bd4ee160def1d02e30c5'
-         '808981a36c81165953017e5e432c1fa1'
-         'f6a1c51adfc68fb7b52dc5715a9cb5a7'
-         'e2013a225d186772851d566b4db89d53'
-         '0636779d32ba47bda25d3edb5fbd08c9'
-         '566435a0444ee45816599f2e0e362c7a'
-         'bb22330e270bf36ccf53cb04d6b496d2'
-         '4c493a3e0f3486be8ad1b6c67c9c6917'
+md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
+         '4abbc3c960dcf22624b2381acc9ffe00'
+         '174b5da1d1e4f17ccdabe62d7af8ffed'
+         'a5cedf5e8027082246f9a485baf859c1'
+         '2a8097ba46be56fbbe3967e9c34c9a0b'
+         'e6c5e75b6e71f7a3d81f5dbad64188a8'
+         'e422617aff583cec11129e0f185e9549'
+         '7d5cf45bcce33f1ed82f660efb089d3c'
+         'acbaad682b7660e691d756680a8a3274'
+         '7fa046fd98013a89ed5f57b18c612068'
+         'ba2b51078c24de01aa604d24673326d6'
+         '9788f0fb9ae2b72bd8bdab660c8cbddc'
+         '41f2c3ccfdef3ed7ceb43a345841933c'
+         '02ce3ecc02498f26a18a02717f808432'
+         'bf01cd68a9f188bd9baa891f1c07ad30'
          '95eb4457f95f3f8dd153983612ee65c0'
          '21c98f19e883879dd3336c1fa143fd31'
          '33d2a12bd688f79f453e71c3b4c22051')
