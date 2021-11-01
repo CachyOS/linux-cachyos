@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-rm -rf linux-cachyos-bmq linux-cachyos-pds linux-cachyos-cacule-lts 
-
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
 
 

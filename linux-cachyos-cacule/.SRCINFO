@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-cacule
 	pkgdesc = Linux-cacule Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/ptr1337/linux-cacule
 	arch = x86_64
 	arch = x86_64_v3
@@ -39,7 +39,7 @@ pkgbase = linux-cachyos-cacule
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-v4l2loopback.patch
 	source = auto-cpu-optimization.sh
 	md5sums = 071d49ff4e020d58c04f9f3f76d3b594
-	md5sums = b197d6e288f503ff9b74ff1b6433810d
+	md5sums = a7454015d410fb782998978af9fb4898
 	md5sums = afdbe964cd00357ef7248553ab9db091
 	md5sums = 146bf117e5aef77478aca8e2422d2554
 	md5sums = 174b5da1d1e4f17ccdabe62d7af8ffed

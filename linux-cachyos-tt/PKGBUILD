@@ -112,7 +112,7 @@ else
   pkgbase=linux-cachyos-tt
 fi
 pkgver=5.15
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-TT Kernel by CachyOS and with some other patches and other improvements'
 #_gittag=v${pkgver%.*}-${pkgver##*.}
@@ -604,7 +604,7 @@ _package-headers() {
 }
 
 md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
-         '18aaf622d2e8292feec718c754a58ab3'
+         'a7454015d410fb782998978af9fb4898'
          'f734c35a75c77b96193e86e307836ae5'
          '174b5da1d1e4f17ccdabe62d7af8ffed'
          'a5cedf5e8027082246f9a485baf859c1'
@@ -619,7 +619,8 @@ md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
          '41f2c3ccfdef3ed7ceb43a345841933c'
          '02ce3ecc02498f26a18a02717f808432'
          'bf01cd68a9f188bd9baa891f1c07ad30'
-         '95eb4457f95f3f8dd153983612ee65c0')
+         '95eb4457f95f3f8dd153983612ee65c0'
+         '21c98f19e883879dd3336c1fa143fd31')
 
 pkgname=("$pkgbase" "$pkgbase-headers" )
 for _p in "${pkgname[@]}"; do

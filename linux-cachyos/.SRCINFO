@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -38,7 +38,7 @@ pkgbase = linux-cachyos
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-v4l2loopback.patch
 	source = auto-cpu-optimization.sh
 	md5sums = 071d49ff4e020d58c04f9f3f76d3b594
-	md5sums = 6a516501ccd87ef3dc5bcebc9a01e3d2
+	md5sums = a7454015d410fb782998978af9fb4898
 	md5sums = 146bf117e5aef77478aca8e2422d2554
 	md5sums = 174b5da1d1e4f17ccdabe62d7af8ffed
 	md5sums = a5cedf5e8027082246f9a485baf859c1

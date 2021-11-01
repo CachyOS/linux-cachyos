@@ -113,7 +113,7 @@ else
   pkgbase=linux-cachyos
 fi
 pkgver=5.15
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -610,7 +610,7 @@ _package-headers() {
 }
 
 md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
-         '6a516501ccd87ef3dc5bcebc9a01e3d2'
+         'a7454015d410fb782998978af9fb4898'
          '146bf117e5aef77478aca8e2422d2554'
          '174b5da1d1e4f17ccdabe62d7af8ffed'
          'a5cedf5e8027082246f9a485baf859c1'
