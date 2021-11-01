@@ -9,7 +9,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
 - Baby Deadline Scheduler by Hamad Marri - linux-cachyos-baby
-- Task Type Scheduler by Hamad Marri (TT) - linux-cachyos-TT
+- Task Type Scheduler by Hamad Marri (TT) - linux-cachyos-tt
 
 **All kernels are prebuilt in two different march versions (x86_64 and x86_64_v3) and also with the lto enabled kernels in the cachyos repo.**
 

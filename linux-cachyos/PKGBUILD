@@ -113,7 +113,7 @@ else
   pkgbase=linux-cachyos
 fi
 pkgver=5.15
-pkgrel=2
+pkgrel=3
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -129,22 +129,30 @@ fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
+  "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
   "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
-  "${_patchsource}/0001-amd64-patches.patch"
-#  "${_patchsource}/0001-btrfs.patch"
-  "${_patchsource}/0001-amdpstate.patch"
+  "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
+  "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
-  "${_patchsource}/0001-zstd.patch"
-  "${_patchsource}/0001-mm.patch"
-  "${_patchsource}/0001-lrng.patch"
-  "${_patchsource}/0001-fixes.patch"
+  "${_patchsource}/0001-clearlinux-patches.patch"
+  "${_patchsource}/0001-cpu-patches.patch"
+  "${_patchsource}/0001-cpufreq-patches.patch"
+  "${_patchsource}/0001-block-patches.patch"
+  "${_patchsource}/0001-btrfs-patches.patch"
+  "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-futex.patch"
-  "${_patchsource}/0001-cpu.patch"
-  "${_patchsource}/0001-hwmon.patch"
-  "${_patchsource}/0001-sitemap.patch"
-  "${_patchsource}/0001-bitops.patch"
-  "${_patchsource}/0001-var.patch"
+  "${_patchsource}/0001-hwmon-patches.patch"
+  #  "${_patchsource}/0001-ksm-patches.patch"
+  "${_patchsource}/0001-sched.patch"
+  "${_patchsource}/0001-mm.patch"
+  "${_patchsource}/0001-lqx-patches.patch"
+  "${_patchsource}/0001-lrng-patches.patch"
+  "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
+  #  "${_patchsource}/0001-xanmod-patches.patch"
+  "${_patchsource}/0001-zen-patches.patch"
+  "${_patchsource}/0001-zstd-patches.patch"
+  "${_patchsource}/0001-zstd-upstream-patches.patch"
   "auto-cpu-optimization.sh"
 )
 if [ -n "$_use_cfi" ]; then
@@ -610,22 +618,29 @@ _package-headers() {
 }
 
 md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
-         'a7454015d410fb782998978af9fb4898'
+         'ca311453b9de38a45bd65beaef256f44'
+         'cf26387aadf2a90428350ac246b070c9'
          '146bf117e5aef77478aca8e2422d2554'
-         '174b5da1d1e4f17ccdabe62d7af8ffed'
-         'a5cedf5e8027082246f9a485baf859c1'
+         'a2f2715c541983f81fbcd22d8c4f2919'
+         '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
-         'e6c5e75b6e71f7a3d81f5dbad64188a8'
-         'e422617aff583cec11129e0f185e9549'
-         '7d5cf45bcce33f1ed82f660efb089d3c'
-         'acbaad682b7660e691d756680a8a3274'
+         '0b6d09bdd920f4c31c05fdeaa0740548'
+         'd7f5fefd8ae018999e2b55073aaca706'
+         '846859fbcd82df462449d763b41cc641'
+         'd6452799e92e21e8f8bea1fddeec60e2'
+         '2b793d08fe0033546a7264a565af51f3'
+         'afe09c5a3e67eb678dac3ce92312e602'
          '7fa046fd98013a89ed5f57b18c612068'
-         'ba2b51078c24de01aa604d24673326d6'
-         '9788f0fb9ae2b72bd8bdab660c8cbddc'
-         '41f2c3ccfdef3ed7ceb43a345841933c'
-         '02ce3ecc02498f26a18a02717f808432'
-         'bf01cd68a9f188bd9baa891f1c07ad30'
-         '95eb4457f95f3f8dd153983612ee65c0'
+         'a1c6a106ddbbff6be6711f6a72706cb0'
+         'a0aac29317844c7c4b03639c76d1219c'
+         '500f49b7f8ebe52f10ce473e50522b08'
+         '39c65dd4eeec0dfedbf79ca5e43276d5'
+         'bac586853f924588e24869d8aa62f5be'
+         'bc64b1d1a9c95b07c28457f7214ebf81'
+         '8cb0301d159b59727b7bdd09350e2a9f'
+         'de6db1147385c058b2e94df3c1739fdf'
+         'bf58290793d3a095ef95fb1fac2de89a'
+         'a86ed27c2ef70973502660ca6804d6fe'
          '21c98f19e883879dd3336c1fa143fd31')
 
 
