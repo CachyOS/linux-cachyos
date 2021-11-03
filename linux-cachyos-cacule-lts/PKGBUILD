@@ -22,7 +22,7 @@ _500_HZ_ticks=
 ### Enable protect file mappings under memory pressure
 _mm_protect=y
 pkgbase=linux-cachyos-cacule-lts
-pkgver=5.10.76
+pkgver=5.10.77
 pkgrel=1
 pkgdesc='LTS Linux'
 url="https://www.kernel.org/"
@@ -59,8 +59,8 @@ source=(
   #  "${_patchsource}/ksm-patches/0001-ksm-patches.patch"
   #  "${_patchsource}/v4l2loopback-patches-v2/0001-v4l2loopback-patches.patch"
 )
-sha256sums=('480a09ba1962862ff18df9453fa0df6ba11cbe19eefedeab81bf2c84f49e1890'
-            'a6177905fb3fd5f187dc33f07d175ae6715bd25225540d5aaee2900c5785765d'
+sha256sums=('d3b64edfc1dd7212e62ed733aeeb73d64ffd6d9658d322d44cddf1b41d5b8fc3'
+            '0122c24ac89b05d3e1f278ec33fcb17997ad6b3e5b6fcd0da70c18ef1b899232'
             '9ec9ac50a8bdd645c456feab4a0ca9b7ffe6dcd0933a89ba96112f8bdedbf0ae'
             '3d4a0602425000d18162fdd45c6f13dd1c5ef78ef3b5b7f19365a8b0cf030c3a'
             '152e251586eec29990fa4cc30c561b7e49acb765434b70634501b398e4c1fe2e'

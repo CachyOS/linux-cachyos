@@ -120,7 +120,7 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb
 fi
 pkgver=5.15
-pkgrel=3
+pkgrel=4
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -146,18 +146,20 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-cpufreq-patches.patch"
-  "${_patchsource}/0001-block-patches.patch"
+  "${_patchsource}/0001-block-backport.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-futex.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
-  #  "${_patchsource}/0001-ksm-patches.patch"
+  "${_patchsource}/0001-acpi.patch"
+  "${_patchsource}/0001-ksmbd-patches.patch"
   "${_patchsource}/0001-sched.patch"
-  "${_patchsource}/0001-mm.patch"
+  "${_patchsource}/0001-lru-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
+#  "${_patchsource}/0001-rcu-next.patch"
   #  "${_patchsource}/0001-xanmod-patches.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
