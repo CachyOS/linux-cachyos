@@ -130,7 +130,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "config"
   "${_patchsource}/TT/0001-tt-r2-5.15.patch"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-  "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
+#  "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
@@ -618,7 +618,6 @@ md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
          'ca311453b9de38a45bd65beaef256f44'
          'c95674556e24ba9fda18aa322bed59eb'
          'cf26387aadf2a90428350ac246b070c9'
-         '9f454068cccf7dcfc80c2e65c92ed99b'
          'a2f2715c541983f81fbcd22d8c4f2919'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
