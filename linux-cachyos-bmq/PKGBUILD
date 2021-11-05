@@ -128,7 +128,7 @@ fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
-  "${_patchsource}/0001-prjc-5.15-r0.patch"
+  "${_patchsource}/0001-prjc-patches.patch"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
   "${_patchsource}/0001-backport.patch"
   "${_patchsource}/0001-misc.patch"
@@ -138,14 +138,14 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-cpufreq-patches.patch"
-  "${_patchsource}/0001-block-backport.patch"
+  #  "${_patchsource}/0001-block-backport.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-futex.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-acpi.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-#  "${_patchsource}/0001-sched.patch"
+  #  "${_patchsource}/0001-sched.patch"
   "${_patchsource}/0001-lru-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
@@ -617,7 +617,7 @@ _package-headers() {
 
 md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
          'ca311453b9de38a45bd65beaef256f44'
-         '74869116146ec746f2a9713df25eef01'
+         '3458cd35e4b13db668de0b711d8f529b'
          'cf26387aadf2a90428350ac246b070c9'
          '910f26cc108ca59bc7eac2f98059991c'
          '9b69c2bb5bd14add123fdf1164b2225d'
@@ -627,7 +627,6 @@ md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
          '0b6d09bdd920f4c31c05fdeaa0740548'
          'd7f5fefd8ae018999e2b55073aaca706'
          '4792a194feb0e9267f8660f38746f4fb'
-         'f63a58cf2bac9f9094705d880ed886d3'
          '2b793d08fe0033546a7264a565af51f3'
          '00decf9061d63b59d6a2857f4bc681df'
          '7fa046fd98013a89ed5f57b18c612068'
