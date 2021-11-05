@@ -134,8 +134,8 @@ elif [ "$_sched_baby" = "rr" ]; then
 elif [ "$_sched_baby" = "hrrn" ]; then
   pkgbase=linux-cachyos-baby-hrn
 fi
-pkgver=5.15
-pkgrel=4
+pkgver=5.15.1
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-baby Kernel by CachyOS and with some other patches and other improvements'
 #_gittag=v${pkgver%.*}-${pkgver##*.}

@@ -25,8 +25,8 @@ _winesync=y
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
 _2k_HZ_ticks=
 _1k_HZ_ticks=
-_750_HZ_ticks=y
-_600_HZ_ticks=
+_750_HZ_ticks=
+_600_HZ_ticks=y
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
@@ -119,8 +119,8 @@ elif [ "$_cpusched" = "cacule" ]; then
 elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cacule-rdb
 fi
-pkgver=5.15
-pkgrel=3
+pkgver=5.15.1
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}

@@ -111,8 +111,8 @@ if [ -n "$_use_llvm_lto" ]; then
 else
   pkgbase=linux-cachyos-bmq
 fi
-pkgver=5.15
-pkgrel=2
+pkgver=5.15.1
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-bmq Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}

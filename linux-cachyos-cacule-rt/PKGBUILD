@@ -3,23 +3,30 @@
 ### BUILD OPTIONS
 # Set the next two variables to ANYTHING that is not null to enable them
 
+# Selecting CacULE or CacULE-RDB scheduler, default:cacule
+_cpusched='cacule'
+#_cpusched='rdb'
+
+
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
 _NUMAdisable=y
 
 # Enable fsync
-_fsync=y
+_fsync=
 
 #enable futex2
-_futex2=y
+_futex2=
 
 #enable winesync
-_winesync=y
+_winesync=
 
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
+_2k_HZ_ticks=
 _1k_HZ_ticks=
-_803_HZ_ticks=y
+_750_HZ_ticks=y
+_600_HZ_ticks=
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
@@ -32,17 +39,13 @@ _kyber_disable=y
 _mm_protect=y
 
 ### Enable multigenerational LRU
-_lru_enable=y
+_lru_enable=
 
 ### Enable Linux Random Number Generator
-_lrng_enable=y
+_lrng_enable=
 
 ## Samba3 Server
 _ksmbd_enable=
-
-# Tweak kernel options prior to a build via nconfig
-_makenconfig=
-
 
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
@@ -106,18 +109,23 @@ _use_current=
 # Tweak kernel options prior to a build via nconfig
 _makenconfig=
 
-if [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-tt-lto
-else
-  pkgbase=linux-cachyos-tt
+
+if [ "$_cpusched" = "cacule" ]  && [ -n "$_use_llvm_lto" ]; then
+  pkgbase=linux-cachyos-cacule-rt-lto
+elif  [ "$_cpusched" = "rdb" ] && [ -n "$_use_llvm_lto" ]; then
+  pkgbase=linux-cachyos-cacule-rdb-rt-lto
+elif [ "$_cpusched" = "cacule" ]; then
+  pkgbase=linux-cachyos-cacule-rt
+elif [ "$_cpusched" = "rdb" ]; then
+  pkgbase=linux-cachyos-cacule-rdb-rt
 fi
-pkgver=5.15.1
+pkgver=5.15
 pkgrel=1
 arch=(x86_64 x86_64_v3)
-pkgdesc='Linux-TT Kernel by CachyOS and with some other patches and other improvements'
-#_gittag=v${pkgver%.*}-${pkgver##*.}
+pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
+_gittag=v${pkgver%.*}-${pkgver##*.}
 arch=('x86_64' 'x86_64_v3')
-url="https://github.com/CachyOS/linux-cachyos"
+url="https://github.com/ptr1337/linux-cacule"
 license=('GPL2')
 options=('!strip')
 makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
@@ -125,12 +133,16 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
+_caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE"
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
-  "${_patchsource}/TT/0001-tt-r2-5.15.patch"
+  "${_patchsource}/RT/0001-5.15-rt17.patch"
+  "${_caculepatches}/v5.15/cacule-5.15-rt-full.patch"
+#  "${_patchsource}/0001-futex.patch"
+#  "${_patchsource}/0001-sched.patch"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-#  "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
+  "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
@@ -140,23 +152,20 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-block-backport.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-fixes-miscellaneous.patch"
-  "${_patchsource}/0001-futex.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
-  "${_patchsource}/0001-acpi.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-  "${_patchsource}/0001-sched.patch"
-  "${_patchsource}/0001-lru-patches.patch"
+#  "${_patchsource}/0001-mm.patch"
   "${_patchsource}/0001-lqx-patches.patch"
-  "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
-#  "${_patchsource}/0001-rcu-next.patch"
-  #  "${_patchsource}/0001-xanmod-patches.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-zstd-upstream-patches.patch"
   "auto-cpu-optimization.sh"
 )
+if [ -n "$_use_cfi" ]; then
+  source+=("${_patchsource}/0002-clang-cfi.patch")
+fi
 
 if [ -n "$_use_pgo" ]; then
   source+=("${_patchsource}/0001-PGO.patch")
@@ -219,6 +228,13 @@ prepare() {
     source "${startdir}"/configure
     cpu_arch
   fi
+  ### Optionally set tickrate to 2000HZ
+  if [ -n "$_2k_HZ_ticks" ]; then
+    echo "Setting tick rate to 2k..."
+    scripts/config --disable CONFIG_HZ_300
+    scripts/config --enable CONFIG_HZ_2000
+    scripts/config --set-val CONFIG_HZ 2000
+  fi
 
   ### Optionally set tickrate to 1000
   if [ -n "$_1k_HZ_ticks" ]; then
@@ -228,14 +244,21 @@ prepare() {
     scripts/config --set-val CONFIG_HZ 1000
   fi
 
-  ### Optionally set tickrate to 803Hz
-  if [ -n "$_803_HZ_ticks" ]; then
-    echo "Setting tick rate to 803HZ..."
+  ### Optionally set tickrate to 750HZ
+  if [ -n "$_750_HZ_ticks" ]; then
+    echo "Setting tick rate to 750HZ..."
     scripts/config --disable CONFIG_HZ_300
-    scripts/config --enable CONFIG_HZ_803
-    scripts/config --set-val CONFIG_HZ 803
+    scripts/config --enable CONFIG_HZ_750
+    scripts/config --set-val CONFIG_HZ 750
   fi
 
+  ### Optionally set tickrate to 600HZ
+  if [ -n "$_600_HZ_ticks" ]; then
+    echo "Setting tick rate to 600HZ..."
+    scripts/config --disable CONFIG_HZ_300
+    scripts/config --enable CONFIG_HZ_600
+    scripts/config --set-val CONFIG_HZ 600
+  fi
   ### Optionally set tickrate to 500HZ
   if [ -n "$_500_HZ_ticks" ]; then
     echo "Setting tick rate to 500HZ..."
@@ -348,6 +371,17 @@ prepare() {
   if [ -n "$_use_llvm_lto" ]; then
     scripts/config --disable CONFIG_LTO_NONE
   fi
+  if [ "$_cpusched" = "cacule" ]; then
+    echo "Selecting CacULE scheduler..."
+    scripts/config --enable CONFIG_CACULE_SCHED
+    scripts/config --disable CONFIG_CACULE_RDB
+  fi
+  if [ "$_cpusched" = "rdb" ]; then
+    echo "Enabling CacULE-RDB scheduler..."
+    scripts/config --enable CONFIG_CACULE_SCHED
+    scripts/config --enable CONFIG_CACULE_RDB
+    scripts/config --set-val CONFIG_RDB_INTERVAL 19
+  fi
 
   ### Enable SMB3 Kernel Server
   if [ -n "$_ksmbd_enable" ]; then
@@ -411,43 +445,32 @@ prepare() {
   scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
   scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_ONDEMAND
+  scripts/config --enable CONFIG_CPU_FREQ_GOV_PERFORMANCE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
   echo "Enable AMD PSTATE v2 driver"
   scripts/config --enable CONFIG_X86_AMD_PSTATE
   scripts/config --enable CONFIG_AMD_PTDMA
-
-
-
-  echo "Disable NUMA"
-  if [ -n "$_NUMAdisable" ]; then
-    echo "Disabling NUMA from kernel config..."
-    scripts/config --disable CONFIG_NUMA
-  fi
-
-  echo "Change config for baby scheduler"
-  scripts/config --enable CONFIG_HZ_PERIODIC
-  scripts/config --disable CONFIG_NO_HZ_IDLE
-  scripts/config --disable CONFIG_NO_HZ_FULL
-  scripts/config --disable CONFIG_NO_HZ
-  scripts/config --disable CONFIG_EXPERT
-  scripts/config --disable CONFIG_DEBUG_KERNEL
-  scripts/config --disable CONFIG_SCHED_DEBUG
-  scripts/config --disable CONFIG_SCHEDSTATS
-  scripts/config --disable NO_HZ
-  scripts/config --disable SCHED_AUTOGROUP
-  scripts/config --disable CGROUP_SCHED
-  scripts/config --disable UCLAMP_TASK
-  scripts/config --disable SCHED_CORE
-  scripts/config --enable CONFIG_TT_SCHED
-  scripts/config --enable CONFIG_HIGH_RES_TIMERS
   echo "Enable Anbox"
   scripts/config --enable CONFIG_ASHMEM
   scripts/config --enable CONFIG_ANDROID
   scripts/config --enable CONFIG_ANDROID_BINDER_IPC
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
+  echo "Enable NTFS"
+  scripts/config --enable CONFIG_NTFS3_FS_POSIX_ACL
+  scripts/config --enable CONFIG_NTFS3_FS
+  scripts/config --enable CONFIG_NTFS3_64BIT_CLUSTER
+  scripts/config --enable CONFIG_NTFS3_LZX_XPRESS
+
+
+  ### Optionally disable NUMA for 64-bit kernels only
+  # (x86 kernels do not support NUMA)
+  if [ -n "$_NUMAdisable" ]; then
+    echo "Disabling NUMA from kernel config..."
+    scripts/config --disable CONFIG_NUMA
+  fi
 
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
@@ -520,7 +543,7 @@ _package() {
   echo "${pkgbase}" | install -Dm644 /dev/stdin "${modulesdir}/pkgbase"
 
   echo "Installing modules..."
-  make ${BUILD_FLAGS[*]} INSTALL_MOD_PATH="${pkgdir:?}/usr" INSTALL_MOD_STRIP=1 modules_install
+  make  ${BUILD_FLAGS[*]} INSTALL_MOD_PATH="${pkgdir:?}/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
   rm "${modulesdir}/"{source,build}
@@ -615,8 +638,9 @@ _package-headers() {
 }
 
 md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
-         'ca311453b9de38a45bd65beaef256f44'
-         'c95674556e24ba9fda18aa322bed59eb'
+         'a7375a8ddb2293e5cd971274f938439c'
+         '3297fb9ac097c0558d62a1ac6f6e5a6b'
+         '690fe365432d3368cc4ba73578d50494'
          'cf26387aadf2a90428350ac246b070c9'
          '9f454068cccf7dcfc80c2e65c92ed99b'
          'a2f2715c541983f81fbcd22d8c4f2919'
@@ -624,18 +648,13 @@ md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          '0b6d09bdd920f4c31c05fdeaa0740548'
          'd7f5fefd8ae018999e2b55073aaca706'
-         '846859fbcd82df462449d763b41cc641'
+         '4792a194feb0e9267f8660f38746f4fb'
          'f63a58cf2bac9f9094705d880ed886d3'
          '2b793d08fe0033546a7264a565af51f3'
-         'de110d27d7e2d44aadecbc4896fefe1c'
-         '7fa046fd98013a89ed5f57b18c612068'
+         '00decf9061d63b59d6a2857f4bc681df'
          'a1c6a106ddbbff6be6711f6a72706cb0'
-         '0dbf246a4e501c5dc276985d34faa5df'
-         'c191a6056424f642f177a579f4674f9b'
-         'a0aac29317844c7c4b03639c76d1219c'
-         '07fb571e48d0772a30c9777ecf13031e'
+         'f845dc3bca8d4e0020ed8f37e4e8d9ea'
          '39c65dd4eeec0dfedbf79ca5e43276d5'
-         'bac586853f924588e24869d8aa62f5be'
          'bc64b1d1a9c95b07c28457f7214ebf81'
          '8cb0301d159b59727b7bdd09350e2a9f'
          'de6db1147385c058b2e94df3c1739fdf'

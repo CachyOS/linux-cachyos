@@ -110,7 +110,7 @@ if [ -n "$_use_llvm_lto" ]; then
 else
   pkgbase=linux-cachyos-pds
 fi
-pkgver=5.15
+pkgver=5.15.1
 pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-pds Kernel by CachyOS and with some other patches and other improvements'

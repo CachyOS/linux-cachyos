@@ -119,8 +119,8 @@ elif [ "$_cpusched" = "cacule" ]; then
 elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cacule-rdb
 fi
-pkgver=5.15
-pkgrel=2
+pkgver=5.15.1
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
