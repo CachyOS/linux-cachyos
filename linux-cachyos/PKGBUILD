@@ -77,7 +77,7 @@ _zstd_module_level='normal'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=y
+_use_llvm_lto=
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
@@ -103,7 +103,7 @@ _localmodcfg=
 _use_current=
 
 # Tweak kernel options prior to a build via nconfig
-_makenconfig=y
+_makenconfig=
 
 
 
@@ -130,7 +130,8 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-  "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
+  "${_patchsource}/0001-backport.patch"
+  "${_patchsource}/0001-misc.patch"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
@@ -150,8 +151,6 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
-#  "${_patchsource}/0001-rcu-next.patch"
-  #  "${_patchsource}/0001-xanmod-patches.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-zstd-upstream-patches.patch"
@@ -621,9 +620,9 @@ _package-headers() {
 
 md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
          'ca311453b9de38a45bd65beaef256f44'
-         '910f26cc108ca59bc7eac2f98059991c'
          'cf26387aadf2a90428350ac246b070c9'
-         '9f454068cccf7dcfc80c2e65c92ed99b'
+         '910f26cc108ca59bc7eac2f98059991c'
+         '9b69c2bb5bd14add123fdf1164b2225d'
          'a2f2715c541983f81fbcd22d8c4f2919'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
@@ -637,7 +636,7 @@ md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
          'a1c6a106ddbbff6be6711f6a72706cb0'
          '0dbf246a4e501c5dc276985d34faa5df'
          'f845dc3bca8d4e0020ed8f37e4e8d9ea'
-         'd9ae541ebbc5da9cf91e99df8124d8bf'
+         'bf3787026e2faa485dce9e45cc721ec5'
          '07fb571e48d0772a30c9777ecf13031e'
          '39c65dd4eeec0dfedbf79ca5e43276d5'
          'bac586853f924588e24869d8aa62f5be'

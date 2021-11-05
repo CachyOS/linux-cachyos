@@ -111,8 +111,8 @@ if [ -n "$_use_llvm_lto" ]; then
 else
   pkgbase=linux-cachyos-bmq
 fi
-pkgver=5.15.1
-pkgrel=1
+pkgver=5.15
+pkgrel=3
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-bmq Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -130,7 +130,8 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "config"
   "${_patchsource}/0001-prjc-5.15-r0.patch"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-  "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
+  "${_patchsource}/0001-backport.patch"
+  "${_patchsource}/0001-misc.patch"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
@@ -150,8 +151,6 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
-#  "${_patchsource}/0001-rcu-next.patch"
-  #  "${_patchsource}/0001-xanmod-patches.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-zstd-upstream-patches.patch"
@@ -620,20 +619,21 @@ md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
          'ca311453b9de38a45bd65beaef256f44'
          '74869116146ec746f2a9713df25eef01'
          'cf26387aadf2a90428350ac246b070c9'
-         '9f454068cccf7dcfc80c2e65c92ed99b'
+         '910f26cc108ca59bc7eac2f98059991c'
+         '9b69c2bb5bd14add123fdf1164b2225d'
          'a2f2715c541983f81fbcd22d8c4f2919'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          '0b6d09bdd920f4c31c05fdeaa0740548'
          'd7f5fefd8ae018999e2b55073aaca706'
-         '846859fbcd82df462449d763b41cc641'
+         '4792a194feb0e9267f8660f38746f4fb'
          'f63a58cf2bac9f9094705d880ed886d3'
          '2b793d08fe0033546a7264a565af51f3'
-         'de110d27d7e2d44aadecbc4896fefe1c'
+         '00decf9061d63b59d6a2857f4bc681df'
          '7fa046fd98013a89ed5f57b18c612068'
          'a1c6a106ddbbff6be6711f6a72706cb0'
          '0dbf246a4e501c5dc276985d34faa5df'
-         'c191a6056424f642f177a579f4674f9b'
+         'f845dc3bca8d4e0020ed8f37e4e8d9ea'
          '07fb571e48d0772a30c9777ecf13031e'
          '39c65dd4eeec0dfedbf79ca5e43276d5'
          'bac586853f924588e24869d8aa62f5be'
