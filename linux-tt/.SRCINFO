@@ -1,7 +1,7 @@
 pkgbase = linux-tt
 	pkgdesc = Linux-TT Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.15
-	pkgrel = 6
+	pkgver = 5.15.1
+	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -19,7 +19,7 @@ pkgbase = linux-tt
 	makedepends = tar
 	makedepends = xz
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.1.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/TT/0001-tt-r2.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch
@@ -46,7 +46,7 @@ pkgbase = linux-tt
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-zstd-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-zstd-upstream-patches.patch
 	source = auto-cpu-optimization.sh
-	md5sums = 071d49ff4e020d58c04f9f3f76d3b594
+	md5sums = c636e16efdff88320b5354b16d2a6eb1
 	md5sums = 1e1dc995c4f531c9c29f9868e8adc835
 	md5sums = 95b7e2621fa81e14c09e310656d4c9da
 	md5sums = cf26387aadf2a90428350ac246b070c9
@@ -87,5 +87,5 @@ pkgname = linux-tt
 
 pkgname = linux-tt-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-TT Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-tt=5.15
+	depends = linux-tt=5.15.1
 	depends = pahole

@@ -112,8 +112,8 @@ if [ -n "$_use_llvm_lto" ]; then
 else
   pkgbase=linux-cachyos
 fi
-pkgver=5.15
-pkgrel=6
+pkgver=5.15.1
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -617,7 +617,7 @@ _package-headers() {
 
 }
 
-md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
+md5sums=('c636e16efdff88320b5354b16d2a6eb1'
          '1e1dc995c4f531c9c29f9868e8adc835'
          'cf26387aadf2a90428350ac246b070c9'
          '9b69c2bb5bd14add123fdf1164b2225d'

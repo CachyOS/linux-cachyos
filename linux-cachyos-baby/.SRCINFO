@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-baby
 	pkgdesc = Linux-baby Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.15
-	pkgrel = 6
+	pkgver = 5.15.1
+	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -19,7 +19,7 @@ pkgbase = linux-cachyos-baby
 	makedepends = tar
 	makedepends = xz
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.1.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-misc.patch
@@ -47,7 +47,7 @@ pkgbase = linux-cachyos-baby
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-zstd-upstream-patches.patch
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/baby/baby-dl-5.14.patch
-	md5sums = 071d49ff4e020d58c04f9f3f76d3b594
+	md5sums = c636e16efdff88320b5354b16d2a6eb1
 	md5sums = 1e1dc995c4f531c9c29f9868e8adc835
 	md5sums = cf26387aadf2a90428350ac246b070c9
 	md5sums = 9b69c2bb5bd14add123fdf1164b2225d
@@ -89,5 +89,5 @@ pkgname = linux-cachyos-baby
 
 pkgname = linux-cachyos-baby-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-baby Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-baby=5.15
+	depends = linux-cachyos-baby=5.15.1
 	depends = pahole

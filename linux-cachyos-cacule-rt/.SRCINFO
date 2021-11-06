@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-cacule-rt
 	pkgdesc = Linux-cacule Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.15
+	pkgver = 5.15.1
 	pkgrel = 1
 	url = https://github.com/ptr1337/linux-cacule
 	arch = x86_64
@@ -19,7 +19,7 @@ pkgbase = linux-cachyos-cacule-rt
 	makedepends = tar
 	makedepends = xz
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.1.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/RT/0001-5.15-rt17.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE/v5.15/cacule-5.15-rt-full.patch
@@ -43,8 +43,8 @@ pkgbase = linux-cachyos-cacule-rt
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-zstd-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-zstd-upstream-patches.patch
 	source = auto-cpu-optimization.sh
-	md5sums = 071d49ff4e020d58c04f9f3f76d3b594
-	md5sums = a7375a8ddb2293e5cd971274f938439c
+	md5sums = c636e16efdff88320b5354b16d2a6eb1
+	md5sums = 6b2d97bc12ca0a07d4663d1fd154df7c
 	md5sums = 3297fb9ac097c0558d62a1ac6f6e5a6b
 	md5sums = 690fe365432d3368cc4ba73578d50494
 	md5sums = cf26387aadf2a90428350ac246b070c9
@@ -81,5 +81,5 @@ pkgname = linux-cachyos-cacule-rt
 
 pkgname = linux-cachyos-cacule-rt-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-cacule Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-cacule-rt=5.15
+	depends = linux-cachyos-cacule-rt=5.15.1
 	depends = pahole
