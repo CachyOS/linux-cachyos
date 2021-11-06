@@ -120,12 +120,12 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cacule-rdb
 fi
 pkgver=5.15
-pkgrel=5
+pkgrel=6
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
 arch=('x86_64' 'x86_64_v3')
-url="https://github.com/ptr1337/linux-cacule"
+url="https://github.com/cachyos/linux-cachyos"
 license=('GPL2')
 options=('!strip')
 makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
@@ -139,7 +139,6 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "config"
   "${_caculepatches}/v5.15/cacule-5.15-full.patch"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-  "${_patchsource}/0001-backport.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
@@ -640,10 +639,9 @@ _package-headers() {
 }
 
 md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
-         'ca311453b9de38a45bd65beaef256f44'
+         '1e1dc995c4f531c9c29f9868e8adc835'
          'afdbe964cd00357ef7248553ab9db091'
          'cf26387aadf2a90428350ac246b070c9'
-         '910f26cc108ca59bc7eac2f98059991c'
          '9b69c2bb5bd14add123fdf1164b2225d'
          'a2f2715c541983f81fbcd22d8c4f2919'
          '53f037488a66667220c263f92ded333d'
@@ -654,7 +652,7 @@ md5sums=('071d49ff4e020d58c04f9f3f76d3b594'
          'f63a58cf2bac9f9094705d880ed886d3'
          '2b793d08fe0033546a7264a565af51f3'
          '00decf9061d63b59d6a2857f4bc681df'
-         '7fa046fd98013a89ed5f57b18c612068'
+         '5bd0ac7a56ecc0be1a71a321d100f5e8'
          'a1c6a106ddbbff6be6711f6a72706cb0'
          '0dbf246a4e501c5dc276985d34faa5df'
          'f845dc3bca8d4e0020ed8f37e4e8d9ea'
