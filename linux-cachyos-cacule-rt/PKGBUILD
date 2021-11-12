@@ -14,13 +14,13 @@ _cpusched='cacule'
 _NUMAdisable=y
 
 # Enable fsync
-_fsync=
+_fsync=y
 
 #enable futex2
-_futex2=
+_futex2=y
 
 #enable winesync
-_winesync=
+_winesync=y
 
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
 _2k_HZ_ticks=
@@ -119,7 +119,7 @@ elif [ "$_cpusched" = "cacule" ]; then
 elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb-rt
 fi
-pkgver=5.15.1
+pkgver=5.15.2
 pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
@@ -137,26 +137,33 @@ _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
-  "${_patchsource}/RT/0001-5.15-rt17.patch"
+  "${_patchsource}/RT/0001-5.15.2-rt19.patch"
   "${_caculepatches}/v5.15/cacule-5.15-rt-full.patch"
-#  "${_patchsource}/0001-futex.patch"
-#  "${_patchsource}/0001-sched.patch"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-  "${_patchsource}/0001-add-600hz-cfs-fixes.patch"
+  "${_patchsource}/0001-misc.patch"
+  "${_patchsource}/0001-winesync.patch"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-cpufreq-patches.patch"
-  "${_patchsource}/0001-block-backport.patch"
+  "${_patchsource}/0001-bfq.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
+  "${_patchsource}/0001-ck-hrtimer.patch"
   "${_patchsource}/0001-fixes-miscellaneous.patch"
+  "${_patchsource}/0001-futex.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-#  "${_patchsource}/0001-mm.patch"
+#  "${_patchsource}/0001-sched.patch"
+  "${_patchsource}/0001-string.patch"
+#  "${_patchsource}/0001-lru-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
+#  "${_patchsource}/0001-lrng-patches.patch"
+#  "${_patchsource}/0001-speculative-patches.patch"
+  "${_patchsource}/0001-bitmap-patches.patch"
   "${_patchsource}/0001-security-patches.patch"
+  "${_patchsource}/0001-xfs-backport.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
@@ -637,29 +644,35 @@ _package-headers() {
 
 }
 
-md5sums=('c636e16efdff88320b5354b16d2a6eb1'
-         '6b2d97bc12ca0a07d4663d1fd154df7c'
-         '3297fb9ac097c0558d62a1ac6f6e5a6b'
+md5sums=('4e0f11f01e157a3d8d7a63c72bedb96f'
+         '1782aa1320baf4333ccd69fdc52bafa4'
+         'ba39e545fe34ef17fc88f954d54b5645'
          '690fe365432d3368cc4ba73578d50494'
          'cf26387aadf2a90428350ac246b070c9'
-         '9f454068cccf7dcfc80c2e65c92ed99b'
-         'a2f2715c541983f81fbcd22d8c4f2919'
+         '8b5d5c105d2f93e46b000b954aa812bc'
+         '681cc53e18c8557644166f7f94d9e23f'
+         '80e419d6847d4122a23a141fd3a40e52'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
-         '0b6d09bdd920f4c31c05fdeaa0740548'
+         'e81a7c896e104ff9206ab51efd30e554'
          'd7f5fefd8ae018999e2b55073aaca706'
          '4792a194feb0e9267f8660f38746f4fb'
-         'f63a58cf2bac9f9094705d880ed886d3'
-         '2b793d08fe0033546a7264a565af51f3'
-         '00decf9061d63b59d6a2857f4bc681df'
+         'ff2c6319fb660962609e2c8d43eab654'
+         'fb3f67bb491a4f8ed3ef3121383deb25'
+         '6038177c72982533035309fcd6df208a'
+         '640629cbf3f32c33b6a3657ca766bb2c'
+         '9790a691cd9fabf9148a0b7787c141f0'
          'a1c6a106ddbbff6be6711f6a72706cb0'
-         'f845dc3bca8d4e0020ed8f37e4e8d9ea'
+         'eb53a23a8d4ff4990d7040e5037e8a06'
+         'd6e5581b4fade267a28deb8e73d236f5'
          '39c65dd4eeec0dfedbf79ca5e43276d5'
+         '19e4c2a45a1337502ce081b337a896bf'
          'bc64b1d1a9c95b07c28457f7214ebf81'
+         '4e4d84a2759740ec1856392f5b98de12'
          '8cb0301d159b59727b7bdd09350e2a9f'
          'de6db1147385c058b2e94df3c1739fdf'
          'bf58290793d3a095ef95fb1fac2de89a'
-         'a86ed27c2ef70973502660ca6804d6fe'
+         '85137d3d62dd3c5dd0d5b8ee015eef25'
          '21c98f19e883879dd3336c1fa143fd31')
 
 pkgname=("$pkgbase" "$pkgbase-headers" )
