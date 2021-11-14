@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 5.15.1 Kernel Configuration
+# Linux/x86 5.15.2 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 11.1.0"
 CONFIG_CC_IS_GCC=y
@@ -1140,7 +1140,9 @@ CONFIG_SECRETMEM=y
 #
 # Data Access Monitoring
 #
-# CONFIG_DAMON is not set
+CONFIG_DAMON=y
+CPMFIG_DAMON_PADDR=y
+CONFIG_DAMON_RECLAIM=y
 # end of Data Access Monitoring
 # end of Memory Management options
 
@@ -10506,7 +10508,6 @@ CONFIG_CC_HAS_WORKING_NOSANITIZE_ADDRESS=y
 # CONFIG_KASAN is not set
 CONFIG_HAVE_ARCH_KFENCE=y
 CONFIG_KFENCE=y
-CONFIG_KFENCE_STATIC_KEYS=y
 CONFIG_KFENCE_SAMPLE_INTERVAL=100
 CONFIG_KFENCE_NUM_OBJECTS=255
 CONFIG_KFENCE_STRESS_TEST_FAULTS=0
