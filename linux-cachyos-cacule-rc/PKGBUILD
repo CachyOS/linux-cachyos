@@ -1,50 +1,16 @@
 # Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev>
-# Maintainer: Piotr Gorski <lucjan.lucjanov@gmail.com>
-# Contributor: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
-# Contributor: Tobias Powalowski <tpowa@archlinux.org>
-# Contributor: Thomas Baechler <thomas@archlinux.org>
-
-# Selecting CacULE or CacULE-RDB scheduler, default:cacule
-#_cpusched='cacule'
-_cpusched='rdb'
 
 ### BUILD OPTIONS
-# Set these variables to ANYTHING that is not null to enable them
+# Set the next two variables to ANYTHING that is not null to enable them
 
-### Tweak kernel options prior to a build via nconfig
-_makenconfig=
-
-### Tweak kernel options prior to a build via menuconfig
-_makemenuconfig=
-
-### Tweak kernel options prior to a build via xconfig
-_makexconfig=
-
-### Tweak kernel options prior to a build via gconfig
-_makegconfig=
+# Selecting CacULE or CacULE-RDB scheduler, default:cacule
+#_cpusched='rdb'
+#_cpusched='tt'
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
 _NUMAdisable=y
-
-# Compile ONLY used modules to VASTLYreduce the number of modules built
-# and the build time.
-#
-# To keep track of which modules are needed for your specific system/hardware,
-# give module_db script a try: https://aur.archlinux.org/packages/modprobed-db
-# This PKGBUILD read the database kept if it exists
-#
-# More at this wiki page ---> https://wiki.archlinux.org/index.php/Modprobed-db
-_localmodcfg=
-
-# Use the current kernel's .config file
-# Enabling this option will use the .config of the RUNNING kernel rather than
-# the ARCH defaults. Useful when the package gets updated and you already went
-# through the trouble of customizing your config options.  NOT recommended when
-# a new kernel is released, but again, convenient for package bumps.
-_use_current=
-
 
 # Enable fsync
 _fsync=y
@@ -58,8 +24,8 @@ _winesync=y
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
 _2k_HZ_ticks=
 _1k_HZ_ticks=
-_750_HZ_ticks=y
-_600_HZ_ticks=
+_750_HZ_ticks=
+_600_HZ_ticks=y
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
@@ -77,8 +43,12 @@ _lru_enable=y
 ### Enable Linux Random Number Generator
 _lrng_enable=y
 
-### Enable DAMON
-_damon=
+## Samba3 Server
+_ksmbd_enable=
+
+# Tweak kernel options prior to a build via nconfig
+_makenconfig=y
+
 
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
@@ -113,42 +83,49 @@ _zstd_module_level='normal'
 # Leave it unselected.
 _fork_brute=
 
-### Enable SPECULATIVE_PAGE
-# ATTENTION - one of three predefined values should be selected!
-# 'full' - enable full SPECULATIVE_PAGE
-# 'basic' - enable basic SPECULATIVE_PAGE
-# 'none' - disable SPECULATIVE_PAGE
-_speculative_page='none'
-
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=
+_use_llvm_lto=y
 
 # Enable it for using the LLVM CFI PATCH for a better security
-_use_cfi=
+_use_cfi=y
 
 ## Enable PGO (patch is failing when cfi is also used)
 _use_pgo=
 
+# Only compile active modules to VASTLY reduce the number of modules built and
+# the build time.
+#
+# To keep track of which modules are needed for your specific system/hardware,
+# give module_db a try: https://aur.archlinux.org/packages/modprobed-db
+# This PKGBUILD reads the database kept if it exists
+#
+# More at this wiki page ---> https://wiki.archlinux.org/index.php/Modprobed-db
+_localmodcfg=
 
-if [ "$_cpusched" = "cacule" ]  && [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cacule-lto
-elif  [ "$_cpusched" = "rdb" ] && [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cacule-rdb-lto
-elif [ "$_cpusched" = "cacule" ]; then
-  pkgbase=linux-cacule
-elif [ "$_cpusched" = "rdb" ]; then
-  pkgbase=linux-cacule-rdb
-fi
-_major=5.15
-_minor=2
-pkgver=${_major}.${_minor}
-_srcname=linux-${pkgver}
-arch=(x86_64 x86_64_v3)
-pkgdesc='Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
-_srcname=linux-${pkgver}
-pkgrel=4
+# Use the current kernel's .config file
+# Enabling this option will use the .config of the RUNNING kernel rather than
+# the ARCH defaults. Useful when the package gets updated and you already went
+# through the trouble of customizing your config options.  NOT recommended when
+# a new kernel is released, but again, convenient for package bumps.
+_use_current=
+
+# Tweak kernel options prior to a build via nconfig
+_makenconfig=y
+
+
+pkgbase=linux-cachyos-cacule-rc
+_major=5.16
+#_minor=1
+#_minorc=$((_minor+1))
+_rcver=rc1
+pkgver=${_major}.${_rcver}
+#_stable=${_major}.${_minor}
+_stablerc=${_major}-${_rcver}
+_srcname=linux-${_stablerc}
+pkgrel=2
+pkgdesc='Linux-CacULE Kernel-RC by Hamad Marri and with some other patchsets'
 arch=('x86_64' 'x86_64_v3')
-url="https://github.com/CachyOS/linux-cachyos"
+url="https://github.com/cachyos/linux-cachyos"
 license=('GPL2')
 options=('!strip')
 makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
@@ -157,66 +134,34 @@ if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
 _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE"
-_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
-source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
-  "${_patchsource}/0001-stable-fix.patch"
-  "${_caculepatches}/v5.15/cacule-5.15-full.patch"
+_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16"
+source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
-  "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
+  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
   "${_patchsource}/0001-misc.patch"
-  "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
-  "${_patchsource}/AMD/0001-amd64-patches.patch"
-  "${_patchsource}/0001-bbr2.patch"
-  "${_patchsource}/0001-clearlinux-patches.patch"
-  "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-cpufreq-patches.patch"
-  "${_patchsource}/0001-bfq.patch"
-  "${_patchsource}/0001-btrfs-patches.patch"
-  "${_patchsource}/0001-ck-hrtimer.patch"
-  "${_patchsource}/0001-fixes-miscellaneous.patch"
-  "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
-  "${_patchsource}/0001-hwmon-patches.patch"
-  "${_patchsource}/0001-ksmbd-patches.patch"
-  "${_patchsource}/0001-mm-lru.patch"
-  "${_patchsource}/0001-lqx-patches.patch"
-  "${_patchsource}/0001-lrng-patches.patch"
-  "${_patchsource}/0001-damon.patch"
-#  "${_patchsource}/0001-sbitmap-patches.patch"
-  "${_patchsource}/0001-security-patches.patch"
-  "${_patchsource}/0001-xfs-backport.patch"
-  "${_patchsource}/0001-v4l2loopback.patch"
-  "${_patchsource}/0001-zen-patches.patch"
+  "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
-  "${_patchsource}/0001-zstd-upstream-patches.patch"
+  "${_patchsource}/misc/0001-mm.patch"
+  "${_patchsource}/0001-zen-patches.patch"
   "auto-cpu-optimization.sh"
 )
-
-if [ -n "$_use_cfi" ]; then
-  source+=("${_patchsource}/0001-cfi.patch")
-fi
-
-if [ -n "$_use_pgo" ]; then
-  source+=("${_patchsource}/0001-PGO.patch")
-fi
-
 if [ -n "$_use_llvm_lto" ]; then
-
   BUILD_FLAGS=(
     LLVM=1
     LLVM_IAS=1
   )
 fi
-
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
 
 prepare() {
-
   cd $_srcname
 
   ### Setting version
   echo "Setting version..."
+  sed -e "/^EXTRAVERSION =/s/=.*/=/" -i Makefile
   scripts/setlocalversion --save-scmversion
   echo "-$pkgrel" > localversion.10-pkgrel
   echo "${pkgbase#linux}" > localversion.20-pkgname
@@ -236,44 +181,14 @@ prepare() {
   cp ../config .config
 
 
-  ### Optionally use running kernel's config
-  # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
-  if [ -n "$_use_current" ]; then
-    if [[ -s /proc/config.gz ]]; then
-      echo "Extracting config from /proc/config.gz..."
-      # modprobe configs
-      zcat /proc/config.gz > ./.config
-    else
-      warning "Your kernel was not compiled with IKCONFIG_PROC!"
-      warning "You cannot read the current config!"
-      warning "Aborting!"
-      exit
-    fi
-  fi
-
-  if [ -n "$_use_cfi" ]; then
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
-    scripts/config --enable CONFIG_CFI_CLANG
-  fi
-
-  if [ -n "$_use_pgo" ]; then
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_PGO_CLANG
-    scripts/config --enable DEBUG_FS
-    scripts/config --enable CONFIG_PGO_CLANG
-  fi
-
   ### Microarchitecture Optimization (GCC/CLANG)
   if [ -n "$_use_auto_optimization" ]; then
     "${srcdir}"/auto-cpu-optimization.sh
   fi
-
-
   if [ -n "$_use_optimization_select" ]; then
     source "${startdir}"/configure
     cpu_arch
   fi
-
-
   ### Optionally set tickrate to 2000HZ
   if [ -n "$_2k_HZ_ticks" ]; then
     echo "Setting tick rate to 2k..."
@@ -305,7 +220,6 @@ prepare() {
     scripts/config --enable CONFIG_HZ_600
     scripts/config --set-val CONFIG_HZ 600
   fi
-
   ### Optionally set tickrate to 500HZ
   if [ -n "$_500_HZ_ticks" ]; then
     echo "Setting tick rate to 500HZ..."
@@ -349,19 +263,17 @@ prepare() {
     scripts/config --disable CONFIG_MQ_IOSCHED_KYBER
   fi
 
-  ### Enable protect mappings under memory pressure
+  ### Enable protect file mappings under memory pressure
   if [ -n "$_mm_protect" ]; then
-    scripts/config --set-val CONFIG_CLEAN_LOW_KBYTES 524288
+    echo "Enabling protect file mappings under memory pressure..."
+    scripts/config --enable CONFIG_UNEVICTABLE_FILE
+    scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_LOW 262144
+    scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_MIN 131072
+    scripts/config --enable CONFIG_UNEVICTABLE_ANON
+    scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_LOW 65536
+    scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_MIN 32768
   fi
-  ### Enable DAMON
-  if [ -n "$_damon" ]; then
-    echo "Enabling DAMON..."
-    scripts/config --enable CONFIG_DAMON
-    scripts/config --enable CONFIG_DAMON_VADDR
-    scripts/config --enable CONFIG_DAMON_DBGFS
-    scripts/config --enable CONFIG_DAMON_PADDR
-    scripts/config --enable CONFIG_DAMON_RECLAIM
-  fi
+
   ### Enable multigenerational LRU
   if [ -n "$_lru_enable" ]; then
     echo "Enabling multigenerational LRU..."
@@ -373,30 +285,6 @@ prepare() {
     scripts/config --disable CONFIG_LRU_GEN_STATS
   fi
 
-  ### Enable SPECULATIVE_PAGE
-  if [ "$_speculative_page" = "full" ]; then
-    echo "Enabling full SPECULATIVE_PAGE..."
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT_STATS
-  elif [ "$_speculative_page" = "basic" ]; then
-    echo "Enabling basic SPECULATIVE_PAGE..."
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
-    scripts/config --disable CONFIG_SPECULATIVE_PAGE_FAULT_STATS
-  elif [ "$_speculative_page" = "none" ]; then
-    echo "Disabling SPECULATIVE_PAGE..."
-    scripts/config --disable CONFIG_SPECULATIVE_PAGE_FAULT
-  else
-    if [ -n "$_speculative_page" ]; then
-      error "The value $_speculative_page is invalid. Choose the correct one again."
-    else
-      error "The value is empty. Choose the correct one again."
-    fi
-    error "Selecting SPECULATIVE_PAGE failed!"
-    exit
-  fi
-
   ### Enable Linux Random Number Generator
   if [ -n "$_lrng_enable" ]; then
     echo "Enabling Linux Random Number Generator ..."
@@ -404,7 +292,6 @@ prepare() {
     scripts/config --enable CONFIG_LRNG_OVERSAMPLE_ENTROPY_SOURCES
     scripts/config --set-val CONFIG_CONFIG_LRNG_OVERSAMPLE_ES_BITS 64
     scripts/config --set-val CONFIG_LRNG_SEED_BUFFER_INIT_ADD_BITS 128
-    scripts/config --enable CONFIG_LRNG_IRQ
     scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
     scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
     scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
@@ -421,7 +308,6 @@ prepare() {
     scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
     scripts/config --enable CONFIG_LRNG_JENT
     scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
-    scripts/config --enable CONFIG_LRNG_CPU
     scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
     scripts/config --enable CONFIG_LRNG_DRNG_SWITCH
     scripts/config --enable CONFIG_LRNG_KCAPI_HASH
@@ -439,14 +325,32 @@ prepare() {
     scripts/config --disable CONFIG_LRNG_ACVT_HASH
     scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
     scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
-    scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
     scripts/config --enable CONFIG_LRNG_SELFTEST
     scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
   fi
-
   echo "Enable LLVM LTO"
   if [ -n "$_use_llvm_lto" ]; then
     scripts/config --disable CONFIG_LTO_NONE
+  fi
+  if [ "$_cpusched" = "cacule" ]; then
+    echo "Selecting CacULE scheduler..."
+    scripts/config --enable CONFIG_CACULE_SCHED
+    scripts/config --disable CONFIG_CACULE_RDB
+  fi
+  if [ "$_cpusched" = "rdb" ]; then
+    echo "Enabling CacULE-RDB scheduler..."
+    scripts/config --enable CONFIG_CACULE_SCHED
+    scripts/config --enable CONFIG_CACULE_RDB
+    scripts/config --set-val CONFIG_RDB_INTERVAL 19
+  fi
+
+  ### Enable SMB3 Kernel Server
+  if [ -n "$_ksmbd_enable" ]; then
+    echo "Enabling SMB3 Kernel Server..."
+    scripts/config --module CONFIG_SMB_SERVER
+    scripts/config --enable CONFIG_SMB_SERVER_SMBDIRECT
+    scripts/config --enable CONFIG_SMB_SERVER_CHECK_CAP_NET_ADMIN
+    scripts/config --enable CONFIG_SMB_SERVER_KERBEROS5
   fi
 
   ### Selecting the ZSTD compression level
@@ -488,19 +392,6 @@ prepare() {
     exit
   fi
 
-  if [ "$_cpusched" = "cacule" ]; then
-    echo "Selecting CacULE scheduler..."
-    scripts/config --enable CONFIG_CACULE_SCHED
-    scripts/config --disable CONFIG_CACULE_RDB
-  fi
-
-  if [ "$_cpusched" = "rdb" ]; then
-    echo "Enabling CacULE-RDB scheduler..."
-    scripts/config --enable CONFIG_CACULE_SCHED
-    scripts/config --enable CONFIG_CACULE_RDB
-    scripts/config --set-val CONFIG_RDB_INTERVAL 19
-  fi
-
   echo "Disabling TCP_CONG_CUBIC..."
   scripts/config --module CONFIG_TCP_CONG_CUBIC
   scripts/config --disable CONFIG_DEFAULT_CUBIC
@@ -511,60 +402,42 @@ prepare() {
   echo "Enabling FULLCONENAT..."
   scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
   scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
-  echo "Setting performance governor..."
-  scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
-  scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_ONDEMAND
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_PERFORMANCE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
   echo "Enable AMD PSTATE v2 driver"
   scripts/config --enable CONFIG_X86_AMD_PSTATE
-  scripts/config --enable CONFIG_AMD_PTDMA
-  echo "Enable Anbox"
-  scripts/config --enable CONFIG_ASHMEM
-  scripts/config --enable CONFIG_ANDROID
-  scripts/config --enable CONFIG_ANDROID_BINDER_IPC
-  scripts/config --enable CONFIG_ANDROID_BINDERFS
-  scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
-  echo "Enable NTFS"
-  scripts/config --enable CONFIG_NTFS3_FS_POSIX_ACL
-  scripts/config --enable CONFIG_NTFS3_FS
-  scripts/config --enable CONFIG_NTFS3_64BIT_CLUSTER
-  scripts/config --enable CONFIG_NTFS3_LZX_XPRESS
-  scripts/config --enable CONFIG_NLS_DEFAULT
 
+  ### Optionally use running kernel's config
+  # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
+  if [ -n "$_use_current" ]; then
+    if [[ -s /proc/config.gz ]]; then
+      echo "Extracting config from /proc/config.gz..."
+      # modprobe configs
+      zcat /proc/config.gz > ./.config
+    else
+      warning "Your kernel was not compiled with IKCONFIG_PROC!"
+      warning "You cannot read the current config!"
+      warning "Aborting!"
+      exit
+    fi
+  fi
 
   ### Optionally load needed modules for the make localmodconfig
   # See https://aur.archlinux.org/packages/modprobed-db
   if [ -n "$_localmodcfg" ]; then
-    if [ -f $HOME/.config/modprobed.db ]; then
+    if [ -e $HOME/.config/modprobed.db ]; then
       echo "Running Steven Rostedt's make localmodconfig now"
-      make  ${BUILD_FLAGS[*]}  LSMOD=$HOME/.config/modprobed.db localmodconfig
+      make ${BUILD_FLAGS[*]} LSMOD=$HOME/.config/modprobed.db localmodconfig
     else
       echo "No modprobed.db data found"
       exit
     fi
   fi
 
-
-  echo "Applying default config..."
   make ${BUILD_FLAGS[*]} olddefconfig
+
   make ${BUILD_FLAGS[*]} -s kernelrelease > version
   echo "Prepared $pkgbase version $(<version)"
 
-  ### Running make nconfig
-  [[ -z "$_makenconfig" ]] ||  make  ${BUILD_FLAGS[*]}  nconfig
-
-  ### Running make menuconfig
-  [[ -z "$_makemenuconfig" ]] || make  ${BUILD_FLAGS[*]} menuconfig
-
-  ### Running make xconfig
-  [[ -z "$_makexconfig" ]] || make  ${BUILD_FLAGS[*]}  xconfig
-
-  ### Running make gconfig
-  [[ -z "$_makegconfig" ]] || make  ${BUILD_FLAGS[*]}  gconfig
+  [[ -z "$_makenconfig" ]] || make ${BUILD_FLAGS[*]} nconfig
 
   ### Save configuration for later reuse
   cp -Tf ./.config "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
@@ -583,10 +456,9 @@ _package() {
   optdepends=('crda: to set the correct wireless channels of your country'
     'linux-firmware: firmware images needed for some devices'
   'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig')
-  provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE)
+
 
   cd $_srcname
-
   local kernver="$(<version)"
   local modulesdir="$pkgdir/usr/lib/modules/$kernver"
 
@@ -603,11 +475,10 @@ _package() {
 
   # remove build and source links
   rm "$modulesdir"/{source,build}
-
 }
 
 _package-headers() {
-  pkgdesc="Headers and scripts for building modules for the ${pkgdesc}"
+  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
   depends=("${pkgbase}=${pkgver}" "pahole")
 
   cd $_srcname
@@ -634,16 +505,13 @@ _package-headers() {
   install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
   install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
 
-  # https://bugs.archlinux.org/task/13146
+  # http://bugs.archlinux.org/task/13146
   install -Dt "$builddir/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
 
-  # https://bugs.archlinux.org/task/20402
+  # http://bugs.archlinux.org/task/20402
   install -Dt "$builddir/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
   install -Dt "$builddir/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
   install -Dt "$builddir/drivers/media/tuners" -m644 drivers/media/tuners/*.h
-
-  # https://bugs.archlinux.org/task/71392
-  install -Dt "$builddir/drivers/iio/common/hid-sensors" -m644 drivers/iio/common/hid-sensors/*.h
 
   echo "Installing KConfig files..."
   find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
@@ -686,44 +554,24 @@ _package-headers() {
   echo "Adding symlink..."
   mkdir -p "$pkgdir/usr/src"
   ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
-
 }
-
-sha512sums=('3ddeb15d9be260ab757c28ba3c23e9ebbcb23a61dcddaa6c5b54e3556cf720b11e182afa5d3747f981c5cd2777d4642a2854fce0e83441fc9a1948d1c5e5eae8'
-            'e132889050cccc1f9f90e19e6a9a8b52fdba67795c057f8081f297fec021ab373c78ce65b8712bb25788857d0251ef5f97ad9e90443a010a566c33e034b71e73'
-            '4240fc839755694536d6010c30442b465ba88310292da8f682d03d5b34225681d2aabd6f5816c892a019d2088a1654d11a5df7fb5eea1afd86e23c68164bbb2e'
-            '8fa265d0382a52d5464823cc61c9459db84b5b76bb4b0979c44bc9e744addabed0a3a55ef65baaf09989b296bb3e8c6995d4b11eaaa1a1010e86058cfa363c5b'
-            'aac8c0a1d2d9dfe37c98e5b83093394fae1f112569ddb8c23228f0e39a42f058ec8b2bb4cfb5303dae32a501cf1d0c918c0f5139a4a896962c7a223a9a52586b'
-            'efee170b8ae29d38a54fa9941815b51242683c6cea4e6026aea2e1ce0a3fe02fbe3e31188a284f7ec965198e609b21ab9f1d8a69847cebfa89cb570142384ab2'
-            'd75dd4a086f947f63786147d5965fee87b65096b7669b90a4cf719e31df1e8f6b67d42d40f3453b1e1da59e4bc27f32aa76a92b997423118d4efd07b34f30853'
-            'd800ad18b40f71a8509acca4d74d8ea9b4d24558665e40a558345403cbcb8a29096baf686158e55baf3d0a4a41a605033c09b162d00a810aa50d8d50785e4bc1'
-            'd549caac984a68ff95c928ffb2055b1ed09f1b0bb0beeded731c4a9f391bf0923c50c1cdefa145cc116121e4746bb35f0b9d32814bad8da142f48b1ead293ab1'
-            'f8e20fe34b058e8e554f653424ced37fefd004489689e6047def11cd463b594241432dd425b082d73a2646fe91531be9083a481b47cc784930991f78d9214529'
-            '0339084577de212c4ef02b46d8d836c0211aacae7503ace23b6098af90e9ca1e9ca9e6fa8e3132051ac0a68b032b89b60078bd5a0d7ca3ad617b91a61acbd3b5'
-            '421e3eaa6a29846d33dfdadf2bd933fae1ec30ee6e83af3148aab40831498e1e4427d62c56f37a23ebbb93d88d184ef177476a448c6d3503459eba5bb6321d38'
-            '7fb6eda30c9542afb26ed63427a07cc01a73e3e1e24e66050fb116242c1bf59b144e72edc67f17f2b61ca65592aad90b01232b57434b9b853e2764a3bcabe2ae'
-            'ad7a972a35e28114a0af66f37aaba9ae7023cd6f22ba8aa8ff9864cb7748095659b74cebe25df5c6beb0185ff42945ad594145eba5e160251f75c71ba39fde2e'
-            '29bb6f3b5ef1232f9c3a34dee19c592f5f87ba8b06a020e840ba9c914953092ee987380cab9a92e233df5e2e1a6a8f211d49376ca4f7ae076b7a4f92749758b6'
-            '233b0467c2f8b6e5c3df30d45630554656dc76e524ad7975bbc95d68a051d1490b6f4f5e661a96c7800d5cb6102d648c737e662f302d3dbf9a2d0ce3853bc0fc'
-            '48b6b0d070240a0f9ac4d95b679fd80e006979c0239c3f56101f626cbddd38abbd572ff8ca2106f5a331c41664b1d3ae275ca43e0cb166a3b0bf768238259b03'
-            'c4127ae38e94e831553013d48f754afe091cd9dd37edf8dff54e64cef0274916a5ea3a819ad092480a9c5e1c95e3196cf5a91bb1d7e94fc98c94c02323e50060'
-            '89fef46a7d006d09e442e3df78ca76fc283c481a62fbf706fa5a47b9aee6fc32db75c06e1381cddb1989aa325993e8e0f4564a17f534095742c4cc4adf7a057f'
-            '9f4d778c73381c45e63794e05523c137d7d3a3b54f39e0f862da102076dccfa876dc70552a07a60ca79b9f2426e6e84a766f31ed284bac4f168077d73cec3d61'
-            '7b7e857b5c72a5cad8be73bb0065268abc71b08df4cbc487a6a8468a6bedfa923a258c95fa97ea44c3c54ed89b52d15c7a74bde4d0171cd86d2a5921a96c15a8'
-            'b501454a225cc3882c6ccc61e6029e6a20efee5179668819d3055afa059ecaa4307c1b57f9780c224e91bf2f50192a93cf7003b9dbb7296a9d604e52604eaea4'
-            'd3e7250b23997c8cb13ce02a1dac8758705f271d2bcedae82501a253d290d8693ca47ff995365f7e6ef0cdacc36f96b12030d7e0a216f8ce7d4f132e938d4af6'
-            'f8edc60ca3fcfb123d08fc2a3ba8b5dcd504e20e61500ba00268ce4486cfd9432e42192cdd35cd2d63db6fe02fcf8139886b80e0e10cb7b81f7f92ccf539483c'
-            'e38e46893ccd68576525ab76726a0cffd3ae2d7c7b2961518a9b41c79eac254c1ceff649dd265c846cde8b383f3b9f0e625ba5b394bbc3a8f6a52745d7b4ffd8'
-            'a1279dcb47ff3d43811c5dfca84a5b4edd6be87f012fa4e2c1a1f0c379e707bee67f23e6dd186be97f78cf1f45f781619db0382fc6aa0d5c42208ad77b95373e'
-            'c60019fa4f598031c24845d80814c56cb9585765fa9536e12b3c2f975f721a67808c2bc14830a12af0aea69da122d5a0874b64119f2409d636800ee83eb09ce5'
-            'ed7578ef6ba2f1bd17535a03e7750a1ae6e2d4cd7dbcfcd68484f12c6c9273467544dfadf86034d866d35eed152d37c6f576f069e301b69ddfc6b16613ad5a81'
-            'f0964f69d0e5e6933c6daecfae396250492c7f3bc39bdb897a1a24936399349cbc2c48e72143156d4870f37545788660aad9d841dcfdee06e5ef645791157fd4'
-            'a54c01ba42e7d5f9433dacaa21f656d8aefdb6a5228fbca2b8e55b26eb02b35327ae3fd98a26a708452b8559e7f4acb32b6e685e26edc64497d1b7d10c5d86e1')
 
 pkgname=("$pkgbase" "$pkgbase-headers")
 for _p in "${pkgname[@]}"; do
   eval "package_$_p() {
-             $(declare -f "_package${_p#$pkgbase}")
-             _package${_p#$pkgbase}
+    $(declare -f "_package${_p#$pkgbase}")
+    _package${_p#$pkgbase}
   }"
 done
+
+
+md5sums=('9ad5b4c937c19b6a15737211c2ce4057'
+         'cca7f3a18eb55e4752cc0e18c96c3574'
+         '02e7cbd91491ad357bf2d507d58e21a0'
+         '299b176cbfc1b386d74406387e9e2d6b'
+         '4792a194feb0e9267f8660f38746f4fb'
+         '67764a5824b567b49bcce19c01d4e1b3'
+         'bf58290793d3a095ef95fb1fac2de89a'
+         '500f49b7f8ebe52f10ce473e50522b08'
+         'de6db1147385c058b2e94df3c1739fdf'
+         '21c98f19e883879dd3336c1fa143fd31')
