@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-tt-lto
+pkgbase = linux-cachyos-tt
 	pkgdesc = Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15.3
 	pkgrel = 1
@@ -18,10 +18,6 @@ pkgbase = linux-cachyos-tt-lto
 	makedepends = perl
 	makedepends = tar
 	makedepends = xz
-	makedepends = clang
-	makedepends = llvm
-	makedepends = lld
-	makedepends = python
 	options = !strip
 	source = https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.3.tar.xz
 	source = config
@@ -84,7 +80,7 @@ pkgbase = linux-cachyos-tt-lto
 	sha512sums = 7558ced203351af42a7c10b644b53d0b2b5ea0dc505754aa4f627a82842857db2f45d0e5a9f3f1a37ad8cbe64b3568dad4aeb113908766bfbb96eb19b9e56512
 	sha512sums = a54c01ba42e7d5f9433dacaa21f656d8aefdb6a5228fbca2b8e55b26eb02b35327ae3fd98a26a708452b8559e7f4acb32b6e685e26edc64497d1b7d10c5d86e1
 
-pkgname = linux-cachyos-tt-lto
+pkgname = linux-cachyos-tt
 	pkgdesc = The Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -95,7 +91,7 @@ pkgname = linux-cachyos-tt-lto
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-tt-lto-headers
+pkgname = linux-cachyos-tt-headers
 	pkgdesc = Headers and scripts for building modules for the Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-tt-lto=5.15.3
+	depends = linux-cachyos-tt=5.15.3
 	depends = pahole
