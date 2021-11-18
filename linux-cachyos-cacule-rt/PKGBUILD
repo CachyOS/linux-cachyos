@@ -119,8 +119,8 @@ elif [ "$_cpusched" = "cacule" ]; then
 elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb-rt
 fi
-pkgver=5.15.2
-pkgrel=2
+pkgver=5.15.3
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -640,7 +640,7 @@ _package-headers() {
 
 }
 
-md5sums=('4e0f11f01e157a3d8d7a63c72bedb96f'
+md5sums=('3a96b55f9996f442da3fd165d01acefe'
          '1782aa1320baf4333ccd69fdc52bafa4'
          '98e9e01f0c9016dbf0c55ee443643cf3'
          '690fe365432d3368cc4ba73578d50494'
@@ -663,11 +663,10 @@ md5sums=('4e0f11f01e157a3d8d7a63c72bedb96f'
          '39c65dd4eeec0dfedbf79ca5e43276d5'
          '13eaebd6dfb087eccd3e191fc147f095'
          'bc64b1d1a9c95b07c28457f7214ebf81'
-         '4e4d84a2759740ec1856392f5b98de12'
          '8cb0301d159b59727b7bdd09350e2a9f'
          'de6db1147385c058b2e94df3c1739fdf'
          'bf58290793d3a095ef95fb1fac2de89a'
-         'dd138ea37149f99429110f3947c6f280'
+         'd086a78802d38899bf5cde2bd3443d9f'
          '21c98f19e883879dd3336c1fa143fd31')
 
 pkgname=("$pkgbase" "$pkgbase-headers" )
