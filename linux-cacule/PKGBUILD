@@ -113,13 +113,6 @@ _zstd_module_level='normal'
 # Leave it unselected.
 _fork_brute=
 
-### Enable SPECULATIVE_PAGE
-# ATTENTION - one of three predefined values should be selected!
-# 'full' - enable full SPECULATIVE_PAGE
-# 'basic' - enable basic SPECULATIVE_PAGE
-# 'none' - disable SPECULATIVE_PAGE
-_speculative_page='none'
-
 ## Enable it for compiling with LLVM and THINLTO
 _use_llvm_lto=
 
@@ -127,7 +120,7 @@ _use_llvm_lto=
 _use_cfi=
 
 ## Enable PGO (patch is failing when cfi is also used)
-_use_pgo=
+#_use_pgo=
 
 
 if [ "$_cpusched" = "cacule" ]  && [ -n "$_use_llvm_lto" ]; then
@@ -140,13 +133,13 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cacule-rdb
 fi
 _major=5.15
-_minor=2
+_minor=3
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=4
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -159,7 +152,6 @@ fi
 _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE"
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
-  "${_patchsource}/0001-stable-fix.patch"
   "${_caculepatches}/v5.15/cacule-5.15-full.patch"
   "config"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
@@ -181,9 +173,9 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-damon.patch"
-#  "${_patchsource}/0001-sbitmap-patches.patch"
+  "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-security-patches.patch"
-  "${_patchsource}/0001-xfs-backport.patch"
+  "${_patchsource}/0001-sched-fix.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
@@ -371,30 +363,6 @@ prepare() {
     scripts/config --set-val CONFIG_TIERS_PER_GEN 4
     scripts/config --enable CONFIG_LRU_GEN_ENABLED
     scripts/config --disable CONFIG_LRU_GEN_STATS
-  fi
-
-  ### Enable SPECULATIVE_PAGE
-  if [ "$_speculative_page" = "full" ]; then
-    echo "Enabling full SPECULATIVE_PAGE..."
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT_STATS
-  elif [ "$_speculative_page" = "basic" ]; then
-    echo "Enabling basic SPECULATIVE_PAGE..."
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
-    scripts/config --disable CONFIG_SPECULATIVE_PAGE_FAULT_STATS
-  elif [ "$_speculative_page" = "none" ]; then
-    echo "Disabling SPECULATIVE_PAGE..."
-    scripts/config --disable CONFIG_SPECULATIVE_PAGE_FAULT
-  else
-    if [ -n "$_speculative_page" ]; then
-      error "The value $_speculative_page is invalid. Choose the correct one again."
-    else
-      error "The value is empty. Choose the correct one again."
-    fi
-    error "Selecting SPECULATIVE_PAGE failed!"
-    exit
   fi
 
   ### Enable Linux Random Number Generator
@@ -706,7 +674,7 @@ sha512sums=('3ddeb15d9be260ab757c28ba3c23e9ebbcb23a61dcddaa6c5b54e3556cf720b11e1
             '29bb6f3b5ef1232f9c3a34dee19c592f5f87ba8b06a020e840ba9c914953092ee987380cab9a92e233df5e2e1a6a8f211d49376ca4f7ae076b7a4f92749758b6'
             '233b0467c2f8b6e5c3df30d45630554656dc76e524ad7975bbc95d68a051d1490b6f4f5e661a96c7800d5cb6102d648c737e662f302d3dbf9a2d0ce3853bc0fc'
             '48b6b0d070240a0f9ac4d95b679fd80e006979c0239c3f56101f626cbddd38abbd572ff8ca2106f5a331c41664b1d3ae275ca43e0cb166a3b0bf768238259b03'
-            'c4127ae38e94e831553013d48f754afe091cd9dd37edf8dff54e64cef0274916a5ea3a819ad092480a9c5e1c95e3196cf5a91bb1d7e94fc98c94c02323e50060'
+            '8887f2b8104fc9b1adf51e45dcc7df7ec217146c2fb11da0df377b26e259dea5fdef8fd254b7659e4af5c6628ccfeba641afc97cd81890a57797cf16fe6734e2'
             '89fef46a7d006d09e442e3df78ca76fc283c481a62fbf706fa5a47b9aee6fc32db75c06e1381cddb1989aa325993e8e0f4564a17f534095742c4cc4adf7a057f'
             '9f4d778c73381c45e63794e05523c137d7d3a3b54f39e0f862da102076dccfa876dc70552a07a60ca79b9f2426e6e84a766f31ed284bac4f168077d73cec3d61'
             '7b7e857b5c72a5cad8be73bb0065268abc71b08df4cbc487a6a8468a6bedfa923a258c95fa97ea44c3c54ed89b52d15c7a74bde4d0171cd86d2a5921a96c15a8'

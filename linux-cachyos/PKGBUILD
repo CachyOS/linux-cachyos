@@ -100,7 +100,7 @@ _zstd_level='ultra'
 # 'normal' - standard compression ratio
 # WARNING: the ultra settings can sometimes
 # be counterproductive in both size and speed.
-_zstd_module_level='ultra'
+_zstd_module_level='normal'
 
 ### Enable SECURITY_FORK_BRUTE
 # WARNING Not recommended.
@@ -109,19 +109,10 @@ _zstd_module_level='ultra'
 # Leave it unselected.
 _fork_brute=
 
-### Enable SPECULATIVE_PAGE
-# ATTENTION - one of three predefined values should be selected!
-# 'full' - enable full SPECULATIVE_PAGE
-# 'basic' - enable basic SPECULATIVE_PAGE
-# 'none' - disable SPECULATIVE_PAGE
-_speculative_page='none'
-
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=
-
-
+_use_llvm_lto=y
 # Enable it for using the LLVM CFI PATCH for a better security
-#_use_cfi=
+_use_cfi=
 
 ## Enable PGO (patch is failing when cfi is also used)
 #_use_pgo=
@@ -139,7 +130,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=4
+pkgrel=5
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -170,10 +161,11 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/0001-ksmbd-patches.patch"
   "${_patchsource}/0001-mm-lru.patch"
   "${_patchsource}/0001-damon.patch"
+  "${_patchsource}/0001-pf-patches.patch"
+  "${_patchsource}/0001-sched-fix.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-security-patches.patch"
-  "${_patchsource}/0001-xfs-backport.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
@@ -362,30 +354,6 @@ prepare() {
     scripts/config --enable CONFIG_DAMON_DBGFS
     scripts/config --enable CONFIG_DAMON_PADDR
     scripts/config --enable CONFIG_DAMON_RECLAIM
-  fi
-
-  ### Enable SPECULATIVE_PAGE
-  if [ "$_speculative_page" = "full" ]; then
-    echo "Enabling full SPECULATIVE_PAGE..."
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT_STATS
-  elif [ "$_speculative_page" = "basic" ]; then
-    echo "Enabling basic SPECULATIVE_PAGE..."
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
-    scripts/config --disable CONFIG_SPECULATIVE_PAGE_FAULT_STATS
-  elif [ "$_speculative_page" = "none" ]; then
-    echo "Disabling SPECULATIVE_PAGE..."
-    scripts/config --disable CONFIG_SPECULATIVE_PAGE_FAULT
-  else
-    if [ -n "$_speculative_page" ]; then
-      error "The value $_speculative_page is invalid. Choose the correct one again."
-    else
-      error "The value is empty. Choose the correct one again."
-    fi
-    error "Selecting SPECULATIVE_PAGE failed!"
-    exit
   fi
 
   ### Enable Linux Random Number Generator
@@ -577,7 +545,7 @@ _package() {
   echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
   echo "Installing modules..."
-  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
+  make ${BUILD_FLAGS[*]} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
   rm "$modulesdir"/{source,build}

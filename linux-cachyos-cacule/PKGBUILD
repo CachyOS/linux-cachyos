@@ -113,13 +113,6 @@ _zstd_module_level='normal'
 # Leave it unselected.
 _fork_brute=
 
-### Enable SPECULATIVE_PAGE
-# ATTENTION - one of three predefined values should be selected!
-# 'full' - enable full SPECULATIVE_PAGE
-# 'basic' - enable basic SPECULATIVE_PAGE
-# 'none' - disable SPECULATIVE_PAGE
-_speculative_page='none'
-
 ## Enable it for compiling with LLVM and THINLTO
 _use_llvm_lto=
 
@@ -127,7 +120,7 @@ _use_llvm_lto=
 _use_cfi=
 
 ## Enable PGO (patch is failing when cfi is also used)
-_use_pgo=
+#_use_pgo=
 
 
 if [ "$_cpusched" = "cacule" ]  && [ -n "$_use_llvm_lto" ]; then
@@ -140,13 +133,13 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb
 fi
 _major=5.15
-_minor=2
+_minor=3
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=4
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -159,7 +152,6 @@ fi
 _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE"
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
-  "${_patchsource}/0001-stable-fix.patch"
   "${_caculepatches}/v5.15/cacule-5.15-full.patch"
   "config"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
@@ -181,9 +173,10 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-damon.patch"
-#  "${_patchsource}/0001-sbitmap-patches.patch"
+  "${_patchsource}/0001-pf-patches.patch"
+  "${_patchsource}/0001-sched-fix.patch"
   "${_patchsource}/0001-security-patches.patch"
-  "${_patchsource}/0001-xfs-backport.patch"
+  "${_patchsource}/0001-sched-fix.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
@@ -371,30 +364,6 @@ prepare() {
     scripts/config --set-val CONFIG_TIERS_PER_GEN 4
     scripts/config --enable CONFIG_LRU_GEN_ENABLED
     scripts/config --disable CONFIG_LRU_GEN_STATS
-  fi
-
-  ### Enable SPECULATIVE_PAGE
-  if [ "$_speculative_page" = "full" ]; then
-    echo "Enabling full SPECULATIVE_PAGE..."
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT_STATS
-  elif [ "$_speculative_page" = "basic" ]; then
-    echo "Enabling basic SPECULATIVE_PAGE..."
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
-    scripts/config --disable CONFIG_SPECULATIVE_PAGE_FAULT_STATS
-  elif [ "$_speculative_page" = "none" ]; then
-    echo "Disabling SPECULATIVE_PAGE..."
-    scripts/config --disable CONFIG_SPECULATIVE_PAGE_FAULT
-  else
-    if [ -n "$_speculative_page" ]; then
-      error "The value $_speculative_page is invalid. Choose the correct one again."
-    else
-      error "The value is empty. Choose the correct one again."
-    fi
-    error "Selecting SPECULATIVE_PAGE failed!"
-    exit
   fi
 
   ### Enable Linux Random Number Generator

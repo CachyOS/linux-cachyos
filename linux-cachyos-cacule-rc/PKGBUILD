@@ -24,8 +24,8 @@ _winesync=y
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
 _2k_HZ_ticks=
 _1k_HZ_ticks=
-_750_HZ_ticks=
-_600_HZ_ticks=y
+_750_HZ_ticks=y
+_600_HZ_ticks=
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
@@ -47,7 +47,7 @@ _lrng_enable=y
 _ksmbd_enable=
 
 # Tweak kernel options prior to a build via nconfig
-_makenconfig=y
+_makenconfig=
 
 
 ## Apply Kernel automatic Optimization
@@ -84,10 +84,10 @@ _zstd_module_level='normal'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=y
+_use_llvm_lto=
 
 # Enable it for using the LLVM CFI PATCH for a better security
-_use_cfi=y
+_use_cfi=
 
 ## Enable PGO (patch is failing when cfi is also used)
 _use_pgo=
@@ -110,19 +110,19 @@ _localmodcfg=
 _use_current=
 
 # Tweak kernel options prior to a build via nconfig
-_makenconfig=y
+_makenconfig=
 
 
 pkgbase=linux-cachyos-cacule-rc
 _major=5.16
-#_minor=1
-#_minorc=$((_minor+1))
+_minor=0
+_minorc=$((_minor+1))
 _rcver=rc1
-pkgver=${_major}.${_rcver}
-#_stable=${_major}.${_minor}
+pkgver=${_major}.${_minorc}
+_stable=${_major}.${_minor}
 _stablerc=${_major}-${_rcver}
 _srcname=linux-${_stablerc}
-pkgrel=2
+pkgrel=1
 pkgdesc='Linux-CacULE Kernel-RC by Hamad Marri and with some other patchsets'
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/cachyos/linux-cachyos"
@@ -133,17 +133,23 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
+
+
 _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE"
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16"
 source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
   "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
   "${_patchsource}/0001-misc.patch"
+  "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-cpufreq-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/misc/0001-mm.patch"
   "${_patchsource}/0001-zen-patches.patch"
+  "${_patchsource}/0001-winesync-fsync.patch"
+  "${_patchsource}/0001-lrng.patch"
+  #  "${_patchsource}/0001-tcp.patch"
   "auto-cpu-optimization.sh"
 )
 if [ -n "$_use_llvm_lto" ]; then
@@ -158,6 +164,8 @@ export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EP
 
 prepare() {
   cd $_srcname
+
+
 
   ### Setting version
   echo "Setting version..."
@@ -566,12 +574,15 @@ done
 
 
 md5sums=('9ad5b4c937c19b6a15737211c2ce4057'
-         'cca7f3a18eb55e4752cc0e18c96c3574'
+         '4c6cfdda3bb1ca972b9d176e3a6bbe85'
          '02e7cbd91491ad357bf2d507d58e21a0'
          '299b176cbfc1b386d74406387e9e2d6b'
+         '15ffc9a58dbdfff5aa77bc085d2b335a'
          '4792a194feb0e9267f8660f38746f4fb'
          '67764a5824b567b49bcce19c01d4e1b3'
          'bf58290793d3a095ef95fb1fac2de89a'
          '500f49b7f8ebe52f10ce473e50522b08'
          'de6db1147385c058b2e94df3c1739fdf'
+         '13ed4ea506b1dc0e9e8437d34c99a916'
+         'a9d7fcef5c2e849ca347a81a7ac729c6'
          '21c98f19e883879dd3336c1fa143fd31')
