@@ -24,8 +24,8 @@ _winesync=y
 
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
 _2k_HZ_ticks=
-_1k_HZ_ticks=
-_750_HZ_ticks=y
+_1k_HZ_ticks=y
+_750_HZ_ticks=
 _600_HZ_ticks=
 _500_HZ_ticks=
 
@@ -87,7 +87,7 @@ _use_llvm_lto=
 _use_cfi=
 
 ## Enable PGO (patch is failing when cfi is also used)
-_use_pgo=
+#_use_pgo=
 
 # Only compile active modules to VASTLY reduce the number of modules built and
 # the build time.
@@ -120,7 +120,7 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb-rt
 fi
 pkgver=5.15.3
-pkgrel=1
+pkgrel=2
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -137,16 +137,17 @@ _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
-  "${_patchsource}/RT/patch-5.15.2-rt20.patch"
+  "${_patchsource}/RT/patch-5.15.3-rt21.patch"
   "${_caculepatches}/v5.15/cacule-5.15-rt-full.patch"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-  "${_patchsource}/0001-misc.patch"
+#  "${_patchsource}/0001-misc.patch"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
-  "${_patchsource}/0001-cpufreq-patches.patch"
+  "${_patchsource}/0001-amd-pstate-v4.patch"
+  "${_patchsource}/0001-tcp.patch"
   "${_patchsource}/0001-bfq.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-ck-hrtimer.patch"
@@ -155,7 +156,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
   "${_patchsource}/0001-string.patch"
-  #  "${_patchsource}/0001-lru-patches.patch"
+  "${_patchsource}/0001-damon.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   #  "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
@@ -641,25 +642,26 @@ _package-headers() {
 }
 
 md5sums=('3a96b55f9996f442da3fd165d01acefe'
-         '1782aa1320baf4333ccd69fdc52bafa4'
-         '98e9e01f0c9016dbf0c55ee443643cf3'
+         'a6a462710095f8f54cffedfc8937f9a2'
+         'a7aa07b02bb6c0f30001b7ee1fb2bd65'
          '690fe365432d3368cc4ba73578d50494'
          'cf26387aadf2a90428350ac246b070c9'
-         '5aa8601982a89357476f6201a369b5aa'
          '80e419d6847d4122a23a141fd3a40e52'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          '0b6d09bdd920f4c31c05fdeaa0740548'
          '67764a5824b567b49bcce19c01d4e1b3'
-         '4792a194feb0e9267f8660f38746f4fb'
+         'c60b962f31b8024a81fbc4e833e0d2d4'
+         'c4a2e93acfdc6c250c3f5eccf80f23e2'
          'ff2c6319fb660962609e2c8d43eab654'
-         'ad8abdde12a6ffa728b975aac06e88b9'
+         'e3ddedc94513a3399a340470839a9d37'
          '6038177c72982533035309fcd6df208a'
-         '640629cbf3f32c33b6a3657ca766bb2c'
+         '5783876e2ccecfee47b6fcc4bfe054e6'
          'd058fb21aac0658ee10029bdbdca96d1'
          '6b82762de24995661c34b2739ba15ea0'
          'a63625757016d525c9e69ab434159bfe'
          'd6e5581b4fade267a28deb8e73d236f5'
+         '3467dde5848327da175663849f794f11'
          '39c65dd4eeec0dfedbf79ca5e43276d5'
          '13eaebd6dfb087eccd3e191fc147f095'
          'bc64b1d1a9c95b07c28457f7214ebf81'
