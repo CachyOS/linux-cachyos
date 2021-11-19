@@ -454,7 +454,6 @@ prepare() {
   scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
   echo "Enable AMD PSTATE v2 driver"
-  scripts/config --enable CONFIG_X86_AMD_PSTATE
   scripts/config --enable CONFIG_AMD_PTDMA
   echo "Enable Anbox"
   scripts/config --enable CONFIG_ASHMEM

@@ -68,7 +68,7 @@ _kyber_disable=y
 _mm_protect=y
 
 ### Enable multigenerational LRU
-_lru_enable=
+_lru_enable=y
 
 ### Enable Linux Random Number Generator
 _lrng_enable=y
@@ -80,7 +80,7 @@ _use_auto_optimization=y
 _use_optimization_select=
 
 ### Enable DAMON
-_damon=y
+_damon=
 
 ### Selecting the ZSTD compression level
 # ATTENTION - one of two predefined values should be selected!
@@ -130,7 +130,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=3
+pkgrel=4
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -148,27 +148,24 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
-  "${_patchsource}/0001-bfq.patch"
+  "${_patchsource}/0001-block-patches.patch"
+  "${_patchsource}/0001-cpu-patches.patch"
+  "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
-  "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-amd-pstate-v4.patch"
-  "${_patchsource}/0001-tcp.patch"
 #  "${_patchsource}/0001-ck-hrtimer.patch"
-  "${_patchsource}/0001-fixes-miscellaneous.patch"
+#  "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-f2fs-backport.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-  "${_patchsource}/0001-mm-lru.patch"
-  "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-damon.patch"
-  "${_patchsource}/0001-pf-patches.patch"
-  "${_patchsource}/0001-sched-fix.patch"
   "${_patchsource}/0001-spectre-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-security-patches.patch"
+  "${_patchsource}/0001-sbitmap-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-zstd-patches-v2.patch"
@@ -644,35 +641,31 @@ _package-headers() {
 }
 
 sha512sums=('3724428553dbba44064e044f960c1dd002427eca79ddc4dd5feb829cdc76394d3bdc99bcf8d67a89cd406dcc6c5f613cc629797bebbf281fdd3ef00aa0724839'
-            'eb1ffe9ddfc9023d5742d2c3f1a0f6672c2dcf5dd6411e2cd464f4ca12bd0bf6f6b340c438ffa414eaba74055c06e8a708e3e6a04a8403f072fe7ae5ca82f642'
+            'c6cd33a7fa0a0d7a7f9919e897f55871b2809ec628671bb3528e30b7aedc6127c69dca949d7b5334ec88a495d625f89f3bc67bc03fd9798c9a7bca324e4fce65'
             'e7348aaf11b96273e3ab2fbc0336e10c5ca2fef21ddf1186c58ef15324acc70f7e7c491a0c76c63668427e9a495098b5735fae29ccd93783ed6694d8e17564cd'
-            '05d9ba4ffb4b777121845d46065ae596dddcd09ba2f800760a283a8494931ccb0867fabd1545885d678cd7f1f1506ac8fec65a7c1943f2593f59b97e7a25c24b'
+            '3f6655f89088638280658cebcb695152d920100257aae8daa8d82f3f22ff054e6274cdb4350862a6ba41c85e65306c3b9ecb5f39b385a08826ba15142891b3be'
             'd75dd4a086f947f63786147d5965fee87b65096b7669b90a4cf719e31df1e8f6b67d42d40f3453b1e1da59e4bc27f32aa76a92b997423118d4efd07b34f30853'
             'd800ad18b40f71a8509acca4d74d8ea9b4d24558665e40a558345403cbcb8a29096baf686158e55baf3d0a4a41a605033c09b162d00a810aa50d8d50785e4bc1'
             'd549caac984a68ff95c928ffb2055b1ed09f1b0bb0beeded731c4a9f391bf0923c50c1cdefa145cc116121e4746bb35f0b9d32814bad8da142f48b1ead293ab1'
-            '7fb6eda30c9542afb26ed63427a07cc01a73e3e1e24e66050fb116242c1bf59b144e72edc67f17f2b61ca65592aad90b01232b57434b9b853e2764a3bcabe2ae'
-            '74d9e95b50b89d583afd48d41b207fe240d8e377a2d8b19a59a8940c4f50282a2a739d782da437afa02bca4153dc4d5a7af2507cbc8136fd98ef45ddb320d693'
-            'f8e20fe34b058e8e554f653424ced37fefd004489689e6047def11cd463b594241432dd425b082d73a2646fe91531be9083a481b47cc784930991f78d9214529'
+            'cfbebdb5347e53020123fc395eb2d241a3463c8a7ebbe251c5af37dd1b91569fdb172c16daa7d9ddd8b05975dffb5ea536cb3760f7af953921156d0c37647427'
             '0339084577de212c4ef02b46d8d836c0211aacae7503ace23b6098af90e9ca1e9ca9e6fa8e3132051ac0a68b032b89b60078bd5a0d7ca3ad617b91a61acbd3b5'
+            '4b35a5f67df276f9a1a4e246582eca495e0a3ee445e43c3640e7e8bd20ed2f19f1ad1a85ab9121e66b8cfc3d58b70598bc690bc87c4833466489715028a69060'
+            'e7a66c81d1e920684cb597f7446a1f5c244c32db69735fcdfc7983304851f31dee11668370e2e322259fa4e9d7368fc46ac6fdff1ae1366a68642a88ca5ab311'
+            'f8e20fe34b058e8e554f653424ced37fefd004489689e6047def11cd463b594241432dd425b082d73a2646fe91531be9083a481b47cc784930991f78d9214529'
             '9208fb03e4e2ecb7f825dc52dec96b2d669c22dc1c1339071042ce3243ea5efbffc01c79db27fe878027460cd50d5de32d5716a70b00d9984bb9974b8d194752'
-            '772428500da0a29d269982676aaf9d200e4858667b5e33f52ea47f8e787d18eb0b6b01347331c855873901f9de68590dc328ed3fca8dc4bbbf02fd9edfb4213b'
-            'a3e8796293a073f74f140a9dacb094a193ceff6db62907c4240d135daa373e09b126c33fa796192404e02843e2e5c36fe739a2395dac35f78b388fd5a96bed40'
             '48b6b0d070240a0f9ac4d95b679fd80e006979c0239c3f56101f626cbddd38abbd572ff8ca2106f5a331c41664b1d3ae275ca43e0cb166a3b0bf768238259b03'
             '06558437098c3abe1360396b4f4a54cf381667573450087b0be7b26294f4d7ae3e2889afd7821ff68a3908ef6ff8ac99f92b18ed2d47476a300a4321e0622f52'
             '4eaac49aad911fc5b3e0990abcacd4fbdbd78dbacf11e6d3d7704b95578ab927475e70f2148232bb7ac5f53c81a02987af83e16ecfeddd43f55c9d731bb7870e'
             '89fef46a7d006d09e442e3df78ca76fc283c481a62fbf706fa5a47b9aee6fc32db75c06e1381cddb1989aa325993e8e0f4564a17f534095742c4cc4adf7a057f'
-            '7adb4076e60bdf884c16e491e1dc9730baa1fadbabdc0a89773986973b42943a3b1666c5ee047373d72581e8d98686044c4bf0dca7ad03ca120ff2e9a560c9d4'
-            'efee170b8ae29d38a54fa9941815b51242683c6cea4e6026aea2e1ce0a3fe02fbe3e31188a284f7ec965198e609b21ab9f1d8a69847cebfa89cb570142384ab2'
             'cc35996b230d219350a7389e42a904022369b12dc5bfaa937f0ae808bcb96ec184519d858de85e59ad17a3c30ea5f36eb1d000239560946a5a5a5e227b284648'
-            'dc817e85e43483ab4d0b76460407832905c5460d67a805a26817ba5804dae738d0a9e554b2808e7f085b209ff42b0df62e94914bf019189ae25c52d96bfffbce'
-            'd0ac0247ac5993fdb9c2f9c371bbbcf2c8d95dc5d0bd2651b9c396b7a09c799ff055430ff200d4e60859724d54709604532143a8f65f2a1e5dba134c6623edf6'
             '6cec83f303d49f6362d72176883fb4ef569a5c3dad00068be6e95b623c034cadeb0ca788dc772a3a509c42ff3aff256c5b98cd510a1a89ef0c86f769d9a1f525'
-            '7b7e857b5c72a5cad8be73bb0065268abc71b08df4cbc487a6a8468a6bedfa923a258c95fa97ea44c3c54ed89b52d15c7a74bde4d0171cd86d2a5921a96c15a8'
+            'e554244aa980ff92e2c5217ffa62a6dba0da400061f9d3613616182ac15d0d5bc65599ff71b8f0be5014c5e4a352ef0aa1b0a19b4d686759fbf88296ba3c96ea'
             'b501454a225cc3882c6ccc61e6029e6a20efee5179668819d3055afa059ecaa4307c1b57f9780c224e91bf2f50192a93cf7003b9dbb7296a9d604e52604eaea4'
             'f8edc60ca3fcfb123d08fc2a3ba8b5dcd504e20e61500ba00268ce4486cfd9432e42192cdd35cd2d63db6fe02fcf8139886b80e0e10cb7b81f7f92ccf539483c'
+            'ef893edc3c4416c31f1bc011cdb9b4926dd39beb696997c31dc8416948255f93c4cf3363bb90a4cfc7d73ad2cecf6e03acf88b458d607e042644333b5d69e643'
             'a1279dcb47ff3d43811c5dfca84a5b4edd6be87f012fa4e2c1a1f0c379e707bee67f23e6dd186be97f78cf1f45f781619db0382fc6aa0d5c42208ad77b95373e'
             'c60019fa4f598031c24845d80814c56cb9585765fa9536e12b3c2f975f721a67808c2bc14830a12af0aea69da122d5a0874b64119f2409d636800ee83eb09ce5'
-            '6512f634d730cdc7bc133e4124220d837d60e34b3a5137b1ee86f3eb69d0986287c1b5afb3d751647c9e1b35e4f2682dafb84010c9f6d58c6bfffde5e55d2eaf'
+            '9e43e46d575e1fafcbbbe9c1d0f5c6d1ce3c7922b9b24f5fe697a7c917d79f8cf8c219068c48f314464fe9324e7c24b5573fbe2c827e2c92b0c7cf4e5f916fcc'
             '5cbeec49c835796993808f79f60fda571254d98f5e65eadc040f96e9a9eff7f6989679993187eb49708e392cd063f79327894198fff6847a50983263c1a4ca7f'
             'a54c01ba42e7d5f9433dacaa21f656d8aefdb6a5228fbca2b8e55b26eb02b35327ae3fd98a26a708452b8559e7f4acb32b6e685e26edc64497d1b7d10c5d86e1')
 
