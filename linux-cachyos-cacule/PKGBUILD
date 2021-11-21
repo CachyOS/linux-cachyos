@@ -133,13 +133,13 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb
 fi
 _major=5.15
-_minor=3
+_minor=4
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=4
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -657,7 +657,7 @@ _package-headers() {
 
 }
 
-sha512sums=('3724428553dbba44064e044f960c1dd002427eca79ddc4dd5feb829cdc76394d3bdc99bcf8d67a89cd406dcc6c5f613cc629797bebbf281fdd3ef00aa0724839'
+sha512sums=('27c38e4772616852710671c4c9d2301e2bf4eea05e47ecd6493c3edddd23ae8e2a08ee9134f2f0e2bf599e095e1b8ccc92b124be2a9a943367dfe6afde3eb369'
             '4240fc839755694536d6010c30442b465ba88310292da8f682d03d5b34225681d2aabd6f5816c892a019d2088a1654d11a5df7fb5eea1afd86e23c68164bbb2e'
             'c6cd33a7fa0a0d7a7f9919e897f55871b2809ec628671bb3528e30b7aedc6127c69dca949d7b5334ec88a495d625f89f3bc67bc03fd9798c9a7bca324e4fce65'
             '3f6655f89088638280658cebcb695152d920100257aae8daa8d82f3f22ff054e6274cdb4350862a6ba41c85e65306c3b9ecb5f39b385a08826ba15142891b3be'
