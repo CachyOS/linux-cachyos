@@ -15,25 +15,28 @@ The CachyOS are improved kernels which improve the performance and other improve
 ## Features
 
 - Very customizable PKGBUILD with many features and improvements
-- 5 Different scheduler are supported, CacULE-,CFS-,baby-,bmq- and pds scheduler
+- 5 Different scheduler are supported, CacULE-,CFS-,tt-,bmq- and pds scheduler
 - GCC/CLANG Optimization with automatically found cpu arch or also selectable cpu arch
 - Choose between LLVM/LTO or GCC
-- Choose between 500Hz, , 600 Hz (defaut),750Hz, 1000Hz, 2000Hz
+- Choose between 500Hz, , 600 Hz ,750Hz, 1000Hz, 2000Hz
 - Improved BFQ Scheduler
+- Generell improved ssctl settings and upstream scheduler fixes
 - Latest LRU Patch-set
 - BBRv2 tcp_congestion_control
 - LLVM ThinLTO provided with \*-lto Kernel (in the cachyos-repo)
-- LRNG Framework (default)
-- FUTEX, WINESYNC & FUTEX2 patch-set
+- LRNG Framework (default enabled)
+- WINEFSYNC and the new futex wait v implementation (futex2) which will be upstream in 5.17
 - Android ANBOX patch-set
-- Latest Paragon NTFS3 driver support
+- Latest Paragon NTFS3 driver support and fixes
 - Latest & improved ZSTD patch-set
+- Some Security related patches. More here: [Fork-Brute](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-security-patches.patch) [spectre](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-spectre-patches.patch)
 - Latest BTRFS improvements & fixes
 - KSMBD Module for Samba3 Server
-- Protection of clean file pages (page cache) may be used to prevent thrashing, reducing I/O under memory pressure, avoid high latency and prevent livelock in near OOM (Out Of Memory) conditions
-- AMD PSTATEv2 Driver
+- Using the lates MG-LRU v5 patch paired with and the new implemented damon. The damon replaces the le9, but the le9 can be still enabled
+- AMD PSTATEv4 Driver
+- Clearlinux Patchset
 - Control Flow Integrity (CFI) slectable when using LLVM
-- experimental PGO building selectable
+- experimental PGO building selectable (at the moment not working)
 
 ## Some Tips & Tricks
 
@@ -135,20 +138,7 @@ More information's you will find here [CachyOS](https://github.com/cachyos) or [
 
 ## How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS:
 
-There is mostly an easy workaround, but be aware, if you install a Kernel and have those parameters still in, the GCC Compiled Kernel will fail. Also some modules which uses DKMS needs to recompiled with CLANG/LLVM. I just compile the backup kernel LINUX-LTS also with CLANG, so i got no problems anymore.
-
-- Just do following:
-
-  ```
-    sudo nano /etc/dkms/framework.conf
-    and add following entrys on the bottom of the file:
-    export LLVM=1
-    export CC=clang
-  ```
-
-- If you have this done, just reinstall or install the kernel which is compiled with LLVM/LTO and DKMS wont fail anymore.
-
-If you got questions, just hit me up!
+Not needed anymore, just install the latest dkms version (3.0.2). 
 
 ## Donations are welcome for the compile server for the repo or a cup of coffee for maintain this repo
 
@@ -163,7 +153,5 @@ If you got questions, just hit me up!
 [SirLucjan (Piotr Gorski)](https://github.com/sirlucjan) for many cool patches
 
 [Archlinux](https://archlinux.org) for the great linux operating system
-
-[GarudaLinux](https://garudalinux.org) for suggestions and supports
 
 [And all other Kernel Developers and Supporters](https://github.com/torvalds/linux)
