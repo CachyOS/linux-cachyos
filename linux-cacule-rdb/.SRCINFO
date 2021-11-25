@@ -1,7 +1,7 @@
 pkgbase = linux-cacule-rdb
 	pkgdesc = Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15.5
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
