@@ -11,7 +11,7 @@ _cpusched='cacule'
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=y
+_makenconfig=
 
 ### Tweak kernel options prior to a build via menuconfig
 _makemenuconfig=
@@ -147,7 +147,7 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 'graphviz' 'imagemagick' 'pahole' 'cpio' 'perl' 'tar' 'xz')
 if [ -n "$_use_llvm_lto" ]; then
   depends+=(clang llvm lld python)
-f
+fi
 if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
