@@ -54,8 +54,8 @@ _winesync=y
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
 _2k_HZ_ticks=
 _1k_HZ_ticks=
-_750_HZ_ticks=y
-_600_HZ_ticks=
+_750_HZ_ticks=
+_600_HZ_ticks=y
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
@@ -124,13 +124,13 @@ else
   pkgbase=linux-cachyos-pds
 fi
 _major=5.15
-_minor=5
+_minor=6
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux PDS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=2
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -140,11 +140,16 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
+if [ -n "$_use_llvm_lto" ]; then
+  depends+=(clang llvm lld python)
+fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "config"
   "${_patchsource}/0001-prjc.patch"
-  "${_patchsource}/dev/0001-arch.patch"
+  "${_patchsource}/0001-arch-patches.patch"
+  "${_patchsource}/AMD/0001-amdpstate.patch"
+  "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-bitmap.patch"
   "${_patchsource}/0001-block-patches.patch"
@@ -152,18 +157,18 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
-  "${_patchsource}/0001-amd-pstate-v4.patch"
   "${_patchsource}/0001-ntfs3.patch"
-  #"${_patchsource}/0001-ck-hrtimer.patch"
-  #"${_patchsource}/0001-fixes-miscellaneous.patch"
+#  "${_patchsource}/0001-ck-hrtimer.patch"
+#  "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
   "${_patchsource}/0001-damon.patch"
+  "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-mm-lru.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
-  "${_patchsource}/0001-security-patches.patch"
+#  "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-sbitmap-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-zstd.patch"
@@ -634,31 +639,32 @@ _package-headers() {
 
 }
 
-sha512sums=('7b9a78c734a24e8b67f93c8de65fb57cce498f18f4ce6a5c4cff0b834407dbf66cda6834118e67cfef3101979f2df78a7cc45854d943ffecee60a990783497df'
-            'b4fd8b016cf022bff4193a21de6b2636def09c0c5a5d9751b8f0b36233d2b1eb16536199ec952fc8bc43c51f0a5de3af8acaeda85a3c4d61d2f6353ec1406987'
+sha512sums=('0f69e98590e796a3ec3e04340fc41954f1cdb7a5859da8efec1ba4a6498760778744e6243d068bc91343e3e7029239ff2e9ee2572f458c6b0e31c23f3686b5f5'
+            '529d4b326892ac73c9c08f0ca2dbe12365b50ee7368712bb8dbe366f916985e760f995404b7061f1bbbea282ab07a811c0d9c1674182ef62fcca401aca3da8b9'
             'e7348aaf11b96273e3ab2fbc0336e10c5ca2fef21ddf1186c58ef15324acc70f7e7c491a0c76c63668427e9a495098b5735fae29ccd93783ed6694d8e17564cd'
-            '136ca6eddc3cda39f41fa55770c53845de8267e004731df6c8b8c0023ec2073b1998d69af944ae4d0cd1ef6e201c32649a0d7b15946133a6da012d8a9cb37d94'
+            'b9ed734f6acbc1269086efd6c904a98f1a669680e65e2150366721b315cc969ec0f58eb0aff7ed253e9ad1ff64314ff9e4c25f4425c96331161489e209b7c759'
+            '6d091087ea65936cc546cd049dafc5a2356244b9b2c9a3562f4c9ad7368bbbd23b4cde5e5bc8995c7fef7e4a3a304975a88016bcd7f3fe446d33c55feb4b8c88'
+            'd800ad18b40f71a8509acca4d74d8ea9b4d24558665e40a558345403cbcb8a29096baf686158e55baf3d0a4a41a605033c09b162d00a810aa50d8d50785e4bc1'
             'd549caac984a68ff95c928ffb2055b1ed09f1b0bb0beeded731c4a9f391bf0923c50c1cdefa145cc116121e4746bb35f0b9d32814bad8da142f48b1ead293ab1'
             'd7b8c20c6950b86ed88aeb271466bcac282c86c8c42a2603e7d54b57b2421c74ad3530bab4a8d43fee407ddcbb2e42885acf1b357b9d87f2a1c4250816c0e788'
             'cfbebdb5347e53020123fc395eb2d241a3463c8a7ebbe251c5af37dd1b91569fdb172c16daa7d9ddd8b05975dffb5ea536cb3760f7af953921156d0c37647427'
             '0339084577de212c4ef02b46d8d836c0211aacae7503ace23b6098af90e9ca1e9ca9e6fa8e3132051ac0a68b032b89b60078bd5a0d7ca3ad617b91a61acbd3b5'
-            'd382d7facd84c9cec16cfe5e3bb924b07b26e45a85831e1acf8893b7f56c621c363c6f71e872c48eb339682c980d2517dfb162730ebd2a0027dfe5f2886ea0dc'
+            '5a1600c43db9493c85fd8654b857bf82c5482c52c19a12df6a34a92d16600a022e284f15e68609f9611b8443944674ee5cc6f87a9c944c6463fb313f1a68b65c'
             'e7a66c81d1e920684cb597f7446a1f5c244c32db69735fcdfc7983304851f31dee11668370e2e322259fa4e9d7368fc46ac6fdff1ae1366a68642a88ca5ab311'
             'f8e20fe34b058e8e554f653424ced37fefd004489689e6047def11cd463b594241432dd425b082d73a2646fe91531be9083a481b47cc784930991f78d9214529'
-            '9208fb03e4e2ecb7f825dc52dec96b2d669c22dc1c1339071042ce3243ea5efbffc01c79db27fe878027460cd50d5de32d5716a70b00d9984bb9974b8d194752'
             'e4266d7b8b3de6be625a8df0404e94eab0305ef929f93ee7fef14bb69f690938b7c9c7ab7578b5c9c7174ae2697893f920d609cd818b649604d4bebeda48df44'
             '48b6b0d070240a0f9ac4d95b679fd80e006979c0239c3f56101f626cbddd38abbd572ff8ca2106f5a331c41664b1d3ae275ca43e0cb166a3b0bf768238259b03'
             '76dfd2023b314be3e5b84acc074857322d49938078b69c87efc4c3510fd5aa528781a07197d00823012a4bdccdcab10db11fc116609d1da7ca694e29010c92b6'
-            'dca4bbec8b13b1fe7d94217a6666caf36dba47392d70f10ddb186b08ab78537ca564245ae90ccac4265e0d097319e825aba0b902151e0da25890c1b77f8ef0fa'
-            '27db1f703e7c0dcbcd18aa4dc9b1098ad89e749d6577df6be94fadf5566ce05921d0a8507300af9a970fa28e6ac00fb9bda2572b6ff4c91fcdf5332bb23344f5'
+            '7a121e38ede8b11e781f09e486377b7472979cfe9780cabfff599124998e95f64eaf1462a1579cc943e924a7df2f640a2b8ea41e0807369f56c84e1a9f4b1934'
+            '7d953a6093de744e9dfe841cec28e9bd88dd12b5cd142d04736fe318a77709f166fe476f8c8bbb77013f715e27c1e1ba219998d3f50d29dfe1127216b64b6d60'
+            '4ba31d174af375b29b7ebea72ce24d5c81d3876885c35baea4d801f691c4083934422ab89470f4725c5ffb3646ea49b140ea33630cce35ee316985bc2bda7b0b'
             '7adb4076e60bdf884c16e491e1dc9730baa1fadbabdc0a89773986973b42943a3b1666c5ee047373d72581e8d98686044c4bf0dca7ad03ca120ff2e9a560c9d4'
             'fb2d882a1156e5f78ff4b5809f0eea6ab6df17f460ad1547c422476e942af54b064c2587d9dc1c0cffef9e906990285d12e98f2efe132c50bf27f02c52d61681'
             'b501454a225cc3882c6ccc61e6029e6a20efee5179668819d3055afa059ecaa4307c1b57f9780c224e91bf2f50192a93cf7003b9dbb7296a9d604e52604eaea4'
-            'f8edc60ca3fcfb123d08fc2a3ba8b5dcd504e20e61500ba00268ce4486cfd9432e42192cdd35cd2d63db6fe02fcf8139886b80e0e10cb7b81f7f92ccf539483c'
             'ef893edc3c4416c31f1bc011cdb9b4926dd39beb696997c31dc8416948255f93c4cf3363bb90a4cfc7d73ad2cecf6e03acf88b458d607e042644333b5d69e643'
             'a1279dcb47ff3d43811c5dfca84a5b4edd6be87f012fa4e2c1a1f0c379e707bee67f23e6dd186be97f78cf1f45f781619db0382fc6aa0d5c42208ad77b95373e'
             '8d2230bbae1708610ff0d93537d1a1f372f4efd25cb35e6016657c13c6032a0e8e5a3ade89ed5e6a866e3720fe998e5aceac3496a1d3c9423af4d1b40c949022'
-            '9be67d8ab398c1286199ed796d6ce951bf6a967e146081e54ca1b2e8ff16b7bc00ecb4668ec9de859901bc16315af4955515d26e8a2858ac49b1661a13df1031'
+            'a0322e98aa0406eda29975be648f33b562c894a090ccafcde6c6dad580353c2029fa5bb2d66d31faa8ff0c593ba2ffe1e76031c0a16f55bf16c6a5366b9d700f'
             'a54c01ba42e7d5f9433dacaa21f656d8aefdb6a5228fbca2b8e55b26eb02b35327ae3fd98a26a708452b8559e7f4acb32b6e685e26edc64497d1b7d10c5d86e1')
 
 pkgname=("$pkgbase" "$pkgbase-headers")
