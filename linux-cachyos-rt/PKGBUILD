@@ -3,11 +3,6 @@
 ### BUILD OPTIONS
 # Set the next two variables to ANYTHING that is not null to enable them
 
-# Selecting CacULE or CacULE-RDB scheduler, default:cacule
-_cpusched='cacule'
-#_cpusched='rdb'
-
-
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
@@ -71,7 +66,7 @@ _zstd_level='ultra'
 # 'normal' - standard compression ratio
 # WARNING: the ultra settings can sometimes
 # be counterproductive in both size and speed.
-_zstd_module_level='normal'
+_zstd_module_level='ultra'
 
 ### Enable SECURITY_FORK_BRUTE
 # WARNING Not recommended.
@@ -110,16 +105,12 @@ _use_current=
 _makenconfig=
 
 
-if [ "$_cpusched" = "cacule" ]  && [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-cacule-rt-lto
-elif  [ "$_cpusched" = "rdb" ] && [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-cacule-rdb-rt-lto
-elif [ "$_cpusched" = "cacule" ]; then
-  pkgbase=linux-cachyos-cacule-rt
-elif [ "$_cpusched" = "rdb" ]; then
-  pkgbase=linux-cachyos-cacule-rdb-rt
+if [ -n "$_use_llvm_lto" ]; then
+  pkgbase=linux-cachyos-rt-lto
+else
+  pkgbase=linux-cachyos-rt
 fi
-pkgver=5.15.4
+pkgver=5.15.6
 pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
@@ -137,17 +128,14 @@ _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
-  "${_patchsource}/RT/patch-5.15.3-rt21.patch"
-  "${_caculepatches}/v5.15/cacule-5.15-rt-full.patch"
+  "${_patchsource}/RT/patch-5.15.5-rt22.patch"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-#  "${_patchsource}/0001-misc.patch"
-  "${_patchsource}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
+  "${_patchsource}/0001-misc.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
-  "${_patchsource}/0001-amd-pstate-v4.patch"
-  "${_patchsource}/0001-tcp.patch"
+  "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
   "${_patchsource}/0001-bfq.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-ck-hrtimer.patch"
@@ -155,12 +143,10 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-  "${_patchsource}/0001-string.patch"
   "${_patchsource}/0001-damon.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   #  "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
-  "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
@@ -453,7 +439,7 @@ prepare() {
   scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-  echo "Enable AMD PSTATE v2 driver"
+  echo "Enable AMD PSTATE driver"
   scripts/config --enable CONFIG_AMD_PTDMA
   echo "Enable Anbox"
   scripts/config --enable CONFIG_ASHMEM
@@ -640,34 +626,30 @@ _package-headers() {
 
 }
 
-md5sums=('7ab1a51d6c48fc062e9e33c143dfa825'
-         'a6a462710095f8f54cffedfc8937f9a2'
-         'a7aa07b02bb6c0f30001b7ee1fb2bd65'
-         '690fe365432d3368cc4ba73578d50494'
+md5sums=('b4e333919e9fddfdd46308cc38ceda1d'
+         '9a30485a426bbf3342062a4b6a5cc3bf'
+         '2f0448cd31f07494221e5a88cf55cda3'
          'cf26387aadf2a90428350ac246b070c9'
-         '80e419d6847d4122a23a141fd3a40e52'
+         '163da83fceb47a7366b9358bc535b0cd'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          '0b6d09bdd920f4c31c05fdeaa0740548'
          '67764a5824b567b49bcce19c01d4e1b3'
-         'c60b962f31b8024a81fbc4e833e0d2d4'
-         'c4a2e93acfdc6c250c3f5eccf80f23e2'
+         '5fda681a06fd32fdad4f55bea5c4ac1c'
          'ff2c6319fb660962609e2c8d43eab654'
          '5b9a009ab68ba548e9d06e0932ab967d'
          '6038177c72982533035309fcd6df208a'
-         '5783876e2ccecfee47b6fcc4bfe054e6'
+         '847969ace416d1b7e3cd2cc7a5d54f01'
          'd058fb21aac0658ee10029bdbdca96d1'
-         '6b82762de24995661c34b2739ba15ea0'
-         'a63625757016d525c9e69ab434159bfe'
-         'd6e5581b4fade267a28deb8e73d236f5'
-         '3467dde5848327da175663849f794f11'
-         'cf0e02e2d2e78aec0f2272445f7d180d'
-         '13eaebd6dfb087eccd3e191fc147f095'
-         'bc64b1d1a9c95b07c28457f7214ebf81'
+         '9b6369bc4c58ad0d9195b5c204ed4b8a'
+         'c6efda5716e4ff79ebdbc963bebd851a'
+         '408dfabb34f2b79aa2f5044b052703db'
+         '56fdf3562b041c0408d9751b7e447977'
+         '08c84362cb916b30d9c77e35b1b3bc54'
          '8cb0301d159b59727b7bdd09350e2a9f'
          'de6db1147385c058b2e94df3c1739fdf'
          'bf58290793d3a095ef95fb1fac2de89a'
-         'f05be13cb783d93d92b07e7e9da5b400'
+         'f81a38839b35a587e59df18ace0ad433'
          '21c98f19e883879dd3336c1fa143fd31')
 
 pkgname=("$pkgbase" "$pkgbase-headers" )

@@ -24,8 +24,8 @@ _winesync=y
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
 _2k_HZ_ticks=
 _1k_HZ_ticks=
-_750_HZ_ticks=
-_600_HZ_ticks=y
+_750_HZ_ticks=y
+_600_HZ_ticks=
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
@@ -50,9 +50,9 @@ _ksmbd_enable=
 
 
 ## Apply Kernel automatic Optimization
-_use_auto_optimization=
+_use_auto_optimization=y
 ## Apply Kernel Optimization selecting
-_use_optimization_select=y
+_use_optimization_select=
 
 
 ### Selecting the ZSTD compression level
@@ -72,7 +72,7 @@ _zstd_level='ultra'
 # 'normal' - standard compression ratio
 # WARNING: the ultra settings can sometimes
 # be counterproductive in both size and speed.
-_zstd_module_level='normal'
+_zstd_module_level='ultra'
 
 ### Enable SECURITY_FORK_BRUTE
 # WARNING Not recommended.
@@ -88,7 +88,7 @@ _use_llvm_lto=
 _use_cfi=
 
 ## Enable PGO (patch is failing when cfi is also used)
-_use_pgo=
+#_use_pgo=
 
 # Only compile active modules to VASTLY reduce the number of modules built and
 # the build time.
@@ -140,9 +140,8 @@ _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16"
 source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
-  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
+#  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
 #    "${_patchsource}/TT/0001-tt-r2-5.16.patch"
-  #"0001-MGLRU-v5.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-cpu-patches.patch"
@@ -150,7 +149,7 @@ source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "${_patchsource}/misc/0001-mm.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-winesync-fsync.patch"
-  "${_patchsource}/0001-amdpstate.patch"
+  "https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/AMD/0001-amd-pstate-dev-v5-fixes.patch"
   #  "${_patchsource}/0001-tcp.patch"
   "auto-cpu-optimization.sh"
 )
@@ -578,8 +577,7 @@ done
 
 
 md5sums=('d941b01e77e2cb4dbfb814a373f12f62'
-         '4c6cfdda3bb1ca972b9d176e3a6bbe85'
-         '02e7cbd91491ad357bf2d507d58e21a0'
+         '0ac42c66359097d484fc67a1905008b0'
          '299b176cbfc1b386d74406387e9e2d6b'
          '15ffc9a58dbdfff5aa77bc085d2b335a'
          '67764a5824b567b49bcce19c01d4e1b3'
@@ -587,5 +585,5 @@ md5sums=('d941b01e77e2cb4dbfb814a373f12f62'
          '500f49b7f8ebe52f10ce473e50522b08'
          'de6db1147385c058b2e94df3c1739fdf'
          '13ed4ea506b1dc0e9e8437d34c99a916'
-         '4b530f55cb9ce472fa539abc69299a17'
+         '5fda681a06fd32fdad4f55bea5c4ac1c'
          '21c98f19e883879dd3336c1fa143fd31')

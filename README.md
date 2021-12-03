@@ -138,7 +138,7 @@ More information's you will find here [CachyOS](https://github.com/cachyos) or [
 
 ## How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS:
 
-Not needed anymore, just install the latest dkms version (3.0.2). 
+Not needed anymore, just install the latest dkms version (3.0.2).
 
 ## Donations are welcome for the compile server for the repo or a cup of coffee for maintain this repo
 

@@ -54,8 +54,8 @@ _winesync=y
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
 _2k_HZ_ticks=
 _1k_HZ_ticks=
-_750_HZ_ticks=
-_600_HZ_ticks=y
+_750_HZ_ticks=y
+_600_HZ_ticks=
 _500_HZ_ticks=
 
 ### Disable MQ-Deadline I/O scheduler
@@ -99,7 +99,7 @@ _zstd_level='ultra'
 # 'normal' - standard compression ratio
 # WARNING: the ultra settings can sometimes
 # be counterproductive in both size and speed.
-_zstd_module_level='normal'
+_zstd_module_level='ultra'
 
 ### Enable SECURITY_FORK_BRUTE
 # WARNING Not recommended.
@@ -130,7 +130,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -148,7 +148,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.ta
   "config"
   "${_patchsource}/0001-prjc.patch"
   "${_patchsource}/0001-arch-patches.patch"
-  "${_patchsource}/AMD/0001-amdpstate.patch"
+  "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-bitmap.patch"
@@ -644,10 +644,10 @@ _package-headers() {
 }
 
 sha512sums=('0f69e98590e796a3ec3e04340fc41954f1cdb7a5859da8efec1ba4a6498760778744e6243d068bc91343e3e7029239ff2e9ee2572f458c6b0e31c23f3686b5f5'
-            '529d4b326892ac73c9c08f0ca2dbe12365b50ee7368712bb8dbe366f916985e760f995404b7061f1bbbea282ab07a811c0d9c1674182ef62fcca401aca3da8b9'
+            '63b814e3f447e0a07637bc578ebe744732ba7f1405106e6b5c170d97c4e33921a48337fe73fe873b749bfeca288c5f476819b00776980995ab6bcbb71efc4ba3'
             'e7348aaf11b96273e3ab2fbc0336e10c5ca2fef21ddf1186c58ef15324acc70f7e7c491a0c76c63668427e9a495098b5735fae29ccd93783ed6694d8e17564cd'
-            'b9ed734f6acbc1269086efd6c904a98f1a669680e65e2150366721b315cc969ec0f58eb0aff7ed253e9ad1ff64314ff9e4c25f4425c96331161489e209b7c759'
-            '6d091087ea65936cc546cd049dafc5a2356244b9b2c9a3562f4c9ad7368bbbd23b4cde5e5bc8995c7fef7e4a3a304975a88016bcd7f3fe446d33c55feb4b8c88'
+            '35e36b6824c83f2bfb0314882be8b373243fa4cd45bcda6291171206ca5b718e73abb91c0edc3f0ad6b06f099746c954aedb5f05fe42797fe408a8176898de65'
+            'd6544f652ef9767e20d8acd1bf09738e7dcd4bc430a39a75b591aa38631942c952f70a29d1febfdfea20e7bc64813991fc1428a1dcaf176b3a024cb17be8cb3c'
             'd800ad18b40f71a8509acca4d74d8ea9b4d24558665e40a558345403cbcb8a29096baf686158e55baf3d0a4a41a605033c09b162d00a810aa50d8d50785e4bc1'
             'd549caac984a68ff95c928ffb2055b1ed09f1b0bb0beeded731c4a9f391bf0923c50c1cdefa145cc116121e4746bb35f0b9d32814bad8da142f48b1ead293ab1'
             'd7b8c20c6950b86ed88aeb271466bcac282c86c8c42a2603e7d54b57b2421c74ad3530bab4a8d43fee407ddcbb2e42885acf1b357b9d87f2a1c4250816c0e788'
@@ -659,7 +659,7 @@ sha512sums=('0f69e98590e796a3ec3e04340fc41954f1cdb7a5859da8efec1ba4a649876077874
             'e4266d7b8b3de6be625a8df0404e94eab0305ef929f93ee7fef14bb69f690938b7c9c7ab7578b5c9c7174ae2697893f920d609cd818b649604d4bebeda48df44'
             '48b6b0d070240a0f9ac4d95b679fd80e006979c0239c3f56101f626cbddd38abbd572ff8ca2106f5a331c41664b1d3ae275ca43e0cb166a3b0bf768238259b03'
             '76dfd2023b314be3e5b84acc074857322d49938078b69c87efc4c3510fd5aa528781a07197d00823012a4bdccdcab10db11fc116609d1da7ca694e29010c92b6'
-            '7a121e38ede8b11e781f09e486377b7472979cfe9780cabfff599124998e95f64eaf1462a1579cc943e924a7df2f640a2b8ea41e0807369f56c84e1a9f4b1934'
+            '51ccbf184aeb98b05bb72f6d2ded8158a16bb2350ff192ce301c2e405bf514af5fe4888098d5a804cf1b2c6558a36ecc9cbdaaeeaf4f43150495579b4c2f7c00'
             '7d953a6093de744e9dfe841cec28e9bd88dd12b5cd142d04736fe318a77709f166fe476f8c8bbb77013f715e27c1e1ba219998d3f50d29dfe1127216b64b6d60'
             '4ba31d174af375b29b7ebea72ce24d5c81d3876885c35baea4d801f691c4083934422ab89470f4725c5ffb3646ea49b140ea33630cce35ee316985bc2bda7b0b'
             '7adb4076e60bdf884c16e491e1dc9730baa1fadbabdc0a89773986973b42943a3b1666c5ee047373d72581e8d98686044c4bf0dca7ad03ca120ff2e9a560c9d4'
