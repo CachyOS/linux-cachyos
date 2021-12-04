@@ -130,7 +130,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=2
+pkgrel=3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -148,6 +148,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.ta
   "config"
   "${_patchsource}/0001-prjc.patch"
   "${_patchsource}/0001-arch-patches.patch"
+  "${_patchsource}/0001-clang.patch"
   "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
@@ -168,7 +169,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.ta
   "${_patchsource}/0001-mm-lru.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
-#  "${_patchsource}/0001-security-patches.patch"
+  "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-sbitmap-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-zstd.patch"
@@ -343,21 +344,20 @@ prepare() {
   ### Enable multigenerational LRU
   if [ -n "$_lru_enable" ]; then
     echo "Enabling multigenerational LRU..."
-    scripts/config --enable CONFIG_HAVE_ARCH_PARENT_PMD_YOUNG
+    scripts/config --enable CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG
     scripts/config --enable CONFIG_LRU_GEN
-    scripts/config --set-val CONFIG_NR_LRU_GENS 7
-    scripts/config --set-val CONFIG_TIERS_PER_GEN 4
-    scripts/config --enable CONFIG_LRU_GEN_ENABLED
+    scripts/config --set-val CONFIG_NR_LRU_GENS 4
+    scripts/config --set-val CONFIG_TIERS_PER_GEN 2
+    scripts/config --disable CONFIG_LRU_GEN_ENABLED
     scripts/config --disable CONFIG_LRU_GEN_STATS
   fi
-
 
   ### Enable DAMON
   if [ -n "$_damon" ]; then
     echo "Enabling DAMON..."
     scripts/config --enable CONFIG_DAMON
-    scripts/config --enable CONFIG_DAMON_VADDR
-    scripts/config --enable CONFIG_DAMON_DBGFS
+    scripts/config --disable CONFIG_DAMON_VADDR
+    scripts/config --disable CONFIG_DAMON_DBGFS
     scripts/config --enable CONFIG_DAMON_PADDR
     scripts/config --enable CONFIG_DAMON_RECLAIM
   fi
@@ -505,7 +505,7 @@ prepare() {
 
   echo "Applying default config..."
   make ${BUILD_FLAGS[*]} olddefconfig
-  make ${BUILD_FLAGS[*]} -s kernelrelease > version
+  make -s kernelrelease > version
   echo "Prepared $pkgbase version $(<version)"
 
   ### Running make nconfig
@@ -643,34 +643,6 @@ _package-headers() {
 
 }
 
-sha512sums=('0f69e98590e796a3ec3e04340fc41954f1cdb7a5859da8efec1ba4a6498760778744e6243d068bc91343e3e7029239ff2e9ee2572f458c6b0e31c23f3686b5f5'
-            '63b814e3f447e0a07637bc578ebe744732ba7f1405106e6b5c170d97c4e33921a48337fe73fe873b749bfeca288c5f476819b00776980995ab6bcbb71efc4ba3'
-            'e7348aaf11b96273e3ab2fbc0336e10c5ca2fef21ddf1186c58ef15324acc70f7e7c491a0c76c63668427e9a495098b5735fae29ccd93783ed6694d8e17564cd'
-            '35e36b6824c83f2bfb0314882be8b373243fa4cd45bcda6291171206ca5b718e73abb91c0edc3f0ad6b06f099746c954aedb5f05fe42797fe408a8176898de65'
-            'd6544f652ef9767e20d8acd1bf09738e7dcd4bc430a39a75b591aa38631942c952f70a29d1febfdfea20e7bc64813991fc1428a1dcaf176b3a024cb17be8cb3c'
-            'd800ad18b40f71a8509acca4d74d8ea9b4d24558665e40a558345403cbcb8a29096baf686158e55baf3d0a4a41a605033c09b162d00a810aa50d8d50785e4bc1'
-            'd549caac984a68ff95c928ffb2055b1ed09f1b0bb0beeded731c4a9f391bf0923c50c1cdefa145cc116121e4746bb35f0b9d32814bad8da142f48b1ead293ab1'
-            'd7b8c20c6950b86ed88aeb271466bcac282c86c8c42a2603e7d54b57b2421c74ad3530bab4a8d43fee407ddcbb2e42885acf1b357b9d87f2a1c4250816c0e788'
-            'cfbebdb5347e53020123fc395eb2d241a3463c8a7ebbe251c5af37dd1b91569fdb172c16daa7d9ddd8b05975dffb5ea536cb3760f7af953921156d0c37647427'
-            '0339084577de212c4ef02b46d8d836c0211aacae7503ace23b6098af90e9ca1e9ca9e6fa8e3132051ac0a68b032b89b60078bd5a0d7ca3ad617b91a61acbd3b5'
-            '5a1600c43db9493c85fd8654b857bf82c5482c52c19a12df6a34a92d16600a022e284f15e68609f9611b8443944674ee5cc6f87a9c944c6463fb313f1a68b65c'
-            'e7a66c81d1e920684cb597f7446a1f5c244c32db69735fcdfc7983304851f31dee11668370e2e322259fa4e9d7368fc46ac6fdff1ae1366a68642a88ca5ab311'
-            'f8e20fe34b058e8e554f653424ced37fefd004489689e6047def11cd463b594241432dd425b082d73a2646fe91531be9083a481b47cc784930991f78d9214529'
-            'e4266d7b8b3de6be625a8df0404e94eab0305ef929f93ee7fef14bb69f690938b7c9c7ab7578b5c9c7174ae2697893f920d609cd818b649604d4bebeda48df44'
-            '48b6b0d070240a0f9ac4d95b679fd80e006979c0239c3f56101f626cbddd38abbd572ff8ca2106f5a331c41664b1d3ae275ca43e0cb166a3b0bf768238259b03'
-            '76dfd2023b314be3e5b84acc074857322d49938078b69c87efc4c3510fd5aa528781a07197d00823012a4bdccdcab10db11fc116609d1da7ca694e29010c92b6'
-            '51ccbf184aeb98b05bb72f6d2ded8158a16bb2350ff192ce301c2e405bf514af5fe4888098d5a804cf1b2c6558a36ecc9cbdaaeeaf4f43150495579b4c2f7c00'
-            '7d953a6093de744e9dfe841cec28e9bd88dd12b5cd142d04736fe318a77709f166fe476f8c8bbb77013f715e27c1e1ba219998d3f50d29dfe1127216b64b6d60'
-            '4ba31d174af375b29b7ebea72ce24d5c81d3876885c35baea4d801f691c4083934422ab89470f4725c5ffb3646ea49b140ea33630cce35ee316985bc2bda7b0b'
-            '7adb4076e60bdf884c16e491e1dc9730baa1fadbabdc0a89773986973b42943a3b1666c5ee047373d72581e8d98686044c4bf0dca7ad03ca120ff2e9a560c9d4'
-            'fb2d882a1156e5f78ff4b5809f0eea6ab6df17f460ad1547c422476e942af54b064c2587d9dc1c0cffef9e906990285d12e98f2efe132c50bf27f02c52d61681'
-            'b501454a225cc3882c6ccc61e6029e6a20efee5179668819d3055afa059ecaa4307c1b57f9780c224e91bf2f50192a93cf7003b9dbb7296a9d604e52604eaea4'
-            'ef893edc3c4416c31f1bc011cdb9b4926dd39beb696997c31dc8416948255f93c4cf3363bb90a4cfc7d73ad2cecf6e03acf88b458d607e042644333b5d69e643'
-            'a1279dcb47ff3d43811c5dfca84a5b4edd6be87f012fa4e2c1a1f0c379e707bee67f23e6dd186be97f78cf1f45f781619db0382fc6aa0d5c42208ad77b95373e'
-            '8d2230bbae1708610ff0d93537d1a1f372f4efd25cb35e6016657c13c6032a0e8e5a3ade89ed5e6a866e3720fe998e5aceac3496a1d3c9423af4d1b40c949022'
-            'a0322e98aa0406eda29975be648f33b562c894a090ccafcde6c6dad580353c2029fa5bb2d66d31faa8ff0c593ba2ffe1e76031c0a16f55bf16c6a5366b9d700f'
-            'a54c01ba42e7d5f9433dacaa21f656d8aefdb6a5228fbca2b8e55b26eb02b35327ae3fd98a26a708452b8559e7f4acb32b6e685e26edc64497d1b7d10c5d86e1')
-
 pkgname=("$pkgbase" "$pkgbase-headers")
 for _p in "${pkgname[@]}"; do
   eval "package_$_p() {
@@ -678,3 +650,33 @@ for _p in "${pkgname[@]}"; do
              _package${_p#$pkgbase}
   }"
 done
+
+md5sums=('b4e333919e9fddfdd46308cc38ceda1d'
+         '0ac42c66359097d484fc67a1905008b0'
+         '25fe602949e5b92d08df96e55e418d7a'
+         'c54808480b8d1faada69cfa461ba87bd'
+         'c40c62f2fa0bdd7af655b1d1cf65a3fc'
+         '5fda681a06fd32fdad4f55bea5c4ac1c'
+         '53f037488a66667220c263f92ded333d'
+         '2a8097ba46be56fbbe3967e9c34c9a0b'
+         'e708f2160dee1ef5c7dffb8a23c199d7'
+         '56ceaed8bfb44eca93298ccc5fe11ca7'
+         '67764a5824b567b49bcce19c01d4e1b3'
+         '299b176cbfc1b386d74406387e9e2d6b'
+         '5b9a009ab68ba548e9d06e0932ab967d'
+         '0b6d09bdd920f4c31c05fdeaa0740548'
+         '8cf507777e20cd4d75a0627eef10c10d'
+         'd058fb21aac0658ee10029bdbdca96d1'
+         '9b6369bc4c58ad0d9195b5c204ed4b8a'
+         'c6efda5716e4ff79ebdbc963bebd851a'
+         '408dfabb34f2b79aa2f5044b052703db'
+         '08c84362cb916b30d9c77e35b1b3bc54'
+         'aa41eead65d8c4d0958df278157e2729'
+         '56fdf3562b041c0408d9751b7e447977'
+         'b09b84168822521426f197610727618b'
+         'bc64b1d1a9c95b07c28457f7214ebf81'
+         '7530840f2eb439f64307dd3157beb28e'
+         '8cb0301d159b59727b7bdd09350e2a9f'
+         'f23b415ff37873ae7142aed31808b635'
+         '1e6e9e1b37eb985b1d123f65a0697833'
+         '21c98f19e883879dd3336c1fa143fd31')
