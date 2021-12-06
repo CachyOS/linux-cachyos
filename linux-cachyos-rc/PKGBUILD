@@ -115,7 +115,7 @@ pkgbase=linux-cachyos-rc
 _major=5.16
 _minor=0
 _minorc=$((_minor+1))
-_rcver=rc3
+_rcver=rc4
 pkgver=${_major}.${_minorc}
 _stable=${_major}.${_minor}
 _stablerc=${_major}-${_rcver}
@@ -142,6 +142,9 @@ source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
 #  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
 #    "${_patchsource}/TT/0001-tt-r2-5.16.patch"
+  "${_patchsource}/misc/0001-block-5.16.patch"
+  "${_patchsource}/0001-apparmor.patch"
+  "${_patchsource}/0001-umcg.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-cpu-patches.patch"
