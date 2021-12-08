@@ -110,8 +110,8 @@ if [ -n "$_use_llvm_lto" ]; then
 else
   pkgbase=linux-cachyos-rt
 fi
-pkgver=5.15.6
-pkgrel=2
+pkgver=5.15.7
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -128,9 +128,9 @@ _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
-  "${_patchsource}/RT/patch-5.15.5-rt22.patch"
+  "${_patchsource}/0001-5.15.5-rt22.patch"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-  "${_patchsource}/0001-misc.patch"
+  "${_patchsource}/0001-misc-next.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
@@ -631,21 +631,21 @@ _package-headers() {
 
 }
 
-md5sums=('b4e333919e9fddfdd46308cc38ceda1d'
+md5sums=('b79700122766ccf561f032eb3c8da27e'
          '9a30485a426bbf3342062a4b6a5cc3bf'
          '2f0448cd31f07494221e5a88cf55cda3'
          'cf26387aadf2a90428350ac246b070c9'
-         '299b176cbfc1b386d74406387e9e2d6b'
+         '6971378b4fb2b16c0c0089cd55fc61f9'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          '0b6d09bdd920f4c31c05fdeaa0740548'
          '67764a5824b567b49bcce19c01d4e1b3'
-         '5fda681a06fd32fdad4f55bea5c4ac1c'
+         '4866d66f4cc1b10cccb520c22cbc71d7'
          'ff2c6319fb660962609e2c8d43eab654'
          '5b9a009ab68ba548e9d06e0932ab967d'
          '6038177c72982533035309fcd6df208a'
          '8aaac6621843060d8fec99e839c3200a'
-         'd058fb21aac0658ee10029bdbdca96d1'
+         '8c354c3d1962ec6785db7f0c3fbbab03'
          '9b6369bc4c58ad0d9195b5c204ed4b8a'
          'c6efda5716e4ff79ebdbc963bebd851a'
          '408dfabb34f2b79aa2f5044b052703db'

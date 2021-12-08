@@ -10,8 +10,7 @@
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
-_NUMAdisable=y
-
+_NUMAdisable=
 # Enable fsync
 _fsync=y
 
@@ -82,7 +81,7 @@ _zstd_module_level='ultra'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=
+_use_llvm_lto=y
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
@@ -108,7 +107,7 @@ _localmodcfg=
 _use_current=
 
 # Tweak kernel options prior to a build via nconfig
-_makenconfig=
+_makenconfig=y
 
 
 pkgbase=linux-cachyos-rc
@@ -144,7 +143,9 @@ source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
 #    "${_patchsource}/TT/0001-tt-r2-5.16.patch"
   "${_patchsource}/misc/0001-block-5.16.patch"
   "${_patchsource}/0001-apparmor.patch"
-  "${_patchsource}/0001-umcg.patch"
+  "${_patchsource}/0001-mapple.patch"
+  "${_patchsource}/0001-damon.patch"
+#  "${_patchsource}/0001-umcg.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-cpu-patches.patch"
@@ -579,8 +580,12 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('d941b01e77e2cb4dbfb814a373f12f62'
+md5sums=('c3b864c2edd20351f8fbfa265df89508'
          '0ac42c66359097d484fc67a1905008b0'
+         'ed2a1bd6ccb62423dca67821baf836e1'
+         'e8e38f00f1f33ed66e16d3df996ad1d9'
+         '049da61c4dcabfc5130940a0c734b1e0'
+         '04c5f310615c227be04f20123412eed6'
          '299b176cbfc1b386d74406387e9e2d6b'
          '15ffc9a58dbdfff5aa77bc085d2b335a'
          '67764a5824b567b49bcce19c01d4e1b3'
@@ -588,5 +593,5 @@ md5sums=('d941b01e77e2cb4dbfb814a373f12f62'
          '500f49b7f8ebe52f10ce473e50522b08'
          'de6db1147385c058b2e94df3c1739fdf'
          '13ed4ea506b1dc0e9e8437d34c99a916'
-         '5fda681a06fd32fdad4f55bea5c4ac1c'
+         '4866d66f4cc1b10cccb520c22cbc71d7'
          '21c98f19e883879dd3336c1fa143fd31')

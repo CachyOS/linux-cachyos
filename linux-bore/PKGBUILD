@@ -22,7 +22,7 @@ _makegconfig=
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
-_NUMAdisable=
+_NUMAdisable=y
 
 # Compile ONLY used modules to VASTLYreduce the number of modules built
 # and the build time.
@@ -53,8 +53,8 @@ _winesync=y
 
 ### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
 _2k_HZ_ticks=
-_1k_HZ_ticks=
-_750_HZ_ticks=y
+_1k_HZ_ticks=y
+_750_HZ_ticks=
 _600_HZ_ticks=
 _500_HZ_ticks=
 
@@ -68,13 +68,13 @@ _kyber_disable=y
 _mm_protect=y
 
 ### Enable multigenerational LRU
-#_lru_enable=
-
-### Enable DAMON
-_damon=y
+_lru_enable=
 
 ### Enable Linux Random Number Generator
 _lrng_enable=y
+
+### Enable DAMON
+_damon=y
 
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
@@ -120,16 +120,16 @@ _use_cfi=
 
 
 if [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-lto
+  pkgbase=linux-bore-lto
 else
-  pkgbase=linux-cachyos
+  pkgbase=linux-bore
 fi
 _major=5.15
 _minor=7
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
-pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
+pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
 pkgrel=1
 arch=('x86_64' 'x86_64_v3')
@@ -145,12 +145,10 @@ if [ -n "$_use_llvm_lto" ]; then
   depends+=(clang llvm lld python)
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
-source=(#"https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
-  "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
+source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "config"
-  #  "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
+  "${_patchsource}/0001-bore-sched.patch"
   "${_patchsource}/0001-arch-patches.patch"
-  "${_patchsource}/0001-CLUSTER.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-le9.patch"
   "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
@@ -160,7 +158,7 @@ source=(#"https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/0001-block-patches.patch"
   #"${_patchsource}/0001-ksm-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
-  "${_patchsource}/0001-misc.patch"
+  "${_patchsource}/0001-misc-next.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-ntfs3.patch"
@@ -181,6 +179,10 @@ source=(#"https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/0001-xfs-backport.patch"
   "auto-cpu-optimization.sh"
 )
+
+if [ -n "$_use_cfi" ]; then
+  source+=("${_patchsource}/0001-cfi.patch")
+fi
 
 if [ -n "$_use_pgo" ]; then
   source+=("${_patchsource}/0001-PGO.patch")
@@ -238,7 +240,7 @@ prepare() {
     fi
   fi
 
-if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
+  if [ -n "$_use_cfi" ]; then
     scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
     scripts/config --enable CONFIG_CFI_CLANG
   fi
@@ -453,6 +455,8 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
     exit
   fi
 
+
+
   echo "Disabling TCP_CONG_CUBIC..."
   scripts/config --module CONFIG_TCP_CONG_CUBIC
   scripts/config --disable CONFIG_DEFAULT_CUBIC
@@ -460,6 +464,9 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
   scripts/config --enable CONFIG_TCP_CONG_BBR2
   scripts/config --enable CONFIG_DEFAULT_BBR2
   scripts/config --set-str CONFIG_DEFAULT_TCP_CONG bbr2
+  echo "Enable TT CPU scheduler..."
+  scripts/config --enable CONFIG_BS_SCHED
+  scripts/config --enable CONFIG_TT_ACCOUNTING_STATS
   echo "Setting performance governor..."
   scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
   scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
@@ -468,7 +475,7 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
   scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-  echo "Enable AMD PSTATE driver"
+  echo "Enable AMD PSTATE v2 driver"
   scripts/config --enable CONFIG_X86_AMD_PSTATE
   scripts/config --enable CONFIG_AMD_PTDMA
   echo "Enable Anbox"
@@ -477,12 +484,6 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
   scripts/config --enable CONFIG_ANDROID_BINDER_IPC
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
-  echo "Enable NTFS"
-  scripts/config --enable CONFIG_NTFS3_FS_POSIX_ACL
-  scripts/config --enable CONFIG_NTFS3_FS
-  scripts/config --enable CONFIG_NTFS3_64BIT_CLUSTER
-  scripts/config --enable CONFIG_NTFS3_LZX_XPRESS
-  scripts/config --enable CONFIG_NLS_DEFAULT
 
 
   ### Optionally load needed modules for the make localmodconfig
@@ -548,7 +549,7 @@ _package() {
   echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
   echo "Installing modules..."
-  make ${BUILD_FLAGS[*]} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
+  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
   rm "$modulesdir"/{source,build}
@@ -648,10 +649,11 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
+
 md5sums=('b79700122766ccf561f032eb3c8da27e'
-         'ec8bc0f3c29da5e6256068b73ab0cb6f'
+         '0ac42c66359097d484fc67a1905008b0'
+         'f5b8f648f022fba2328c432d0e65ae8d'
          '2627c6fcd9760b0e7a3553500db0a7e1'
-         'df0a0c51baecdbd369694c9f10715cb4'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
          '448e2846e615c76989289ef30ec9eba2'
          '4866d66f4cc1b10cccb520c22cbc71d7'
@@ -660,7 +662,7 @@ md5sums=('b79700122766ccf561f032eb3c8da27e'
          'e708f2160dee1ef5c7dffb8a23c199d7'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
-         '299b176cbfc1b386d74406387e9e2d6b'
+         '6971378b4fb2b16c0c0089cd55fc61f9'
          '5b9a009ab68ba548e9d06e0932ab967d'
          '0b6d09bdd920f4c31c05fdeaa0740548'
          '8cf507777e20cd4d75a0627eef10c10d'

@@ -1,5 +1,5 @@
-pkgbase = linux-cacule
-	pkgdesc = Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements
+pkgbase = linux-cachyos-bore
+	pkgdesc = Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15.7
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
@@ -19,9 +19,9 @@ pkgbase = linux-cacule
 	makedepends = tar
 	makedepends = xz
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.7.tar.xz
+	source = https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.7.tar.xz
 	source = config
-	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE/v5.15/cacule-5.15-full.patch
+	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-bore-sched.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-arch-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-cfi.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-le9.patch
@@ -53,7 +53,7 @@ pkgbase = linux-cacule
 	source = auto-cpu-optimization.sh
 	md5sums = b79700122766ccf561f032eb3c8da27e
 	md5sums = 0ac42c66359097d484fc67a1905008b0
-	md5sums = afdbe964cd00357ef7248553ab9db091
+	md5sums = f5b8f648f022fba2328c432d0e65ae8d
 	md5sums = 2627c6fcd9760b0e7a3553500db0a7e1
 	md5sums = e3fa8507aed6ef3ce37e62f18fe9b7e1
 	md5sums = 448e2846e615c76989289ef30ec9eba2
@@ -84,8 +84,8 @@ pkgbase = linux-cacule
 	md5sums = 507e61367296d14b88ac38a4aee03cdf
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cacule
-	pkgdesc = The Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
+pkgname = linux-cachyos-bore
+	pkgdesc = The Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
 	depends = initramfs
@@ -95,7 +95,7 @@ pkgname = linux-cacule
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cacule-headers
-	pkgdesc = Headers and scripts for building modules for the Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cacule=5.15.7
+pkgname = linux-cachyos-bore-headers
+	pkgdesc = Headers and scripts for building modules for the Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements
+	depends = linux-cachyos-bore=5.15.7
 	depends = pahole

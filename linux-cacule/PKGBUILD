@@ -68,10 +68,10 @@ _mq_deadline_disable=y
 _kyber_disable=y
 
 ### Enable protect file mappings under memory pressure
-_mm_protect=
+_mm_protect=y
 
 ### Enable multigenerational LRU
-_lru_enable=y
+_lru_enable=
 
 ### Enable Linux Random Number Generator
 _lrng_enable=y
@@ -132,13 +132,13 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cacule-rdb
 fi
 _major=5.15
-_minor=6
+_minor=7
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=3
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -159,14 +159,16 @@ source=(
   "${_caculepatches}/v5.15/cacule-5.15-full.patch"
   #  "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
   "${_patchsource}/0001-arch-patches.patch"
-  "${_patchsource}/0001-clang.patch"
+  "${_patchsource}/0001-cfi.patch"
+  "${_patchsource}/0001-le9.patch"
   "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-bitmap.patch"
   "${_patchsource}/0001-block-patches.patch"
+  #"${_patchsource}/0001-ksm-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
-  "${_patchsource}/0001-misc.patch"
+  "${_patchsource}/0001-misc-next.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-ntfs3.patch"
@@ -177,20 +179,16 @@ source=(
   "${_patchsource}/0001-ksmbd-patches.patch"
   "${_patchsource}/0001-damon.patch"
   "${_patchsource}/0001-pf-patches.patch"
-  "${_patchsource}/0001-mm-lru.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
-  "${_patchsource}/0001-security-patches.patch"
-  "${_patchsource}/0001-sbitmap-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
+  "${_patchsource}/0001-security-patches.patch"
+  "${_patchsource}/0001-spectre-patches.patch"
+  "${_patchsource}/0001-sbitmap-patches.patch"
   "${_patchsource}/0001-zstd.patch"
   "${_patchsource}/0001-xfs-backport.patch"
   "auto-cpu-optimization.sh"
 )
-
-if [ -n "$_use_cfi" ]; then
-  source+=("${_patchsource}/0001-cfi.patch")
-fi
 
 if [ -n "$_use_pgo" ]; then
   source+=("${_patchsource}/0001-PGO.patch")
@@ -525,7 +523,7 @@ prepare() {
 
   echo "Applying default config..."
   make ${BUILD_FLAGS[*]} olddefconfig
-  make ${BUILD_FLAGS[*]} -s kernelrelease > version
+  make -s kernelrelease > version
   echo "Prepared $pkgbase version $(<version)"
 
   ### Running make nconfig
@@ -663,37 +661,6 @@ _package-headers() {
 
 }
 
-sha512sums=('0f69e98590e796a3ec3e04340fc41954f1cdb7a5859da8efec1ba4a6498760778744e6243d068bc91343e3e7029239ff2e9ee2572f458c6b0e31c23f3686b5f5'
-            '63b814e3f447e0a07637bc578ebe744732ba7f1405106e6b5c170d97c4e33921a48337fe73fe873b749bfeca288c5f476819b00776980995ab6bcbb71efc4ba3'
-            '4240fc839755694536d6010c30442b465ba88310292da8f682d03d5b34225681d2aabd6f5816c892a019d2088a1654d11a5df7fb5eea1afd86e23c68164bbb2e'
-            '35e36b6824c83f2bfb0314882be8b373243fa4cd45bcda6291171206ca5b718e73abb91c0edc3f0ad6b06f099746c954aedb5f05fe42797fe408a8176898de65'
-            '5c79a6237ebee9f28780e0455ca3c7b3067d7631a04de5957c2cd196c7077c05f6d16cc152c13afa15901c5eb88382d9e6c1b10ab6fe23da8b572f2b9c0ab397'
-            'd6544f652ef9767e20d8acd1bf09738e7dcd4bc430a39a75b591aa38631942c952f70a29d1febfdfea20e7bc64813991fc1428a1dcaf176b3a024cb17be8cb3c'
-            'd800ad18b40f71a8509acca4d74d8ea9b4d24558665e40a558345403cbcb8a29096baf686158e55baf3d0a4a41a605033c09b162d00a810aa50d8d50785e4bc1'
-            'd549caac984a68ff95c928ffb2055b1ed09f1b0bb0beeded731c4a9f391bf0923c50c1cdefa145cc116121e4746bb35f0b9d32814bad8da142f48b1ead293ab1'
-            'd7b8c20c6950b86ed88aeb271466bcac282c86c8c42a2603e7d54b57b2421c74ad3530bab4a8d43fee407ddcbb2e42885acf1b357b9d87f2a1c4250816c0e788'
-            'cfbebdb5347e53020123fc395eb2d241a3463c8a7ebbe251c5af37dd1b91569fdb172c16daa7d9ddd8b05975dffb5ea536cb3760f7af953921156d0c37647427'
-            '0339084577de212c4ef02b46d8d836c0211aacae7503ace23b6098af90e9ca1e9ca9e6fa8e3132051ac0a68b032b89b60078bd5a0d7ca3ad617b91a61acbd3b5'
-            'b80266d5975a97ee87339b95743a905d2a00a055f6b15bbf310dda381fe47422fa7dc387b1918e4fccf67eb176645d1c9db9fdbd621b3fc9dfe94d5b42ef8745'
-            'e7a66c81d1e920684cb597f7446a1f5c244c32db69735fcdfc7983304851f31dee11668370e2e322259fa4e9d7368fc46ac6fdff1ae1366a68642a88ca5ab311'
-            'f8e20fe34b058e8e554f653424ced37fefd004489689e6047def11cd463b594241432dd425b082d73a2646fe91531be9083a481b47cc784930991f78d9214529'
-            'e4266d7b8b3de6be625a8df0404e94eab0305ef929f93ee7fef14bb69f690938b7c9c7ab7578b5c9c7174ae2697893f920d609cd818b649604d4bebeda48df44'
-            '29bb6f3b5ef1232f9c3a34dee19c592f5f87ba8b06a020e840ba9c914953092ee987380cab9a92e233df5e2e1a6a8f211d49376ca4f7ae076b7a4f92749758b6'
-            '96bf40b2f90ba03af7298cfed3d6893a007d13654a8d58daf99192bc32006f7e75ee149460a8939cb80422fec45d6d4bfd89031a046b99232fe41312bdbf8541'
-            '48b6b0d070240a0f9ac4d95b679fd80e006979c0239c3f56101f626cbddd38abbd572ff8ca2106f5a331c41664b1d3ae275ca43e0cb166a3b0bf768238259b03'
-            '76dfd2023b314be3e5b84acc074857322d49938078b69c87efc4c3510fd5aa528781a07197d00823012a4bdccdcab10db11fc116609d1da7ca694e29010c92b6'
-            '51ccbf184aeb98b05bb72f6d2ded8158a16bb2350ff192ce301c2e405bf514af5fe4888098d5a804cf1b2c6558a36ecc9cbdaaeeaf4f43150495579b4c2f7c00'
-            '7d953a6093de744e9dfe841cec28e9bd88dd12b5cd142d04736fe318a77709f166fe476f8c8bbb77013f715e27c1e1ba219998d3f50d29dfe1127216b64b6d60'
-            '4ba31d174af375b29b7ebea72ce24d5c81d3876885c35baea4d801f691c4083934422ab89470f4725c5ffb3646ea49b140ea33630cce35ee316985bc2bda7b0b'
-            '7adb4076e60bdf884c16e491e1dc9730baa1fadbabdc0a89773986973b42943a3b1666c5ee047373d72581e8d98686044c4bf0dca7ad03ca120ff2e9a560c9d4'
-            'fb2d882a1156e5f78ff4b5809f0eea6ab6df17f460ad1547c422476e942af54b064c2587d9dc1c0cffef9e906990285d12e98f2efe132c50bf27f02c52d61681'
-            'd24425f2e5c9f53cb8a7c496a15c836bd4cc2aeeac47fdd2fa72b1e9d2fc28949b5163fcba064ee006926f4c2364878eee87c23d649d4057cf7ed4cf6307c70a'
-            'f8edc60ca3fcfb123d08fc2a3ba8b5dcd504e20e61500ba00268ce4486cfd9432e42192cdd35cd2d63db6fe02fcf8139886b80e0e10cb7b81f7f92ccf539483c'
-            'ef893edc3c4416c31f1bc011cdb9b4926dd39beb696997c31dc8416948255f93c4cf3363bb90a4cfc7d73ad2cecf6e03acf88b458d607e042644333b5d69e643'
-            'a1279dcb47ff3d43811c5dfca84a5b4edd6be87f012fa4e2c1a1f0c379e707bee67f23e6dd186be97f78cf1f45f781619db0382fc6aa0d5c42208ad77b95373e'
-            '8d2230bbae1708610ff0d93537d1a1f372f4efd25cb35e6016657c13c6032a0e8e5a3ade89ed5e6a866e3720fe998e5aceac3496a1d3c9423af4d1b40c949022'
-            'a0322e98aa0406eda29975be648f33b562c894a090ccafcde6c6dad580353c2029fa5bb2d66d31faa8ff0c593ba2ffe1e76031c0a16f55bf16c6a5366b9d700f'
-            'a54c01ba42e7d5f9433dacaa21f656d8aefdb6a5228fbca2b8e55b26eb02b35327ae3fd98a26a708452b8559e7f4acb32b6e685e26edc64497d1b7d10c5d86e1')
 
 pkgname=("$pkgbase" "$pkgbase-headers")
 for _p in "${pkgname[@]}"; do
@@ -702,3 +669,37 @@ for _p in "${pkgname[@]}"; do
              _package${_p#$pkgbase}
   }"
 done
+
+
+md5sums=('b79700122766ccf561f032eb3c8da27e'
+         '0ac42c66359097d484fc67a1905008b0'
+         'afdbe964cd00357ef7248553ab9db091'
+         '2627c6fcd9760b0e7a3553500db0a7e1'
+         'e3fa8507aed6ef3ce37e62f18fe9b7e1'
+         '448e2846e615c76989289ef30ec9eba2'
+         '4866d66f4cc1b10cccb520c22cbc71d7'
+         '53f037488a66667220c263f92ded333d'
+         '2a8097ba46be56fbbe3967e9c34c9a0b'
+         'e708f2160dee1ef5c7dffb8a23c199d7'
+         '56ceaed8bfb44eca93298ccc5fe11ca7'
+         '67764a5824b567b49bcce19c01d4e1b3'
+         '6971378b4fb2b16c0c0089cd55fc61f9'
+         '5b9a009ab68ba548e9d06e0932ab967d'
+         '0b6d09bdd920f4c31c05fdeaa0740548'
+         '8cf507777e20cd4d75a0627eef10c10d'
+         '6038177c72982533035309fcd6df208a'
+         '8aaac6621843060d8fec99e839c3200a'
+         '8c354c3d1962ec6785db7f0c3fbbab03'
+         '9b6369bc4c58ad0d9195b5c204ed4b8a'
+         'c6efda5716e4ff79ebdbc963bebd851a'
+         '408dfabb34f2b79aa2f5044b052703db'
+         '08c84362cb916b30d9c77e35b1b3bc54'
+         '56fdf3562b041c0408d9751b7e447977'
+         'b09b84168822521426f197610727618b'
+         '8cb0301d159b59727b7bdd09350e2a9f'
+         'bc64b1d1a9c95b07c28457f7214ebf81'
+         '8d390345afa36c56fa15bf4f4edad9a2'
+         '7530840f2eb439f64307dd3157beb28e'
+         'f23b415ff37873ae7142aed31808b635'
+         '507e61367296d14b88ac38a4aee03cdf'
+         '21c98f19e883879dd3336c1fa143fd31')

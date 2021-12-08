@@ -8,7 +8,7 @@
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=y
+_makenconfig=
 
 ### Tweak kernel options prior to a build via menuconfig
 _makemenuconfig=
@@ -65,10 +65,10 @@ _mq_deadline_disable=y
 _kyber_disable=y
 
 ### Enable protect file mappings under memory pressure
-_mm_protect=
+_mm_protect=y
 
 ### Enable multigenerational LRU
-_lru_enable=y
+_lru_enable=
 
 ### Enable Linux Random Number Generator
 _lrng_enable=y
@@ -110,7 +110,7 @@ _zstd_module_level='ultra'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=y
+_use_llvm_lto=
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
@@ -125,13 +125,13 @@ else
   pkgbase=linux-cachyos-tt
 fi
 _major=5.15
-_minor=6
+_minor=7
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=3
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -148,10 +148,9 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "config"
   "${_patchsource}/TT/0001-tt-r3.patch"
-  "${_patchsource}/0001-5.15.7-rc1.patch"
   "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-cfi.patch"
-  "${_patchsource}/0001-lru-patches.patch"
+  "${_patchsource}/0001-le9.patch"
   "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
@@ -164,7 +163,7 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-ntfs3.patch"
   "${_patchsource}/0001-ck-hrtimer.patch"
-#  "${_patchsource}/0001-fixes-miscellaneous.patch"
+  "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
@@ -651,34 +650,35 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('b4e333919e9fddfdd46308cc38ceda1d'
+md5sums=('b79700122766ccf561f032eb3c8da27e'
          '0ac42c66359097d484fc67a1905008b0'
-         '0342c20d76304597438291923001202b'
-         'c40c62f2fa0bdd7af655b1d1cf65a3fc'
-         'c54808480b8d1faada69cfa461ba87bd'
-         '5fda681a06fd32fdad4f55bea5c4ac1c'
+         'c3ab4d8c534b883c18ed8a295f5e84bd'
+         '2627c6fcd9760b0e7a3553500db0a7e1'
+         'e3fa8507aed6ef3ce37e62f18fe9b7e1'
+         '448e2846e615c76989289ef30ec9eba2'
+         '4866d66f4cc1b10cccb520c22cbc71d7'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          'e708f2160dee1ef5c7dffb8a23c199d7'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
-         '299b176cbfc1b386d74406387e9e2d6b'
+         '6971378b4fb2b16c0c0089cd55fc61f9'
          '5b9a009ab68ba548e9d06e0932ab967d'
          '0b6d09bdd920f4c31c05fdeaa0740548'
          '8cf507777e20cd4d75a0627eef10c10d'
          '6038177c72982533035309fcd6df208a'
          '8aaac6621843060d8fec99e839c3200a'
-         'd058fb21aac0658ee10029bdbdca96d1'
+         '8c354c3d1962ec6785db7f0c3fbbab03'
          '9b6369bc4c58ad0d9195b5c204ed4b8a'
          'c6efda5716e4ff79ebdbc963bebd851a'
          '408dfabb34f2b79aa2f5044b052703db'
          '08c84362cb916b30d9c77e35b1b3bc54'
-         'aa41eead65d8c4d0958df278157e2729'
          '56fdf3562b041c0408d9751b7e447977'
          'b09b84168822521426f197610727618b'
-         'bc64b1d1a9c95b07c28457f7214ebf81'
-         '7530840f2eb439f64307dd3157beb28e'
          '8cb0301d159b59727b7bdd09350e2a9f'
+         'bc64b1d1a9c95b07c28457f7214ebf81'
+         '8d390345afa36c56fa15bf4f4edad9a2'
+         '7530840f2eb439f64307dd3157beb28e'
          'f23b415ff37873ae7142aed31808b635'
-         '1e6e9e1b37eb985b1d123f65a0697833'
+         '507e61367296d14b88ac38a4aee03cdf'
          '21c98f19e883879dd3336c1fa143fd31')
