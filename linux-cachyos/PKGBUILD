@@ -45,9 +45,6 @@ _use_current=
 # Enable fsync
 _fsync=y
 
-#enable futex2
-_futex2=y
-
 #enable winesync
 _winesync=y
 
@@ -68,10 +65,10 @@ _kyber_disable=y
 _mm_protect=y
 
 ### Enable multigenerational LRU
-#_lru_enable=
+_lru_enable=y
 
 ### Enable DAMON
-_damon=y
+_damon=
 
 ### Enable Linux Random Number Generator
 _lrng_enable=y
@@ -100,7 +97,7 @@ _zstd_level='ultra'
 # 'normal' - standard compression ratio
 # WARNING: the ultra settings can sometimes
 # be counterproductive in both size and speed.
-_zstd_module_level='ultra'
+_zstd_module_level='normal'
 
 ### Enable SECURITY_FORK_BRUTE
 # WARNING Not recommended.
@@ -131,7 +128,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -141,24 +138,19 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
-if [ -n "$_use_llvm_lto" ]; then
-  depends+=(clang llvm lld python)
-fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=(#"https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
-  #  "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
   "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-CLUSTER.patch"
   "${_patchsource}/0001-cfi.patch"
-  "${_patchsource}/0001-le9.patch"
+  "${_patchsource}/0001-lru-patches.patch"
   "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-bitmap.patch"
   "${_patchsource}/0001-block-patches.patch"
-  #"${_patchsource}/0001-ksm-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
@@ -314,10 +306,6 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
     scripts/config --enable CONFIG_FUTEX_PI
   fi
 
-  if [ -n "$_futex2" ]; then
-    echo "Enable Futex2 support"
-    scripts/config --enable CONFIG_FUTEX2
-  fi
 
   if [ -n "$_winesync" ]; then
     echo "Enable winesync support"
@@ -336,20 +324,28 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
     scripts/config --disable CONFIG_MQ_IOSCHED_KYBER
   fi
 
-  ### Enable protect mappings under memory pressure
-  if [ -n "$_mm_protect" ]; then
-    scripts/config --set-val CONFIG_CLEAN_LOW_KBYTES 524288
-  fi
+
+      ### Enable protect mappings under memory pressure
+  	if [ -n "$_mm_protect" ]; then
+  		echo "Enabling protect file mappings under memory pressure..."
+  		scripts/config --enable CONFIG_UNEVICTABLE_FILE
+  		scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_LOW 0
+  		scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_MIN 0
+  		echo "Enabling protect anonymous mappings under memory pressure..."
+  		scripts/config --enable CONFIG_UNEVICTABLE_ANON
+  		scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_LOW 0
+  		scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_MIN 0
+  	fi
 
   ### Enable multigenerational LRU
   if [ -n "$_lru_enable" ]; then
     echo "Enabling multigenerational LRU..."
     scripts/config --enable CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG
-    scripts/config --enable CONFIG_LRU_GEN
-    scripts/config --set-val CONFIG_NR_LRU_GENS 4
-    scripts/config --set-val CONFIG_TIERS_PER_GEN 2
-    scripts/config --disable CONFIG_LRU_GEN_ENABLED
-    scripts/config --disable CONFIG_LRU_GEN_STATS
+		scripts/config --enable CONFIG_LRU_GEN
+		scripts/config --set-val CONFIG_NR_LRU_GENS 7
+		scripts/config --set-val CONFIG_TIERS_PER_GEN 4
+		scripts/config --enable CONFIG_LRU_GEN_ENABLED
+		scripts/config --disable CONFIG_LRU_GEN_STATS
   fi
 
   ### Enable DAMON
@@ -365,48 +361,49 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
   ### Enable Linux Random Number Generator
   if [ -n "$_lrng_enable" ]; then
     echo "Enabling Linux Random Number Generator ..."
-    scripts/config --enable CONFIG_LRNG
-    scripts/config --enable CONFIG_LRNG_OVERSAMPLE_ENTROPY_SOURCES
-    scripts/config --set-val CONFIG_CONFIG_LRNG_OVERSAMPLE_ES_BITS 64
-    scripts/config --set-val CONFIG_LRNG_SEED_BUFFER_INIT_ADD_BITS 128
-    scripts/config --enable CONFIG_LRNG_IRQ
-    scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
-    scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
-    scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
-    scripts/config --enable CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION
-    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_512
-    scripts/config --enable CONFIG_LRNG_COLLECTION_SIZE_1024
-    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_2048
-    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_4096
-    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_8192
-    scripts/config --set-val CONFIG_LRNG_COLLECTION_SIZE 1024
-    scripts/config --enable CONFIG_LRNG_HEALTH_TESTS
-    scripts/config --set-val CONFIG_LRNG_RCT_CUTOFF 31
-    scripts/config --set-val CONFIG_LRNG_APT_CUTOFF 325
-    scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
-    scripts/config --enable CONFIG_LRNG_JENT
-    scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
-    scripts/config --enable CONFIG_LRNG_CPU
-    scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
-    scripts/config --enable CONFIG_LRNG_DRNG_SWITCH
-    scripts/config --enable CONFIG_LRNG_KCAPI_HASH
-    scripts/config --module CONFIG_LRNG_DRBG
-    scripts/config --module CONFIG_LRNG_KCAPI
-    scripts/config --enable CONFIG_LRNG_TESTING_MENU
-    scripts/config --disable CONFIG_LRNG_RAW_HIRES_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_JIFFIES_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_IRQ_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_IRQFLAGS_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_RETIP_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_REGS_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_ARRAY
-    scripts/config --disable CONFIG_LRNG_IRQ_PERF
-    scripts/config --disable CONFIG_LRNG_ACVT_HASH
-    scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
-    scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
-    scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
-    scripts/config --enable CONFIG_LRNG_SELFTEST
-    scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
+    echo "Enabling Linux Random Number Generator with pfkernel config..."
+		scripts/config --enable CONFIG_LRNG
+		scripts/config --enable CONFIG_LRNG_OVERSAMPLE_ENTROPY_SOURCES
+		scripts/config --set-val CONFIG_CONFIG_LRNG_OVERSAMPLE_ES_BITS 64
+		scripts/config --set-val CONFIG_LRNG_SEED_BUFFER_INIT_ADD_BITS 128
+		scripts/config --enable CONFIG_LRNG_IRQ
+		scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
+		scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
+		scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
+		scripts/config --enable CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION
+		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_512
+		scripts/config --enable CONFIG_LRNG_COLLECTION_SIZE_1024
+		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_2048
+		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_4096
+		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_8192
+		scripts/config --set-val CONFIG_LRNG_COLLECTION_SIZE 1024
+		scripts/config --enable CONFIG_LRNG_HEALTH_TESTS
+		scripts/config --set-val CONFIG_LRNG_RCT_CUTOFF 31
+		scripts/config --set-val CONFIG_LRNG_APT_CUTOFF 325
+		scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
+		scripts/config --enable CONFIG_LRNG_JENT
+		scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
+		scripts/config --enable CONFIG_LRNG_CPU
+		scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
+		scripts/config --enable CONFIG_LRNG_DRNG_SWITCH
+		scripts/config --enable CONFIG_LRNG_KCAPI_HASH
+		scripts/config --module CONFIG_LRNG_DRBG
+		scripts/config --module CONFIG_LRNG_KCAPI
+		scripts/config --enable CONFIG_LRNG_TESTING_MENU
+		scripts/config --disable CONFIG_LRNG_RAW_HIRES_ENTROPY
+		scripts/config --disable CONFIG_LRNG_RAW_JIFFIES_ENTROPY
+		scripts/config --disable CONFIG_LRNG_RAW_IRQ_ENTROPY
+		scripts/config --disable CONFIG_LRNG_RAW_IRQFLAGS_ENTROPY
+		scripts/config --disable CONFIG_LRNG_RAW_RETIP_ENTROPY
+		scripts/config --disable CONFIG_LRNG_RAW_REGS_ENTROPY
+		scripts/config --disable CONFIG_LRNG_RAW_ARRAY
+		scripts/config --disable CONFIG_LRNG_IRQ_PERF
+		scripts/config --disable CONFIG_LRNG_ACVT_HASH
+		scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
+		scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
+		scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
+		scripts/config --enable CONFIG_LRNG_SELFTEST
+		scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
   fi
 
   echo "Enable LLVM LTO"
@@ -477,12 +474,6 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
   scripts/config --enable CONFIG_ANDROID_BINDER_IPC
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
-  echo "Enable NTFS"
-  scripts/config --enable CONFIG_NTFS3_FS_POSIX_ACL
-  scripts/config --enable CONFIG_NTFS3_FS
-  scripts/config --enable CONFIG_NTFS3_64BIT_CLUSTER
-  scripts/config --enable CONFIG_NTFS3_LZX_XPRESS
-  scripts/config --enable CONFIG_NLS_DEFAULT
 
 
   ### Optionally load needed modules for the make localmodconfig
@@ -649,11 +640,11 @@ for _p in "${pkgname[@]}"; do
 done
 
 md5sums=('b79700122766ccf561f032eb3c8da27e'
-         'ec8bc0f3c29da5e6256068b73ab0cb6f'
+         'd97e86d9464dd34683f67de4d4a595c0'
          '2627c6fcd9760b0e7a3553500db0a7e1'
          'df0a0c51baecdbd369694c9f10715cb4'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
-         '448e2846e615c76989289ef30ec9eba2'
+         '4bfca774a71e7228f5b8bb31660521af'
          '4866d66f4cc1b10cccb520c22cbc71d7'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
@@ -662,10 +653,10 @@ md5sums=('b79700122766ccf561f032eb3c8da27e'
          '67764a5824b567b49bcce19c01d4e1b3'
          '299b176cbfc1b386d74406387e9e2d6b'
          '5b9a009ab68ba548e9d06e0932ab967d'
-         '0b6d09bdd920f4c31c05fdeaa0740548'
+         '41887f2f959068e41756f4c39671ca79'
          '8cf507777e20cd4d75a0627eef10c10d'
          '6038177c72982533035309fcd6df208a'
-         '8aaac6621843060d8fec99e839c3200a'
+         '2a13aa40945c9910f7ad20a429442793'
          '8c354c3d1962ec6785db7f0c3fbbab03'
          '9b6369bc4c58ad0d9195b5c204ed4b8a'
          'c6efda5716e4ff79ebdbc963bebd851a'
