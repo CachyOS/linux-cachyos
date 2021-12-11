@@ -1,7 +1,7 @@
-pkgbase = linux-cachyos-tt
+pkgbase = linux-cachyos-tt-lto
 	pkgdesc = Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15.7
-	pkgrel = 2
+	pkgrel = 3
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -18,6 +18,14 @@ pkgbase = linux-cachyos-tt
 	makedepends = perl
 	makedepends = tar
 	makedepends = xz
+	makedepends = clang
+	makedepends = llvm
+	makedepends = lld
+	makedepends = python
+	depends = clang
+	depends = llvm
+	depends = lld
+	depends = python
 	options = !strip
 	source = https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.7.tar.xz
 	source = config
@@ -54,7 +62,7 @@ pkgbase = linux-cachyos-tt
 	source = auto-cpu-optimization.sh
 	md5sums = b79700122766ccf561f032eb3c8da27e
 	md5sums = d97e86d9464dd34683f67de4d4a595c0
-	md5sums = cfc49db1b15e5cce87ccbe983a48d899
+	md5sums = 8ddae253b47a8c6e746d4510f64dad58
 	md5sums = 2627c6fcd9760b0e7a3553500db0a7e1
 	md5sums = e3fa8507aed6ef3ce37e62f18fe9b7e1
 	md5sums = 4bfca774a71e7228f5b8bb31660521af
@@ -86,7 +94,7 @@ pkgbase = linux-cachyos-tt
 	md5sums = 507e61367296d14b88ac38a4aee03cdf
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-tt
+pkgname = linux-cachyos-tt-lto
 	pkgdesc = The Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -97,7 +105,7 @@ pkgname = linux-cachyos-tt
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-tt-headers
+pkgname = linux-cachyos-tt-lto-headers
 	pkgdesc = Headers and scripts for building modules for the Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-tt=5.15.7
+	depends = linux-cachyos-tt-lto=5.15.7
 	depends = pahole

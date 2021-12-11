@@ -1,7 +1,7 @@
 pkgbase = linux-tt
 	pkgdesc = Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15.7
-	pkgrel = 2
+	pkgrel = 3
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -54,7 +54,7 @@ pkgbase = linux-tt
 	source = auto-cpu-optimization.sh
 	md5sums = b79700122766ccf561f032eb3c8da27e
 	md5sums = d97e86d9464dd34683f67de4d4a595c0
-	md5sums = cfc49db1b15e5cce87ccbe983a48d899
+	md5sums = 8ddae253b47a8c6e746d4510f64dad58
 	md5sums = 2627c6fcd9760b0e7a3553500db0a7e1
 	md5sums = e3fa8507aed6ef3ce37e62f18fe9b7e1
 	md5sums = 4bfca774a71e7228f5b8bb31660521af

@@ -128,7 +128,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=2
+pkgrel=3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -654,7 +654,7 @@ done
 
 md5sums=('b79700122766ccf561f032eb3c8da27e'
          'd97e86d9464dd34683f67de4d4a595c0'
-         'cfc49db1b15e5cce87ccbe983a48d899'
+         '8ddae253b47a8c6e746d4510f64dad58'
          '2627c6fcd9760b0e7a3553500db0a7e1'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
          '4bfca774a71e7228f5b8bb31660521af'
