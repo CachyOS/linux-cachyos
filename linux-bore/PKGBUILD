@@ -48,8 +48,7 @@ _fsync=y
 #enable winesync
 _winesync=y
 
-### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
-_2k_HZ_ticks=
+### Running with a 1000HZ, 750Hz or  500HZ tick rate
 _1k_HZ_ticks=
 _750_HZ_ticks=y
 _600_HZ_ticks=
@@ -148,7 +147,7 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=(
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
-  "${_patchsource}/0001-bore-sched.patch"
+  "${_patchsource}/bore/0001-bore-sched.patch"
   "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-page-table-check.patch"
@@ -171,7 +170,7 @@ source=(
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-  "${_patchsource}/0001-damon.patch"
+#  "${_patchsource}/0001-damon-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
@@ -260,15 +259,6 @@ prepare() {
   if [ -n "$_use_optimization_select" ]; then
     source "${startdir}"/configure
     cpu_arch
-  fi
-
-
-  ### Optionally set tickrate to 2000HZ
-  if [ -n "$_2k_HZ_ticks" ]; then
-    echo "Setting tick rate to 2k..."
-    scripts/config --disable CONFIG_HZ_300
-    scripts/config --enable CONFIG_HZ_2000
-    scripts/config --set-val CONFIG_HZ 2000
   fi
 
   ### Optionally set tickrate to 1000
@@ -423,11 +413,10 @@ prepare() {
   fi
 
   if [ -n "$_use_page_check" ]; then
-      echo "Enable Page Table Check"
+    echo "Enable Page Table Check"
     scripts/config --enable ARCH_SUPPORTS_PAGE_TABLE_CHECK
     scripts/config --enable CONFIG_PAGE_TABLE_CHECK
     scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
-
   fi
 
   ### Selecting the ZSTD compression level
@@ -469,9 +458,8 @@ prepare() {
     exit
   fi
 
-
+  echo "Enable BORE Scheduler"
   scripts/config --enable CONFIG_BS_SCHED
-
   echo "Disabling TCP_CONG_CUBIC..."
   scripts/config --module CONFIG_TCP_CONG_CUBIC
   scripts/config --disable CONFIG_DEFAULT_CUBIC
@@ -487,7 +475,7 @@ prepare() {
   scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-  echo "Enable AMD PSTATE v2 driver"
+  echo "Enable AMD PSTATE driver"
   scripts/config --enable CONFIG_X86_AMD_PSTATE
   scripts/config --enable CONFIG_AMD_PTDMA
   echo "Enable Anbox"
@@ -663,7 +651,7 @@ done
 
 md5sums=('b79700122766ccf561f032eb3c8da27e'
          '1ccb20b7c46bfdae67ee99dcb9e7f618'
-         '468f2a4ac2e33046b7d54a33e66e4e59'
+         '22552abc3fe996c2e89980e13e5583a3'
          '2627c6fcd9760b0e7a3553500db0a7e1'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
          '152706f6ebbe9917c6a5955cd5447344'
@@ -686,7 +674,6 @@ md5sums=('b79700122766ccf561f032eb3c8da27e'
          '8c354c3d1962ec6785db7f0c3fbbab03'
          '9b6369bc4c58ad0d9195b5c204ed4b8a'
          'c6efda5716e4ff79ebdbc963bebd851a'
-         '408dfabb34f2b79aa2f5044b052703db'
          '08c84362cb916b30d9c77e35b1b3bc54'
          '56fdf3562b041c0408d9751b7e447977'
          'b09b84168822521426f197610727618b'

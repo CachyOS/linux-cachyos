@@ -78,7 +78,7 @@ _zstd_module_level='normal'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=y
+_use_llvm_lto=
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
@@ -106,8 +106,11 @@ _use_current=
 # Tweak kernel options prior to a build via nconfig
 _makenconfig=y
 
-
+if [ -n "$_use_llvm_lto" ]; then
+pkgbase=linux-cachyos-rc-lto
+else
 pkgbase=linux-cachyos-rc
+fi
 _major=5.16
 _minor=0
 _minorc=$((_minor+1))
@@ -116,7 +119,7 @@ pkgver=${_major}.${_minorc}
 _stable=${_major}.${_minor}
 _stablerc=${_major}-${_rcver}
 _srcname=linux-${_stablerc}
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux-CachyOS Kernel-RC by Hamad Marri and with some other patchsets'
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/cachyos/linux-cachyos"
@@ -127,33 +130,31 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
-  if [ -n "$_use_llvm_lto" ]; then
-    depends+=(clang llvm lld python)
-  fi
+if [ -n "$_use_llvm_lto" ]; then
+  depends+=(clang llvm lld python)
+fi
 
 
 _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE"
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16"
 source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
-#  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
-    "${_patchsource}/0001-cacule-bs-sched-5.16.patch"
-#    "${_patchsource}/TT/0001-tt-r2-5.16.patch"
+  #  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
+  "${_patchsource}/0001-bore-5.16.patch"
   "${_patchsource}/0001-bbr2.patch"
-  "${_patchsource}/misc/0001-block-5.16.patch"
+  "${_patchsource}/0001-amd-patches.patch"
+  "${_patchsource}/0001-block.patch"
   "${_patchsource}/0001-lrng.patch"
-  "${_patchsource}/0001-misc.patch"
+  "${_patchsource}/0001-misc-2.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-fixes.patch"
-  "${_patchsource}/0001-throttle.patch"
+  "${_patchsource}/0001-futex.patch"
+  "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-ksm.patch"
-  "${_patchsource}/0001-sched-fix.patch"
   "${_patchsource}/0001-pte-marker.patch"
   "${_patchsource}/0001-zen-patches.patch"
-  "${_patchsource}/0001-winesync-fsync.patch"
-  "https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/AMD/0001-amd-pstate-dev-v5-fixes.patch"
   "auto-cpu-optimization.sh"
 )
 if [ -n "$_use_llvm_lto" ]; then
@@ -200,13 +201,6 @@ prepare() {
   if [ -n "$_use_optimization_select" ]; then
     source "${startdir}"/configure
     cpu_arch
-  fi
-  ### Optionally set tickrate to 2000HZ
-  if [ -n "$_2k_HZ_ticks" ]; then
-    echo "Setting tick rate to 2k..."
-    scripts/config --disable CONFIG_HZ_300
-    scripts/config --enable CONFIG_HZ_2000
-    scripts/config --set-val CONFIG_HZ 2000
   fi
 
   ### Optionally set tickrate to 1000
@@ -581,23 +575,19 @@ done
 
 md5sums=('fc8324c20772b997ef37de8cfebd489f'
          '0ac42c66359097d484fc67a1905008b0'
+         '7df4edf28f486873807f15c9ed0216a0'
          '15ffc9a58dbdfff5aa77bc085d2b335a'
-         'ed2a1bd6ccb62423dca67821baf836e1'
-         'e8e38f00f1f33ed66e16d3df996ad1d9'
-         '04c5f310615c227be04f20123412eed6'
+         'b9b7f287edd8804118c9eda03574ab8b'
+         'aa5b31d6f9600ec3b1664cd4e5839b75'
          '08d66bbba34a98e3a2d83e2bd89aa257'
-         '299b176cbfc1b386d74406387e9e2d6b'
+         'db445bd5650d7e0ce2552704bb944752'
          'c840895ea0da5c49cbc62e08d3646ee0'
          'f574f1c40fa2d07602e77418b863e144'
-         '2fd466dbbb9de8ee02e9178731b93451'
+         '2458d1c5d00d10709922e686c5d1e97f'
+         'c9a168a620a6a95247447ee5fd8de8b4'
          'd78bb31569440421e0e76d9a8c0a14fc'
          'bf58290793d3a095ef95fb1fac2de89a'
-         '43f6fa397f26304860aab86998e2d010'
-         'b61acf64829368b2f8cf03f1b1877991'
          '5bbccd18de800b0b54652bee0b76da0a'
-         'fd918d13c20960ca78c78d21d6695e85'
          '99771ace6973c3f9ae60c858d7b5e59a'
          'de6db1147385c058b2e94df3c1739fdf'
-         '13ed4ea506b1dc0e9e8437d34c99a916'
-         '4866d66f4cc1b10cccb520c22cbc71d7'
          '21c98f19e883879dd3336c1fa143fd31')

@@ -70,6 +70,8 @@ _lru_enable=y
 ### Enable DAMON
 _damon=
 
+_use_page_check=y
+
 ### Enable Linux Random Number Generator
 _lrng_enable=y
 
@@ -128,7 +130,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=2
+pkgrel=3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -149,6 +151,7 @@ source=(#"https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
+  "${_patchsource}/0001-page-table-check.patch"
   "${_patchsource}/0001-bitmap.patch"
   "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
@@ -161,7 +164,7 @@ source=(#"https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-  "${_patchsource}/0001-damon.patch"
+#  "${_patchsource}/0001-damon-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
@@ -250,15 +253,6 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
   if [ -n "$_use_optimization_select" ]; then
     source "${startdir}"/configure
     cpu_arch
-  fi
-
-
-  ### Optionally set tickrate to 2000HZ
-  if [ -n "$_2k_HZ_ticks" ]; then
-    echo "Setting tick rate to 2k..."
-    scripts/config --disable CONFIG_HZ_300
-    scripts/config --enable CONFIG_HZ_2000
-    scripts/config --set-val CONFIG_HZ 2000
   fi
 
   ### Optionally set tickrate to 1000
@@ -409,6 +403,13 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
   echo "Enable LLVM LTO"
   if [ -n "$_use_llvm_lto" ]; then
     scripts/config --disable CONFIG_LTO_NONE
+  fi
+
+  if [ -n "$_use_page_check" ]; then
+      echo "Enable Page Table Check"
+    scripts/config --enable ARCH_SUPPORTS_PAGE_TABLE_CHECK
+    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
+    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
   fi
 
   ### Selecting the ZSTD compression level
@@ -648,6 +649,7 @@ md5sums=('b79700122766ccf561f032eb3c8da27e'
          '4866d66f4cc1b10cccb520c22cbc71d7'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
+         '152706f6ebbe9917c6a5955cd5447344'
          'e708f2160dee1ef5c7dffb8a23c199d7'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
@@ -660,7 +662,6 @@ md5sums=('b79700122766ccf561f032eb3c8da27e'
          '8c354c3d1962ec6785db7f0c3fbbab03'
          '9b6369bc4c58ad0d9195b5c204ed4b8a'
          'c6efda5716e4ff79ebdbc963bebd851a'
-         '408dfabb34f2b79aa2f5044b052703db'
          '08c84362cb916b30d9c77e35b1b3bc54'
          '56fdf3562b041c0408d9751b7e447977'
          'b09b84168822521426f197610727618b'

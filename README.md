@@ -9,16 +9,17 @@ The CachyOS are improved kernels which improve the performance and other improve
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
 - Task Type Scheduler by Hamad Marri (TT) - linux-cachyos-tt
+- BORE (Burst-Oriented Response Enhancer) CPU Scheduler by firelzrd (BORE) - linux-cachyos-bore
 
 **All kernels are prebuilt in two different march versions (x86_64 and x86_64_v3) and also with the lto enabled kernels in the cachyos repo.**
 
 ## Features
 
 - Very customizable PKGBUILD with many features and improvements
-- 5 Different scheduler are supported, CacULE-,CFS-,tt-,bmq- and pds scheduler
+- 5 Different scheduler are supported, CacULE-,CFS-,tt-,bmq-,bore-, and pds scheduler
 - GCC/CLANG Optimization with automatically found cpu arch or also selectable cpu arch
 - Choose between LLVM/LTO or GCC
-- Choose between 500Hz, , 600 Hz ,750Hz, 1000Hz, 2000Hz
+- Choose between 500Hz, , 600 Hz ,750Hz, 1000Hz
 - Improved BFQ Scheduler
 - Generell improved ssctl settings and upstream scheduler fixes
 - Latest LRU Patch-set
