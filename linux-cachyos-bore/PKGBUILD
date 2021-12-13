@@ -8,7 +8,7 @@
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=
+_makenconfig=y
 
 ### Tweak kernel options prior to a build via menuconfig
 _makemenuconfig=
@@ -109,7 +109,7 @@ _zstd_module_level='normal'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=
+_use_llvm_lto=y
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
@@ -130,7 +130,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=3
+pkgrel=4
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -148,7 +148,8 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=(
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
-  "${_patchsource}/0001-bore-sched.patch"
+  "${_patchsource}/0001-stable-rc.patch"
+  "0001-cacule-bore-sched.patch"
   "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-page-table-check.patch"
@@ -171,7 +172,7 @@ source=(
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-  "${_patchsource}/0001-damon.patch"
+  "${_patchsource}/0001-damon-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
@@ -487,7 +488,7 @@ prepare() {
   scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-  echo "Enable AMD PSTATE v2 driver"
+  echo "Enable AMD PSTATE driver"
   scripts/config --enable CONFIG_X86_AMD_PSTATE
   scripts/config --enable CONFIG_AMD_PTDMA
   echo "Enable Anbox"
@@ -496,6 +497,7 @@ prepare() {
   scripts/config --enable CONFIG_ANDROID_BINDER_IPC
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
+  scripts/config --enable CONFIG_NTFS3_FS
 
 
   ### Optionally load needed modules for the make localmodconfig

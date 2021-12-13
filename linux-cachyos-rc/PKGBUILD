@@ -10,12 +10,9 @@
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
-_NUMAdisable=
+_NUMAdisable=y
 # Enable fsync
 _fsync=y
-
-#enable futex2
-_futex2=y
 
 #enable winesync
 _winesync=y
@@ -71,7 +68,7 @@ _zstd_level='ultra'
 # 'normal' - standard compression ratio
 # WARNING: the ultra settings can sometimes
 # be counterproductive in both size and speed.
-_zstd_module_level='ultra'
+_zstd_module_level='normal'
 
 ### Enable SECURITY_FORK_BRUTE
 # WARNING Not recommended.
@@ -114,7 +111,7 @@ pkgbase=linux-cachyos-rc
 _major=5.16
 _minor=0
 _minorc=$((_minor+1))
-_rcver=rc4
+_rcver=rc5
 pkgver=${_major}.${_minorc}
 _stable=${_major}.${_minor}
 _stablerc=${_major}-${_rcver}
@@ -140,21 +137,23 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
 #  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
+    "${_patchsource}/0001-cacule-bs-sched-5.16.patch"
 #    "${_patchsource}/TT/0001-tt-r2-5.16.patch"
-  "${_patchsource}/misc/0001-block-5.16.patch"
-  "${_patchsource}/0001-apparmor.patch"
-  "${_patchsource}/0001-mapple.patch"
-  "${_patchsource}/0001-damon.patch"
-#  "${_patchsource}/0001-umcg.patch"
-  "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-bbr2.patch"
-  "${_patchsource}/0001-cpu-patches.patch"
+  "${_patchsource}/misc/0001-block-5.16.patch"
+  "${_patchsource}/0001-lrng.patch"
+  "${_patchsource}/0001-misc.patch"
+  "${_patchsource}/0001-cpu.patch"
+  "${_patchsource}/0001-fixes.patch"
+  "${_patchsource}/0001-throttle.patch"
+  "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-zstd-patches.patch"
-  "${_patchsource}/misc/0001-mm.patch"
+  "${_patchsource}/0001-ksm.patch"
+  "${_patchsource}/0001-sched-fix.patch"
+  "${_patchsource}/0001-pte-marker.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-winesync-fsync.patch"
   "https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/AMD/0001-amd-pstate-dev-v5-fixes.patch"
-  #  "${_patchsource}/0001-tcp.patch"
   "auto-cpu-optimization.sh"
 )
 if [ -n "$_use_llvm_lto" ]; then
@@ -580,17 +579,24 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('c3b864c2edd20351f8fbfa265df89508'
+md5sums=('fc8324c20772b997ef37de8cfebd489f'
          '0ac42c66359097d484fc67a1905008b0'
+         '15ffc9a58dbdfff5aa77bc085d2b335a'
          'ed2a1bd6ccb62423dca67821baf836e1'
          'e8e38f00f1f33ed66e16d3df996ad1d9'
-         '049da61c4dcabfc5130940a0c734b1e0'
          '04c5f310615c227be04f20123412eed6'
+         '08d66bbba34a98e3a2d83e2bd89aa257'
          '299b176cbfc1b386d74406387e9e2d6b'
-         '15ffc9a58dbdfff5aa77bc085d2b335a'
-         '67764a5824b567b49bcce19c01d4e1b3'
+         'c840895ea0da5c49cbc62e08d3646ee0'
+         'f574f1c40fa2d07602e77418b863e144'
+         '2fd466dbbb9de8ee02e9178731b93451'
+         'd78bb31569440421e0e76d9a8c0a14fc'
          'bf58290793d3a095ef95fb1fac2de89a'
-         '500f49b7f8ebe52f10ce473e50522b08'
+         '43f6fa397f26304860aab86998e2d010'
+         'b61acf64829368b2f8cf03f1b1877991'
+         '5bbccd18de800b0b54652bee0b76da0a'
+         'fd918d13c20960ca78c78d21d6695e85'
+         '99771ace6973c3f9ae60c858d7b5e59a'
          'de6db1147385c058b2e94df3c1739fdf'
          '13ed4ea506b1dc0e9e8437d34c99a916'
          '4866d66f4cc1b10cccb520c22cbc71d7'
