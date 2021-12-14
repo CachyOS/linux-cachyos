@@ -131,13 +131,13 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cacule-rdb
 fi
 _major=5.15
-_minor=7
+_minor=8
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=3
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -666,7 +666,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('b79700122766ccf561f032eb3c8da27e'
+md5sums=('5b04a1db6305c993d7f55db334a2b415'
          'd97e86d9464dd34683f67de4d4a595c0'
          'afdbe964cd00357ef7248553ab9db091'
          '2627c6fcd9760b0e7a3553500db0a7e1'

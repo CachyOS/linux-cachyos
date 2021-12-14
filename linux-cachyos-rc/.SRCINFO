@@ -26,7 +26,6 @@ pkgbase = linux-cachyos-rc
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-amd-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-block.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-lrng.patch
-	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-misc-2.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-cpu.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-fixes.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-futex.patch

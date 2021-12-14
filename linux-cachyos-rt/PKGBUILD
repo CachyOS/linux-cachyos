@@ -112,8 +112,8 @@ if [ -n "$_use_llvm_lto" ]; then
 else
   pkgbase=linux-cachyos-rt
 fi
-pkgver=5.15.7
-pkgrel=2
+pkgver=5.15.8
+pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
 _gittag=v${pkgver%.*}-${pkgver##*.}
@@ -633,7 +633,7 @@ _package-headers() {
 
 }
 
-md5sums=('b79700122766ccf561f032eb3c8da27e'
+md5sums=('5b04a1db6305c993d7f55db334a2b415'
          '9a30485a426bbf3342062a4b6a5cc3bf'
          '2f0448cd31f07494221e5a88cf55cda3'
          'cf26387aadf2a90428350ac246b070c9'

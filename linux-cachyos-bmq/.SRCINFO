@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-bmq
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.15.7
-	pkgrel = 3
+	pkgver = 5.15.8
+	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -19,7 +19,7 @@ pkgbase = linux-cachyos-bmq
 	makedepends = tar
 	makedepends = xz
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.7.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.8.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-prjc.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-arch-patches.patch
@@ -51,7 +51,7 @@ pkgbase = linux-cachyos-bmq
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-zstd.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-xfs-backport.patch
 	source = auto-cpu-optimization.sh
-	md5sums = b79700122766ccf561f032eb3c8da27e
+	md5sums = 5b04a1db6305c993d7f55db334a2b415
 	md5sums = d97e86d9464dd34683f67de4d4a595c0
 	md5sums = 25fe602949e5b92d08df96e55e418d7a
 	md5sums = 2627c6fcd9760b0e7a3553500db0a7e1
@@ -97,5 +97,5 @@ pkgname = linux-cachyos-bmq
 
 pkgname = linux-cachyos-bmq-headers
 	pkgdesc = Headers and scripts for building modules for the Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-bmq=5.15.7
+	depends = linux-cachyos-bmq=5.15.8
 	depends = pahole

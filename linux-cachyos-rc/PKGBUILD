@@ -104,7 +104,7 @@ _localmodcfg=
 _use_current=
 
 # Tweak kernel options prior to a build via nconfig
-_makenconfig=y
+_makenconfig=
 
 if [ -n "$_use_llvm_lto" ]; then
 pkgbase=linux-cachyos-rc-lto
@@ -145,7 +145,6 @@ source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "${_patchsource}/0001-amd-patches.patch"
   "${_patchsource}/0001-block.patch"
   "${_patchsource}/0001-lrng.patch"
-  "${_patchsource}/0001-misc-2.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-fixes.patch"
   "${_patchsource}/0001-futex.patch"

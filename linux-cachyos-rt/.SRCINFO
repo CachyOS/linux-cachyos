@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-rt
 	pkgdesc = Linux-cacule Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.15.7
-	pkgrel = 2
+	pkgver = 5.15.8
+	pkgrel = 1
 	url = https://github.com/ptr1337/linux-cacule
 	arch = x86_64
 	arch = x86_64_v3
@@ -19,7 +19,7 @@ pkgbase = linux-cachyos-rt
 	makedepends = tar
 	makedepends = xz
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.7.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.8.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-5.15.5-rt22.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch
@@ -43,7 +43,7 @@ pkgbase = linux-cachyos-rt
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-zstd-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-zstd-upstream-patches.patch
 	source = auto-cpu-optimization.sh
-	md5sums = b79700122766ccf561f032eb3c8da27e
+	md5sums = 5b04a1db6305c993d7f55db334a2b415
 	md5sums = 9a30485a426bbf3342062a4b6a5cc3bf
 	md5sums = 2f0448cd31f07494221e5a88cf55cda3
 	md5sums = cf26387aadf2a90428350ac246b070c9
@@ -81,5 +81,5 @@ pkgname = linux-cachyos-rt
 
 pkgname = linux-cachyos-rt-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-cacule Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-rt=5.15.7
+	depends = linux-cachyos-rt=5.15.8
 	depends = pahole
