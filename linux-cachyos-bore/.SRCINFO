@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-bore-lto
+pkgbase = linux-cachyos-bore
 	pkgdesc = Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15.8
 	pkgrel = 1
@@ -18,14 +18,6 @@ pkgbase = linux-cachyos-bore-lto
 	makedepends = perl
 	makedepends = tar
 	makedepends = xz
-	makedepends = clang
-	makedepends = llvm
-	makedepends = lld
-	makedepends = python
-	depends = clang
-	depends = llvm
-	depends = lld
-	depends = python
 	options = !strip
 	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.8.tar.xz
 	source = config
@@ -98,7 +90,7 @@ pkgbase = linux-cachyos-bore-lto
 	md5sums = 507e61367296d14b88ac38a4aee03cdf
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-bore-lto
+pkgname = linux-cachyos-bore
 	pkgdesc = The Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -109,7 +101,7 @@ pkgname = linux-cachyos-bore-lto
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-bore-lto-headers
+pkgname = linux-cachyos-bore-headers
 	pkgdesc = Headers and scripts for building modules for the Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-bore-lto=5.15.8
+	depends = linux-cachyos-bore=5.15.8
 	depends = pahole
