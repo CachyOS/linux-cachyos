@@ -129,7 +129,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux pds scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=2
+pkgrel=3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -156,7 +156,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.ta
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/misc/0010-ELF.patch"
-  "${_patchsource}/0001-bitmap.patch"
+#  "${_patchsource}/0001-bitmap.patch"
   "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-misc.patch"

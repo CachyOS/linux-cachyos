@@ -135,7 +135,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=2
+pkgrel=3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -158,7 +158,7 @@ source=(#"https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/misc/0010-ELF.patch"
-  "${_patchsource}/0001-bitmap.patch"
+#  "${_patchsource}/0001-bitmap.patch"
   "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-misc.patch"
@@ -665,7 +665,6 @@ md5sums=('5b04a1db6305c993d7f55db334a2b415'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          'a05b47e1970509a27f36501534751a9b'
-         '82b58a2673da7a5479b6a94f6200e28b'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
          '299b176cbfc1b386d74406387e9e2d6b'
