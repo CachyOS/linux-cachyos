@@ -48,8 +48,7 @@ _fsync=y
 #enable winesync
 _winesync=y
 
-### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
-_2k_HZ_ticks=
+### Running with a 1000HZ, 750Hz or  500HZ tick rate
 _1k_HZ_ticks=
 _750_HZ_ticks=y
 _600_HZ_ticks=
@@ -72,6 +71,12 @@ _damon=
 
 _use_page_check=y
 
+# experimental;
+# User Managed Concurrency Groups is an M:N threading toolkit that allows
+# constructing user space schedulers designed to efficiently manage
+# heterogeneous in-process workloads while maintaining high CPU
+# utilization (95%+).
+#_enable_umcg=
 ### Enable Linux Random Number Generator
 _lrng_enable=y
 
@@ -130,7 +135,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -145,19 +150,21 @@ source=(#"https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
   "${_patchsource}/0001-arch-patches.patch"
-  "${_patchsource}/0001-CLUSTER.patch"
   "${_patchsource}/0001-cfi.patch"
+  "${_patchsource}/0001-page-table-check.patch"
   "${_patchsource}/0001-lru-patches.patch"
-  "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
+  "${_patchsource}/AMD/0001-amdpstate.patch"
+  "${_patchsource}/AMD/amd-sched.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
-  "${_patchsource}/0001-page-table-check.patch"
+  "${_patchsource}/misc/0010-ELF.patch"
   "${_patchsource}/0001-bitmap.patch"
   "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
+  "${_patchsource}/0001-intel-patches.patch"
   "${_patchsource}/0001-ntfs3.patch"
   "${_patchsource}/0001-ck-hrtimer.patch"
   "${_patchsource}/0001-fixes-miscellaneous.patch"
@@ -233,7 +240,7 @@ prepare() {
     fi
   fi
 
-if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
+  if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
     scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
     scripts/config --enable CONFIG_CFI_CLANG
   fi
@@ -319,27 +326,27 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
   fi
 
 
-      ### Enable protect mappings under memory pressure
-  	if [ -n "$_mm_protect" ]; then
-  		echo "Enabling protect file mappings under memory pressure..."
-  		scripts/config --enable CONFIG_UNEVICTABLE_FILE
-  		scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_LOW 0
-  		scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_MIN 0
-  		echo "Enabling protect anonymous mappings under memory pressure..."
-  		scripts/config --enable CONFIG_UNEVICTABLE_ANON
-  		scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_LOW 0
-  		scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_MIN 0
-  	fi
+  ### Enable protect mappings under memory pressure
+  if [ -n "$_mm_protect" ]; then
+    echo "Enabling protect file mappings under memory pressure..."
+    scripts/config --enable CONFIG_UNEVICTABLE_FILE
+    scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_LOW 0
+    scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_MIN 0
+    echo "Enabling protect anonymous mappings under memory pressure..."
+    scripts/config --enable CONFIG_UNEVICTABLE_ANON
+    scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_LOW 0
+    scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_MIN 0
+  fi
 
   ### Enable multigenerational LRU
   if [ -n "$_lru_enable" ]; then
     echo "Enabling multigenerational LRU..."
     scripts/config --enable CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG
-		scripts/config --enable CONFIG_LRU_GEN
-		scripts/config --set-val CONFIG_NR_LRU_GENS 7
-		scripts/config --set-val CONFIG_TIERS_PER_GEN 4
-		scripts/config --enable CONFIG_LRU_GEN_ENABLED
-		scripts/config --disable CONFIG_LRU_GEN_STATS
+    scripts/config --enable CONFIG_LRU_GEN
+    scripts/config --set-val CONFIG_NR_LRU_GENS 7
+    scripts/config --set-val CONFIG_TIERS_PER_GEN 4
+    scripts/config --enable CONFIG_LRU_GEN_ENABLED
+    scripts/config --disable CONFIG_LRU_GEN_STATS
   fi
 
   ### Enable DAMON
@@ -352,52 +359,64 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
     scripts/config --enable CONFIG_DAMON_RECLAIM
   fi
 
+  if [ -n "$_use_page_check" ]; then
+    echo "Enable Page Table Check"
+    scripts/config --enable ARCH_SUPPORTS_PAGE_TABLE_CHECK
+    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
+    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
+  fi
+
+  if [ -n "$_enable_umcg" ]; then
+    echo "Enable Page Table Check"
+    scripts/config --enable CONFIG_HAVE_UMCG
+    scripts/config --enable CONFIG_UMCG
+  fi
   ### Enable Linux Random Number Generator
   if [ -n "$_lrng_enable" ]; then
     echo "Enabling Linux Random Number Generator ..."
     echo "Enabling Linux Random Number Generator with pfkernel config..."
-		scripts/config --enable CONFIG_LRNG
-		scripts/config --enable CONFIG_LRNG_OVERSAMPLE_ENTROPY_SOURCES
-		scripts/config --set-val CONFIG_CONFIG_LRNG_OVERSAMPLE_ES_BITS 64
-		scripts/config --set-val CONFIG_LRNG_SEED_BUFFER_INIT_ADD_BITS 128
-		scripts/config --enable CONFIG_LRNG_IRQ
-		scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
-		scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
-		scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
-		scripts/config --enable CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION
-		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_512
-		scripts/config --enable CONFIG_LRNG_COLLECTION_SIZE_1024
-		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_2048
-		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_4096
-		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_8192
-		scripts/config --set-val CONFIG_LRNG_COLLECTION_SIZE 1024
-		scripts/config --enable CONFIG_LRNG_HEALTH_TESTS
-		scripts/config --set-val CONFIG_LRNG_RCT_CUTOFF 31
-		scripts/config --set-val CONFIG_LRNG_APT_CUTOFF 325
-		scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
-		scripts/config --enable CONFIG_LRNG_JENT
-		scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
-		scripts/config --enable CONFIG_LRNG_CPU
-		scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
-		scripts/config --enable CONFIG_LRNG_DRNG_SWITCH
-		scripts/config --enable CONFIG_LRNG_KCAPI_HASH
-		scripts/config --module CONFIG_LRNG_DRBG
-		scripts/config --module CONFIG_LRNG_KCAPI
-		scripts/config --enable CONFIG_LRNG_TESTING_MENU
-		scripts/config --disable CONFIG_LRNG_RAW_HIRES_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_JIFFIES_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_IRQ_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_IRQFLAGS_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_RETIP_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_REGS_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_ARRAY
-		scripts/config --disable CONFIG_LRNG_IRQ_PERF
-		scripts/config --disable CONFIG_LRNG_ACVT_HASH
-		scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
-		scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
-		scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
-		scripts/config --enable CONFIG_LRNG_SELFTEST
-		scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
+    scripts/config --enable CONFIG_LRNG
+    scripts/config --enable CONFIG_LRNG_OVERSAMPLE_ENTROPY_SOURCES
+    scripts/config --set-val CONFIG_CONFIG_LRNG_OVERSAMPLE_ES_BITS 64
+    scripts/config --set-val CONFIG_LRNG_SEED_BUFFER_INIT_ADD_BITS 128
+    scripts/config --enable CONFIG_LRNG_IRQ
+    scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
+    scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
+    scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
+    scripts/config --enable CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION
+    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_512
+    scripts/config --enable CONFIG_LRNG_COLLECTION_SIZE_1024
+    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_2048
+    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_4096
+    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_8192
+    scripts/config --set-val CONFIG_LRNG_COLLECTION_SIZE 1024
+    scripts/config --enable CONFIG_LRNG_HEALTH_TESTS
+    scripts/config --set-val CONFIG_LRNG_RCT_CUTOFF 31
+    scripts/config --set-val CONFIG_LRNG_APT_CUTOFF 325
+    scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
+    scripts/config --enable CONFIG_LRNG_JENT
+    scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
+    scripts/config --enable CONFIG_LRNG_CPU
+    scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
+    scripts/config --enable CONFIG_LRNG_DRNG_SWITCH
+    scripts/config --enable CONFIG_LRNG_KCAPI_HASH
+    scripts/config --module CONFIG_LRNG_DRBG
+    scripts/config --module CONFIG_LRNG_KCAPI
+    scripts/config --enable CONFIG_LRNG_TESTING_MENU
+    scripts/config --disable CONFIG_LRNG_RAW_HIRES_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_JIFFIES_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_IRQ_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_IRQFLAGS_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_RETIP_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_REGS_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_ARRAY
+    scripts/config --disable CONFIG_LRNG_IRQ_PERF
+    scripts/config --disable CONFIG_LRNG_ACVT_HASH
+    scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
+    scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
+    scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
+    scripts/config --enable CONFIG_LRNG_SELFTEST
+    scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
   fi
 
   echo "Enable LLVM LTO"
@@ -405,12 +424,7 @@ if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
     scripts/config --disable CONFIG_LTO_NONE
   fi
 
-  if [ -n "$_use_page_check" ]; then
-      echo "Enable Page Table Check"
-    scripts/config --enable ARCH_SUPPORTS_PAGE_TABLE_CHECK
-    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
-    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
-  fi
+
 
   ### Selecting the ZSTD compression level
   if [ "$_zstd_level" = "ultra" ]; then
@@ -643,19 +657,21 @@ done
 md5sums=('5b04a1db6305c993d7f55db334a2b415'
          'd97e86d9464dd34683f67de4d4a595c0'
          '2627c6fcd9760b0e7a3553500db0a7e1'
-         'df0a0c51baecdbd369694c9f10715cb4'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
+         '152706f6ebbe9917c6a5955cd5447344'
          '4bfca774a71e7228f5b8bb31660521af'
-         '4866d66f4cc1b10cccb520c22cbc71d7'
+         '4b530f55cb9ce472fa539abc69299a17'
+         'dccfe71705b24d3fb1f51aaf2016216d'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
-         '152706f6ebbe9917c6a5955cd5447344'
-         'e708f2160dee1ef5c7dffb8a23c199d7'
+         'a05b47e1970509a27f36501534751a9b'
+         '82b58a2673da7a5479b6a94f6200e28b'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
          '299b176cbfc1b386d74406387e9e2d6b'
-         '5b9a009ab68ba548e9d06e0932ab967d'
+         '6d0f581b0edcf0a11308f3e3cde5eeaf'
          '41887f2f959068e41756f4c39671ca79'
+         'b04c8a3f01b3dfba1410e2c26ec7d975'
          '8cf507777e20cd4d75a0627eef10c10d'
          '6038177c72982533035309fcd6df208a'
          '2a13aa40945c9910f7ad20a429442793'

@@ -129,7 +129,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux pds scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -146,13 +146,16 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
   "${_patchsource}/0001-prjc.patch"
+  "${_patchsource}/0001-prjc-fixes.patch"
   "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-page-table-check.patch"
   "${_patchsource}/0001-lru-patches.patch"
-  "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
+  "${_patchsource}/AMD/0001-amdpstate.patch"
+  "${_patchsource}/AMD/amd-sched.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
+  "${_patchsource}/misc/0010-ELF.patch"
   "${_patchsource}/0001-bitmap.patch"
   "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
@@ -161,12 +164,12 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.ta
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-intel-patches.patch"
   "${_patchsource}/0001-ntfs3.patch"
-  #  "${_patchsource}/0001-ck-hrtimer.patch"
+#  "${_patchsource}/0001-ck-hrtimer.patch"
   "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-#  "${_patchsource}/0001-damon.patch"
+#  "${_patchsource}/0001-damon-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
@@ -670,18 +673,21 @@ done
 md5sums=('5b04a1db6305c993d7f55db334a2b415'
          'd97e86d9464dd34683f67de4d4a595c0'
          '25fe602949e5b92d08df96e55e418d7a'
+         '4ade58369428890eacc90a68ddf6f20b'
          '2627c6fcd9760b0e7a3553500db0a7e1'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
          '152706f6ebbe9917c6a5955cd5447344'
          '4bfca774a71e7228f5b8bb31660521af'
-         '4866d66f4cc1b10cccb520c22cbc71d7'
+         '4b530f55cb9ce472fa539abc69299a17'
+         'dccfe71705b24d3fb1f51aaf2016216d'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
-         'e708f2160dee1ef5c7dffb8a23c199d7'
+         'a05b47e1970509a27f36501534751a9b'
+         '82b58a2673da7a5479b6a94f6200e28b'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
          '299b176cbfc1b386d74406387e9e2d6b'
-         '5b9a009ab68ba548e9d06e0932ab967d'
+         '6d0f581b0edcf0a11308f3e3cde5eeaf'
          '41887f2f959068e41756f4c39671ca79'
          'b04c8a3f01b3dfba1410e2c26ec7d975'
          '8cf507777e20cd4d75a0627eef10c10d'

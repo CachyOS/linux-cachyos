@@ -8,7 +8,7 @@
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=y
+_makenconfig=
 
 ### Tweak kernel options prior to a build via menuconfig
 _makemenuconfig=
@@ -130,7 +130,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -664,7 +664,7 @@ done
 
 md5sums=('5b04a1db6305c993d7f55db334a2b415'
          'd97e86d9464dd34683f67de4d4a595c0'
-         '22552abc3fe996c2e89980e13e5583a3'
+         'bd7d37c1f6b7bd0bfec044046025cf93'
          '2627c6fcd9760b0e7a3553500db0a7e1'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
          '152706f6ebbe9917c6a5955cd5447344'

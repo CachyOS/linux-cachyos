@@ -104,7 +104,7 @@ _localmodcfg=
 _use_current=
 
 # Tweak kernel options prior to a build via nconfig
-_makenconfig=
+_makenconfig=y
 
 if [ -n "$_use_llvm_lto" ]; then
 pkgbase=linux-cachyos-rc-lto
@@ -140,6 +140,7 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
   #  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
+  "${_patchsource}/0001-umcg.patch"
   "${_patchsource}/0001-bore-5.16.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-amd-patches.patch"
@@ -151,7 +152,6 @@ source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-zstd-patches.patch"
-  "${_patchsource}/0001-ksm.patch"
   "${_patchsource}/0001-pte-marker.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "auto-cpu-optimization.sh"
@@ -498,8 +498,6 @@ _package-headers() {
 
   # add objtool for external module building and enabled VALIDATION_STACK option
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
-  # add resolve_btfids
-  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
   # add xfs and shmem for aufs building
   mkdir -p "$builddir"/{fs/xfs,mm}

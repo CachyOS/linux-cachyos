@@ -129,7 +129,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -651,7 +651,7 @@ done
 
 md5sums=('5b04a1db6305c993d7f55db334a2b415'
          '1ccb20b7c46bfdae67ee99dcb9e7f618'
-         '22552abc3fe996c2e89980e13e5583a3'
+         'bd7d37c1f6b7bd0bfec044046025cf93'
          '2627c6fcd9760b0e7a3553500db0a7e1'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
          '152706f6ebbe9917c6a5955cd5447344'
@@ -661,11 +661,11 @@ md5sums=('5b04a1db6305c993d7f55db334a2b415'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          'a05b47e1970509a27f36501534751a9b'
-         'e708f2160dee1ef5c7dffb8a23c199d7'
+         '82b58a2673da7a5479b6a94f6200e28b'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
          '299b176cbfc1b386d74406387e9e2d6b'
-         '5b9a009ab68ba548e9d06e0932ab967d'
+         '6d0f581b0edcf0a11308f3e3cde5eeaf'
          '41887f2f959068e41756f4c39671ca79'
          'b04c8a3f01b3dfba1410e2c26ec7d975'
          '8cf507777e20cd4d75a0627eef10c10d'
