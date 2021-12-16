@@ -1,7 +1,7 @@
 pkgbase = linux-cacule
 	pkgdesc = Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.15.8
-	pkgrel = 3
+	pkgver = 5.15.9
+	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -19,7 +19,7 @@ pkgbase = linux-cacule
 	makedepends = tar
 	makedepends = xz
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.8.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.9.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE/v5.15/cacule-5.15-full.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15/0001-arch-patches.patch
@@ -101,5 +101,5 @@ pkgname = linux-cacule
 
 pkgname = linux-cacule-headers
 	pkgdesc = Headers and scripts for building modules for the Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cacule=5.15.8
+	depends = linux-cacule=5.15.9
 	depends = pahole

@@ -112,7 +112,7 @@ if [ -n "$_use_llvm_lto" ]; then
 else
   pkgbase=linux-cachyos-rt
 fi
-pkgver=5.15.8
+pkgver=5.15.9
 pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
