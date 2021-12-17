@@ -123,7 +123,7 @@ else
   pkgbase=linux-bore
 fi
 _major=5.15
-_minor=9
+_minor=10
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
@@ -157,7 +157,6 @@ source=(
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/misc/0010-ELF.patch"
-  "${_patchsource}/0001-bitmap.patch"
   "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-misc.patch"
@@ -170,7 +169,6 @@ source=(
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-#  "${_patchsource}/0001-damon-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
@@ -182,6 +180,7 @@ source=(
   "${_patchsource}/0001-xfs-backport.patch"
   "auto-cpu-optimization.sh"
 )
+
 
 if [ -n "$_use_pgo" ]; then
   source+=("${_patchsource}/0001-PGO.patch")
@@ -649,7 +648,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('5b04a1db6305c993d7f55db334a2b415'
+md5sums=('b661040d70e3c6da4844dc4ecbf30555'
          '1ccb20b7c46bfdae67ee99dcb9e7f618'
          'bd7d37c1f6b7bd0bfec044046025cf93'
          '2627c6fcd9760b0e7a3553500db0a7e1'
@@ -664,15 +663,15 @@ md5sums=('5b04a1db6305c993d7f55db334a2b415'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
          '299b176cbfc1b386d74406387e9e2d6b'
-         '6d0f581b0edcf0a11308f3e3cde5eeaf'
+         '68e3ce199650ac9530ca8a30c920da99'
          '41887f2f959068e41756f4c39671ca79'
          'b04c8a3f01b3dfba1410e2c26ec7d975'
          '8cf507777e20cd4d75a0627eef10c10d'
          '6038177c72982533035309fcd6df208a'
-         '2a13aa40945c9910f7ad20a429442793'
+         '8bda7327ae759b1b52e3b617952bd964'
          '8c354c3d1962ec6785db7f0c3fbbab03'
          '9b6369bc4c58ad0d9195b5c204ed4b8a'
-         'c6efda5716e4ff79ebdbc963bebd851a'
+         '480c6bb9db4842114787f66ad5a68404'
          '08c84362cb916b30d9c77e35b1b3bc54'
          '56fdf3562b041c0408d9751b7e447977'
          'b09b84168822521426f197610727618b'

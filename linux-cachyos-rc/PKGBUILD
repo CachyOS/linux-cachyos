@@ -140,19 +140,24 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
   #  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
+  #"${_patchsource}/0001-bore-sched.patch"
   "${_patchsource}/0001-umcg.patch"
+  "${_patchsource}/0001-folios-filemap.patch"
+  "${_patchsource}/0001-tip-rcu.patch"
   "${_patchsource}/0001-bore-5.16.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-amd-patches.patch"
+  "${_patchsource}/0001-lsm-apparmor.patch"
   "${_patchsource}/0001-block.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-cpu.patch"
+  "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-fixes.patch"
   "${_patchsource}/0001-futex.patch"
   "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-zstd-patches.patch"
-  "${_patchsource}/0001-pte-marker.patch"
+  #"${_patchsource}/0001-pte-marker.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "auto-cpu-optimization.sh"
 )
@@ -571,20 +576,22 @@ done
 
 
 md5sums=('fc8324c20772b997ef37de8cfebd489f'
-         '0ac42c66359097d484fc67a1905008b0'
-         '7df4edf28f486873807f15c9ed0216a0'
+         '3b8607c4bdb94b0e8acbc0888bacd543'
+         'dd1002726b5f2358fa2f3173850131c8'
+         '91f43aace39f19aeab85708c7eb5d5e5'
+         'ce07eb9c3af072cf6661c8ee361ad2cc'
+         '1c3f79ee8295b5db289ac7a9faa98fb3'
          '15ffc9a58dbdfff5aa77bc085d2b335a'
          'b9b7f287edd8804118c9eda03574ab8b'
+         '9fac3dbac9d9afb9cc5a7641a4443f57'
          'aa5b31d6f9600ec3b1664cd4e5839b75'
          '08d66bbba34a98e3a2d83e2bd89aa257'
-         'db445bd5650d7e0ce2552704bb944752'
          'c840895ea0da5c49cbc62e08d3646ee0'
+         '299b176cbfc1b386d74406387e9e2d6b'
          'f574f1c40fa2d07602e77418b863e144'
          '2458d1c5d00d10709922e686c5d1e97f'
          'c9a168a620a6a95247447ee5fd8de8b4'
          'd78bb31569440421e0e76d9a8c0a14fc'
          'bf58290793d3a095ef95fb1fac2de89a'
-         '5bbccd18de800b0b54652bee0b76da0a'
-         '99771ace6973c3f9ae60c858d7b5e59a'
          'de6db1147385c058b2e94df3c1739fdf'
          '21c98f19e883879dd3336c1fa143fd31')
