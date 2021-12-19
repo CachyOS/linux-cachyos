@@ -69,8 +69,6 @@ _lru_enable=y
 ### Enable DAMON
 _damon=
 
-_use_page_check=y
-
 # experimental;
 # User Managed Concurrency Groups is an M:N threading toolkit that allows
 # constructing user space schedulers designed to efficiently manage
@@ -135,7 +133,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -151,7 +149,6 @@ source=(#"https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "config"
   "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-cfi.patch"
-  "${_patchsource}/0001-page-table-check.patch"
   "${_patchsource}/0001-lru-patches.patch"
   "${_patchsource}/AMD/0001-amdpstate.patch"
   "${_patchsource}/AMD/amd-sched.patch"
@@ -359,18 +356,6 @@ prepare() {
     scripts/config --enable CONFIG_DAMON_RECLAIM
   fi
 
-  if [ -n "$_use_page_check" ]; then
-    echo "Enable Page Table Check"
-    scripts/config --enable ARCH_SUPPORTS_PAGE_TABLE_CHECK
-    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
-    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
-  fi
-
-  if [ -n "$_enable_umcg" ]; then
-    echo "Enable Page Table Check"
-    scripts/config --enable CONFIG_HAVE_UMCG
-    scripts/config --enable CONFIG_UMCG
-  fi
   ### Enable Linux Random Number Generator
   if [ -n "$_lrng_enable" ]; then
     echo "Enabling Linux Random Number Generator ..."
@@ -658,7 +643,6 @@ md5sums=('b661040d70e3c6da4844dc4ecbf30555'
          'd97e86d9464dd34683f67de4d4a595c0'
          '2627c6fcd9760b0e7a3553500db0a7e1'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
-         '152706f6ebbe9917c6a5955cd5447344'
          '4bfca774a71e7228f5b8bb31660521af'
          '4b530f55cb9ce472fa539abc69299a17'
          'dccfe71705b24d3fb1f51aaf2016216d'

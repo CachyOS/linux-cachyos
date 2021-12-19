@@ -76,8 +76,6 @@ _lrng_enable=y
 ### Enable DAMON
 _damon=
 
-_use_page_check=y
-
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
 
@@ -137,7 +135,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -158,7 +156,6 @@ source=(
   "${_caculepatches}/v5.15/cacule-5.15-full.patch"
   "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-cfi.patch"
-  "${_patchsource}/0001-page-table-check.patch"
   "${_patchsource}/0001-lru-patches.patch"
   "${_patchsource}/AMD/0001-amdpstate.patch"
   "${_patchsource}/AMD/amd-sched.patch"
@@ -493,7 +490,7 @@ prepare() {
   scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-  echo "Enable AMD PSTATE v2 driver"
+  echo "Enable AMD PSTATE driver"
   scripts/config --enable CONFIG_X86_AMD_PSTATE
   scripts/config --enable CONFIG_AMD_PTDMA
   echo "Enable Anbox"
@@ -672,7 +669,6 @@ md5sums=('b661040d70e3c6da4844dc4ecbf30555'
          'afdbe964cd00357ef7248553ab9db091'
          '2627c6fcd9760b0e7a3553500db0a7e1'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
-         '152706f6ebbe9917c6a5955cd5447344'
          '4bfca774a71e7228f5b8bb31660521af'
          '4b530f55cb9ce472fa539abc69299a17'
          'dccfe71705b24d3fb1f51aaf2016216d'

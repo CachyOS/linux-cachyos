@@ -79,8 +79,6 @@ _use_optimization_select=
 ### Enable DAMON
 _damon=
 
-_use_page_check=y
-
 ### Selecting the ZSTD compression level
 # ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
@@ -129,7 +127,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux pds scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -149,7 +147,6 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.ta
   "${_patchsource}/0001-prjc-fixes.patch"
   "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-cfi.patch"
-  "${_patchsource}/0001-page-table-check.patch"
   "${_patchsource}/0001-lru-patches.patch"
   "${_patchsource}/AMD/0001-amdpstate.patch"
   "${_patchsource}/AMD/amd-sched.patch"
@@ -431,13 +428,6 @@ prepare() {
   echo "Enable LLVM LTO"
   if [ -n "$_use_llvm_lto" ]; then
     scripts/config --disable CONFIG_LTO_NONE
-  fi
-
-  if [ -n "$_use_page_check" ]; then
-    echo "Enable Page Table Check"
-    scripts/config --enable ARCH_SUPPORTS_PAGE_TABLE_CHECK
-    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
-    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
   fi
 
   ### Selecting the ZSTD compression level

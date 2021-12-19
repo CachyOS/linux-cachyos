@@ -34,15 +34,13 @@ _kyber_disable=y
 _mm_protect=y
 
 ### Enable multigenerational LRU
-_lru_enable=
+_lru_enable=y
 
 ### Enable Linux Random Number Generator
 _lrng_enable=
 
 ## Samba3 Server
 _ksmbd_enable=
-
-_use_page_check=y
 
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
@@ -68,7 +66,7 @@ _zstd_level='ultra'
 # 'normal' - standard compression ratio
 # WARNING: the ultra settings can sometimes
 # be counterproductive in both size and speed.
-_zstd_module_level='ultra'
+_zstd_module_level='normal'
 
 ### Enable SECURITY_FORK_BRUTE
 # WARNING Not recommended.
@@ -135,7 +133,6 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-misc-next.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
-  "${_patchsource}/0001-page-table-check.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
@@ -265,11 +262,6 @@ prepare() {
     scripts/config --enable CONFIG_FUTEX_PI
   fi
 
-  if [ -n "$_futex2" ]; then
-    echo "Enable Futex2 support"
-    scripts/config --enable CONFIG_FUTEX2
-  fi
-
   if [ -n "$_winesync" ]; then
     echo "Enable winesync support"
     scripts/config --module CONFIG_WINESYNC
@@ -361,16 +353,16 @@ prepare() {
   if [ -n "$_use_llvm_lto" ]; then
     scripts/config --disable CONFIG_LTO_NONE
   fi
-  if [ "$_cpusched" = "cacule" ]; then
-    echo "Selecting CacULE scheduler..."
-    scripts/config --enable CONFIG_CACULE_SCHED
-    scripts/config --disable CONFIG_CACULE_RDB
-  fi
-  if [ "$_cpusched" = "rdb" ]; then
-    echo "Enabling CacULE-RDB scheduler..."
-    scripts/config --enable CONFIG_CACULE_SCHED
-    scripts/config --enable CONFIG_CACULE_RDB
-    scripts/config --set-val CONFIG_RDB_INTERVAL 19
+
+  ### Enable multigenerational LRU
+  if [ -n "$_lru_enable" ]; then
+    echo "Enabling multigenerational LRU..."
+    scripts/config --enable CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG
+    scripts/config --enable CONFIG_LRU_GEN
+    scripts/config --set-val CONFIG_NR_LRU_GENS 7
+    scripts/config --set-val CONFIG_TIERS_PER_GEN 4
+    scripts/config --enable CONFIG_LRU_GEN_ENABLED
+    scripts/config --disable CONFIG_LRU_GEN_STATS
   fi
 
   ### Enable SMB3 Kernel Server
@@ -382,12 +374,6 @@ prepare() {
     scripts/config --enable CONFIG_SMB_SERVER_KERBEROS5
   fi
 
-  if [ -n "$_use_page_check" ]; then
-    echo "Enable Page Table Check"
-    scripts/config --enable ARCH_SUPPORTS_PAGE_TABLE_CHECK
-    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
-    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
-  fi
 
   ### Selecting the ZSTD compression level
   if [ "$_zstd_level" = "ultra" ]; then
@@ -448,6 +434,7 @@ prepare() {
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
   echo "Enable AMD PSTATE driver"
   scripts/config --enable CONFIG_AMD_PTDMA
+  scripts/config --enable CONFIG_AMD_PSTATE
   echo "Enable Anbox"
   scripts/config --enable CONFIG_ASHMEM
   scripts/config --enable CONFIG_ANDROID
@@ -455,10 +442,8 @@ prepare() {
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
   echo "Enable NTFS"
-  scripts/config --enable CONFIG_NTFS3_FS_POSIX_ACL
   scripts/config --enable CONFIG_NTFS3_FS
-  scripts/config --enable CONFIG_NTFS3_64BIT_CLUSTER
-  scripts/config --enable CONFIG_NTFS3_LZX_XPRESS
+
 
 
   ### Optionally disable NUMA for 64-bit kernels only
