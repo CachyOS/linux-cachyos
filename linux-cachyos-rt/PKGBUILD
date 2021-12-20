@@ -128,28 +128,27 @@ _caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver}.tar.xz"
   "config"
-  "${_patchsource}/0001-5.15.5-rt22.patch"
+  "${_patchsource}/0001-5.15.10-rt24.patch"
   "${_patchsource}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-  "${_patchsource}/0001-misc-next.patch"
+  "${_patchsource}/0001-misc.patch"
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
-  "${_patchsource}/AMD/0001-amd-pstate-dev-v5-fixes.patch"
+  "${_patchsource}/AMD/0001-amdpstate.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
   "${_patchsource}/0001-ck-hrtimer.patch"
   "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-#  "${_patchsource}/0001-damon-patches.patch"
+  #  "${_patchsource}/0001-damon-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   #  "${_patchsource}/0001-lrng-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-zen-patches.patch"
-  "${_patchsource}/0001-zstd-patches.patch"
-  "${_patchsource}/0001-zstd-upstream-patches.patch"
+  "${_patchsource}/0001-zstd.patch"
   "auto-cpu-optimization.sh"
 )
 if [ -n "$_use_cfi" ]; then
@@ -161,11 +160,11 @@ if [ -n "$_use_pgo" ]; then
 fi
 
 if [ -n "$_use_llvm_lto" ]; then
-
-  BUILD_FLAGS=(
-    LLVM=1
-    LLVM_IAS=1
-  )
+  LLVMOPTS="LLVM=1 LLVM_IAS=1"
+  CLANGOPTS="CC=clang LD=ld.lld"
+else
+  LLVMOPTS=""
+  CLANGOPTS=""
 fi
 
 export KBUILD_BUILD_HOST=archlinux
@@ -471,32 +470,42 @@ prepare() {
   ### Optionally load needed modules for the make localmodconfig
   # See https://aur.archlinux.org/packages/modprobed-db
   if [ -n "$_localmodcfg" ]; then
-    if [ -e "$HOME"/.config/modprobed.db ]; then
+    if [ -f $HOME/.config/modprobed.db ]; then
       echo "Running Steven Rostedt's make localmodconfig now"
-      make ${BUILD_FLAGS[*]} LSMOD="$HOME"/.config/modprobed.db localmodconfig
+      make  $LLVMOPTS LSMOD=$HOME/.config/modprobed.db localmodconfig
     else
       echo "No modprobed.db data found"
       exit
     fi
   fi
 
+
   echo "Applying default config..."
-  make ${BUILD_FLAGS[*]} olddefconfig
-  make ${BUILD_FLAGS[*]} -s kernelrelease > version
+  make $LLVMOPTS olddefconfig
+  make $LLVMOPTS -s kernelrelease > version
   echo "Prepared $pkgbase version $(<version)"
 
-  [[ -z "$_makenconfig" ]] || make ${BUILD_FLAGS[*]} nconfig
+  ### Running make nconfig
+  [[ -z "$_makenconfig" ]] ||  make $LLVMOPTS nconfig
+
+  ### Running make menuconfig
+  [[ -z "$_makemenuconfig" ]] || make $LLVMOPTS menuconfig
+
+  ### Running make xconfig
+  [[ -z "$_makexconfig" ]] || make $LLVMOPTS xconfig
+
+  ### Running make gconfig
+  [[ -z "$_makegconfig" ]] || make $LLVMOPTS gconfig
 
   ### Save configuration for later reuse
   cp -Tf ./.config "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
+
 }
 
 build() {
-  cd "${srcdir:?}/linux-${pkgver}" || (
-    echo -e "\E[1;31mCan't cd to ${srcdir:?}/linux-${pkgver} directory! Build failed! \E[0m"
-    exit 1
-  )
-  make ${BUILD_FLAGS[*]} -j$(nproc) all
+  cd $_srcname
+
+  make $LLVMOPTS -j$(nproc) all
 }
 
 _package() {
@@ -507,27 +516,24 @@ _package() {
   'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig')
   provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE)
 
-  cd "${srcdir:?}/linux-${pkgver}" || (
-    echo -e "\E[1;31mCan't cd to ${srcdir:?}/linux-${pkgver} directory! Package linux kernel failed! \E[0m"
-    exit 1
-  )
+  cd $_srcname
 
   local kernver="$(<version)"
-  local modulesdir="${pkgdir:?}/usr/lib/modules/$kernver"
+  local modulesdir="$pkgdir/usr/lib/modules/$kernver"
 
   echo "Installing boot image..."
   # systemd expects to find the kernel here to allow hibernation
   # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-  install -Dm644 "$(make -s image_name)" "${modulesdir}/vmlinuz"
+  install -Dm644 "$(make $CLANGOPTS -s image_name)" "$modulesdir/vmlinuz"
 
   # Used by mkinitcpio to name the kernel
-  echo "${pkgbase}" | install -Dm644 /dev/stdin "${modulesdir}/pkgbase"
+  echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
   echo "Installing modules..."
-  make  ${BUILD_FLAGS[*]} INSTALL_MOD_PATH="${pkgdir:?}/usr" INSTALL_MOD_STRIP=1 modules_install
+  make $CLANGOPTS INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
-  rm "${modulesdir}/"{source,build}
+  rm "$modulesdir"/{source,build}
 
 }
 
@@ -535,118 +541,114 @@ _package-headers() {
   pkgdesc="Headers and scripts for building modules for the ${pkgdesc}"
   depends=("${pkgbase}=${pkgver}" "pahole")
 
-  cd "${srcdir:?}/linux-${pkgver}" || (
-    echo -e "\E[1;31mCan't cd to ${srcdir:?}/linux-${pkgver} directory! Package linux headers failed! \E[0m"
-    exit 1
-  )
-
-  local builddir="${pkgdir:?}/usr/lib/modules/$(<version)/build"
+  cd $_srcname
+  local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
   echo "Installing build files..."
-  install -Dt "${builddir}" -m644 .config Makefile Module.symvers System.map \
+  install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
     localversion.* version vmlinux
-  install -Dt "${builddir}/kernel" -m644 kernel/Makefile
-  install -Dt "${builddir}/arch/x86" -m644 arch/x86/Makefile
-  cp -t "${builddir}" -a scripts
+  install -Dt "$builddir/kernel" -m644 kernel/Makefile
+  install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
+  cp -t "$builddir" -a scripts
 
   # add objtool for external module building and enabled VALIDATION_STACK option
-  install -Dt "${builddir}/tools/objtool" tools/objtool/objtool
+  install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
   # add xfs and shmem for aufs building
-  mkdir -p "${builddir}"/{fs/xfs,mm}
+  mkdir -p "$builddir"/{fs/xfs,mm}
 
   echo "Installing headers..."
-  cp -t "${builddir}" -a include
-  cp -t "${builddir}/arch/x86" -a arch/x86/include
-  install -Dt "${builddir}/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
+  cp -t "$builddir" -a include
+  cp -t "$builddir/arch/x86" -a arch/x86/include
+  install -Dt "$builddir/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
 
-  install -Dt "${builddir}/drivers/md" -m644 drivers/md/*.h
-  install -Dt "${builddir}/net/mac80211" -m644 net/mac80211/*.h
+  install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
+  install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
 
   # https://bugs.archlinux.org/task/13146
-  install -Dt "${builddir}/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
+  install -Dt "$builddir/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
 
   # https://bugs.archlinux.org/task/20402
-  install -Dt "${builddir}/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
-  install -Dt "${builddir}/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
-  install -Dt "${builddir}/drivers/media/tuners" -m644 drivers/media/tuners/*.h
+  install -Dt "$builddir/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
+  install -Dt "$builddir/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
+  install -Dt "$builddir/drivers/media/tuners" -m644 drivers/media/tuners/*.h
 
   # https://bugs.archlinux.org/task/71392
-  install -Dt "${builddir}/drivers/iio/common/hid-sensors" -m644 drivers/iio/common/hid-sensors/*.h
+  install -Dt "$builddir/drivers/iio/common/hid-sensors" -m644 drivers/iio/common/hid-sensors/*.h
 
   echo "Installing KConfig files..."
-  find . -name 'Kconfig*' -exec install -Dm644 {} "${builddir}/{}" \;
+  find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
 
   echo "Removing unneeded architectures..."
   local arch
-  for arch in "${builddir}"/arch/*/; do
+  for arch in "$builddir"/arch/*/; do
     [[ $arch = */x86/ ]] && continue
     echo "Removing $(basename "$arch")"
     rm -r "$arch"
   done
 
   echo "Removing documentation..."
-  rm -r "${builddir}/Documentation"
+  rm -r "$builddir/Documentation"
 
   echo "Removing broken symlinks..."
-  find -L "${builddir}" -type l -printf 'Removing %P\n' -delete
+  find -L "$builddir" -type l -printf 'Removing %P\n' -delete
 
   echo "Removing loose objects..."
-  find "${builddir}" -type f -name '*.o' -printf 'Removing %P\n' -delete
+  find "$builddir" -type f -name '*.o' -printf 'Removing %P\n' -delete
 
   echo "Stripping build tools..."
   local file
   while read -rd '' file; do
     case "$(file -bi "$file")" in
-      application/x-sharedlib\;*) # Libraries (.so)
-        strip -v "${STRIP_SHARED}" "$file" ;;
-      application/x-archive\;*) # Libraries (.a)
-        strip -v "${STRIP_STATIC}" "$file" ;;
-      application/x-executable\;*) # Binaries
-        strip -v "${STRIP_BINARIES}" "$file" ;;
+      application/x-sharedlib\;*)      # Libraries (.so)
+        strip -v $STRIP_SHARED "$file" ;;
+      application/x-archive\;*)        # Libraries (.a)
+        strip -v $STRIP_STATIC "$file" ;;
+      application/x-executable\;*)     # Binaries
+        strip -v $STRIP_BINARIES "$file" ;;
       application/x-pie-executable\;*) # Relocatable binaries
-        strip -v "${STRIP_SHARED}" "$file" ;;
+        strip -v $STRIP_SHARED "$file" ;;
     esac
-  done < <(find "${builddir}" -type f -perm -u+x ! -name vmlinux -print0)
+  done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
 
   echo "Stripping vmlinux..."
-  strip -v "${STRIP_STATIC}" "${builddir}/vmlinux"
+  strip -v $STRIP_STATIC "$builddir/vmlinux"
 
   echo "Adding symlink..."
-  mkdir -p "${pkgdir:?}/usr/src"
-  ln -sr "${builddir}" "${pkgdir:?}/usr/src/${pkgbase}"
+  mkdir -p "$pkgdir/usr/src"
+  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 
 }
 
-md5sums=('5b04a1db6305c993d7f55db334a2b415'
-         '9a30485a426bbf3342062a4b6a5cc3bf'
-         '2f0448cd31f07494221e5a88cf55cda3'
-         'cf26387aadf2a90428350ac246b070c9'
-         '6971378b4fb2b16c0c0089cd55fc61f9'
-         '53f037488a66667220c263f92ded333d'
-         '2a8097ba46be56fbbe3967e9c34c9a0b'
-         '152706f6ebbe9917c6a5955cd5447344'
-         '41887f2f959068e41756f4c39671ca79'
-         '67764a5824b567b49bcce19c01d4e1b3'
-         '4866d66f4cc1b10cccb520c22cbc71d7'
-         '5b9a009ab68ba548e9d06e0932ab967d'
-         '6038177c72982533035309fcd6df208a'
-         '2a13aa40945c9910f7ad20a429442793'
-         '8c354c3d1962ec6785db7f0c3fbbab03'
-         '9b6369bc4c58ad0d9195b5c204ed4b8a'
-         'c6efda5716e4ff79ebdbc963bebd851a'
-         '56fdf3562b041c0408d9751b7e447977'
-         '08c84362cb916b30d9c77e35b1b3bc54'
-         '8cb0301d159b59727b7bdd09350e2a9f'
-         'de6db1147385c058b2e94df3c1739fdf'
-         'bf58290793d3a095ef95fb1fac2de89a'
-         'f81a38839b35a587e59df18ace0ad433'
-         '21c98f19e883879dd3336c1fa143fd31')
 
-pkgname=("$pkgbase" "$pkgbase-headers" )
+pkgname=("$pkgbase" "$pkgbase-headers")
 for _p in "${pkgname[@]}"; do
   eval "package_$_p() {
-              $(declare -f "_package${_p#$pkgbase}")
-              _package${_p#$pkgbase}
+             $(declare -f "_package${_p#$pkgbase}")
+             _package${_p#$pkgbase}
   }"
 done
+
+
+md5sums=('b661040d70e3c6da4844dc4ecbf30555'
+         'a0e0c04d19191dce51b530d04f38e7cb'
+         'cdbb72be18eed85ed1beb02cb799acb1'
+         'cf26387aadf2a90428350ac246b070c9'
+         '299b176cbfc1b386d74406387e9e2d6b'
+         '53f037488a66667220c263f92ded333d'
+         '2a8097ba46be56fbbe3967e9c34c9a0b'
+         '41887f2f959068e41756f4c39671ca79'
+         '67764a5824b567b49bcce19c01d4e1b3'
+         '3aaa8d1bc993d4173aa1bb79ade16fb7'
+         '70be88d96e0bc9e72759bf3902e7eb53'
+         '6038177c72982533035309fcd6df208a'
+         '8bda7327ae759b1b52e3b617952bd964'
+         '8c354c3d1962ec6785db7f0c3fbbab03'
+         '9e044fc5bc4eb2b1c4ed7c318709cd46'
+         '480c6bb9db4842114787f66ad5a68404'
+         '56fdf3562b041c0408d9751b7e447977'
+         '08c84362cb916b30d9c77e35b1b3bc54'
+         'd9a892f66631615a72bdc93ee7397afa'
+         'de6db1147385c058b2e94df3c1739fdf'
+         '8a7c7cf90dcad3f655491b21c35f36b3'
+         '21c98f19e883879dd3336c1fa143fd31')

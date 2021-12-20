@@ -135,7 +135,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=2
+pkgrel=3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -162,7 +162,7 @@ source=(
   "${_patchsource}/AMD/0001-amd64-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/misc/0010-ELF.patch"
-#  "${_patchsource}/0001-bitmap.patch"
+  #  "${_patchsource}/0001-bitmap.patch"
   "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/0001-misc.patch"
@@ -175,7 +175,7 @@ source=(
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-ksmbd-patches.patch"
-#  "${_patchsource}/0001-damon-patches.patch"
+  #  "${_patchsource}/0001-damon-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-lqx-patches.patch"
   "${_patchsource}/0001-lrng-patches.patch"
@@ -193,11 +193,11 @@ if [ -n "$_use_pgo" ]; then
 fi
 
 if [ -n "$_use_llvm_lto" ]; then
-
-  BUILD_FLAGS=(
-    LLVM=1
-    LLVM_IAS=1
-  )
+  LLVMOPTS="LLVM=1 LLVM_IAS=1"
+  CLANGOPTS="CC=clang LD=ld.lld"
+else
+  LLVMOPTS=""
+  CLANGOPTS=""
 fi
 
 export KBUILD_BUILD_HOST=archlinux
@@ -506,7 +506,7 @@ prepare() {
   if [ -n "$_localmodcfg" ]; then
     if [ -f $HOME/.config/modprobed.db ]; then
       echo "Running Steven Rostedt's make localmodconfig now"
-      make  ${BUILD_FLAGS[*]}  LSMOD=$HOME/.config/modprobed.db localmodconfig
+      make  $LLVMOPTS LSMOD=$HOME/.config/modprobed.db localmodconfig
     else
       echo "No modprobed.db data found"
       exit
@@ -515,21 +515,21 @@ prepare() {
 
 
   echo "Applying default config..."
-  make ${BUILD_FLAGS[*]} olddefconfig
-  make -s kernelrelease > version
+  make $LLVMOPTS olddefconfig
+  make $LLVMOPTS -s kernelrelease > version
   echo "Prepared $pkgbase version $(<version)"
 
   ### Running make nconfig
-  [[ -z "$_makenconfig" ]] ||  make  ${BUILD_FLAGS[*]}  nconfig
+  [[ -z "$_makenconfig" ]] ||  make $LLVMOPTS nconfig
 
   ### Running make menuconfig
-  [[ -z "$_makemenuconfig" ]] || make  ${BUILD_FLAGS[*]} menuconfig
+  [[ -z "$_makemenuconfig" ]] || make $LLVMOPTS menuconfig
 
   ### Running make xconfig
-  [[ -z "$_makexconfig" ]] || make  ${BUILD_FLAGS[*]}  xconfig
+  [[ -z "$_makexconfig" ]] || make $LLVMOPTS xconfig
 
   ### Running make gconfig
-  [[ -z "$_makegconfig" ]] || make  ${BUILD_FLAGS[*]}  gconfig
+  [[ -z "$_makegconfig" ]] || make $LLVMOPTS gconfig
 
   ### Save configuration for later reuse
   cp -Tf ./.config "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
@@ -539,7 +539,7 @@ prepare() {
 build() {
   cd $_srcname
 
-  make ${BUILD_FLAGS[*]} -j$(nproc) all
+  make $LLVMOPTS -j$(nproc) all
 }
 
 _package() {
@@ -558,13 +558,13 @@ _package() {
   echo "Installing boot image..."
   # systemd expects to find the kernel here to allow hibernation
   # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-  install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
+  install -Dm644 "$(make $CLANGOPTS -s image_name)" "$modulesdir/vmlinuz"
 
   # Used by mkinitcpio to name the kernel
   echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
   echo "Installing modules..."
-  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
+  make $CLANGOPTS INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
   rm "$modulesdir"/{source,build}
@@ -665,12 +665,12 @@ done
 
 
 md5sums=('b661040d70e3c6da4844dc4ecbf30555'
-         'd97e86d9464dd34683f67de4d4a595c0'
+         '4cd58f3d72ddd5cb4c41e1d1618f18ec'
          'afdbe964cd00357ef7248553ab9db091'
          '2627c6fcd9760b0e7a3553500db0a7e1'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
          '4bfca774a71e7228f5b8bb31660521af'
-         '4b530f55cb9ce472fa539abc69299a17'
+         '3aaa8d1bc993d4173aa1bb79ade16fb7'
          'dccfe71705b24d3fb1f51aaf2016216d'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
@@ -678,22 +678,22 @@ md5sums=('b661040d70e3c6da4844dc4ecbf30555'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
          '299b176cbfc1b386d74406387e9e2d6b'
-         '68e3ce199650ac9530ca8a30c920da99'
+         '70be88d96e0bc9e72759bf3902e7eb53'
          '41887f2f959068e41756f4c39671ca79'
          'b04c8a3f01b3dfba1410e2c26ec7d975'
          '8cf507777e20cd4d75a0627eef10c10d'
          '6038177c72982533035309fcd6df208a'
          '8bda7327ae759b1b52e3b617952bd964'
          '8c354c3d1962ec6785db7f0c3fbbab03'
-         '9b6369bc4c58ad0d9195b5c204ed4b8a'
+         '9e044fc5bc4eb2b1c4ed7c318709cd46'
          '480c6bb9db4842114787f66ad5a68404'
          '08c84362cb916b30d9c77e35b1b3bc54'
          '56fdf3562b041c0408d9751b7e447977'
          'b09b84168822521426f197610727618b'
-         '8cb0301d159b59727b7bdd09350e2a9f'
+         'd9a892f66631615a72bdc93ee7397afa'
          'bc64b1d1a9c95b07c28457f7214ebf81'
          '8d390345afa36c56fa15bf4f4edad9a2'
          '7530840f2eb439f64307dd3157beb28e'
-         'f23b415ff37873ae7142aed31808b635'
+         '8a7c7cf90dcad3f655491b21c35f36b3'
          '507e61367296d14b88ac38a4aee03cdf'
          '21c98f19e883879dd3336c1fa143fd31')
