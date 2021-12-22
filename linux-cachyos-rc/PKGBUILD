@@ -138,9 +138,9 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
   #  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
-  #"${_patchsource}/0001-bore-sched.patch"
+#  "${_patchsource}/0001-bore-sched.patch"
   "${_patchsource}/0001-amdpstate.patch"
-  "${_patchsource}/0001-mm.patch"
+  #  "${_patchsource}/0001-le9.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-cpu.patch"
@@ -566,9 +566,8 @@ done
 
 
 md5sums=('ff0a2b8a7b14d6ca738e22cd498e19b2'
-         'cfebb6b7d291183eab41ef621d5db74e'
+         '4b7ed503a56bfea3a7afed88668a8126'
          '3aaa8d1bc993d4173aa1bb79ade16fb7'
-         'de2cb8c957943e6affaa65d9ae548464'
          '621bd031ffb6ce291b26e15bbf7e0aeb'
          '978153c745ba777574ad6689a0c9f283'
          'd4c38ce51fb9a69aa92ad9b9e0199122'

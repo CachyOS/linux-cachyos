@@ -128,13 +128,13 @@ elif [ "$_cpusched" = "rdb" ]; then
   pkgbase=linux-cachyos-cacule-rdb
 fi
 _major=5.15
-_minor=10
+_minor=11
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=3
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -181,6 +181,8 @@ source=(
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-spectre-patches.patch"
+  "${_patchsource}/0001-xanmod-patches.patch"
+  "${_patchsource}/0001-net-patches.patch"
   "${_patchsource}/0001-sbitmap-patches.patch"
   "${_patchsource}/0001-zstd.patch"
   "${_patchsource}/0001-xfs-backport.patch"
@@ -659,8 +661,8 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('b661040d70e3c6da4844dc4ecbf30555'
-         '4cd58f3d72ddd5cb4c41e1d1618f18ec'
+md5sums=('7fcbea316f8439d092040996295c8f9d'
+         'b1674b6cc65f404efb6a5dd6bf46ec68'
          'afdbe964cd00357ef7248553ab9db091'
          '2627c6fcd9760b0e7a3553500db0a7e1'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
@@ -680,7 +682,7 @@ md5sums=('b661040d70e3c6da4844dc4ecbf30555'
          '6038177c72982533035309fcd6df208a'
          '8bda7327ae759b1b52e3b617952bd964'
          '8c354c3d1962ec6785db7f0c3fbbab03'
-         '9e044fc5bc4eb2b1c4ed7c318709cd46'
+         '349c88a39ec553aa3c9caf886b44c7ab'
          '480c6bb9db4842114787f66ad5a68404'
          '08c84362cb916b30d9c77e35b1b3bc54'
          '56fdf3562b041c0408d9751b7e447977'
@@ -688,7 +690,9 @@ md5sums=('b661040d70e3c6da4844dc4ecbf30555'
          'd9a892f66631615a72bdc93ee7397afa'
          'bc64b1d1a9c95b07c28457f7214ebf81'
          '8d390345afa36c56fa15bf4f4edad9a2'
+         '102fd2533e85eaecb4255df77d3e2901'
+         '0153cfcb6feab5a108c269fff9f47cb3'
          '7530840f2eb439f64307dd3157beb28e'
          '8a7c7cf90dcad3f655491b21c35f36b3'
-         '507e61367296d14b88ac38a4aee03cdf'
+         'adfbf046639eb80e94769c4f4d0bc478'
          '21c98f19e883879dd3336c1fa143fd31')

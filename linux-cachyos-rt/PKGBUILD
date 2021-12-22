@@ -110,7 +110,7 @@ if [ -n "$_use_llvm_lto" ]; then
 else
   pkgbase=linux-cachyos-rt
 fi
-pkgver=5.15.10
+pkgver=5.15.11
 pkgrel=1
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux-cacule Kernel by CachyOS and with some other patches and other improvements'
@@ -630,7 +630,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('b661040d70e3c6da4844dc4ecbf30555'
+md5sums=('7fcbea316f8439d092040996295c8f9d'
          'a0e0c04d19191dce51b530d04f38e7cb'
          'cdbb72be18eed85ed1beb02cb799acb1'
          'cf26387aadf2a90428350ac246b070c9'
@@ -644,7 +644,7 @@ md5sums=('b661040d70e3c6da4844dc4ecbf30555'
          '6038177c72982533035309fcd6df208a'
          '8bda7327ae759b1b52e3b617952bd964'
          '8c354c3d1962ec6785db7f0c3fbbab03'
-         '9e044fc5bc4eb2b1c4ed7c318709cd46'
+         '349c88a39ec553aa3c9caf886b44c7ab'
          '480c6bb9db4842114787f66ad5a68404'
          '56fdf3562b041c0408d9751b7e447977'
          '08c84362cb916b30d9c77e35b1b3bc54'
