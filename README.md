@@ -1,4 +1,4 @@
-# <center>Linux Kernel with several sccheduler and other improvements</center>
+# <center>Linux Kernel with several scheduler and other improvements</center>
 
 ## General Informations
 
