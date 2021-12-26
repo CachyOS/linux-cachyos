@@ -128,7 +128,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=2
+pkgrel=3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -652,18 +652,18 @@ done
 
 md5sums=('7fcbea316f8439d092040996295c8f9d'
          '290dfcba7649509c39c23281aa75e56c'
-         '7622794066a04778d1895bcee3026b1f'
-         '2627c6fcd9760b0e7a3553500db0a7e1'
+         '68e8f75fa81db3b994c6ab460d90a55d'
+         '41066f8b3a2f26ae652551eace4c20fc'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
          '1f3becd94390729d940a60b1e9b872b1'
-         '3aaa8d1bc993d4173aa1bb79ade16fb7'
+         'ef446a32fe115b59710a122009bb1d49'
          'dccfe71705b24d3fb1f51aaf2016216d'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
          '299b176cbfc1b386d74406387e9e2d6b'
-         '70be88d96e0bc9e72759bf3902e7eb53'
+         'a5de61b14e9ff7bfb4cb6548b6ee1c93'
          '41887f2f959068e41756f4c39671ca79'
          'b04c8a3f01b3dfba1410e2c26ec7d975'
          '8cf507777e20cd4d75a0627eef10c10d'
@@ -671,16 +671,16 @@ md5sums=('7fcbea316f8439d092040996295c8f9d'
          '8bda7327ae759b1b52e3b617952bd964'
          '8c354c3d1962ec6785db7f0c3fbbab03'
          '349c88a39ec553aa3c9caf886b44c7ab'
-         '480c6bb9db4842114787f66ad5a68404'
+         'cb762a9025377bdac472071ef160343d'
          '08c84362cb916b30d9c77e35b1b3bc54'
-         '595687f36a42f5ca4a3ff054bdc83b98'
+         '7d28f804d6b74f9a22ad30d67af5a669'
          '56fdf3562b041c0408d9751b7e447977'
          'b09b84168822521426f197610727618b'
          'd9a892f66631615a72bdc93ee7397afa'
          'bc64b1d1a9c95b07c28457f7214ebf81'
          '8d390345afa36c56fa15bf4f4edad9a2'
          '7530840f2eb439f64307dd3157beb28e'
-         '8a7c7cf90dcad3f655491b21c35f36b3'
+         '940d98858e6e59ecc07da50e05f6bc3d'
          '0153cfcb6feab5a108c269fff9f47cb3'
          '102fd2533e85eaecb4255df77d3e2901'
          '21c98f19e883879dd3336c1fa143fd31')
