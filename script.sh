@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-rm -rf linux-cachyos-cacule-lts
-
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
 
 
@@ -11,7 +9,7 @@ do
   d=$(dirname $f)
   cd $d
 
-  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg
+  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/buildcache:/home/notroot/.buildcache pttrr/docker-makepkg
   docker rm dockerbuild
   cd ..
 done
@@ -27,7 +25,7 @@ do
   d=$(dirname $f)
   cd $d
 
-  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
+  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/buildcache:/home/notroot/.buildcache pttrr/docker-makepkg-v3
   docker rm dockerbuild
   cd ..
 done
@@ -45,7 +43,23 @@ for f in $files
 do
   d=$(dirname $f)
   cd $d
-  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
+  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/buildcache:/home/notroot/.buildcache pttrr/docker-makepkg-v3
+  docker rm dockerbuild
+  cd ..
+done
+
+mv */*.tar.zst* /home/ptr1337/packages/
+
+find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU3=y/GENERIC_CPU=y/' {}
+
+files=$(find . -name "PKGBUILD")
+
+for f in $files
+do
+  d=$(dirname $f)
+  cd $d
+
+  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/buildcache:/home/notroot/.buildcache pttrr/docker-makepkg
   docker rm dockerbuild
   cd ..
 done

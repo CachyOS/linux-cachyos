@@ -1,23 +1,25 @@
 # Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev>
-# Maintainer: Piotr Gorski <lucjan.lucjanov@gmail.com>
+# Contributor: Piotr Gorski <lucjan.lucjanov@gmail.com>
 # Contributor: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
 # Contributor: Tobias Powalowski <tpowa@archlinux.org>
 # Contributor: Thomas Baechler <thomas@archlinux.org>
+
+### Selecting the CPU scheduler
+# ATTENTION - one of seven predefined values should be selected!
+# 'bmq' - select 'BitMap Queue CPU scheduler'
+# 'pds' - select 'Priority and Deadline based Skip list multiple queue CPU scheduler'
+# 'cacule' - select 'CacULE scheduler'
+# 'cacule-rdb' - select 'CacULE-RDB scheduler'
+# 'bore' - select 'Burst-Oriented Response Enhancer'
+# 'tt' - select 'Task Type Scheduler by Hamad Marri'
+# 'cfs' - select 'Completely Fair Scheduler'
+_cpusched='tt'
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=
-
-### Tweak kernel options prior to a build via menuconfig
-_makemenuconfig=
-
-### Tweak kernel options prior to a build via xconfig
-_makexconfig=
-
-### Tweak kernel options prior to a build via gconfig
-_makegconfig=
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -41,14 +43,10 @@ _localmodcfg=
 # a new kernel is released, but again, convenient for package bumps.
 _use_current=
 
-
-# Enable fsync
-_fsync=y
-
 #enable winesync
 _winesync=y
 
-### Running with a 2000 HZ, 1000HZ, 750Hz or  500HZ tick rate
+### Running with a 1000HZ, 750Hz or  500HZ tick rate
 _1k_HZ_ticks=
 _750_HZ_ticks=y
 _600_HZ_ticks=
@@ -66,11 +64,14 @@ _mm_protect=y
 ### Enable multigenerational LRU
 _lru_enable=y
 
-### Enable Linux Random Number Generator
-_lrng_enable=y
+## Enable Page-Table-Check
+_page_table_check=y
 
 ### Enable DAMON
 _damon=
+
+### Enable Linux Random Number Generator
+_lrng_enable=y
 
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
@@ -83,7 +84,7 @@ _use_optimization_select=
 # ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
 # 'normal' - standard compression ratio
-_zstd_level='ultra'
+_zstd_level='normal'
 
 ### Selecting the ZSTD module compression level
 # If you want to use ZSTD compression,
@@ -127,7 +128,7 @@ _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=3
+pkgrel=4
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -135,13 +136,15 @@ options=('!strip')
 makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 'graphviz' 'imagemagick' 'pahole' 'cpio' 'perl' 'tar' 'xz')
 if [ -n "$_use_llvm_lto" ]; then
-  makedepends+=(clang llvm lld python)
+  depends=(clang llvm lld python)
 fi
 if [ -n "$_use_llvm_lto" ]; then
-  depends+=(clang llvm lld python)
+  makedepends+=(clang llvm lld python)
 fi
+_caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE"
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
-source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
+source=(
+  "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
   "${_patchsource}/TT/0001-tt-r3.patch"
   "${_patchsource}/0001-arch-patches.patch"
@@ -158,7 +161,6 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-intel-patches.patch"
   "${_patchsource}/0001-ntfs3.patch"
-  "${_patchsource}/0001-ck-hrtimer.patch"
   "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
@@ -170,20 +172,16 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-spectre-patches.patch"
-  "${_patchsource}/0001-sbitmap-patches.patch"
   "${_patchsource}/0001-xanmod-patches.patch"
-  "${_patchsource}/0001-net-patches.patch"
+#  "${_patchsource}/0001-net-patches.patch"
+  "${_patchsource}/0001-sbitmap-patches.patch"
   "${_patchsource}/0001-zstd.patch"
   "auto-cpu-optimization.sh"
 )
 
-if [ -n "$_use_cfi" ]; then
-  source+=("${_patchsource}/0001-cfi.patch")
-fi
-
-if [ -n "$_use_pgo" ]; then
-  source+=("${_patchsource}/0001-PGO.patch")
-fi
+#if [ -n "$_use_pgo" ]; then
+#  source+=("${_patchsource}/0001-PGO.patch")
+#fi
 
 if [ -n "$_use_llvm_lto" ]; then
   LLVMOPTS="LLVM=1 LLVM_IAS=1"
@@ -237,17 +235,6 @@ prepare() {
     fi
   fi
 
-  if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
-    scripts/config --enable CONFIG_CFI_CLANG
-  fi
-
-  if [ -n "$_use_pgo" ]; then
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_PGO_CLANG
-    scripts/config --enable DEBUG_FS
-    scripts/config --enable CONFIG_PGO_CLANG
-  fi
-
   ### Microarchitecture Optimization (GCC/CLANG)
   if [ -n "$_use_auto_optimization" ]; then
     "${srcdir}"/auto-cpu-optimization.sh
@@ -258,6 +245,64 @@ prepare() {
     source "${startdir}"/configure
     cpu_arch
   fi
+
+
+  ### Selecting the CPU scheduler
+  if [ "$_cpusched" = "bmq" ]; then
+    echo "Selecting BMQ CPU scheduler..."
+    scripts/config --enable CONFIG_SCHED_BMQ
+    scripts/config --disable CONFIG_SCHED_PDS
+  elif [ "$_cpusched" = "pds" ]; then
+    echo "Selecting PDS CPU scheduler..."
+    scripts/config --disable CONFIG_SCHED_BMQ
+    scripts/config --enable CONFIG_SCHED_PDS
+  elif [ "$_cpusched" = "cacule" ]; then
+    echo "Selecting CacULE scheduler..."
+    scripts/config --disable CONFIG_SCHED_ALT
+    scripts/config --enable CONFIG_CACULE_SCHED
+  elif [ "$_cpusched" = "cacule-rdb" ]; then
+    echo "Selecting CacULE-RDB scheduler..."
+    scripts/config --disable CONFIG_SCHED_ALT
+    scripts/config --enable CONFIG_CACULE_SCHED
+    scripts/config --enable CONFIG_CACULE_RDB
+    scripts/config --set-val CONFIG_RDB_INTERVAL 19
+  elif [ "$_cpusched" = "tt" ]; then
+    echo "Enable TT CPU scheduler..."
+    scripts/config --enable CONFIG_TT_SCHED
+    scripts/config --enable CONFIG_TT_ACCOUNTING_STATS
+  elif [ "$_cpusched" = "bore" ]; then
+    echo "Selecting BORE Scheduler..."
+    scripts/config --disable CONFIG_SCHED_ALT
+  elif [ "$_cpusched" = "cfs" ]; then
+    echo "Selecting Completely Fair Scheduler..."
+    scripts/config --disable CONFIG_SCHED_ALT
+  else
+    if [ -n "$_cpusched" ]; then
+      error "The value $_cpusched is invalid. Choose the correct one again."
+    else
+      error "The value is empty. Choose the correct one again."
+    fi
+    error "Selecting the CPU scheduler failed!"
+    exit
+  fi
+
+
+  if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
+    echo "Enabling CFI"
+    scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
+    scripts/config --enable CONFIG_CFI_CLANG
+  fi
+
+  if [ -n "$_use_llvm_lto" ]; then
+    echo "Enable LLVM LTO"
+    scripts/config --disable CONFIG_LTO_NONE
+  fi
+
+  #  if [ -n "$_use_pgo" ]; then
+  #    scripts/config --enable CONFIG_ARCH_SUPPORTS_PGO_CLANG
+  #    scripts/config --enable DEBUG_FS
+  #    scripts/config --enable CONFIG_PGO_CLANG
+  #  fi
 
   ### Optionally set tickrate to 1000
   if [ -n "$_1k_HZ_ticks" ]; then
@@ -298,13 +343,6 @@ prepare() {
     scripts/config --disable CONFIG_NUMA
   fi
 
-  if [ -n "$_fsync" ]; then
-    echo "Enable Fsync support"
-    scripts/config --enable CONFIG_FUTEX
-    scripts/config --enable CONFIG_FUTEX_PI
-  fi
-
-
   if [ -n "$_winesync" ]; then
     echo "Enable winesync support"
     scripts/config --module CONFIG_WINESYNC
@@ -326,13 +364,17 @@ prepare() {
   ### Enable protect mappings under memory pressure
   if [ -n "$_mm_protect" ]; then
     echo "Enabling protect file mappings under memory pressure..."
-    scripts/config --enable CONFIG_UNEVICTABLE_FILE
-    scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_LOW 0
-    scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_MIN 0
-    echo "Enabling protect anonymous mappings under memory pressure..."
-    scripts/config --enable CONFIG_UNEVICTABLE_ANON
-    scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_LOW 0
-    scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_MIN 0
+    scripts/config --set-val CONFIG_ANON_MIN_KBYTES 0
+    scripts/config --set-val CONFIG_CLEAN_LOW_KBYTES 524288
+    scripts/config --set-val CONFIG_CLEAN_MIN_KBYTES 0
+  fi
+
+  ### Enable multigenerational LRU
+  if [ -n "$_page_table_check" ]; then
+    echo "Enabling Page-Table-Check..."
+    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
+    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
+    scripts/config --enable CONFIG_ARCH_SUPPORTS_PAGE_TABLE_CHECK
   fi
 
   ### Enable multigenerational LRU
@@ -404,11 +446,6 @@ prepare() {
     scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
   fi
 
-  echo "Enable LLVM LTO"
-  if [ -n "$_use_llvm_lto" ]; then
-    scripts/config --disable CONFIG_LTO_NONE
-  fi
-
   ### Selecting the ZSTD compression level
   if [ "$_zstd_level" = "ultra" ]; then
     echo "Enabling highest ZSTD compression ratio..."
@@ -448,8 +485,6 @@ prepare() {
     exit
   fi
 
-
-
   echo "Disabling TCP_CONG_CUBIC..."
   scripts/config --module CONFIG_TCP_CONG_CUBIC
   scripts/config --disable CONFIG_DEFAULT_CUBIC
@@ -457,9 +492,6 @@ prepare() {
   scripts/config --enable CONFIG_TCP_CONG_BBR2
   scripts/config --enable CONFIG_DEFAULT_BBR2
   scripts/config --set-str CONFIG_DEFAULT_TCP_CONG bbr2
-  echo "Enable TT CPU scheduler..."
-  scripts/config --enable CONFIG_TT_SCHED
-  scripts/config --enable CONFIG_TT_ACCOUNTING_STATS
   echo "Setting performance governor..."
   scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
   scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
@@ -468,7 +500,7 @@ prepare() {
   scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
   scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-  echo "Enable AMD PSTATE v2 driver"
+  echo "Enable AMD PSTATE driver"
   scripts/config --enable CONFIG_X86_AMD_PSTATE
   scripts/config --enable CONFIG_AMD_PTDMA
   echo "Enable Anbox"
@@ -477,6 +509,12 @@ prepare() {
   scripts/config --enable CONFIG_ANDROID_BINDER_IPC
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
+  scripts/config --enable CONFIG_NTFS3_FS
+  echo "Enabling KBUILD_CFLAGS -O3..."
+  scripts/config --disable CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
+  scripts/config --enable CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
+  scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
+  scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
 
 
   ### Optionally load needed modules for the make localmodconfig
@@ -491,8 +529,8 @@ prepare() {
     fi
   fi
 
-
   echo "Applying default config..."
+
   make $LLVMOPTS olddefconfig
   make $LLVMOPTS -s kernelrelease > version
   echo "Prepared $pkgbase version $(<version)"
@@ -500,21 +538,13 @@ prepare() {
   ### Running make nconfig
   [[ -z "$_makenconfig" ]] ||  make $LLVMOPTS nconfig
 
-  ### Running make menuconfig
-  [[ -z "$_makemenuconfig" ]] || make $LLVMOPTS menuconfig
-
-  ### Running make xconfig
-  [[ -z "$_makexconfig" ]] || make $LLVMOPTS xconfig
-
-  ### Running make gconfig
-  [[ -z "$_makegconfig" ]] || make $LLVMOPTS gconfig
-
   ### Save configuration for later reuse
   cp -Tf ./.config "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
 
 }
 
 build() {
+
   cd $_srcname
 
   make $LLVMOPTS -j$(nproc) all
@@ -529,7 +559,6 @@ _package() {
   provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE)
 
   cd $_srcname
-
   local kernver="$(<version)"
   local modulesdir="$pkgdir/usr/lib/modules/$kernver"
 
@@ -643,9 +672,9 @@ done
 
 
 md5sums=('7fcbea316f8439d092040996295c8f9d'
-         '290dfcba7649509c39c23281aa75e56c'
+         '788dcd568f1c00441ad9746706e4f1bc'
          '67d717f8270b1e638cbf6e65d4725cdc'
-         '41066f8b3a2f26ae652551eace4c20fc'
+         'ef9fa3407854cea8e78112c25bb72e41'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
          '1f3becd94390729d940a60b1e9b872b1'
          'ef446a32fe115b59710a122009bb1d49'
@@ -659,11 +688,10 @@ md5sums=('7fcbea316f8439d092040996295c8f9d'
          '41887f2f959068e41756f4c39671ca79'
          'b04c8a3f01b3dfba1410e2c26ec7d975'
          '8cf507777e20cd4d75a0627eef10c10d'
-         '6038177c72982533035309fcd6df208a'
          '8bda7327ae759b1b52e3b617952bd964'
          '8c354c3d1962ec6785db7f0c3fbbab03'
-         '349c88a39ec553aa3c9caf886b44c7ab'
-         'cb762a9025377bdac472071ef160343d'
+         'b6b2c2c6b4761aa5a8dea6ac0add8736'
+         '265ac5714001f018c5bc7f99637c5181'
          '08c84362cb916b30d9c77e35b1b3bc54'
          '7d28f804d6b74f9a22ad30d67af5a669'
          '56fdf3562b041c0408d9751b7e447977'
@@ -671,8 +699,7 @@ md5sums=('7fcbea316f8439d092040996295c8f9d'
          'd9a892f66631615a72bdc93ee7397afa'
          'bc64b1d1a9c95b07c28457f7214ebf81'
          '8d390345afa36c56fa15bf4f4edad9a2'
-         '7530840f2eb439f64307dd3157beb28e'
          '102fd2533e85eaecb4255df77d3e2901'
-         '0153cfcb6feab5a108c269fff9f47cb3'
+         '7530840f2eb439f64307dd3157beb28e'
          '940d98858e6e59ecc07da50e05f6bc3d'
          '21c98f19e883879dd3336c1fa143fd31')
