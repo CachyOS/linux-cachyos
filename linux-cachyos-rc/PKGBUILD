@@ -119,7 +119,7 @@ pkgver=${_major}.${_minor}
 _stable=${_major}.${_minor}
 _stablerc=${_major}-${_rcver}
 _srcname=linux-${_stablerc}
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux-CachyOS Kernel-RC by Hamad Marri and with some other patchsets'
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/cachyos/linux-cachyos"
@@ -139,6 +139,7 @@ source=("https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
   #  "${_caculepatches}/v5.16/0001-cacULE-5.16-full.patch"
   "${_patchsource}/0001-bore-sched.patch"
+  "${_patchsource}/0001-block-perf.patch"
   "${_patchsource}/0001-amdpstate.patch"
   "${_patchsource}/0001-pte-marker.patch"
   "${_patchsource}/0001-sched-perf-fix.patch"
@@ -568,6 +569,7 @@ done
 md5sums=('ce9f9c812f847ff18494f4e3cddf4505'
          '9cc698af4174326d44e8c8fda942c4d2'
          '7c16734e93e8f371441ea1844736a02a'
+         'fa93f9a728a712cf5f73181ec971d3d4'
          'ef446a32fe115b59710a122009bb1d49'
          'd98c7ebc9432a24724b10416e3103540'
          '1262001a6a1e72fa271481cf897ac6d1'
@@ -576,7 +578,7 @@ md5sums=('ce9f9c812f847ff18494f4e3cddf4505'
          '978153c745ba777574ad6689a0c9f283'
          'd4c38ce51fb9a69aa92ad9b9e0199122'
          'd78bb31569440421e0e76d9a8c0a14fc'
-         '299b176cbfc1b386d74406387e9e2d6b'
+         '2fdd66a2e6731a63cc34a9202e39d810'
          'f574f1c40fa2d07602e77418b863e144'
          '2458d1c5d00d10709922e686c5d1e97f'
          '2160aabf2b9798907d36c4d246937d71'

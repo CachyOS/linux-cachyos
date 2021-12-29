@@ -122,13 +122,13 @@ else
   pkgbase=linux-cachyos-bmq
 fi
 _major=5.15
-_minor=11
+_minor=12
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements'
 _srcname=linux-${pkgver}
-pkgrel=4
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -174,7 +174,7 @@ source=(
   "${_patchsource}/0001-security-patches.patch"
   "${_patchsource}/0001-spectre-patches.patch"
   "${_patchsource}/0001-xanmod-patches.patch"
-#  "${_patchsource}/0001-net-patches.patch"
+  "${_patchsource}/0001-net-patches.patch"
   "${_patchsource}/0001-sbitmap-patches.patch"
   "${_patchsource}/0001-zstd.patch"
   "auto-cpu-optimization.sh"
@@ -672,7 +672,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('7fcbea316f8439d092040996295c8f9d'
+md5sums=('7c3faf14ec344d6d0219b6a8b2475726'
          '788dcd568f1c00441ad9746706e4f1bc'
          '25fe602949e5b92d08df96e55e418d7a'
          'ef9fa3407854cea8e78112c25bb72e41'
@@ -684,7 +684,7 @@ md5sums=('7fcbea316f8439d092040996295c8f9d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          '56ceaed8bfb44eca93298ccc5fe11ca7'
          '67764a5824b567b49bcce19c01d4e1b3'
-         '299b176cbfc1b386d74406387e9e2d6b'
+         '018c728c9e744a99bb9b589028b8a1f6'
          'a5de61b14e9ff7bfb4cb6548b6ee1c93'
          '41887f2f959068e41756f4c39671ca79'
          'b04c8a3f01b3dfba1410e2c26ec7d975'
@@ -701,6 +701,7 @@ md5sums=('7fcbea316f8439d092040996295c8f9d'
          'bc64b1d1a9c95b07c28457f7214ebf81'
          '8d390345afa36c56fa15bf4f4edad9a2'
          '102fd2533e85eaecb4255df77d3e2901'
+         '03bb361f5f900cc9fd1159eda5e4f0ff'
          '7530840f2eb439f64307dd3157beb28e'
          '940d98858e6e59ecc07da50e05f6bc3d'
          '21c98f19e883879dd3336c1fa143fd31')

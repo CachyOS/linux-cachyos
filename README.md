@@ -9,7 +9,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
 - Task Type Scheduler by Hamad Marri (TT) - linux-cachyos-tt
-- BORE (Burst-Oriented Response Enhancer) CPU Scheduler by firelzrd (BORE) - linux-cachyos-bore
+- BORE (Burst-Oriented Response Enhancer) CPU Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) - linux-cachyos-bore
 
 **All kernels are prebuilt in two different march versions (x86_64 and x86_64_v3) and also with the lto enabled kernels in the cachyos repo.**
 
@@ -28,16 +28,22 @@ The CachyOS are improved kernels which improve the performance and other improve
 - LRNG Framework (default enabled)
 - WINEFSYNC and the new futex wait v implementation (futex2) which will be upstream in 5.17
 - Android ANBOX patch-set
-- Latest Paragon NTFS3 driver support and fixes
+- page-table-patch included
 - Latest & improved ZSTD patch-set
 - Some Security related patches. More here: [Fork-Brute](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-security-patches.patch) [spectre](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-spectre-patches.patch)
 - Latest BTRFS improvements & fixes
 - KSMBD Module for Samba3 Server
-- Using the lates MG-LRU v5 patch paired with and the new implemented damon. The damon replaces the le9, but the le9 can be still enabled
-- AMD PSTATEv4 Driver
+- Using the lates MG-LRU v5 patch paired with and the new implemented damon. The damon is disabled at default, but can be enabled in the PKGBUILD
+- AMD PSTATEv7 Driver
 - Clearlinux Patchset
 - Control Flow Integrity (CFI) slectable when using LLVM
 - experimental PGO building selectable (at the moment not working)
+
+## Other distros
+
+- First I will release every kernel update with a complete patch for every scheduler and their config.
+- Next I will implement a building system so it is possible to build the kernel for several distros.
+- Maybe I will provide some releases for debian based distros.
 
 ## Some Tips & Tricks
 
@@ -151,7 +157,7 @@ Not needed anymore, just install the latest dkms version (3.0.2).
 
 [BL4CKH47H4CK3R](https://github.com/BL4CKH47H4CK3R) for Optimization, Bug Hunting & Support
 
-[SirLucjan (Piotr Gorski)](https://github.com/sirlucjan) for many cool patches
+[SirLucjan (Piotr Gorski)](https://github.com/sirlucjan)
 
 [Archlinux](https://archlinux.org) for the great linux operating system
 
