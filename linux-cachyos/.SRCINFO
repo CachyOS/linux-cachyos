@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-cfs
+pkgbase = linux-cachyos
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15.12
 	pkgrel = 1
@@ -84,7 +84,7 @@ pkgbase = linux-cachyos-cfs
 	md5sums = 940d98858e6e59ecc07da50e05f6bc3d
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-cfs
+pkgname = linux-cachyos
 	pkgdesc = The Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -95,7 +95,7 @@ pkgname = linux-cachyos-cfs
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-cfs-headers
+pkgname = linux-cachyos-headers
 	pkgdesc = Headers and scripts for building modules for the Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-cfs=5.15.12
+	depends = linux-cachyos=5.15.12
 	depends = pahole
