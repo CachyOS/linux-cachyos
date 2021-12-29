@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-bore
+pkgbase = linux-cachyos-pds
 	pkgdesc = Linux PDS scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15.12
 	pkgrel = 1
@@ -86,7 +86,7 @@ pkgbase = linux-cachyos-bore
 	md5sums = 940d98858e6e59ecc07da50e05f6bc3d
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-bore
+pkgname = linux-cachyos-pds
 	pkgdesc = The Linux PDS scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -97,7 +97,7 @@ pkgname = linux-cachyos-bore
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-bore-headers
+pkgname = linux-cachyos-pds-headers
 	pkgdesc = Headers and scripts for building modules for the Linux PDS scheduler Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-bore=5.15.12
+	depends = linux-cachyos-pds=5.15.12
 	depends = pahole

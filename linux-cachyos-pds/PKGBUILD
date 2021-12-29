@@ -117,9 +117,9 @@ _use_cfi=
 
 
 if [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-bore-lto
+  pkgbase=linux-cachyos-pds-lto
 else
-  pkgbase=linux-cachyos-bore
+  pkgbase=linux-cachyos-pds
 fi
 _major=5.15
 _minor=12
