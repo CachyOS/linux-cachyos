@@ -122,7 +122,7 @@ else
   pkgbase=linux-cachyos-tt
 fi
 _major=5.15
-_minor=12
+_minor=13
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 arch=(x86_64 x86_64_v3)

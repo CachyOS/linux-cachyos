@@ -84,7 +84,7 @@ _use_optimization_select=
 # ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
 # 'normal' - standard compression ratio
-_zstd_level='normal'
+_zstd_level='ultra'
 
 ### Selecting the ZSTD module compression level
 # If you want to use ZSTD compression,

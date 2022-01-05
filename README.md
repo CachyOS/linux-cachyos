@@ -8,7 +8,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 - CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
-- Task Type Scheduler by Hamad Marri (TT) - linux-cachyos-tt
+- Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - linux-cachyos-tt
 - BORE (Burst-Oriented Response Enhancer) CPU Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) - linux-cachyos-bore
 
 **All kernels are prebuilt in two different march versions (x86_64 and x86_64_v3) and also with the lto enabled kernels in the cachyos repo.**
@@ -21,7 +21,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Choose between LLVM/LTO or GCC
 - Choose between 500Hz, , 600 Hz ,750Hz, 1000Hz
 - Improved BFQ Scheduler
-- Generell improved ssctl settings and upstream scheduler fixes
+- General improved sysctl settings and upstream scheduler fixes
 - Latest LRU Patch-set
 - BBRv2 tcp_congestion_control
 - LLVM ThinLTO provided with \*-lto Kernel (in the cachyos-repo)
@@ -33,7 +33,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Some Security related patches. More here: [Fork-Brute](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-security-patches.patch) [spectre](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-spectre-patches.patch)
 - Latest BTRFS improvements & fixes
 - KSMBD Module for Samba3 Server
-- Using the lates MG-LRU v5 patch paired with and the new implemented damon. The damon is disabled at default, but can be enabled in the PKGBUILD
+- Using the latest MG-LRU v5 patch paired with and the new implemented damon. The damon is disabled at default, but can be enabled in the PKGBUILD
 - AMD PSTATEv7 Driver
 - Clearlinux Patchset
 - Control Flow Integrity (CFI) slectable when using LLVM
@@ -75,7 +75,7 @@ net.ipv4.tcp_congestion_control = bbr2
 
 ## We are providing a [repo](https://mirror.cachyos.org/) which includes all kernels in generic-v3 and generic and more optimized packages
 
-### How to add our Repo automatically with CPU detection (if x86-64-v3 is supported)
+### How to add our repo automatically with CPU detection (if x86-64-v3 is supported)
 
 **Just run following command:**
 
