@@ -13,7 +13,7 @@
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'cfs' - select 'Completely Fair Scheduler'
-_cpusched='cfs'
+_cpusched='bore'
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null to enable them
@@ -34,7 +34,7 @@ _NUMAdisable=y
 # This PKGBUILD read the database kept if it exists
 #
 # More at this wiki page ---> https://wiki.archlinux.org/index.php/Modprobed-db
-_localmodcfg=y
+_localmodcfg=
 
 # Use the current kernel's .config file
 # Enabling this option will use the .config of the RUNNING kernel rather than
@@ -150,7 +150,7 @@ source=(
   "config"
   #"${_patchsource}/cacule/0001-cacULE-5.16-full.patch"
   #"${_patchsource}/sched/0001-bore-sched.patch"
-#  "${_patchsource}/0001-tt.patch"
+  #  "${_patchsource}/0001-tt.patch"
   "${_patchsource}/0001-sched-perf-fix.patch"
   "${_patchsource}/0001-amdpstate.patch"
   "${_patchsource}/0001-anbox.patch"
@@ -167,7 +167,7 @@ source=(
   "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-zen-patches.patch"
-#  "${_patchsource}/0001-v4l2loopback.patch"
+  #  "${_patchsource}/0001-v4l2loopback.patch"
   "auto-cpu-optimization.sh"
 )
 
@@ -278,7 +278,7 @@ prepare() {
     exit
   fi
 
-scripts/config --enable CONFIG_FAST_HEADERS
+  scripts/config --enable CONFIG_FAST_HEADERS
   if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
     echo "Enabling CFI"
     scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
@@ -507,7 +507,8 @@ scripts/config --enable CONFIG_FAST_HEADERS
   scripts/config --enable CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
   scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
   scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
-
+  scripts/config --enable CONFIG_MODULE_FG_KASLR
+  scripts/config --enable CONFIG_FAST_HEADERS
 
   ### Optionally load needed modules for the make localmodconfig
   # See https://aur.archlinux.org/packages/modprobed-db
@@ -589,7 +590,6 @@ _package-headers() {
 
   # add xfs and shmem for aufs building
   mkdir -p "$builddir"/{fs/xfs,mm}
-
   install -Dt "$builddir"/tools/bpf/resolve_btfids tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
@@ -677,7 +677,7 @@ md5sums=('1f4cd3c97d5a0049e9de9202a005ff12'
          'e418b4d90901e1c01c14f89d22c60886'
          '7d28f804d6b74f9a22ad30d67af5a669'
          'd78bb31569440421e0e76d9a8c0a14fc'
-         '9b09d8ca59023aba2065c52989e759ae'
+         '2fdd66a2e6731a63cc34a9202e39d810'
          'f574f1c40fa2d07602e77418b863e144'
          '2458d1c5d00d10709922e686c5d1e97f'
          '2160aabf2b9798907d36c4d246937d71'

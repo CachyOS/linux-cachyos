@@ -141,12 +141,11 @@ fi
 if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
-_caculepatches="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE"
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.15"
 source=(
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
-  "${_caculepatches}/v5.15/cacule-5.15-full.patch"
+  "${_patchsource}/cacule/cacule-5.15-full.patch"
   "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-lru-patches.patch"
@@ -671,13 +670,13 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('7c3faf14ec344d6d0219b6a8b2475726'
+md5sums=('4423a9fc25fcaa9e562c0f28e03960b3'
          '788dcd568f1c00441ad9746706e4f1bc'
          'afdbe964cd00357ef7248553ab9db091'
          'ef9fa3407854cea8e78112c25bb72e41'
          'e3fa8507aed6ef3ce37e62f18fe9b7e1'
          '1f3becd94390729d940a60b1e9b872b1'
-         'ef446a32fe115b59710a122009bb1d49'
+         '9ce207e47ad186b612050bd83641a697'
          'dccfe71705b24d3fb1f51aaf2016216d'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
@@ -691,10 +690,10 @@ md5sums=('7c3faf14ec344d6d0219b6a8b2475726'
          '8bda7327ae759b1b52e3b617952bd964'
          '8c354c3d1962ec6785db7f0c3fbbab03'
          'b6b2c2c6b4761aa5a8dea6ac0add8736'
-         '265ac5714001f018c5bc7f99637c5181'
+         'c8546d67979e5f33f819284c11daa9c5'
          '08c84362cb916b30d9c77e35b1b3bc54'
          '7d28f804d6b74f9a22ad30d67af5a669'
-         '56fdf3562b041c0408d9751b7e447977'
+         '2130bb325438a2fc880593c5e345521f'
          'b09b84168822521426f197610727618b'
          'd9a892f66631615a72bdc93ee7397afa'
          'bc64b1d1a9c95b07c28457f7214ebf81'

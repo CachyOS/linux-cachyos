@@ -137,7 +137,6 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-${pkgver
   "${_patchsource}/0001-cpu-patches.patch"
   "${_patchsource}/AMD/0001-amdpstate.patch"
   "${_patchsource}/0001-btrfs-patches.patch"
-  "${_patchsource}/0001-ck-hrtimer.patch"
   "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-futex-wait.v-fsync-winesync.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
@@ -630,25 +629,24 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('7fcbea316f8439d092040996295c8f9d'
+md5sums=('4423a9fc25fcaa9e562c0f28e03960b3'
          'a0e0c04d19191dce51b530d04f38e7cb'
-         'cdbb72be18eed85ed1beb02cb799acb1'
+         '2521bd8753421606710d3c42dfc8d78c'
          'cf26387aadf2a90428350ac246b070c9'
-         '299b176cbfc1b386d74406387e9e2d6b'
+         '018c728c9e744a99bb9b589028b8a1f6'
          '53f037488a66667220c263f92ded333d'
          '2a8097ba46be56fbbe3967e9c34c9a0b'
          '41887f2f959068e41756f4c39671ca79'
          '67764a5824b567b49bcce19c01d4e1b3'
-         '3aaa8d1bc993d4173aa1bb79ade16fb7'
-         '70be88d96e0bc9e72759bf3902e7eb53'
-         '6038177c72982533035309fcd6df208a'
+         '9ce207e47ad186b612050bd83641a697'
+         'a5de61b14e9ff7bfb4cb6548b6ee1c93'
          '8bda7327ae759b1b52e3b617952bd964'
          '8c354c3d1962ec6785db7f0c3fbbab03'
-         '349c88a39ec553aa3c9caf886b44c7ab'
-         '480c6bb9db4842114787f66ad5a68404'
-         '56fdf3562b041c0408d9751b7e447977'
+         'b6b2c2c6b4761aa5a8dea6ac0add8736'
+         'c8546d67979e5f33f819284c11daa9c5'
+         '2130bb325438a2fc880593c5e345521f'
          '08c84362cb916b30d9c77e35b1b3bc54'
          'd9a892f66631615a72bdc93ee7397afa'
          'de6db1147385c058b2e94df3c1739fdf'
-         '8a7c7cf90dcad3f655491b21c35f36b3'
+         '940d98858e6e59ecc07da50e05f6bc3d'
          '21c98f19e883879dd3336c1fa143fd31')
