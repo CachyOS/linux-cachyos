@@ -34,7 +34,7 @@ _NUMAdisable=y
 # This PKGBUILD read the database kept if it exists
 #
 # More at this wiki page ---> https://wiki.archlinux.org/index.php/Modprobed-db
-_localmodcfg=
+_localmodcfg=y
 
 # Use the current kernel's .config file
 # Enabling this option will use the .config of the RUNNING kernel rather than
@@ -107,7 +107,7 @@ _zstd_module_level='normal'
 _fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=
+_use_llvm_lto=y
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
@@ -117,7 +117,7 @@ _use_cfi=
 
 
 if [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-rc-lto
+  pkgbase=linux-cachyos-rc-llvm
 else
   pkgbase=linux-cachyos-rc
 fi
@@ -131,7 +131,7 @@ _stablerc=${_major}-${_rcver}
 _srcname=linux-${_stablerc}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=0.1
+pkgrel=0.4
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -148,35 +148,36 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=(
   "https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
   "config"
-  #"${_patchsource}/cacule/0001-cacULE-5.16-full.patch"
-  #"${_patchsource}/sched/0001-bore-sched.patch"
-  #  "${_patchsource}/0001-tt.patch"
+  "${_patchsource}/next/0002-mm-next.patch"
+  "${_patchsource}/next/0003-folio-io.patch"
+  "${_patchsource}/next/0004-rcu-next.patch"
+  "${_patchsource}/0001-MG-LRU-v6.patch"
+#  "${_patchsource}/0001-fast-headers.patch"
   "${_patchsource}/0001-sched-perf-fix.patch"
+  "${_patchsource}/misc/0007-v5.16-winesync.patch"
   "${_patchsource}/0001-amdpstate.patch"
   "${_patchsource}/0001-anbox.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-cpu.patch"
-  "${_patchsource}/0001-MG-LRU-v6.patch"
-  "${_patchsource}/0001-lru-draining.patch"
-  "${_patchsource}/0001-page-table-check.patch"
+#  "${_patchsource}/0001-page-table-check.patch"
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-fixes.patch"
   "${_patchsource}/0001-futex.patch"
   "${_patchsource}/0001-hwmon.patch"
+  "${_patchsource}/0001-ksmbd.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-zen-patches.patch"
-  #  "${_patchsource}/0001-v4l2loopback.patch"
+  "${_patchsource}/0001-v4l2loopback.patch"
   "auto-cpu-optimization.sh"
 )
 
 #if [ -n "$_use_pgo" ]; then
 #  source+=("${_patchsource}/0001-PGO.patch")
 #fi
-
 if [ -n "$_use_llvm_lto" ]; then
-  LLVMOPTS="LLVM=1 LLVM_IAS=1"
+  LLVMOPTS="LLVM=1"
   CLANGOPTS="CC=clang LD=ld.lld"
 else
   LLVMOPTS=""
@@ -278,7 +279,6 @@ prepare() {
     exit
   fi
 
-  scripts/config --enable CONFIG_FAST_HEADERS
   if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
     echo "Enabling CFI"
     scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
@@ -590,7 +590,7 @@ _package-headers() {
 
   # add xfs and shmem for aufs building
   mkdir -p "$builddir"/{fs/xfs,mm}
-  install -Dt "$builddir"/tools/bpf/resolve_btfids tools/bpf/resolve_btfids/resolve_btfids
+#  install -Dt "$builddir"/tools/bpf/resolve_btfids tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
   cp -t "$builddir" -a include
