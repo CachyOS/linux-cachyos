@@ -126,9 +126,11 @@ _minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 _stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
+#_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 pkgrel=1
@@ -146,7 +148,7 @@ if [ -n "$_use_llvm_lto" ]; then
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16"
 source=(
-  "https://git.kernel.org/torvalds/t/linux-${_stablerc}.tar.gz"
+  "https://git.kernel.org/torvalds/t/linux-${_stable}.tar.gz"
   "config"
   #"${_patchsource}/cacule/0001-cacULE-5.16-full.patch"
 #  "${_patchsource}/sched/0001-bore-sched.patch"
@@ -669,22 +671,26 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('1f4cd3c97d5a0049e9de9202a005ff12'
-         '9cc698af4174326d44e8c8fda942c4d2'
+md5sums=('5c6acbcc119ab680a32264c865ea70e1'
+         '5c710dda7d0d84a84093ae656e8f861c'
+         '258c33888c85d1ecc0bbdf59c3a92895'
+         '9956af4381a21744369bf81d76d3142d'
+         '7773f031916813d1011430a515a536ab'
+         'd16ccc4f52eb0bc08893dc66a7caa154'
          '1262001a6a1e72fa271481cf897ac6d1'
-         '9ce207e47ad186b612050bd83641a697'
+         '972fa89ff4ad22631fca50af2305c049'
+         '2923efbd99eea15f7ef2ada70e661bd5'
          '80e419d6847d4122a23a141fd3a40e52'
          'cced4f2ea452c03e74a6bbbb4a9768d7'
          '9f86c3b9e6271cfc4440864a6857b256'
          'd4c38ce51fb9a69aa92ad9b9e0199122'
-         '94f01559d149c8094c18de15d04ecac8'
-         'e418b4d90901e1c01c14f89d22c60886'
-         '7d28f804d6b74f9a22ad30d67af5a669'
          'd78bb31569440421e0e76d9a8c0a14fc'
-         '2fdd66a2e6731a63cc34a9202e39d810'
+         '80920e501b9b87bfe587edff445e6efe'
          'f574f1c40fa2d07602e77418b863e144'
          '2458d1c5d00d10709922e686c5d1e97f'
          '2160aabf2b9798907d36c4d246937d71'
+         '12ad5085b7f01793980f137f2c9451cb'
          'bf58290793d3a095ef95fb1fac2de89a'
          'de6db1147385c058b2e94df3c1739fdf'
+         'cb9384ce179d08be6c90df6d0a0977a1'
          '21c98f19e883879dd3336c1fa143fd31')
