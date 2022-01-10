@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-rt
+pkgbase = linux-cachyos-rt-lts
 	pkgdesc = Linux-cacule Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15.13
 	pkgrel = 1
@@ -49,12 +49,12 @@ pkgbase = linux-cachyos-rt
 	md5sums = 2a8097ba46be56fbbe3967e9c34c9a0b
 	md5sums = 41887f2f959068e41756f4c39671ca79
 	md5sums = 67764a5824b567b49bcce19c01d4e1b3
-	md5sums = 9ce207e47ad186b612050bd83641a697
-	md5sums = a5de61b14e9ff7bfb4cb6548b6ee1c93
+	md5sums = e4345010ef3270f6ccc5b26396c63a51
+	md5sums = 05308acbf7baf527692474cdef1dca82
 	md5sums = 8bda7327ae759b1b52e3b617952bd964
 	md5sums = 8c354c3d1962ec6785db7f0c3fbbab03
 	md5sums = b6b2c2c6b4761aa5a8dea6ac0add8736
-	md5sums = c8546d67979e5f33f819284c11daa9c5
+	md5sums = 5b5ea6f0b8ae6b726aab697a946f750d
 	md5sums = 2130bb325438a2fc880593c5e345521f
 	md5sums = 08c84362cb916b30d9c77e35b1b3bc54
 	md5sums = d9a892f66631615a72bdc93ee7397afa
@@ -62,7 +62,7 @@ pkgbase = linux-cachyos-rt
 	md5sums = 940d98858e6e59ecc07da50e05f6bc3d
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-rt
+pkgname = linux-cachyos-rt-lts
 	pkgdesc = The Linux-cacule Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -73,7 +73,7 @@ pkgname = linux-cachyos-rt
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-rt-headers
+pkgname = linux-cachyos-rt-lts-headers
 	pkgdesc = Headers and scripts for building modules for the Linux-cacule Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-rt=5.15.13
+	depends = linux-cachyos-rt-lts=5.15.13
 	depends = pahole

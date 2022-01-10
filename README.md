@@ -21,6 +21,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Choose between LLVM/LTO or GCC
 - Choose between 500Hz, , 600 Hz ,750Hz, 1000Hz
 - Improved BFQ Scheduler
+- Back-ported patches from linux-next
 - General improved sysctl settings and upstream scheduler fixes
 - Latest LRU Patch-set
 - BBRv2 tcp_congestion_control
@@ -33,7 +34,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Some Security related patches. More here: [Fork-Brute](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-security-patches.patch) [spectre](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-spectre-patches.patch)
 - Latest BTRFS improvements & fixes
 - KSMBD Module for Samba3 Server
-- Using the latest MG-LRU v5 patch paired with and the new implemented damon. The damon is disabled at default, but can be enabled in the PKGBUILD
+- Using the latest MG-LRU v5 patch paired with and the new implemented damon.
 - AMD PSTATEv7 Driver
 - Clearlinux Patchset
 - Control Flow Integrity (CFI) slectable when using LLVM

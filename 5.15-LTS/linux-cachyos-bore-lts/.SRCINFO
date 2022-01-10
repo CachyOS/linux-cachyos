@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-bore-lto
+pkgbase = linux-cachyos-bore-lts-lto
 	pkgdesc = Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.15.13
 	pkgrel = 1
@@ -62,25 +62,25 @@ pkgbase = linux-cachyos-bore-lto
 	source = auto-cpu-optimization.sh
 	md5sums = 4423a9fc25fcaa9e562c0f28e03960b3
 	md5sums = 5402af533ceb55bf08d42d626889c33f
-	md5sums = 19fa2fdb7201e4efe673a449744cda63
+	md5sums = f98ffed5a49d131e97ca6cb3ddb37047
 	md5sums = ef9fa3407854cea8e78112c25bb72e41
 	md5sums = e3fa8507aed6ef3ce37e62f18fe9b7e1
 	md5sums = 1f3becd94390729d940a60b1e9b872b1
-	md5sums = 9ce207e47ad186b612050bd83641a697
+	md5sums = e4345010ef3270f6ccc5b26396c63a51
 	md5sums = dccfe71705b24d3fb1f51aaf2016216d
 	md5sums = 53f037488a66667220c263f92ded333d
 	md5sums = 2a8097ba46be56fbbe3967e9c34c9a0b
 	md5sums = 56ceaed8bfb44eca93298ccc5fe11ca7
 	md5sums = 67764a5824b567b49bcce19c01d4e1b3
 	md5sums = 018c728c9e744a99bb9b589028b8a1f6
-	md5sums = a5de61b14e9ff7bfb4cb6548b6ee1c93
+	md5sums = 05308acbf7baf527692474cdef1dca82
 	md5sums = 41887f2f959068e41756f4c39671ca79
 	md5sums = b04c8a3f01b3dfba1410e2c26ec7d975
 	md5sums = 8cf507777e20cd4d75a0627eef10c10d
 	md5sums = 8bda7327ae759b1b52e3b617952bd964
 	md5sums = 8c354c3d1962ec6785db7f0c3fbbab03
 	md5sums = b6b2c2c6b4761aa5a8dea6ac0add8736
-	md5sums = c8546d67979e5f33f819284c11daa9c5
+	md5sums = 5b5ea6f0b8ae6b726aab697a946f750d
 	md5sums = 08c84362cb916b30d9c77e35b1b3bc54
 	md5sums = 7d28f804d6b74f9a22ad30d67af5a669
 	md5sums = 2130bb325438a2fc880593c5e345521f
@@ -94,7 +94,7 @@ pkgbase = linux-cachyos-bore-lto
 	md5sums = 940d98858e6e59ecc07da50e05f6bc3d
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-bore-lto
+pkgname = linux-cachyos-bore-lts-lto
 	pkgdesc = The Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -105,7 +105,7 @@ pkgname = linux-cachyos-bore-lto
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-bore-lto-headers
+pkgname = linux-cachyos-bore-lts-lto-headers
 	pkgdesc = Headers and scripts for building modules for the Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements
-	depends = linux-cachyos-bore-lto=5.15.13
+	depends = linux-cachyos-bore-lts-lto=5.15.13
 	depends = pahole

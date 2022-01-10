@@ -156,9 +156,8 @@ source=(
   "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/next/0002-mm-next.patch"
   "${_patchsource}/next/0003-folio-io.patch"
-  "${_patchsource}/next/0004-rcu-next.patch"
+  "${_patchsource}/0001-rcu.patch"
   "${_patchsource}/0001-MG-LRU-v6.patch"
-#  "${_patchsource}/0001-fast-headers.patch"
   "${_patchsource}/0001-sched-perf-fix.patch"
   "${_patchsource}/misc/0007-v5.16-winesync.patch"
   "${_patchsource}/0001-amdpstate.patch"
@@ -166,7 +165,6 @@ source=(
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-cpu.patch"
-#  "${_patchsource}/0001-page-table-check.patch"
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-fixes.patch"
@@ -673,11 +671,11 @@ done
 
 
 md5sums=('5c6acbcc119ab680a32264c865ea70e1'
-         '5c710dda7d0d84a84093ae656e8f861c'
+         '003d8f62685f327059a7d1a4e0d1b4b9'
          '855970078999580f28fa32f547d89d7f'
          '258c33888c85d1ecc0bbdf59c3a92895'
          '9956af4381a21744369bf81d76d3142d'
-         '7773f031916813d1011430a515a536ab'
+         '167a4267269e6a709c54e7b9ea8bf8d5'
          'd16ccc4f52eb0bc08893dc66a7caa154'
          '1262001a6a1e72fa271481cf897ac6d1'
          '972fa89ff4ad22631fca50af2305c049'
