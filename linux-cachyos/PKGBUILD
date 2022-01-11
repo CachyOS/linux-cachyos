@@ -152,7 +152,7 @@ source=(
   "config"
   #  "${_patchsource}/sched/0001-pjrc.patch" ## not released for 5.16 right now
   #  "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
-  #  "${_patchsource}/sched/0001-bore-sched.patch"
+  "${_patchsource}/sched/0001-bore-sched.patch"
   #  "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-MG-LRU-v6.patch"
   "${_patchsource}/0001-blk-patches.patch"
@@ -160,12 +160,13 @@ source=(
   "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-amdpstate.patch"
   "${_patchsource}/0001-anbox.patch"
-  "${_patchsource}/0001-bbr2.patch"
+  "${_patchsource}/0001-bbr2-patches.patch"
   "${_patchsource}/0001-btrfs.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
+  "${_patchsource}/0001-f2fs-patches.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-fixes.patch"
   "${_patchsource}/0001-futex.patch"
@@ -673,18 +674,20 @@ done
 
 md5sums=('5c6acbcc119ab680a32264c865ea70e1'
          'f9425b75de74d70497781f8c8448c27f'
+         '1fb4de64e7b59b67afecc7b71b951576'
          'd16ccc4f52eb0bc08893dc66a7caa154'
          '194c8e20ad30973c32159cb23f3be4c9'
          '1262001a6a1e72fa271481cf897ac6d1'
          'f717c0a238353f443a6f0633a59ee8ca'
          '2923efbd99eea15f7ef2ada70e661bd5'
          '80e419d6847d4122a23a141fd3a40e52'
-         'cced4f2ea452c03e74a6bbbb4a9768d7'
+         'd194311161f8f44755e532db738f4a2d'
          'e9dff9b551b8fa7c0b47ae5ac0b16365'
          '9f86c3b9e6271cfc4440864a6857b256'
          'b61fd5f488e44208fc97bfa6a274aebb'
          'd4c38ce51fb9a69aa92ad9b9e0199122'
          'a687c26c262ccb9ad7cb54697a1476bc'
+         '55bb44747ae64b05640e6452113877c2'
          '80920e501b9b87bfe587edff445e6efe'
          'f574f1c40fa2d07602e77418b863e144'
          '2458d1c5d00d10709922e686c5d1e97f'

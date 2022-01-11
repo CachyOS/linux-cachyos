@@ -151,8 +151,8 @@ source=(
   "https://git.kernel.org/torvalds/t/linux-${_stable}.tar.gz"
   "config"
   #  "${_patchsource}/sched/0001-pjrc.patch" ## not released for 5.16 right now
-  #  "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
-  #  "${_patchsource}/sched/0001-bore-sched.patch"
+  #${_patchsource}/sched/0001-cacULE-5.16-full.patch"
+  #"${_patchsource}/sched/0001-bore-sched.patch"
   "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-MG-LRU-v6.patch"
   "${_patchsource}/0001-blk-patches.patch"
@@ -160,12 +160,13 @@ source=(
   "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-amdpstate.patch"
   "${_patchsource}/0001-anbox.patch"
-  "${_patchsource}/0001-bbr2.patch"
+  "${_patchsource}/0001-bbr2-patches.patch"
   "${_patchsource}/0001-btrfs.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
+  "${_patchsource}/0001-f2fs-patches.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-fixes.patch"
   "${_patchsource}/0001-futex.patch"
@@ -180,7 +181,6 @@ source=(
   "${_patchsource}/next/0003-folio-io.patch"
   "auto-cpu-optimization.sh"
 )
-
 
 #if [ -n "$_use_pgo" ]; then
 #  source+=("${_patchsource}/0001-PGO.patch")

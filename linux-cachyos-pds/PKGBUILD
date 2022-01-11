@@ -148,7 +148,7 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=(
   "https://git.kernel.org/torvalds/t/linux-${_stable}.tar.gz"
   "config"
-  #  "${_patchsource}/sched/0001-pjrc.patch" ## not released for 5.16 right now
+    "${_patchsource}/sched/0001-pjrc.patch" ## not released for 5.16 right now
   #  "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
   #  "${_patchsource}/sched/0001-bore-sched.patch"
   #  "${_patchsource}/sched/0001-tt.patch"
@@ -174,7 +174,6 @@ source=(
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/misc/0007-v5.16-winesync.patch"
-  "${_patchsource}/next/0002-mm-next.patch"
   "${_patchsource}/next/0003-folio-io.patch"
   "auto-cpu-optimization.sh"
 )
@@ -671,6 +670,7 @@ done
 
 md5sums=('5c6acbcc119ab680a32264c865ea70e1'
          'f9425b75de74d70497781f8c8448c27f'
+         'a457d94f835eb36ae4087b3646e1d4ef'
          'd16ccc4f52eb0bc08893dc66a7caa154'
          '194c8e20ad30973c32159cb23f3be4c9'
          '1262001a6a1e72fa271481cf897ac6d1'
@@ -693,6 +693,5 @@ md5sums=('5c6acbcc119ab680a32264c865ea70e1'
          'de6db1147385c058b2e94df3c1739fdf'
          'cb9384ce179d08be6c90df6d0a0977a1'
          '972fa89ff4ad22631fca50af2305c049'
-         '258c33888c85d1ecc0bbdf59c3a92895'
          '9956af4381a21744369bf81d76d3142d'
          '21c98f19e883879dd3336c1fa143fd31')
