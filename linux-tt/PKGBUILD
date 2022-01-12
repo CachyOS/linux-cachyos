@@ -649,6 +649,15 @@ _package-headers() {
   ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
 
+pkgname=("$pkgbase" "$pkgbase-headers")
+for _p in "${pkgname[@]}"; do
+  eval "package_$_p() {
+             $(declare -f "_package${_p#$pkgbase}")
+             _package${_p#$pkgbase}
+  }"
+done
+
+
 md5sums=('5c6acbcc119ab680a32264c865ea70e1'
   '003d8f62685f327059a7d1a4e0d1b4b9'
   '258c33888c85d1ecc0bbdf59c3a92895'
