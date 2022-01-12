@@ -148,32 +148,34 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=(
   "https://git.kernel.org/torvalds/t/linux-${_stable}.tar.gz"
   "config"
-    "${_patchsource}/sched/0001-pjrc.patch" ## not released for 5.16 right now
-  #  "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
+  "${_patchsource}/sched/0001-pjrc.patch"
+  # "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
   #  "${_patchsource}/sched/0001-bore-sched.patch"
-  #  "${_patchsource}/sched/0001-tt.patch"
+  #    "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-MG-LRU-v6.patch"
-  "${_patchsource}/0001-blk-patches.patch"
+  "${_patchsource}/0001-amd64-patches.patch"
   "${_patchsource}/0001-sched-perf-fix.patch"
   "${_patchsource}/0001-block-patches.patch"
-  "${_patchsource}/0001-amdpstate.patch"
+  "${_patchsource}/0001-blk-patches.patch"
+  "${_patchsource}/0001-pm.patch"
   "${_patchsource}/0001-anbox.patch"
-  "${_patchsource}/0001-bbr2.patch"
+  "${_patchsource}/0001-bbr2-patches.patch"
   "${_patchsource}/0001-btrfs.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
+  "${_patchsource}/0001-f2fs-xfs-ext4-patches.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-fixes.patch"
-  "${_patchsource}/0001-futex.patch"
+  "${_patchsource}/0001-futex-winesync.patch"
   "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-ksmbd.patch"
   "${_patchsource}/0001-rcu.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
-  "${_patchsource}/misc/0007-v5.16-winesync.patch"
+  "${_patchsource}/next/0002-mm-next.patch"
   "${_patchsource}/next/0003-folio-io.patch"
   "auto-cpu-optimization.sh"
 )
@@ -545,98 +547,85 @@ _package() {
   'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig')
   provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE)
 
-  cd $_srcname
 
+  cd $_srcname
   local kernver="$(<version)"
   local modulesdir="$pkgdir/usr/lib/modules/$kernver"
 
+  echo "Installing boot image..."
   # systemd expects to find the kernel here to allow hibernation
   # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-  install -Dm644 "$(make $LLVMOPTS -s image_name)" "$modulesdir/vmlinuz"
+  install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
 
   # Used by mkinitcpio to name the kernel
-  echo "${pkgbase}" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
+  echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
-  # make room for external modules
-  local _extramodules="extramodules-${pkgbase}"
-  ln -s "../${_extramodules}" "$modulesdir/extramodules"
-  # add real version for building modules and running depmod from hook
-  echo "${kernver}" |
-  install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules/${_extramodules}/version"
-
-  echo -e "\n${TB}* INSTALLING MODULES${TN}"
-  make $LLVMOPTS LOCALVERSION= INSTALL_MOD_PATH="${pkgdir}/usr" INSTALL_MOD_STRIP=1 modules_install
+  echo "Installing modules..."
+  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
-  rm "${modulesdir}/source"
-  rm "${modulesdir}/build"
-
-  # depmod
-  depmod -b "${pkgdir}/usr" -F System.map "${kernver}"
-
-
-
+  rm "$modulesdir"/{source,build}
 }
 
 _package-headers() {
   pkgdesc="Headers and scripts for building modules for the ${pkgdesc}"
   depends=("${pkgbase}=${pkgver}" "pahole")
-
   cd $_srcname
-  local kernver="$(<version)"
-  local _builddir="${pkgdir}/usr/lib/modules/${kernver}/build"
+  local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
-  echo -e "\n${TB}* INSTALLING HEADERS${TN}"
-  install -Dt "${_builddir}" -m644 Makefile .config Module.symvers System.map version vmlinux localversion.*
-  install -Dt "${_builddir}/kernel" -m644 kernel/Makefile
-  install -Dt "${_builddir}/arch/x86" -m644 "arch/x86/Makefile"
-  #mkdir "${_builddir}/.tmp_versions"
+  echo "Installing build files..."
+  install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
+    localversion.* version vmlinux
+  install -Dt "$builddir/kernel" -m644 kernel/Makefile
+  install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
+  cp -t "$builddir" -a scripts
 
-  cp -t "${_builddir}" -a include scripts
+  # required when STACK_VALIDATION is enabled
+  install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
-  # add xfs and shmem for aufs building
-  mkdir -p "${_builddir}"/{fs/xfs,mm}
+  # required when DEBUG_INFO_BTF_MODULES is enabled
+  #  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
-  # add objtool for external module building and enabled VALIDATION_STACK option
-  install -Dt "${_builddir}/tools/objtool" tools/objtool/objtool
+  echo "Installing headers..."
+  cp -t "$builddir" -a include
+  cp -t "$builddir/arch/x86" -a arch/x86/include
+  install -Dt "$builddir/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
 
-  cp -t "${_builddir}/arch/x86" -a "arch/x86/include"
-  install -Dt "${_builddir}/arch/x86/kernel" -m644 "arch/x86/kernel/asm-offsets.s"
+  install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
+  install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
 
-  install -Dt "${_builddir}/drivers/md" -m644 drivers/md/*.h
-  install -Dt "${_builddir}/net/mac80211" -m644 net/mac80211/*.h
+  # https://bugs.archlinux.org/task/13146
+  install -Dt "$builddir/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
 
-  # http://bugs.archlinux.org/task/13146
-  install -Dt "${_builddir}/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
+  # https://bugs.archlinux.org/task/20402
+  install -Dt "$builddir/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
+  install -Dt "$builddir/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
+  install -Dt "$builddir/drivers/media/tuners" -m644 drivers/media/tuners/*.h
 
-  # http://bugs.archlinux.org/task/20402
-  install -Dt "${_builddir}/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
-  install -Dt "${_builddir}/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
-  install -Dt "${_builddir}/drivers/media/tuners" -m644 drivers/media/tuners/*.h
+  # https://bugs.archlinux.org/task/71392
+  install -Dt "$builddir/drivers/iio/common/hid-sensors" -m644 drivers/iio/common/hid-sensors/*.h
 
-  # copy in Kconfig files
-  find . -name Kconfig\* -exec install -Dm644 {} "${_builddir}/{}" \;
+  echo "Installing KConfig files..."
+  find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
 
-  # remove unneeded stuff
-  echo -e "\n${TB}* REMOVING UNNEEDED FILES${TN}"
-  # remove unneeded architectures
-  local _arch
-  for _arch in "${_builddir}"/arch/*/; do
-    [[ ${_arch} == */x86/ ]] && continue
-    rm -r "${_arch}"
+  echo "Removing unneeded architectures..."
+  local arch
+  for arch in "$builddir"/arch/*/; do
+    [[ $arch = */x86/ ]] && continue
+    echo "Removing $(basename "$arch")"
+    rm -r "$arch"
   done
 
-  # remove files already in linux-docs package
-  rm -r "${_builddir}/Documentation"
+  echo "Removing documentation..."
+  rm -r "$builddir/Documentation"
 
-  # remove broken symlinks
-  find -L "${_builddir}" -type l -printf 'Removing %P\n' -delete
+  echo "Removing broken symlinks..."
+  find -L "$builddir" -type l -printf 'Removing %P\n' -delete
 
-  # remove loose objects"
-  find "${_builddir}" -type f -name '*.o' -printf 'Removing %P\n' -delete
+  echo "Removing loose objects..."
+  find "$builddir" -type f -name '*.o' -printf 'Removing %P\n' -delete
 
-  # strip scripts directory
-  echo -e "\n${TB}* STRIPPING${TN}"
+  echo "Stripping build tools..."
   local file
   while read -rd '' file; do
     case "$(file -bi "$file")" in
@@ -649,14 +638,14 @@ _package-headers() {
       application/x-pie-executable\;*) # Relocatable binaries
         strip -v $STRIP_SHARED "$file" ;;
     esac
-  done < <(find "${_builddir}" -type f -perm -u+x ! -name vmlinux -print0)
+  done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
 
-  strip -v $STRIP_STATIC "${_builddir}/vmlinux"
+  echo "Stripping vmlinux..."
+  strip -v $STRIP_STATIC "$builddir/vmlinux"
 
-  echo -e "\n${TB}* SYMLINKING${TN}"
+  echo "Adding symlink..."
   mkdir -p "$pkgdir/usr/src"
-  ln -sr "$_builddir" "$pkgdir/usr/src/$pkgbase"
-
+  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
 
 pkgname=("$pkgbase" "$pkgbase-headers")
@@ -672,26 +661,28 @@ md5sums=('5c6acbcc119ab680a32264c865ea70e1'
          'f9425b75de74d70497781f8c8448c27f'
          'a457d94f835eb36ae4087b3646e1d4ef'
          'd16ccc4f52eb0bc08893dc66a7caa154'
-         '194c8e20ad30973c32159cb23f3be4c9'
-         '1262001a6a1e72fa271481cf897ac6d1'
+         'dbdb6754a1f5b3ccf26321843a070406'
+         'd6feae0f2dd1b24a853d335da003cb51'
          'f717c0a238353f443a6f0633a59ee8ca'
-         '2923efbd99eea15f7ef2ada70e661bd5'
+         '194c8e20ad30973c32159cb23f3be4c9'
+         '2faaa79055263c1cdeeaa2896e641696'
          '80e419d6847d4122a23a141fd3a40e52'
-         'cced4f2ea452c03e74a6bbbb4a9768d7'
+         'd194311161f8f44755e532db738f4a2d'
          'e9dff9b551b8fa7c0b47ae5ac0b16365'
          '9f86c3b9e6271cfc4440864a6857b256'
          'b61fd5f488e44208fc97bfa6a274aebb'
          'd4c38ce51fb9a69aa92ad9b9e0199122'
          'a687c26c262ccb9ad7cb54697a1476bc'
+         '8ef0e994f61bcd8d2188588f42805005'
          '80920e501b9b87bfe587edff445e6efe'
          'f574f1c40fa2d07602e77418b863e144'
-         '2458d1c5d00d10709922e686c5d1e97f'
+         '28dcc1fe3029c6c316773bbcbe82954d'
          '2160aabf2b9798907d36c4d246937d71'
          '12ad5085b7f01793980f137f2c9451cb'
          '167a4267269e6a709c54e7b9ea8bf8d5'
          'bf58290793d3a095ef95fb1fac2de89a'
          'de6db1147385c058b2e94df3c1739fdf'
          'cb9384ce179d08be6c90df6d0a0977a1'
-         '972fa89ff4ad22631fca50af2305c049'
+         '258c33888c85d1ecc0bbdf59c3a92895'
          '9956af4381a21744369bf81d76d3142d'
          '21c98f19e883879dd3336c1fa143fd31')

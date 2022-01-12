@@ -150,15 +150,16 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=(
   "https://git.kernel.org/torvalds/t/linux-${_stable}.tar.gz"
   "config"
-  #  "${_patchsource}/sched/0001-pjrc.patch" ## not released for 5.16 right now
+  #  "${_patchsource}/sched/0001-pjrc.patch"
   "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
-  #"${_patchsource}/sched/0001-bore-sched.patch"
-  #  "${_patchsource}/sched/0001-tt.patch"
+  #  "${_patchsource}/sched/0001-bore-sched.patch"
+  #    "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-MG-LRU-v6.patch"
-  "${_patchsource}/0001-blk-patches.patch"
+  "${_patchsource}/0001-amd64-patches.patch"
   "${_patchsource}/0001-sched-perf-fix.patch"
   "${_patchsource}/0001-block-patches.patch"
-  "${_patchsource}/0001-amdpstate.patch"
+  "${_patchsource}/0001-blk-patches.patch"
+  "${_patchsource}/0001-pm.patch"
   "${_patchsource}/0001-anbox.patch"
   "${_patchsource}/0001-bbr2-patches.patch"
   "${_patchsource}/0001-btrfs.patch"
@@ -166,17 +167,16 @@ source=(
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
-  "${_patchsource}/0001-f2fs-patches.patch"
+  "${_patchsource}/0001-f2fs-xfs-ext4-patches.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-fixes.patch"
-  "${_patchsource}/0001-futex.patch"
+  "${_patchsource}/0001-futex-winesync.patch"
   "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-ksmbd.patch"
   "${_patchsource}/0001-rcu.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
-  "${_patchsource}/misc/0007-v5.16-winesync.patch"
   "${_patchsource}/next/0002-mm-next.patch"
   "${_patchsource}/next/0003-folio-io.patch"
   "auto-cpu-optimization.sh"
@@ -583,7 +583,7 @@ _package-headers() {
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
   # required when DEBUG_INFO_BTF_MODULES is enabled
-  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+  #  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
   cp -t "$builddir" -a include
@@ -646,6 +646,7 @@ _package-headers() {
   mkdir -p "$pkgdir/usr/src"
   ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
+
 pkgname=("$pkgbase" "$pkgbase-headers")
 for _p in "${pkgname[@]}"; do
   eval "package_$_p() {
@@ -659,10 +660,11 @@ md5sums=('5c6acbcc119ab680a32264c865ea70e1'
          'f9425b75de74d70497781f8c8448c27f'
          '02e7cbd91491ad357bf2d507d58e21a0'
          'd16ccc4f52eb0bc08893dc66a7caa154'
-         '194c8e20ad30973c32159cb23f3be4c9'
-         '1262001a6a1e72fa271481cf897ac6d1'
+         'dbdb6754a1f5b3ccf26321843a070406'
+         'd6feae0f2dd1b24a853d335da003cb51'
          'f717c0a238353f443a6f0633a59ee8ca'
-         '2923efbd99eea15f7ef2ada70e661bd5'
+         '194c8e20ad30973c32159cb23f3be4c9'
+         '2faaa79055263c1cdeeaa2896e641696'
          '80e419d6847d4122a23a141fd3a40e52'
          'd194311161f8f44755e532db738f4a2d'
          'e9dff9b551b8fa7c0b47ae5ac0b16365'
@@ -670,17 +672,16 @@ md5sums=('5c6acbcc119ab680a32264c865ea70e1'
          'b61fd5f488e44208fc97bfa6a274aebb'
          'd4c38ce51fb9a69aa92ad9b9e0199122'
          'a687c26c262ccb9ad7cb54697a1476bc'
-         '55bb44747ae64b05640e6452113877c2'
+         '8ef0e994f61bcd8d2188588f42805005'
          '80920e501b9b87bfe587edff445e6efe'
          'f574f1c40fa2d07602e77418b863e144'
-         '2458d1c5d00d10709922e686c5d1e97f'
+         '28dcc1fe3029c6c316773bbcbe82954d'
          '2160aabf2b9798907d36c4d246937d71'
          '12ad5085b7f01793980f137f2c9451cb'
          '167a4267269e6a709c54e7b9ea8bf8d5'
          'bf58290793d3a095ef95fb1fac2de89a'
          'de6db1147385c058b2e94df3c1739fdf'
          'cb9384ce179d08be6c90df6d0a0977a1'
-         '972fa89ff4ad22631fca50af2305c049'
          '258c33888c85d1ecc0bbdf59c3a92895'
          '9956af4381a21744369bf81d76d3142d'
          '21c98f19e883879dd3336c1fa143fd31')
