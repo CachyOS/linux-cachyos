@@ -47,8 +47,8 @@ _use_current=
 _winesync=y
 
 ### Running with a 1000HZ, 750Hz or  500HZ tick rate
-_1k_HZ_ticks=
-_750_HZ_ticks=y
+_1k_HZ_ticks=y
+_750_HZ_ticks=
 _600_HZ_ticks=
 _500_HZ_ticks=
 
@@ -71,7 +71,7 @@ _page_table_check=y
 _damon=
 
 ### Enable Linux Random Number Generator
-_lrng_enable=y
+#_lrng_enable=y
 
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
@@ -117,9 +117,9 @@ _use_cfi=
 
 
 if [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-lto
+  pkgbase=linux-cachyos-rt-lto
 else
-  pkgbase=linux-cachyos
+  pkgbase=linux-cachyos-rt
 fi
 _major=5.16
 _minor=0
@@ -154,18 +154,17 @@ source=(
   # "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
   #  "${_patchsource}/sched/0001-bore-sched.patch"
   #    "${_patchsource}/sched/0001-tt.patch"
-  "${_patchsource}/0001-5.16-rt14.patch"
-  "${_patchsource}/0001-MG-LRU-v6.patch"
-  "${_patchsource}/0001-amd64-patches.patch"
-  "${_patchsource}/0001-sched-perf-fix.patch"
+  "${_patchsource}/RT/0001-5.16-RT.patch"
+  "${_patchsource}/RT/0002-MG-LRU-v6-RT.patch"
+  #  "${_patchsource}/RT/0003-RCU-NEXT-RT.patch"
+  "${_patchsource}/RT/0004-CFI-RT.patch"
+  "${_patchsource}/RT/0005-mm-next-rt.patch"
   "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-blk-patches.patch"
   "${_patchsource}/0001-pm.patch"
   "${_patchsource}/0001-anbox.patch"
   "${_patchsource}/0001-bbr2-patches.patch"
   "${_patchsource}/0001-btrfs.patch"
-  "${_patchsource}/0001-lrng.patch"
-  "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-f2fs-xfs-ext4-patches.patch"
@@ -174,14 +173,13 @@ source=(
   "${_patchsource}/0001-futex-winesync.patch"
   "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-ksmbd.patch"
-  "${_patchsource}/0001-rcu.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
-  "${_patchsource}/next/0002-mm-next.patch"
   "${_patchsource}/next/0003-folio-io.patch"
   "auto-cpu-optimization.sh"
 )
+
 
 #if [ -n "$_use_pgo" ]; then
 #  source+=("${_patchsource}/0001-PGO.patch")
@@ -391,54 +389,6 @@ prepare() {
     scripts/config --disable CONFIG_DAMON_DBGFS
     scripts/config --enable CONFIG_DAMON_PADDR
     scripts/config --enable CONFIG_DAMON_RECLAIM
-  fi
-
-  ### Enable Linux Random Number Generator
-  if [ -n "$_lrng_enable" ]; then
-    echo "Enabling Linux Random Number Generator ..."
-    echo "Enabling Linux Random Number Generator with pfkernel config..."
-    scripts/config --enable CONFIG_LRNG
-    scripts/config --enable CONFIG_LRNG_OVERSAMPLE_ENTROPY_SOURCES
-    scripts/config --set-val CONFIG_CONFIG_LRNG_OVERSAMPLE_ES_BITS 64
-    scripts/config --set-val CONFIG_LRNG_SEED_BUFFER_INIT_ADD_BITS 128
-    scripts/config --enable CONFIG_LRNG_IRQ
-    scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
-    scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
-    scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
-    scripts/config --enable CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION
-    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_512
-    scripts/config --enable CONFIG_LRNG_COLLECTION_SIZE_1024
-    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_2048
-    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_4096
-    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_8192
-    scripts/config --set-val CONFIG_LRNG_COLLECTION_SIZE 1024
-    scripts/config --enable CONFIG_LRNG_HEALTH_TESTS
-    scripts/config --set-val CONFIG_LRNG_RCT_CUTOFF 31
-    scripts/config --set-val CONFIG_LRNG_APT_CUTOFF 325
-    scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
-    scripts/config --enable CONFIG_LRNG_JENT
-    scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
-    scripts/config --enable CONFIG_LRNG_CPU
-    scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
-    scripts/config --enable CONFIG_LRNG_DRNG_SWITCH
-    scripts/config --enable CONFIG_LRNG_KCAPI_HASH
-    scripts/config --module CONFIG_LRNG_DRBG
-    scripts/config --module CONFIG_LRNG_KCAPI
-    scripts/config --enable CONFIG_LRNG_TESTING_MENU
-    scripts/config --disable CONFIG_LRNG_RAW_HIRES_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_JIFFIES_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_IRQ_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_IRQFLAGS_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_RETIP_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_REGS_ENTROPY
-    scripts/config --disable CONFIG_LRNG_RAW_ARRAY
-    scripts/config --disable CONFIG_LRNG_IRQ_PERF
-    scripts/config --disable CONFIG_LRNG_ACVT_HASH
-    scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
-    scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
-    scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
-    scripts/config --enable CONFIG_LRNG_SELFTEST
-    scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
   fi
 
   ### Selecting the ZSTD compression level
@@ -661,19 +611,17 @@ done
 
 
 md5sums=('5c6acbcc119ab680a32264c865ea70e1'
-         'f9425b75de74d70497781f8c8448c27f'
-         '73423dff49884a7d301945f61cfd2296'
-         'd16ccc4f52eb0bc08893dc66a7caa154'
-         'dbdb6754a1f5b3ccf26321843a070406'
-         'd6feae0f2dd1b24a853d335da003cb51'
+         'f8d7a1429f30756bee8583d7c59fd225'
+         '6723aa447f3897ed71e4464082dfa01d'
+         '254cdfbf39e2313408d8f729d5c49d57'
+         'b6da8bb6dcb8952c409925462d46844d'
+         'a0cd7013f0649a500fd3c01a899a7209'
          'f717c0a238353f443a6f0633a59ee8ca'
          '194c8e20ad30973c32159cb23f3be4c9'
          '2faaa79055263c1cdeeaa2896e641696'
          '80e419d6847d4122a23a141fd3a40e52'
          'd194311161f8f44755e532db738f4a2d'
          'e9dff9b551b8fa7c0b47ae5ac0b16365'
-         '9f86c3b9e6271cfc4440864a6857b256'
-         'b61fd5f488e44208fc97bfa6a274aebb'
          'd4c38ce51fb9a69aa92ad9b9e0199122'
          'a687c26c262ccb9ad7cb54697a1476bc'
          '8ef0e994f61bcd8d2188588f42805005'
@@ -682,10 +630,8 @@ md5sums=('5c6acbcc119ab680a32264c865ea70e1'
          '28dcc1fe3029c6c316773bbcbe82954d'
          '2160aabf2b9798907d36c4d246937d71'
          '12ad5085b7f01793980f137f2c9451cb'
-         '167a4267269e6a709c54e7b9ea8bf8d5'
          'bf58290793d3a095ef95fb1fac2de89a'
          'de6db1147385c058b2e94df3c1739fdf'
          'cb9384ce179d08be6c90df6d0a0977a1'
-         '258c33888c85d1ecc0bbdf59c3a92895'
          '9956af4381a21744369bf81d76d3142d'
          '21c98f19e883879dd3336c1fa143fd31')
