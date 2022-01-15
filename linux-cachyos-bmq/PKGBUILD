@@ -133,7 +133,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=3
+pkgrel=4
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -174,7 +174,7 @@ source=(
   "${_patchsource}/0001-ksmbd.patch"
   "${_patchsource}/0001-rcu.patch"
   "${_patchsource}/0001-zstd-patches.patch"
-  "${_patchsource}/0001-zen-patches.patch"
+#  "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-page-table-check.patch"
   "auto-cpu-optimization.sh"
@@ -585,7 +585,7 @@ _package-headers() {
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
   # required when DEBUG_INFO_BTF_MODULES is enabled
-  #  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
   cp -t "$builddir" -a include
@@ -658,7 +658,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 md5sums=('5c6acbcc119ab680a32264c865ea70e1'
-         'f9425b75de74d70497781f8c8448c27f'
+         '6048a8eb052a7b2a22b4ab159278b903'
          '3b05d6069ddcff7dec9c3a216ae48825'
          'c463c17e1bf27df35f05eb1004c2ba48'
          '3d8d1eeebba7d038f6d890619233e605'
@@ -680,7 +680,6 @@ md5sums=('5c6acbcc119ab680a32264c865ea70e1'
          '12ad5085b7f01793980f137f2c9451cb'
          '167a4267269e6a709c54e7b9ea8bf8d5'
          'bf58290793d3a095ef95fb1fac2de89a'
-         'de6db1147385c058b2e94df3c1739fdf'
          'cb9384ce179d08be6c90df6d0a0977a1'
          '7d28f804d6b74f9a22ad30d67af5a669'
          '21c98f19e883879dd3336c1fa143fd31')
