@@ -110,7 +110,7 @@ _fork_brute=
 _use_llvm_lto=
 
 # Enable it for using the LLVM CFI PATCH for a better security
-_use_cfi=
+#_use_cfi=
 
 ## Enable PGO (patch is failing when cfi is also used)
 #_use_pgo=
@@ -122,18 +122,18 @@ else
   pkgbase=linux-cacule-rdb
 fi
 _major=5.16
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 _stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=4
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -148,27 +148,29 @@ if [ -n "$_use_llvm_lto" ]; then
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16"
 source=(
-  "https://git.kernel.org/torvalds/t/linux-${_stable}.tar.gz"
+  "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
-  #  "${_patchsource}/sched/0001-pjrc.patch" ## not released for 5.16 right now
+  #  "${_patchsource}/sched/0001-pjrc.patch"
   "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
   #  "${_patchsource}/sched/0001-bore-sched.patch"
   #  "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-lru-patches.patch"
   "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-sched-perf-fix.patch"
-  "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-blk-patches.patch"
   "${_patchsource}/0001-pm.patch"
   "${_patchsource}/0001-anbox.patch"
   "${_patchsource}/0001-bbr2-patches.patch"
+  "${_patchsource}/0001-bfq-patches.patch"
   "${_patchsource}/0001-btrfs.patch"
   "${_patchsource}/0001-lrng.patch"
-  "${_patchsource}/0001-cfi.patch"
+#  "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-f2fs-xfs-ext4-patches.patch"
   "${_patchsource}/0001-misc.patch"
+  "${_patchsource}/0001-lqx-patches.patch"
+  "${_patchsource}/0001-net-patches.patch"
   "${_patchsource}/0001-fixes-miscellaneous.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-futex-winesync.patch"
@@ -179,6 +181,7 @@ source=(
 #  "${_patchsource}/0001-zen-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/next/0002-mm-next.patch"
+#  "${_patchsource}/0001-FG-KASLR.patch"
   "auto-cpu-optimization.sh"
 )
 
@@ -284,11 +287,11 @@ prepare() {
     exit
   fi
 
-  if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
-    echo "Enabling CFI"
-    scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
-    scripts/config --enable CONFIG_CFI_CLANG
-  fi
+#  if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
+#    echo "Enabling CFI"
+#    scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
+#    scripts/config --enable CONFIG_CFI_CLANG
+#  fi
 
   if [ -n "$_use_llvm_lto" ]; then
     echo "Enable LLVM LTO"
@@ -655,31 +658,32 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-md5sums=('5c6acbcc119ab680a32264c865ea70e1'
+md5sums=('121e4f65cf16ff76527020ea596fa431'
          '6048a8eb052a7b2a22b4ab159278b903'
          '02e7cbd91491ad357bf2d507d58e21a0'
-         'c463c17e1bf27df35f05eb1004c2ba48'
+         '76b9d9fa00184d10e7949bb948ca846d'
          '3d8d1eeebba7d038f6d890619233e605'
          'd6feae0f2dd1b24a853d335da003cb51'
-         'f717c0a238353f443a6f0633a59ee8ca'
          '194c8e20ad30973c32159cb23f3be4c9'
          '2faaa79055263c1cdeeaa2896e641696'
          '80e419d6847d4122a23a141fd3a40e52'
          'd194311161f8f44755e532db738f4a2d'
+         'b5b3d9d1cefc3955a82ec895f891abf3'
          'e9dff9b551b8fa7c0b47ae5ac0b16365'
          '9f86c3b9e6271cfc4440864a6857b256'
-         'b61fd5f488e44208fc97bfa6a274aebb'
          'd4c38ce51fb9a69aa92ad9b9e0199122'
          'a687c26c262ccb9ad7cb54697a1476bc'
-         'a35a6dea9bc12029b3a837d86d4b842a'
+         '2249b7ca0a7dfb0b2f835a8cc4058f1e'
          '80920e501b9b87bfe587edff445e6efe'
+         '231fa80a33e7a926ba832d3bd66d2ce6'
+         'bf010dff1d7a48191d491eba2dde1227'
          'b7867c9203f9f1ec1e3d6648a4659624'
          'be1e00d93e9c2ba91ee6017b82e64194'
          '28dcc1fe3029c6c316773bbcbe82954d'
-         '2160aabf2b9798907d36c4d246937d71'
+         '0714c9817397ac7568afc3e327a20ddd'
          '12ad5085b7f01793980f137f2c9451cb'
          '167a4267269e6a709c54e7b9ea8bf8d5'
          'bf58290793d3a095ef95fb1fac2de89a'
          'cb9384ce179d08be6c90df6d0a0977a1'
-         '258c33888c85d1ecc0bbdf59c3a92895'
+         '1613d4689c58d19417a9cd7177f6454b'
          '21c98f19e883879dd3336c1fa143fd31')
