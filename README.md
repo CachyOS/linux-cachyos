@@ -4,47 +4,47 @@
 
 The CachyOS are improved kernels which improve the performance and other improvements. Following Scheduler are supported:
 
--   Standard Kernel Completely Fair Scheduler (CFS) - linux-cachyos
--   CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
--   BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
--   Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
--   Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - linux-cachyos-tt
--   BORE (Burst-Oriented Response Enhancer) CPU Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) - linux-cachyos-bore
+- Standard Kernel Completely Fair Scheduler (CFS) - linux-cachyos
+- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
+- BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
+- Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
+- Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - linux-cachyos-tt
+- BORE (Burst-Oriented Response Enhancer) CPU Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) - linux-cachyos-bore
 
 **All kernels are prebuilt in two different march versions (x86_64 and x86_64_v3) and also with the lto enabled kernels in the cachyos repo.**
 
 ## Features
 
--   Very customizable PKGBUILD with many features and improvements
--   5 Different scheduler are supported, CacULE-,CFS-,tt-,bmq-,bore-, and pds scheduler
--   GCC/CLANG Optimization with automatically found cpu arch or also selectable cpu arch
--   Choose between LLVM/LTO or GCC
--   Choose between 500Hz, , 600 Hz ,750Hz, 1000Hz
--   Improved BFQ Scheduler
--   Back-ported patches from linux-next
--   General improved sysctl settings and upstream scheduler fixes
--   Latest LRU Patch-set
--   BBRv2 tcp_congestion_control
--   LLVM ThinLTO provided with \*-lto Kernel (in the cachyos-repo)
--   LRNG Framework (default enabled)
--   WINEFSYNC and the new futex wait v implementation (futex2) which will be upstream in 5.17
--   Android ANBOX patch-set
--   page-table-patch included
--   Latest & improved ZSTD patch-set
--   Some Security related patches. More here: [Fork-Brute](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-security-patches.patch) [spectre](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-spectre-patches.patch)
--   Latest BTRFS improvements & fixes
--   KSMBD Module for Samba3 Server
--   Using the latest MG-LRU v5 patch paired with and the new implemented damon.
--   AMD PSTATEv7 Driver
--   Clearlinux Patchset
--   Control Flow Integrity (CFI) slectable when using LLVM
--   experimental PGO building selectable (at the moment not working)
+- Very customizable PKGBUILD with many features and improvements
+- 5 Different scheduler are supported, CacULE-,CFS-,tt-,bmq-,bore-, and pds scheduler
+- GCC/CLANG Optimization with automatically found cpu arch or also selectable cpu arch
+- Choose between LLVM/LTO or GCC
+- Choose between 500Hz, , 600 Hz ,750Hz, 1000Hz
+- Improved BFQ Scheduler
+- Back-ported patches from linux-next
+- General improved sysctl settings and upstream scheduler fixes
+- Latest LRU Patch-set
+- BBRv2 tcp_congestion_control
+- LLVM ThinLTO provided with \*-lto Kernel (in the cachyos-repo)
+- LRNG Framework (default enabled)
+- WINEFSYNC and the new futex wait v implementation (futex2) which will be upstream in 5.17
+- Android ANBOX patch-set
+- page-table-patch included
+- Latest & improved ZSTD patch-set
+- Some Security related patches. More here: [Fork-Brute](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-security-patches.patch) [spectre](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-spectre-patches.patch)
+- Latest BTRFS improvements & fixes
+- KSMBD Module for Samba3 Server
+- Using the latest MG-LRU v5 patch paired with and the new implemented damon.
+- AMD PSTATEv7 Driver
+- Clearlinux Patchset
+- Control Flow Integrity (CFI) slectable when using LLVM
+- experimental PGO building selectable (at the moment not working)
 
 ## Other distros
 
--   First I will release every kernel update with a complete patch for every scheduler and their config.
--   Next I will implement a building system so it is possible to build the kernel for several distros.
--   Maybe I will provide some releases for debian based distros.
+- First I will release every kernel update with a complete patch for every scheduler and their config.
+- Next I will implement a building system so it is possible to build the kernel for several distros.
+- Maybe I will provide some releases for debian based distros.
 
 ## Some Tips & Tricks
 
@@ -85,7 +85,7 @@ You can tune the scheduler by setting these sysctl values
     cd repo
     sudo ./cachyos-repo.sh
 
-* * *
+---
 
 \--
 
@@ -119,7 +119,7 @@ You can tune the scheduler by setting these sysctl values
       Include = /etc/pacman.d/cachyos-mirrorlist
       ``\`
 
-* * *
+---
 
     This script will also backup your old pacman.conf.
 
