@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-cacule-lto
+pkgbase = linux-cachyos-cacule
 	pkgdesc = Linux cacULE scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.16.2
 	pkgrel = 2
@@ -18,10 +18,6 @@ pkgbase = linux-cachyos-cacule-lto
 	makedepends = perl
 	makedepends = tar
 	makedepends = xz
-	depends = clang
-	depends = llvm
-	depends = lld
-	depends = python
 	options = !strip
 	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.16.2.tar.xz
 	source = config
@@ -80,7 +76,7 @@ pkgbase = linux-cachyos-cacule-lto
 	md5sums = 6bb03b7a1b9207aaf77fb886d42bab74
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
-pkgname = linux-cachyos-cacule-lto
+pkgname = linux-cachyos-cacule
 	pkgdesc = The Linux cacULE scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -91,7 +87,7 @@ pkgname = linux-cachyos-cacule-lto
 	provides = VIRTUALBOX-GUEST-MODULES
 	provides = WIREGUARD-MODULE
 
-pkgname = linux-cachyos-cacule-lto-headers
+pkgname = linux-cachyos-cacule-headers
 	pkgdesc = Headers and scripts for building modules for the Linux cacULE scheduler Kernel by CachyOS and with some other patches and other improvements kernel
-	depends = linux-cachyos-cacule-lto=5.16.2
+	depends = linux-cachyos-cacule=5.16.2
 	depends = pahole

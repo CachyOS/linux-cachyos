@@ -117,9 +117,9 @@ _use_llvm_lto=
 
 
 if [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-tt-lto
+  pkgbase=linux-tt-lto
 else
-  pkgbase=linux-cachyos-tt
+  pkgbase=linux-tt
 fi
 _major=5.16
 _minor=2
