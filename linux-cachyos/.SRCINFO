@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.16.2
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -23,7 +23,6 @@ pkgbase = linux-cachyos
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-lru-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-arch-patches.patch
-	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-sched-perf-fix.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-blk-patches.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-pm.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-anbox.patch
@@ -50,7 +49,6 @@ pkgbase = linux-cachyos
 	md5sums = 6048a8eb052a7b2a22b4ab159278b903
 	md5sums = 76b9d9fa00184d10e7949bb948ca846d
 	md5sums = 3d8d1eeebba7d038f6d890619233e605
-	md5sums = 54892e41c11a34bf9a348e5653d79796
 	md5sums = 194c8e20ad30973c32159cb23f3be4c9
 	md5sums = 2faaa79055263c1cdeeaa2896e641696
 	md5sums = 80e419d6847d4122a23a141fd3a40e52
@@ -89,5 +87,3 @@ pkgname = linux-cachyos-headers
 	pkgdesc = Headers and scripts for building modules for the Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements kernel
 	depends = linux-cachyos=5.16.2
 	depends = pahole
-
-pkgname = linux-cachyos-docs

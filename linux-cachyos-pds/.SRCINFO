@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-pds
 	pkgdesc = Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.16.2
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -89,5 +89,3 @@ pkgname = linux-cachyos-pds-headers
 	pkgdesc = Headers and scripts for building modules for the Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements kernel
 	depends = linux-cachyos-pds=5.16.2
 	depends = pahole
-
-pkgname = linux-cachyos-pds-docs

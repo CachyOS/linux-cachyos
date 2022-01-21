@@ -133,7 +133,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -153,7 +153,6 @@ source=(
   #  "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-lru-patches.patch"
   "${_patchsource}/0001-arch-patches.patch"
-#   "${_patchsource}/0001-sched-perf-fix.patch"
   "${_patchsource}/0001-blk-patches.patch"
   "${_patchsource}/0001-pm.patch"
   "${_patchsource}/0001-anbox.patch"
@@ -175,7 +174,6 @@ source=(
   "${_patchsource}/0001-rcu.patch"
   "${_patchsource}/0001-zstd-patches.patch"
 #  "${_patchsource}/0001-zen-patches.patch"
-  "${_patchsource}/next/0001-mm-next.patch"
 #  "${_patchsource}/0001-FG-KASLR.patch"
   "auto-cpu-optimization.sh"
 )
@@ -648,7 +646,7 @@ _package-headers() {
   ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
 
-pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-docs")
+pkgname=("$pkgbase" "$pkgbase-headers")
 for _p in "${pkgname[@]}"; do
   eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
@@ -681,5 +679,4 @@ md5sums=('fd00badc3b53d42da3d84a7cf6f53f17'
          '12ad5085b7f01793980f137f2c9451cb'
          '167a4267269e6a709c54e7b9ea8bf8d5'
          'bf58290793d3a095ef95fb1fac2de89a'
-         '6bb03b7a1b9207aaf77fb886d42bab74'
          '21c98f19e883879dd3336c1fa143fd31')

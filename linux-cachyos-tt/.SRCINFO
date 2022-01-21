@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-tt
 	pkgdesc = Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.16.2
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -75,10 +75,17 @@ pkgbase = linux-cachyos-tt
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
 pkgname = linux-cachyos-tt
+	pkgdesc = The Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
+	depends = coreutils
+	depends = kmod
+	depends = initramfs
+	optdepends = crda: to set the correct wireless channels of your country
+	optdepends = linux-firmware: firmware images needed for some devices
+	optdepends = modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig
+	provides = VIRTUALBOX-GUEST-MODULES
+	provides = WIREGUARD-MODULE
 
 pkgname = linux-cachyos-tt-headers
 	pkgdesc = Headers and scripts for building modules for the Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements kernel
 	depends = linux-cachyos-tt=5.16.2
 	depends = pahole
-
-pkgname = linux-cachyos-tt-docs

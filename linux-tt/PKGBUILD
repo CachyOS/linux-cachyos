@@ -133,7 +133,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -147,13 +147,12 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=(
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
-#    "${_patchsource}/sched/0001-prjc.patch"
+  #  "${_patchsource}/sched/0001-pjrc.patch" ## not released for 5.16 right now
   #  "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
   #  "${_patchsource}/sched/0001-bore-sched.patch"
   "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-lru-patches.patch"
   "${_patchsource}/0001-arch-patches.patch"
-  #   "${_patchsource}/0001-sched-perf-fix.patch"
   "${_patchsource}/0001-blk-patches.patch"
   "${_patchsource}/0001-pm.patch"
   "${_patchsource}/0001-anbox.patch"
@@ -175,8 +174,9 @@ source=(
   "${_patchsource}/0001-rcu.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   #  "${_patchsource}/0001-zen-patches.patch"
-  "${_patchsource}/next/0001-mm-next.patch"
+  "${_patchsource}/0001-v4l2loopback.patch"
   #  "${_patchsource}/0001-FG-KASLR.patch"
+  "${_patchsource}/next/0001-mm-next.patch"
   "auto-cpu-optimization.sh"
 )
 
@@ -539,7 +539,7 @@ build() {
   make $LLVMOPTS -j$(nproc) all
 }
 
-__package() {
+_package() {
   pkgdesc="The $pkgdesc kernel and modules"
   depends=(coreutils kmod initramfs)
   optdepends=('crda: to set the correct wireless channels of your country'
@@ -648,7 +648,7 @@ _package-headers() {
   ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
 
-pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-docs")
+pkgname=("$pkgbase" "$pkgbase-headers")
 for _p in "${pkgname[@]}"; do
   eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
@@ -681,5 +681,6 @@ md5sums=('fd00badc3b53d42da3d84a7cf6f53f17'
          '12ad5085b7f01793980f137f2c9451cb'
          '167a4267269e6a709c54e7b9ea8bf8d5'
          'bf58290793d3a095ef95fb1fac2de89a'
+         'cb9384ce179d08be6c90df6d0a0977a1'
          '6bb03b7a1b9207aaf77fb886d42bab74'
          '21c98f19e883879dd3336c1fa143fd31')

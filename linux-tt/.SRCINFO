@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-tt
 	pkgdesc = Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.16.2
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -44,6 +44,7 @@ pkgbase = linux-cachyos-tt
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-ksmbd.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-rcu.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-zstd-patches.patch
+	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-v4l2loopback.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/next/0001-mm-next.patch
 	source = auto-cpu-optimization.sh
 	md5sums = fd00badc3b53d42da3d84a7cf6f53f17
@@ -71,14 +72,22 @@ pkgbase = linux-cachyos-tt
 	md5sums = 12ad5085b7f01793980f137f2c9451cb
 	md5sums = 167a4267269e6a709c54e7b9ea8bf8d5
 	md5sums = bf58290793d3a095ef95fb1fac2de89a
+	md5sums = cb9384ce179d08be6c90df6d0a0977a1
 	md5sums = 6bb03b7a1b9207aaf77fb886d42bab74
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
 pkgname = linux-cachyos-tt
+	pkgdesc = The Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
+	depends = coreutils
+	depends = kmod
+	depends = initramfs
+	optdepends = crda: to set the correct wireless channels of your country
+	optdepends = linux-firmware: firmware images needed for some devices
+	optdepends = modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig
+	provides = VIRTUALBOX-GUEST-MODULES
+	provides = WIREGUARD-MODULE
 
 pkgname = linux-cachyos-tt-headers
 	pkgdesc = Headers and scripts for building modules for the Linux TT scheduler Kernel by CachyOS and with some other patches and other improvements kernel
 	depends = linux-cachyos-tt=5.16.2
 	depends = pahole
-
-pkgname = linux-cachyos-tt-docs

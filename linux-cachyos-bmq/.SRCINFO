@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-bmq
 	pkgdesc = Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.16.2
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -44,7 +44,6 @@ pkgbase = linux-cachyos-bmq
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-ksmbd.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-rcu.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-zstd-patches.patch
-	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/next/0001-mm-next.patch
 	source = auto-cpu-optimization.sh
 	md5sums = fd00badc3b53d42da3d84a7cf6f53f17
 	md5sums = 6048a8eb052a7b2a22b4ab159278b903
@@ -71,7 +70,6 @@ pkgbase = linux-cachyos-bmq
 	md5sums = 12ad5085b7f01793980f137f2c9451cb
 	md5sums = 167a4267269e6a709c54e7b9ea8bf8d5
 	md5sums = bf58290793d3a095ef95fb1fac2de89a
-	md5sums = 6bb03b7a1b9207aaf77fb886d42bab74
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
 pkgname = linux-cachyos-bmq
@@ -89,5 +87,3 @@ pkgname = linux-cachyos-bmq-headers
 	pkgdesc = Headers and scripts for building modules for the Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements kernel
 	depends = linux-cachyos-bmq=5.16.2
 	depends = pahole
-
-pkgname = linux-cachyos-bmq-docs

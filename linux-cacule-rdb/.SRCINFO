@@ -1,7 +1,7 @@
 pkgbase = linux-cacule-rdb
 	pkgdesc = Linux cacULE scheduler Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.16.1
-	pkgrel = 1
+	pkgver = 5.16.2
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -19,7 +19,7 @@ pkgbase = linux-cacule-rdb
 	makedepends = tar
 	makedepends = xz
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.16.1.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.16.2.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/sched/0001-cacULE-5.16-full.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-lru-patches.patch
@@ -44,9 +44,10 @@ pkgbase = linux-cacule-rdb
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-ksmbd.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-rcu.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-zstd-patches.patch
+	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-v4l2loopback.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/next/0001-mm-next.patch
 	source = auto-cpu-optimization.sh
-	md5sums = 121e4f65cf16ff76527020ea596fa431
+	md5sums = fd00badc3b53d42da3d84a7cf6f53f17
 	md5sums = 6048a8eb052a7b2a22b4ab159278b903
 	md5sums = 02e7cbd91491ad357bf2d507d58e21a0
 	md5sums = 76b9d9fa00184d10e7949bb948ca846d
@@ -71,6 +72,7 @@ pkgbase = linux-cacule-rdb
 	md5sums = 12ad5085b7f01793980f137f2c9451cb
 	md5sums = 167a4267269e6a709c54e7b9ea8bf8d5
 	md5sums = bf58290793d3a095ef95fb1fac2de89a
+	md5sums = cb9384ce179d08be6c90df6d0a0977a1
 	md5sums = 6bb03b7a1b9207aaf77fb886d42bab74
 	md5sums = 21c98f19e883879dd3336c1fa143fd31
 
@@ -87,5 +89,5 @@ pkgname = linux-cacule-rdb
 
 pkgname = linux-cacule-rdb-headers
 	pkgdesc = Headers and scripts for building modules for the Linux cacULE scheduler Kernel by CachyOS and with some other patches and other improvements kernel
-	depends = linux-cacule-rdb=5.16.1
+	depends = linux-cacule-rdb=5.16.2
 	depends = pahole
