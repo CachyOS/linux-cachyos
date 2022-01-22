@@ -43,8 +43,6 @@ pkgbase = linux-cachyos-tt
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-ksmbd.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-rcu.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-zstd-patches.patch
-	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-fix-building-with-gcc-trunk.patch
-	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-fortify.patch
 	source = auto-cpu-optimization.sh
 	sha256sums = 09fe833a4d6304327bbe00e75ad7a2587188d1f406b3265fed11a0f8c5663b44
 	sha256sums = 2b7f21f750dc5f96c7d62a3a63173f33f8b46f8f4be1d361e7bd4cd16fb2b128
@@ -70,8 +68,6 @@ pkgbase = linux-cachyos-tt
 	sha256sums = 045160e2253115688651f86f9e01c5a9d052bd71d0ea613f138125422db38141
 	sha256sums = c1d1319d672f3b0ba0e016ae31bf7d189fea82985ff528117297b56facac65ad
 	sha256sums = 74c84814a670c68f0291f94b76fe00eac96b0e7965ed1762dbffd7c938dd9fdc
-	sha256sums = a0758a1b8d31f186d0712287895c4bb175eb21dbb1ee66ba29b05cd4cf4f417c
-	sha256sums = ccf6e829271010c00b28702c8c3c92d1c672aa788e04464ecddbf99b05e7f8bd
 	sha256sums = 65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b
 
 pkgname = linux-cachyos-tt
