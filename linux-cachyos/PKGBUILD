@@ -168,7 +168,7 @@ source=(
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-futex-winesync.patch"
   "${_patchsource}/0001-hwmon.patch"
-  "${_patchsource}/0001-ksmbd.patch"
+#  "${_patchsource}/0001-ksmbd.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/misc/0001-cc.patch"
   "${_patchsource}/misc/0010-ELF.patch"
@@ -678,7 +678,6 @@ sha256sums=('ba402fe9c05b70505172664ccf8d3dd2d7b78c4fa8ec8fb27fa83a6ce6b9b5b1'
             '8c2e3ce0874a23e4d8df419f79dd1d045ef349bbe1474717e9455c8197f41c4e'
             '9c7aebb85ef34d9c89d2e8ba34a9c82309d2ba9a14b8fdabaf01ba953ad6f08f'
             '669e8580b8bbb9ce38738154cf45e7c199cee91c2b9327102564aa9f9d7afd83'
-            '045160e2253115688651f86f9e01c5a9d052bd71d0ea613f138125422db38141'
             '9a22cd0f1dab0e6d970a7215641d7409b756b14740904501f95c5aef29d15f89'
             '1539b1786e8a57c441f4028fc7c64de59d926ad107b44dcad74a72ff9638870f'
             '6c2737225c46c8776022eede29753fea10547cfd1a0c38dcab628be7a4d7c126'
