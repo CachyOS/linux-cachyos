@@ -122,7 +122,7 @@ else
   pkgbase=linux-cachyos-bmq
 fi
 _major=5.16
-_minor=2
+_minor=3
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -133,7 +133,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=3
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -162,16 +162,16 @@ source=(
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-lru-le9-patches.patch"
-  "${_patchsource}/0001-f2fs-xfs-ext4-patches.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-net-patches.patch"
-  "${_patchsource}/0001-fixes-miscellaneous.patch"
+  "${_patchsource}/0001-fixes-misc.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-futex-winesync.patch"
   "${_patchsource}/0001-hwmon.patch"
-  "${_patchsource}/0001-ksmbd.patch"
-  "${_patchsource}/0001-rcu.patch"
+#  "${_patchsource}/0001-ksmbd.patch"
   "${_patchsource}/0001-zstd-patches.patch"
+  "${_patchsource}/misc/0001-cc.patch"
+  "${_patchsource}/misc/0010-ELF.patch"
 #  "${_patchsource}/0001-zen-patches.patch"
 #  "${_patchsource}/next/0001-mm-next.patch"
 #  "${_patchsource}/0001-FG-KASLR.patch"
@@ -659,28 +659,27 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('09fe833a4d6304327bbe00e75ad7a2587188d1f406b3265fed11a0f8c5663b44'
-            '2b7f21f750dc5f96c7d62a3a63173f33f8b46f8f4be1d361e7bd4cd16fb2b128'
-            'c181d1ae2fabe49beb6e967f223fcfa9212872137ed71d95986493d49d4bc54a'
+sha256sums=('ba402fe9c05b70505172664ccf8d3dd2d7b78c4fa8ec8fb27fa83a6ce6b9b5b1'
+            'fa70df0ba2a15b3828eacba4b14878bbd01d3ce29194165b8f2b02f37d28a116'
+            '7b7e4c699be5fa0871dc7cf4e23cc497eb11a1db547576eaadea186483dad4c9'
             '8ac5db0022b75027970ddcc7ee80e4c57e8a235fd590ed6dcc402909bb063a8a'
-            '0c1bc32aafa16c6daa4bf12595c352f535cea13ae0d4391d7d8916a9c4457341'
+            '4d592e6bd49ae19db05d758130ae1b6f3bb081923a7b6df0b946ea0f4524168e'
             '0b64f616404ed70757f423c879bf3edf51525bfdb78f7ec8f1ae21412d9e8a2a'
             'bc91fa787a28516b317fdd9e038ed2c10b61703a9848c1a9ad286e92d51c97be'
-            '2d425719dc5992dabac1944270422c4217ff3f335a5d80a03cdec5c09ee1968c'
+            '04f472466fe33ddadb64a52edb57db78e513111bb44dc71cb301a376ea093b46'
             '6e64484546582b4a747ef4c9d7fdf44005884a9abd86a7ecd9ab8d1f9e3e23d6'
             'eb57a61e3c1bf2966211f02a9ae080c3af4c7faf3f706821440e324a70d0cd20'
             '7936b61ba25f03597fd563be82c31a5756d8a82c893f69a2d569f99d375b1362'
             '915e992ed5ba2551ca648e4aa7340e9f250f6b7806287a061c1c8e40b1dc348b'
             'e2d99ace9b54021c5ef53b4b51716816172d6304f6a823b88d5b4e9a68562aef'
             'ff4215e6078864b9e556c3ceedbee8d6881b280755fcfbb97771148ebf05ef53'
-            'c6c4b3720c2907be872037faf546702a060ac5b52733ed65d528bc907400bf69'
             '5332ffc19ab2a50b162e07de425d60e473bb8b5be411ae669bae3471653f161f'
             'db0d2fde8f1e994fbb4eb37c8affa3f0b339aa658f9ab5003bb2ce453a68ab95'
-            '81e1e9559ff3a1f2b7bc7ee450821dad9aaa0ff4bcb885d2c494943e1550754f'
+            '86452400a7e2cbe02cf1dad51eb72899af963ba8b2c441c48575ae68bb9f9274'
             '8c2e3ce0874a23e4d8df419f79dd1d045ef349bbe1474717e9455c8197f41c4e'
             '9c7aebb85ef34d9c89d2e8ba34a9c82309d2ba9a14b8fdabaf01ba953ad6f08f'
-            '9ae41e84e69fbb7e88e7278488eb42e2e1281cb6f7c9c18bf2d11ac692a08d7d'
-            '045160e2253115688651f86f9e01c5a9d052bd71d0ea613f138125422db38141'
-            'c1d1319d672f3b0ba0e016ae31bf7d189fea82985ff528117297b56facac65ad'
-            '74c84814a670c68f0291f94b76fe00eac96b0e7965ed1762dbffd7c938dd9fdc'
+            '669e8580b8bbb9ce38738154cf45e7c199cee91c2b9327102564aa9f9d7afd83'
+            '9a22cd0f1dab0e6d970a7215641d7409b756b14740904501f95c5aef29d15f89'
+            '1539b1786e8a57c441f4028fc7c64de59d926ad107b44dcad74a72ff9638870f'
+            '6c2737225c46c8776022eede29753fea10547cfd1a0c38dcab628be7a4d7c126'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
