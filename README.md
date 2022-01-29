@@ -4,7 +4,7 @@
 
 The CachyOS are improved kernels which improve the performance and other improvements. Following Scheduler are supported:
 
-- Standard Kernel Completely Fair Scheduler (CFS) - linux-cachyos
+- Standard Scheduler Completely Fair Scheduler (CFS) - linux-cachyos
 - CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
@@ -46,32 +46,6 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Next I will implement a building system so it is possible to build the kernel for several distros.
 - Maybe I will provide some releases for debian based distros.
 
-## Some Tips & Tricks
-
-You can tune the scheduler by setting these sysctl values
-
-    net.core.netdev_max_backlog = 16384
-    net.core.somaxconn = 8192
-    net.core.rmem_default = 1048576
-    net.core.rmem_max = 16777216
-    net.core.wmem_default = 1048576
-    net.core.wmem_max = 16777216
-    net.core.optmem_max = 65536
-    net.ipv4.tcp_rmem = 4096 1048576 2097152
-    net.ipv4.tcp_wmem = 4096 65536 16777216
-    net.ipv4.udp_rmem_min = 8192
-    net.ipv4.udp_wmem_min = 8192
-    net.ipv4.tcp_fastopen = 3
-    net.ipv4.tcp_keepalive_time = 60
-    net.ipv4.tcp_keepalive_intvl = 10
-    net.ipv4.tcp_keepalive_probes = 6
-    net.ipv4.conf.default.log_martians = 1
-    net.ipv4.conf.all.log_martians = 1
-    net.ipv4.tcp_mtu_probing = 1
-    net.ipv4.tcp_syncookies = 1
-    net.core.default_qdisc = cake
-    net.ipv4.tcp_congestion_control = bbr2
-
 ## We are providing a [repo](https://mirror.cachyos.org/) which includes all kernels in generic-v3 and generic and more optimized packages
 
 ### How to add our repo automatically with CPU detection (if x86-64-v3 is supported)
@@ -95,7 +69,7 @@ You can tune the scheduler by setting these sysctl values
 
     sudo pacman-key --lsign-key F3B607488DB35A47
 
-    sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-6-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-6-1-any.pkg.tar.zst'
+    sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-8-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-8-1-any.pkg.tar.zst'
 
       **Checking x86_64_v3 cpu support:**
 
@@ -109,12 +83,8 @@ You can tune the scheduler by setting these sysctl values
       add following under the arch repos the "-v3" repos only if they are supported:
       ```
       # cachyos repos
-      [cachyos-desktop-v3]
-      Include = /etc/pacman.d/cachyos-v3-mirrorlist
       [cachyos-v3]
       Include = /etc/pacman.d/cachyos-v3-mirrorlist
-      [cachyos-desktop]
-      Include = /etc/pacman.d/cachyos-mirrorlist
       [cachyos]
       Include = /etc/pacman.d/cachyos-mirrorlist
       ``\`

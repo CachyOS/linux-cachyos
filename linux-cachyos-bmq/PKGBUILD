@@ -43,6 +43,15 @@ _localmodcfg=
 # a new kernel is released, but again, convenient for package bumps.
 _use_current=
 
+### Enable KBUILD_CFLAGS -O3
+_cc_harder=y
+
+### Set performance governor as default
+_per_gov=y
+
+### Enable TCP_CONG_BBR2
+_tcp_bbr2=y
+
 #enable winesync
 _winesync=y
 
@@ -79,7 +88,6 @@ _use_auto_optimization=y
 ## Apply Kernel Optimization selecting
 _use_optimization_select=
 
-
 ### Selecting the ZSTD compression level
 # ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
@@ -98,6 +106,9 @@ _zstd_level='normal'
 # WARNING: the ultra settings can sometimes
 # be counterproductive in both size and speed.
 _zstd_module_level='normal'
+
+# Enable zram/zswap ZSTD compression
+_zstd_compression=y
 
 ### Enable SECURITY_FORK_BRUTE
 # WARNING Not recommended.
@@ -122,7 +133,7 @@ else
   pkgbase=linux-cachyos-bmq
 fi
 _major=5.16
-_minor=3
+_minor=4
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -156,7 +167,6 @@ source=(
   "${_patchsource}/0001-anbox.patch"
   "${_patchsource}/0001-bbr2-patches.patch"
   "${_patchsource}/0001-bfq-patches.patch"
-  "${_patchsource}/0001-btrfs.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
@@ -164,19 +174,17 @@ source=(
   "${_patchsource}/0001-lru-le9-patches.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-net-patches.patch"
-  "${_patchsource}/0001-fixes-misc.patch"
+  "${_patchsource}/0001-fixes-misc-futex.patch"
   "${_patchsource}/0001-pf-patches.patch"
-  "${_patchsource}/0001-futex-winesync.patch"
-  "${_patchsource}/0001-hwmon.patch"
-#  "${_patchsource}/0001-ksmbd.patch"
+  #  "${_patchsource}/0001-ksmbd.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/misc/0001-cc.patch"
   "${_patchsource}/misc/0010-ELF.patch"
-#  "${_patchsource}/0001-zen-patches.patch"
-#  "${_patchsource}/next/0001-mm-next.patch"
-#  "${_patchsource}/0001-FG-KASLR.patch"
-#  "${_patchsource}/0001-fix-building-with-gcc-trunk.patch"
-#  "${_patchsource}/0001-fortify.patch"
+  #  "${_patchsource}/0001-zen-patches.patch"
+  #  "${_patchsource}/next/0001-mm-next.patch"
+  #  "${_patchsource}/0001-FG-KASLR.patch"
+  #  "${_patchsource}/0001-fix-building-with-gcc-trunk.patch"
+  #  "${_patchsource}/0001-fortify.patch"
   "auto-cpu-optimization.sh"
 )
 #if [ -n "$_use_pgo" ]; then
@@ -274,14 +282,14 @@ prepare() {
   fi
 
   if [ -n "$_use_llvm_lto" ]; then
-      scripts/config --disable LTO_NONE \
-                     --enable LTO \
-                     --enable LTO_CLANG \
-                     --enable ARCH_SUPPORTS_LTO_CLANG \
-                     --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
-                     --enable HAS_LTO_CLANG \
-                     --enable LTO_CLANG_THIN \
-                     --enable HAVE_GCC_PLUGINS
+    scripts/config --disable LTO_NONE \
+      --enable LTO \
+      --enable LTO_CLANG \
+      --enable ARCH_SUPPORTS_LTO_CLANG \
+      --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
+      --enable HAS_LTO_CLANG \
+      --enable LTO_CLANG_THIN \
+      --enable HAVE_GCC_PLUGINS
   fi
 
   ### Optionally set tickrate to 1000
@@ -340,6 +348,44 @@ prepare() {
     scripts/config --disable CONFIG_MQ_IOSCHED_KYBER
   fi
 
+  ### Set performance governor
+  if [ -n "$_per_gov" ]; then
+    echo "Setting performance governor..."
+    scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
+    scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
+    echo "Disabling uneeded governors..."
+    scripts/config --disable CONFIG_CPU_FREQ_GOV_ONDEMAND
+    scripts/config --disable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
+    scripts/config --disable CONFIG_CPU_FREQ_GOV_USERSPACE
+    scripts/config --disable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+  fi
+
+  ### Enable KBUILD_CFLAGS -O3
+  if [ -n "$_cc_harder" ]; then
+    echo "Enabling KBUILD_CFLAGS -O3..."
+    scripts/config --disable CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
+    scripts/config --enable CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
+  fi
+
+  ### Enable TCP_CONG_BBR2
+  if [ -n "$_tcp_bbr2" ]; then
+    echo "Disabling TCP_CONG_CUBIC..."
+    scripts/config --module CONFIG_TCP_CONG_CUBIC
+    scripts/config --disable CONFIG_DEFAULT_CUBIC
+    echo "Enabling TCP_CONG_BBR2..."
+    scripts/config --enable CONFIG_TCP_CONG_BBR2
+    scripts/config --enable CONFIG_DEFAULT_BBR2
+    scripts/config --set-str CONFIG_DEFAULT_TCP_CONG bbr2
+  fi
+
+
+  ### Enable FULLCONENAT
+  if [ -n "$_nf_cone" ]; then
+    echo "Enabling FULLCONENAT..."
+    scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
+    scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
+  fi
+
 
   ### Enable protect mappings under memory pressure
   if [ -n "$_mm_protect" ]; then
@@ -350,12 +396,12 @@ prepare() {
   fi
 
   ### Enable multigenerational LRU
-#  if [ -n "$_page_table_check" ]; then
-#    echo "Enabling Page-Table-Check..."
-#    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
-#    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
-#    scripts/config --enable CONFIG_ARCH_SUPPORTS_PAGE_TABLE_CHECK
-#  fi
+  #  if [ -n "$_page_table_check" ]; then
+  #    echo "Enabling Page-Table-Check..."
+  #    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
+  #    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
+  #    scripts/config --enable CONFIG_ARCH_SUPPORTS_PAGE_TABLE_CHECK
+  #  fi
 
   ### Enable multigenerational LRU
   if [ -n "$_lru_enable" ]; then
@@ -426,6 +472,7 @@ prepare() {
     scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
   fi
 
+
   ### Selecting the ZSTD compression level
   if [ "$_zstd_level" = "ultra" ]; then
     echo "Enabling highest ZSTD compression ratio..."
@@ -465,34 +512,25 @@ prepare() {
     exit
   fi
 
-  echo "Disabling TCP_CONG_CUBIC..."
-  scripts/config --module CONFIG_TCP_CONG_CUBIC
-  scripts/config --disable CONFIG_DEFAULT_CUBIC
-  echo "Enabling TCP_CONG_BBR2..."
-  scripts/config --enable CONFIG_TCP_CONG_BBR2
-  scripts/config --enable CONFIG_DEFAULT_BBR2
-  scripts/config --set-str CONFIG_DEFAULT_TCP_CONG bbr2
-  echo "Setting performance governor..."
-  scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
-  scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_ONDEMAND
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_PERFORMANCE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_USERSPACE
-  scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-  echo "Enable AMD PSTATE driver"
-  scripts/config --enable CONFIG_X86_AMD_PSTATE
-  scripts/config --enable CONFIG_AMD_PTDMA
+  ### Enable zram/zswap ZSTD compression
+  if [ -n "$_zstd_compression" ]; then
+    echo "Enabling zram ZSTD compression..."
+    scripts/config --disable CONFIG_ZRAM_DEF_COMP_LZORLE
+    scripts/config --enable CONFIG_ZRAM_DEF_COMP_ZSTD
+    scripts/config --set-str CONFIG_ZRAM_DEF_COMP zstd
+    echo "Enabling zswap ZSTD compression..."
+    scripts/config --disable CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4
+    scripts/config --enable CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD
+    scripts/config --set-str CONFIG_ZSWAP_COMPRESSOR_DEFAULT zstd
+  fi
+
+
   echo "Enable Anbox"
   scripts/config --enable CONFIG_ASHMEM
   scripts/config --enable CONFIG_ANDROID
   scripts/config --enable CONFIG_ANDROID_BINDER_IPC
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
-  scripts/config --enable CONFIG_NTFS3_FS
-  echo "Enabling KBUILD_CFLAGS -O3..."
-  scripts/config --disable CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
-  scripts/config --enable CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
 
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
@@ -513,14 +551,16 @@ prepare() {
   ### Optionally load needed modules for the make localmodconfig
   # See https://aur.archlinux.org/packages/modprobed-db
   if [ -n "$_localmodcfg" ]; then
-      if [ -e $HOME/.config/modprobed.db ]; then
-          echo "Running Steven Rostedt's make localmodconfig now"
-          make ${BUILD_FLAGS[*]} LSMOD=$HOME/.config/modprobed.db localmodconfig
-      else
-          echo "No modprobed.db data found"
-          exit
-      fi
+    if [ -e $HOME/.config/modprobed.db ]; then
+      echo "Running Steven Rostedt's make localmodconfig now"
+      make ${BUILD_FLAGS[*]} LSMOD=$HOME/.config/modprobed.db localmodconfig
+    else
+      echo "No modprobed.db data found"
+      exit
+    fi
   fi
+
+
 
   echo "Applying default config..."
 
@@ -529,7 +569,7 @@ prepare() {
   echo "Prepared $pkgbase version $(<version)"
 
   ### Running make nconfig
-    [[ -z "$_makenconfig" ]] || make ${BUILD_FLAGS[*]} nconfig
+  [[ -z "$_makenconfig" ]] || make ${BUILD_FLAGS[*]} nconfig
 
   ### Save configuration for later reuse
   cp -Tf ./.config "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
@@ -545,12 +585,11 @@ _package() {
   pkgdesc="The $pkgdesc kernel and modules"
   depends=('coreutils' 'kmod' 'initramfs')
   optdepends=('crda: to set the correct wireless channels of your country'
-              'linux-firmware: firmware images needed for some devices'
-              'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig')
+    'linux-firmware: firmware images needed for some devices'
+  'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig')
   provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE)
 
   cd $_srcname
-
   local kernver="$(<version)"
   local modulesdir="$pkgdir/usr/lib/modules/$kernver"
 
@@ -573,7 +612,7 @@ _package-headers() {
   pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
   depends=(pahole)
 
-  cd ${_srcname}
+  cd $_srcname
   local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
   echo "Installing build files..."
@@ -587,7 +626,7 @@ _package-headers() {
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
   # required when DEBUG_INFO_BTF_MODULES is enabled
-  #install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
   cp -t "$builddir" -a include
@@ -649,6 +688,7 @@ _package-headers() {
   echo "Adding symlink..."
   mkdir -p "$pkgdir/usr/src"
   ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+
 }
 
 pkgname=("$pkgbase" "$pkgbase-headers")
@@ -659,15 +699,14 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('ba402fe9c05b70505172664ccf8d3dd2d7b78c4fa8ec8fb27fa83a6ce6b9b5b1'
-            'fa70df0ba2a15b3828eacba4b14878bbd01d3ce29194165b8f2b02f37d28a116'
+sha256sums=('2be32a40b9be35a914166ab1de096ffdb50872366219e17471789a59e43b50bf'
+            '81f365d70f4d856dd0694af70a434f55fb88da00f110bb4e4b74ac0992e6be0c'
             '7b7e4c699be5fa0871dc7cf4e23cc497eb11a1db547576eaadea186483dad4c9'
-            '8ac5db0022b75027970ddcc7ee80e4c57e8a235fd590ed6dcc402909bb063a8a'
+            '4f5f368f9ac356c19b3d40fd0eeea51010503375a4c61c4de1e766f528b04aee'
             '4d592e6bd49ae19db05d758130ae1b6f3bb081923a7b6df0b946ea0f4524168e'
             '0b64f616404ed70757f423c879bf3edf51525bfdb78f7ec8f1ae21412d9e8a2a'
             'bc91fa787a28516b317fdd9e038ed2c10b61703a9848c1a9ad286e92d51c97be'
             '04f472466fe33ddadb64a52edb57db78e513111bb44dc71cb301a376ea093b46'
-            '6e64484546582b4a747ef4c9d7fdf44005884a9abd86a7ecd9ab8d1f9e3e23d6'
             'eb57a61e3c1bf2966211f02a9ae080c3af4c7faf3f706821440e324a70d0cd20'
             '7936b61ba25f03597fd563be82c31a5756d8a82c893f69a2d569f99d375b1362'
             '915e992ed5ba2551ca648e4aa7340e9f250f6b7806287a061c1c8e40b1dc348b'
@@ -675,10 +714,8 @@ sha256sums=('ba402fe9c05b70505172664ccf8d3dd2d7b78c4fa8ec8fb27fa83a6ce6b9b5b1'
             'ff4215e6078864b9e556c3ceedbee8d6881b280755fcfbb97771148ebf05ef53'
             '5332ffc19ab2a50b162e07de425d60e473bb8b5be411ae669bae3471653f161f'
             'db0d2fde8f1e994fbb4eb37c8affa3f0b339aa658f9ab5003bb2ce453a68ab95'
-            '86452400a7e2cbe02cf1dad51eb72899af963ba8b2c441c48575ae68bb9f9274'
+            '428de49021a06fa68ec098ac04755b4917cc53fee0142756c120a1ac83f1cbfe'
             '8c2e3ce0874a23e4d8df419f79dd1d045ef349bbe1474717e9455c8197f41c4e'
-            '9c7aebb85ef34d9c89d2e8ba34a9c82309d2ba9a14b8fdabaf01ba953ad6f08f'
-            '669e8580b8bbb9ce38738154cf45e7c199cee91c2b9327102564aa9f9d7afd83'
             '9a22cd0f1dab0e6d970a7215641d7409b756b14740904501f95c5aef29d15f89'
             '1539b1786e8a57c441f4028fc7c64de59d926ad107b44dcad74a72ff9638870f'
             '6c2737225c46c8776022eede29753fea10547cfd1a0c38dcab628be7a4d7c126'
