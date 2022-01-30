@@ -107,7 +107,7 @@ _zstd_module_level='normal'
 #_fork_brute=
 
 ## Enable it for compiling with LLVM and THINLTO
-_use_llvm_lto=
+_use_llvm_lto=y
 
 # Enable it for using the LLVM CFI PATCH for a better security
 #_use_cfi=
@@ -148,14 +148,11 @@ source=(
   "https://github.com/torvalds/linux/archive/refs/tags/v5.17-rc1.tar.gz"
   "config"
   #  "${_patchsource}/sched/0001-pjrc.patch"
-  "${_patchsource}/sched/0001-cacULE-5.17.patch"
+#  "${_patchsource}/sched/0001-cacULE-5.17.patch"
 #   "${_patchsource}/sched/0001-bore-sched.patch"
   #  "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-arch-patches.patch"
-  "${_patchsource}/0001-anbox.patch"
-  "${_patchsource}/0001-asus-ec.patch"
   "${_patchsource}/0001-bbr2.patch"
-#  "${_patchsource}/0001-bfq-patches.patch"
 #  "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
@@ -173,8 +170,8 @@ source=(
 #  "${_patchsource}/0001-zen-patches.patch"
 #  "${_patchsource}/next/0001-mm-next.patch"
 #  "${_patchsource}/0001-FG-KASLR.patch"
-  "${_patchsource}/0001-fix-building-with-gcc-trunk.patch"
-#  "${_patchsource}/0001-fortify.patch"
+#  "${_patchsource}/0001-fix-building-with-gcc-trunk.patch"
+  "${_patchsource}/0001-fortify-gcc-fix.patch"
   "auto-cpu-optimization.sh"
 )
 #if [ -n "$_use_pgo" ]; then
@@ -586,7 +583,7 @@ _package-headers() {
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
   # required when DEBUG_INFO_BTF_MODULES is enabled
-  #install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
   cp -t "$builddir" -a include
@@ -659,11 +656,8 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('9269b46a87c16941871f81057c8b82c913869eb86037b92c0bd4d5b9aa69dece'
-            '2bc48e8f8be6eff4fd922a8057cde9fcd2e65ec55de22bfda4e2dd18a3d43b81'
-            '33c0d70410ac7e0fccce5796aacea76838b048c79bbdc92eaf2fdbb5eabd4e0d'
+            '81f365d70f4d856dd0694af70a434f55fb88da00f110bb4e4b74ac0992e6be0c'
             'ae4034b307d1be3675db999cf014ade18d99ea1542bf7aa3afd00398d9912ea9'
-            'b81d81435984662cc5948e5e26389402d6803ceb4cd3fe346f632fdf4c81f9ed'
-            'af8e5e015be13494314a270c52e67b23892e6683926c295a89f780ccf8454e04'
             '7da6bf2368260a8f3cc1c974b6d94ffb8a2a223a66292828ebd8f54c9b85af06'
             '4c7eb0d2b3c83ddc05f65463142270466e078833842af13fa96eb2d7e0b9a124'
             'd027022d216dcc26ab7f47f803ee3a2aab42e6d28b5f268045a9f000547c8490'
@@ -672,5 +666,5 @@ sha256sums=('9269b46a87c16941871f81057c8b82c913869eb86037b92c0bd4d5b9aa69dece'
             '6a7f1dc8eed0f2c3c63e33c8652675a1349a4da48b586756aff581d27beb45ee'
             '7d2e3b2c07ce5f8d4e793e6e2dca57294b0bc09ca143daae6472520cfc20b4c2'
             'a52767f212739fd124df348689d92f6386b6bc90fb8941130ef365a3c5ef3b93'
-            'a0758a1b8d31f186d0712287895c4bb175eb21dbb1ee66ba29b05cd4cf4f417c'
+            'c5708a87606591153091e7ce1a1c04a6f9dc9b123ec71b2bf2f849d51b3a2dc4'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')

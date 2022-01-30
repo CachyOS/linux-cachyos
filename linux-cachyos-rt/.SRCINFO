@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-rt
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.16.0
+	pkgver = 5.16.4
 	pkgrel = 3
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -55,7 +55,7 @@ pkgbase = linux-cachyos-rt
 	md5sums = c463c17e1bf27df35f05eb1004c2ba48
 	md5sums = 80920e501b9b87bfe587edff445e6efe
 	md5sums = bf010dff1d7a48191d491eba2dde1227
-	md5sums = 957a97a4351a0bacb0f00e5cc5564681
+	md5sums = 1496c72512e84f0e914972b0d528c659
 	md5sums = be1e00d93e9c2ba91ee6017b82e64194
 	md5sums = b8de60147525240358a5aea6d809f0ed
 	md5sums = d2a8951a9292e5c397b8cdd50b61a92b

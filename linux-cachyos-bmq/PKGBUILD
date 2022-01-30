@@ -144,7 +144,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -176,7 +176,7 @@ source=(
   "${_patchsource}/0001-net-patches.patch"
   "${_patchsource}/0001-fixes-misc-futex.patch"
   "${_patchsource}/0001-pf-patches.patch"
-  #  "${_patchsource}/0001-ksmbd.patch"
+  "${_patchsource}/0001-f2fs-xfs-ext4-btrfs.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/misc/0001-cc.patch"
   "${_patchsource}/misc/0010-ELF.patch"
@@ -184,7 +184,7 @@ source=(
   #  "${_patchsource}/next/0001-mm-next.patch"
   #  "${_patchsource}/0001-FG-KASLR.patch"
   #  "${_patchsource}/0001-fix-building-with-gcc-trunk.patch"
-  #  "${_patchsource}/0001-fortify.patch"
+  "${_patchsource}/0001-fortify-gcc-fix.patch"
   "auto-cpu-optimization.sh"
 )
 #if [ -n "$_use_pgo" ]; then
@@ -714,9 +714,11 @@ sha256sums=('2be32a40b9be35a914166ab1de096ffdb50872366219e17471789a59e43b50bf'
             'ff4215e6078864b9e556c3ceedbee8d6881b280755fcfbb97771148ebf05ef53'
             '5332ffc19ab2a50b162e07de425d60e473bb8b5be411ae669bae3471653f161f'
             'db0d2fde8f1e994fbb4eb37c8affa3f0b339aa658f9ab5003bb2ce453a68ab95'
-            '428de49021a06fa68ec098ac04755b4917cc53fee0142756c120a1ac83f1cbfe'
+            '0cfa42cb2504720b578a74ee20a3c272bf892e754b59f8282bcf78610e94eb4c'
             '8c2e3ce0874a23e4d8df419f79dd1d045ef349bbe1474717e9455c8197f41c4e'
+            '731a9303e2aeb4535c90bf1cbadee65b3dcaaf38434fcf2dd750ba7d44686d21'
             '9a22cd0f1dab0e6d970a7215641d7409b756b14740904501f95c5aef29d15f89'
             '1539b1786e8a57c441f4028fc7c64de59d926ad107b44dcad74a72ff9638870f'
             '6c2737225c46c8776022eede29753fea10547cfd1a0c38dcab628be7a4d7c126'
+            'c5708a87606591153091e7ce1a1c04a6f9dc9b123ec71b2bf2f849d51b3a2dc4'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
