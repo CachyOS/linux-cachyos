@@ -13,7 +13,7 @@
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'cfs' - select 'Completely Fair Scheduler'
-_cpusched='cacule'
+_cpusched='cacule-rdb'
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null to enable them
@@ -158,6 +158,7 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=(
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
+  "${_patchsource}/0001-stable-rc.patch"
   #  "${_patchsource}/sched/0001-pjrc.patch"
   "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
   #  "${_patchsource}/sched/0001-bore-sched.patch"
@@ -699,6 +700,7 @@ done
 
 sha256sums=('2be32a40b9be35a914166ab1de096ffdb50872366219e17471789a59e43b50bf'
             'ddab31ab1bd7aa5b00c932a4a16ce93ec7a34fe2e0fa371277280b52a88a515b'
+            '787979822d8a92a613e44c46230d5b46600f365f775fdb14fa704f2374e3d064'
             '480a3399d346b5fe053708a458ba63ae4a074d925114896f899740198bf809f2'
             '4f5f368f9ac356c19b3d40fd0eeea51010503375a4c61c4de1e766f528b04aee'
             '4d592e6bd49ae19db05d758130ae1b6f3bb081923a7b6df0b946ea0f4524168e'
