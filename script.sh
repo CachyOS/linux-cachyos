@@ -9,7 +9,7 @@ do
   d=$(dirname $f)
   cd $d
 
-  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache:/home/notroot/ccache pttrr/docker-makepkg
+  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache:/home/notroot/ccache pttrr/docker-makepkg-kernel
   docker rm dockerbuild
   cd ..
 done
@@ -25,7 +25,7 @@ do
   d=$(dirname $f)
   cd $d
 
-  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache:/home/notroot/ccache pttrr/docker-makepkg-v3
+  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache:/home/notroot/ccache pttrr/docker-makepkg-kernel-v3
   docker rm dockerbuild
   cd ..
 done
@@ -43,7 +43,7 @@ for f in $files
 do
   d=$(dirname $f)
   cd $d
-  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache:/home/notroot/ccache pttrr/docker-makepkg-v3
+  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache:/home/notroot/ccache pttrr/docker-makepkg-kernel-v3
   docker rm dockerbuild
   cd ..
 done
@@ -58,8 +58,7 @@ for f in $files
 do
   d=$(dirname $f)
   cd $d
-
-  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache:/home/notroot/ccache pttrr/docker-makepkg
+  docker run --name dockerbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache:/home/notroot/ccache pttrr/docker-makepkg-kernel
   docker rm dockerbuild
   cd ..
 done

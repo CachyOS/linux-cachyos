@@ -144,7 +144,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=2
+pkgrel=3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -178,12 +178,10 @@ source=(
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-f2fs-xfs-ext4-btrfs.patch"
   "${_patchsource}/0001-zstd-patches.patch"
+  "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/misc/0001-cc.patch"
   "${_patchsource}/misc/0010-ELF.patch"
   #  "${_patchsource}/0001-zen-patches.patch"
-  #  "${_patchsource}/next/0001-mm-next.patch"
-  #  "${_patchsource}/0001-FG-KASLR.patch"
-  #  "${_patchsource}/0001-fix-building-with-gcc-trunk.patch"
   "${_patchsource}/0001-fortify-gcc-fix.patch"
   "auto-cpu-optimization.sh"
 )
@@ -626,7 +624,7 @@ _package-headers() {
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
   # required when DEBUG_INFO_BTF_MODULES is enabled
-  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+#  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
   cp -t "$builddir" -a include
@@ -700,7 +698,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('2be32a40b9be35a914166ab1de096ffdb50872366219e17471789a59e43b50bf'
-            '81f365d70f4d856dd0694af70a434f55fb88da00f110bb4e4b74ac0992e6be0c'
+            'ddab31ab1bd7aa5b00c932a4a16ce93ec7a34fe2e0fa371277280b52a88a515b'
             '7b7e4c699be5fa0871dc7cf4e23cc497eb11a1db547576eaadea186483dad4c9'
             '4f5f368f9ac356c19b3d40fd0eeea51010503375a4c61c4de1e766f528b04aee'
             '4d592e6bd49ae19db05d758130ae1b6f3bb081923a7b6df0b946ea0f4524168e'
@@ -718,6 +716,7 @@ sha256sums=('2be32a40b9be35a914166ab1de096ffdb50872366219e17471789a59e43b50bf'
             '8c2e3ce0874a23e4d8df419f79dd1d045ef349bbe1474717e9455c8197f41c4e'
             '731a9303e2aeb4535c90bf1cbadee65b3dcaaf38434fcf2dd750ba7d44686d21'
             '9a22cd0f1dab0e6d970a7215641d7409b756b14740904501f95c5aef29d15f89'
+            'b3a46271fe16d6136bf71d1a149cfe0e0968e9c8732946d8eb7a4a91413c1ea5'
             '1539b1786e8a57c441f4028fc7c64de59d926ad107b44dcad74a72ff9638870f'
             '6c2737225c46c8776022eede29753fea10547cfd1a0c38dcab628be7a4d7c126'
             'c5708a87606591153091e7ce1a1c04a6f9dc9b123ec71b2bf2f849d51b3a2dc4'
