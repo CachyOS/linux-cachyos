@@ -133,7 +133,7 @@ else
   pkgbase=linux-cachyos-cacule
 fi
 _major=5.16
-_minor=4
+_minor=5
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -144,7 +144,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=3
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -175,7 +175,7 @@ source=(
   "${_patchsource}/0001-lru-le9-patches.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-net-patches.patch"
-  "${_patchsource}/0001-fixes-misc-futex.patch"
+  "${_patchsource}/0001-fixes.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-f2fs-xfs-ext4-btrfs.patch"
   "${_patchsource}/0001-zstd-patches.patch"
@@ -698,9 +698,9 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('2be32a40b9be35a914166ab1de096ffdb50872366219e17471789a59e43b50bf'
+sha256sums=('ecaeedd9d289934f97c572aa965b6959d4d47f9789220e4fc3fbb525d8f1c7ab'
             'ddab31ab1bd7aa5b00c932a4a16ce93ec7a34fe2e0fa371277280b52a88a515b'
-            '787979822d8a92a613e44c46230d5b46600f365f775fdb14fa704f2374e3d064'
+            '0c0fd7e061e326ab36157054a5ff7dab1bb9da87de6cc5709b38f42608e44903'
             '480a3399d346b5fe053708a458ba63ae4a074d925114896f899740198bf809f2'
             '4f5f368f9ac356c19b3d40fd0eeea51010503375a4c61c4de1e766f528b04aee'
             '4d592e6bd49ae19db05d758130ae1b6f3bb081923a7b6df0b946ea0f4524168e'
@@ -714,7 +714,7 @@ sha256sums=('2be32a40b9be35a914166ab1de096ffdb50872366219e17471789a59e43b50bf'
             'ff4215e6078864b9e556c3ceedbee8d6881b280755fcfbb97771148ebf05ef53'
             '5332ffc19ab2a50b162e07de425d60e473bb8b5be411ae669bae3471653f161f'
             'db0d2fde8f1e994fbb4eb37c8affa3f0b339aa658f9ab5003bb2ce453a68ab95'
-            '0cfa42cb2504720b578a74ee20a3c272bf892e754b59f8282bcf78610e94eb4c'
+            'dd23555365fb200b0b6ed0af4eb3115fc71a986977a7db329c4459dfef7f69b3'
             '8c2e3ce0874a23e4d8df419f79dd1d045ef349bbe1474717e9455c8197f41c4e'
             '731a9303e2aeb4535c90bf1cbadee65b3dcaaf38434fcf2dd750ba7d44686d21'
             '9a22cd0f1dab0e6d970a7215641d7409b756b14740904501f95c5aef29d15f89'
