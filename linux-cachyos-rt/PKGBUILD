@@ -137,8 +137,8 @@ _minor=4
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 _stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -702,7 +702,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 
-md5sums=('e6680ce7c989a3efe58b51e3f3f0bf93'
+md5sums=('4a6796ff9e020abb3666d40775ab4867'
          'd67b2835b28bc538b42056585937e846'
          '6ecf0e31a09b784007c1ed4167ba66bc'
          '3cbc8878b3125172907140b12b977715'
