@@ -144,7 +144,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -158,7 +158,7 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.
 source=(
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
-  "${_patchsource}/sched/0001-prjc.patch"
+  "${_patchsource}/sched/0001-pjrc.patch"
   #  "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
   #  "${_patchsource}/sched/0001-bore-sched.patch"
   #  "${_patchsource}/sched/0001-tt.patch"
@@ -166,22 +166,23 @@ source=(
   "${_patchsource}/0001-amdpstate.patch"
   "${_patchsource}/0001-anbox.patch"
   "${_patchsource}/0001-bbr2-patches.patch"
+  "${_patchsource}/0001-boot.patch"
+  "${_patchsource}/misc/0001-cc.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
+  "${_patchsource}/misc/0010-ELF.patch"
+  "${_patchsource}/0001-fortify-gcc-fix.patch"
+  "${_patchsource}/0001-fixes.patch"
+  "${_patchsource}/0001-f2fs-xfs-ext4-btrfs.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-lru-le9-patches.patch"
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-net-patches.patch"
-  "${_patchsource}/0001-fixes.patch"
   "${_patchsource}/0001-pf-patches.patch"
-  "${_patchsource}/0001-f2fs-xfs-ext4-btrfs.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
-  "${_patchsource}/misc/0001-cc.patch"
-  "${_patchsource}/misc/0010-ELF.patch"
-  #  "${_patchsource}/0001-zen-patches.patch"
-  "${_patchsource}/0001-fortify-gcc-fix.patch"
+  "${_patchsource}/0001-xanmod-patches.patch"
   "auto-cpu-optimization.sh"
 )
 #if [ -n "$_use_pgo" ]; then
