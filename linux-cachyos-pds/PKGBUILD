@@ -127,7 +127,7 @@ else
   pkgbase=linux-cachyos-pds
 fi
 _major=5.16
-_minor=6
+_minor=7
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -689,7 +689,7 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('5aec93459d97470e77b66fb5b08738ca61fca9e7843b2f81d10d4a48bb3a16d0'
+sha256sums=('5751f53e8e5415eb0494ac1513765cbdea28848963999dfdb5d4e7f4c3d8a6cd'
             'ddab31ab1bd7aa5b00c932a4a16ce93ec7a34fe2e0fa371277280b52a88a515b'
             '7b7e4c699be5fa0871dc7cf4e23cc497eb11a1db547576eaadea186483dad4c9'
             '4f5f368f9ac356c19b3d40fd0eeea51010503375a4c61c4de1e766f528b04aee'
