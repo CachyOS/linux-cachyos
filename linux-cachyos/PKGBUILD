@@ -128,7 +128,7 @@ else
   pkgbase=linux-cachyos
 fi
 _major=5.16
-_minor=5
+_minor=6
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -139,7 +139,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=2
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -162,17 +162,15 @@ source=(
   "${_patchsource}/0001-anbox.patch"
   "${_patchsource}/0001-bbr2-patches.patch"
   "${_patchsource}/0001-boot.patch"
-  "${_patchsource}/misc/0001-cc.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/misc/0010-ELF.patch"
-  "${_patchsource}/0001-fortify-gcc-fix.patch"
-  "${_patchsource}/0001-fixes.patch"
+  "${_patchsource}/0001-misc-new.patch"
   "${_patchsource}/0001-f2fs-xfs-ext4-btrfs.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-lru-le9-patches.patch"
-  "${_patchsource}/0001-misc.patch"
+  "${_patchsource}/0001-hwmon-patches.patch"
   "${_patchsource}/0001-net-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
@@ -692,27 +690,25 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('ecaeedd9d289934f97c572aa965b6959d4d47f9789220e4fc3fbb525d8f1c7ab'
+sha256sums=('5aec93459d97470e77b66fb5b08738ca61fca9e7843b2f81d10d4a48bb3a16d0'
             'ddab31ab1bd7aa5b00c932a4a16ce93ec7a34fe2e0fa371277280b52a88a515b'
             '4f5f368f9ac356c19b3d40fd0eeea51010503375a4c61c4de1e766f528b04aee'
             '4d592e6bd49ae19db05d758130ae1b6f3bb081923a7b6df0b946ea0f4524168e'
             '0b64f616404ed70757f423c879bf3edf51525bfdb78f7ec8f1ae21412d9e8a2a'
             'bc91fa787a28516b317fdd9e038ed2c10b61703a9848c1a9ad286e92d51c97be'
             '8c2409c3ffc915cc3b8357c980fd6b66fb12ce122aa88f04e6f04ed43bf67cec'
-            '1539b1786e8a57c441f4028fc7c64de59d926ad107b44dcad74a72ff9638870f'
             'eb57a61e3c1bf2966211f02a9ae080c3af4c7faf3f706821440e324a70d0cd20'
             '7936b61ba25f03597fd563be82c31a5756d8a82c893f69a2d569f99d375b1362'
             '915e992ed5ba2551ca648e4aa7340e9f250f6b7806287a061c1c8e40b1dc348b'
             '6c2737225c46c8776022eede29753fea10547cfd1a0c38dcab628be7a4d7c126'
-            'c5708a87606591153091e7ce1a1c04a6f9dc9b123ec71b2bf2f849d51b3a2dc4'
-            'dd23555365fb200b0b6ed0af4eb3115fc71a986977a7db329c4459dfef7f69b3'
+            '6c0c0db81dc8cf7380f5a140f43fe400d1187a05782ff2b3623d920df4881d0c'
             '295c21ee0ee3d4362305b334f74f30be11bcbaf0b7e4fc09cc46fb16ba946c60'
             'e2d99ace9b54021c5ef53b4b51716816172d6304f6a823b88d5b4e9a68562aef'
             'ff4215e6078864b9e556c3ceedbee8d6881b280755fcfbb97771148ebf05ef53'
-            '5332ffc19ab2a50b162e07de425d60e473bb8b5be411ae669bae3471653f161f'
+            '55c025c063b0c7115b892fb6dab863bf85de1bfc93962841883eff7fc36d93b0'
             'db0d2fde8f1e994fbb4eb37c8affa3f0b339aa658f9ab5003bb2ce453a68ab95'
             '8c2e3ce0874a23e4d8df419f79dd1d045ef349bbe1474717e9455c8197f41c4e'
-            '9a22cd0f1dab0e6d970a7215641d7409b756b14740904501f95c5aef29d15f89'
+            '706f3b04cbce6e5e213d082694117d5fe96cdac9ccaed71e0a9f02ab62d2f431'
             'b3a46271fe16d6136bf71d1a149cfe0e0968e9c8732946d8eb7a4a91413c1ea5'
             '39a98308126050de9e250f16cfc9ae8b04fd40962ae106f1ebec59baeedae8c5'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
