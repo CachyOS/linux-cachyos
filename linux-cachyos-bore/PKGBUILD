@@ -139,7 +139,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -253,6 +253,7 @@ prepare() {
   elif [ "$_cpusched" = "bore" ]; then
     echo "Selecting BORE Scheduler..."
     scripts/config --disable CONFIG_SCHED_ALT
+    scripts/config --enable CONFIG_SCHED_BORE
   elif [ "$_cpusched" = "cfs" ]; then
     echo "Selecting Completely Fair Scheduler..."
     scripts/config --disable CONFIG_SCHED_ALT
@@ -691,7 +692,7 @@ done
 
 sha256sums=('5751f53e8e5415eb0494ac1513765cbdea28848963999dfdb5d4e7f4c3d8a6cd'
             'ddab31ab1bd7aa5b00c932a4a16ce93ec7a34fe2e0fa371277280b52a88a515b'
-            '637df0ee23713ea36dfb42ddc8282770cc0cae9602dc741e650be53a8d80315f'
+            '48fedf231e1b458b95badc0bf0ea994a0478e8abb5267a44f7683e7ccb866b43'
             '4f5f368f9ac356c19b3d40fd0eeea51010503375a4c61c4de1e766f528b04aee'
             '4d592e6bd49ae19db05d758130ae1b6f3bb081923a7b6df0b946ea0f4524168e'
             '0b64f616404ed70757f423c879bf3edf51525bfdb78f7ec8f1ae21412d9e8a2a'
