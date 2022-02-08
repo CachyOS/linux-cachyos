@@ -149,12 +149,9 @@ arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
 options=('!strip')
-makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
-'graphviz' 'imagemagick' 'pahole' 'cpio' 'perl' 'tar' 'xz')
+makedepends=('bc' 'kmod' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'xmlto' 'git' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch')
 if [ -n "$_use_llvm_lto" ]; then
   depends=(clang llvm lld python)
-fi
-if [ -n "$_use_llvm_lto" ]; then
   makedepends+=(clang llvm lld python)
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16"
