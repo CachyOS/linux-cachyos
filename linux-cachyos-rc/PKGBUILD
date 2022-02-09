@@ -137,7 +137,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=0.2
+pkgrel=0.3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -154,6 +154,7 @@ source=(
 #  "${_patchsource}/sched/0001-cacULE-5.17.patch"
 #  "${_patchsource}/sched/0001-bore-sched.patch"
 #  "${_patchsource}/sched/0001-tt.patch"
+  "${_patchsource}/0001-cachy.patch"
   "${_patchsource}/0001-numa-balanc.patch"
   "${_patchsource}/0001-anbox.patch"
   "${_patchsource}/0001-asus-ec.patch"
@@ -684,6 +685,7 @@ done
 
 sha256sums=('21b7b7d87dab777dc0e27de99bd167797b774be08b594f384839e54fd62cc217'
             '2e77950d09237a2d18cd6d5662ac9952230c3cdedf9c2718d91a8748b45801e6'
+            '80b03a4c65fc49a7059c5f0c31f2b58359c0faabcc960daffd19b5d2fa025cfe'
             '891d29f5edf1cba2336e12d77f294c5dc6603c164caed9ab01574d480c98a256'
             'b81d81435984662cc5948e5e26389402d6803ceb4cd3fe346f632fdf4c81f9ed'
             'af8e5e015be13494314a270c52e67b23892e6683926c295a89f780ccf8454e04'
