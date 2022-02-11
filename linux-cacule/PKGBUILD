@@ -139,7 +139,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -697,7 +697,7 @@ sha256sums=('1660e7228ec299c187c19739d115ded97f6b1be05a24986c4c443e7c5e8b744f'
             '38e66c9722b9918f6d79876065a4dc17c20215387bab2a3722ae0b8d8b9a3d45'
             '80b03a4c65fc49a7059c5f0c31f2b58359c0faabcc960daffd19b5d2fa025cfe'
             'd471337542fbdab0eef9169fba9a85879847e07797153ea845bee90b7facf3fa'
-            '4d592e6bd49ae19db05d758130ae1b6f3bb081923a7b6df0b946ea0f4524168e'
+            '0345336d0a3f1b5f2da2c6689a736f59d1dfa090a2b9cd54e7e38ff451bde7ac'
             '0b64f616404ed70757f423c879bf3edf51525bfdb78f7ec8f1ae21412d9e8a2a'
             'bc91fa787a28516b317fdd9e038ed2c10b61703a9848c1a9ad286e92d51c97be'
             '8c2409c3ffc915cc3b8357c980fd6b66fb12ce122aa88f04e6f04ed43bf67cec'
