@@ -133,7 +133,7 @@ else
   pkgbase=linux-cachyos-rt
 fi
 _major=5.16
-_minor=4
+_minor=9
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}

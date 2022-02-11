@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-rt
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.16.4
+	pkgver = 5.16.9
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -24,7 +24,7 @@ pkgbase = linux-cachyos-rt
 	makedepends = make
 	makedepends = patch
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.16.4.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.16.9.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/RT/0001-5.16-RT.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16/0001-arch-patches.patch
