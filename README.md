@@ -23,7 +23,8 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Improved BFQ Scheduler
 - Back-ported patches from linux-next
 - General improved sysctl settings and upstream scheduler fixes
-- Latest LRU Patch-set
+- Latest LRU Patch-set, default disabled
+- Damon Reclaim enabled at default
 - BBRv2 tcp_congestion_control
 - LLVM ThinLTO provided with \*-lto Kernel (in the cachyos-repo)
 - LRNG Framework (default enabled)
@@ -31,11 +32,10 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Android ANBOX patch-set
 - page-table-patch included
 - Latest & improved ZSTD patch-set
-- Some Security related patches. More here: [Fork-Brute](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-security-patches.patch) [spectre](https://github.com/ptr1337/kernel-patches/blob/master/5.15/0001-spectre-patches.patch)
 - Latest BTRFS improvements & fixes
 - KSMBD Module for Samba3 Server
 - Using the latest MG-LRU v5 patch paired with and the new implemented damon.
-- AMD PSTATEv7 Driver
+- AMD PSTATEv8 Driver
 - Clearlinux Patchset
 - Control Flow Integrity (CFI) slectable when using LLVM
 - experimental PGO building selectable (at the moment not working)

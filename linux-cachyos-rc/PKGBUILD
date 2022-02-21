@@ -128,7 +128,7 @@ fi
 _major=5.17
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc4
+_rcver=rc5
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -148,16 +148,14 @@ if [ -n "$_use_llvm_lto" ]; then
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17"
 source=(
-  "https://github.com/torvalds/linux/archive/refs/tags/v5.17-rc3.tar.gz"
+  "https://github.com/torvalds/linux/archive/refs/tags/v5.17-rc5.tar.gz"
   "config"
 #  "${_patchsource}/sched/0001-prjc.patch"
 #  "${_patchsource}/sched/0001-cacULE-5.17.patch"
 #  "${_patchsource}/sched/0001-bore-sched.patch"
 #  "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-cachy.patch"
-  "${_patchsource}/0001-numa-balanc.patch"
   "${_patchsource}/0001-anbox.patch"
-  "${_patchsource}/0001-asus-ec.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
@@ -166,7 +164,6 @@ source=(
   "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-spf-anon.patch"
   "${_patchsource}/0001-pf-patches.patch"
-  "${_patchsource}/0001-futex.patch"
   "${_patchsource}/0001-zstd-patches.patch"
 #  "${_patchsource}/0001-zen-patches.patch"
 #  "${_patchsource}/0001-FG-KASLR.patch"
