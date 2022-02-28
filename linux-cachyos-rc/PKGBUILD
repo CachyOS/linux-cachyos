@@ -52,9 +52,6 @@ _per_gov=y
 ### Enable TCP_CONG_BBR2
 _tcp_bbr2=y
 
-#enable winesync
-_winesync=y
-
 ### Running with a 1000HZ, 750Hz or  500HZ tick rate
 _1k_HZ_ticks=
 _750_HZ_ticks=y
@@ -78,9 +75,6 @@ _page_table_check=
 
 ### Enable DAMON
 _damon=y
-
-### Enable Linux Random Number Generator
-_lrng_enable=y
 
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
@@ -128,7 +122,7 @@ fi
 _major=5.17
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc5
+_rcver=rc6
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -148,25 +142,25 @@ if [ -n "$_use_llvm_lto" ]; then
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17"
 source=(
-  "https://github.com/torvalds/linux/archive/refs/tags/v5.17-rc5.tar.gz"
+  "https://github.com/torvalds/linux/archive/refs/tags/v5.17-rc6.tar.gz"
   "config"
-#  "${_patchsource}/sched/0001-prjc.patch"
-#  "${_patchsource}/sched/0001-cacULE-5.17.patch"
-#  "${_patchsource}/sched/0001-bore-sched.patch"
-#  "${_patchsource}/sched/0001-tt.patch"
+  #  "${_patchsource}/sched/0001-prjc.patch"
+  #  "${_patchsource}/sched/0001-cacULE-5.17.patch"
+  #  "${_patchsource}/sched/0001-bore-sched.patch"
+  #  "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-cachy.patch"
   "${_patchsource}/0001-anbox.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-cpu.patch"
+  "${_patchsource}/0001-fortify.patch"
   "${_patchsource}/0001-clearlinux.patch"
+  "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-MG-LRU-v7.patch"
-  "${_patchsource}/0001-misc.patch"
   "${_patchsource}/0001-spf-anon.patch"
-  "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-zstd-patches.patch"
-#  "${_patchsource}/0001-zen-patches.patch"
-#  "${_patchsource}/0001-FG-KASLR.patch"
+  #  "${_patchsource}/0001-zen-patches.patch"
+  #  "${_patchsource}/0001-FG-KASLR.patch"
   "auto-cpu-optimization.sh"
 )
 #if [ -n "$_use_pgo" ]; then
@@ -378,12 +372,12 @@ prepare() {
   fi
 
   ### Enable multigenerational LRU
-    if [ -n "$_page_table_check" ]; then
-      echo "Enabling Page-Table-Check..."
-      scripts/config --enable CONFIG_PAGE_TABLE_CHECK
-      scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
-      scripts/config --enable CONFIG_ARCH_SUPPORTS_PAGE_TABLE_CHECK
-    fi
+  if [ -n "$_page_table_check" ]; then
+    echo "Enabling Page-Table-Check..."
+    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
+    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
+    scripts/config --enable CONFIG_ARCH_SUPPORTS_PAGE_TABLE_CHECK
+  fi
 
   ### Enable multigenerational LRU
   if [ -n "$_lru_enable" ]; then
@@ -607,7 +601,7 @@ _package-headers() {
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
   # required when DEBUG_INFO_BTF_MODULES is enabled
-#  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
   cp -t "$builddir" -a include
@@ -680,17 +674,17 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('f58de0f77ae34aefb6fec5c4942251194db6fb6522f91d4554c4ab4dbda8c133'
-            '2e77950d09237a2d18cd6d5662ac9952230c3cdedf9c2718d91a8748b45801e6'
-            '5fed5032d896ac3b98b69eb001d1f454d4f625013c55f7eb3fd6a8e81259018d'
+sha256sums=('275126af98e8c8b8334605413bf604aa924848515d811b63d272df838adf1525'
+            'fc31cb0a6634f571de23f62e2ead1ba1214117202e9978d557450f725d7e7bce'
+            'cbd65e8ed6949034d15d42288579a2e32576bda34eb32a83cc8c47244ca0e032'
             'b81d81435984662cc5948e5e26389402d6803ceb4cd3fe346f632fdf4c81f9ed'
             '7da6bf2368260a8f3cc1c974b6d94ffb8a2a223a66292828ebd8f54c9b85af06'
             'fbc98ae990ef1f75ac5a11eb822e01503b5cc09b412f3b3d2e03adde04123068'
             '4c7eb0d2b3c83ddc05f65463142270466e078833842af13fa96eb2d7e0b9a124'
+            '80f74815a4aef568018f8480830f51e958c1e1d8f5cd3a84e67d396e0ccb658b'
             'd027022d216dcc26ab7f47f803ee3a2aab42e6d28b5f268045a9f000547c8490'
+            '2f6afbd6c031f0656e9945d5cf7c6e6e778053a545d701136a3fb9bf87d0eec9'
             'c59b277dfdea2a4dad2b3c619d2f14d852be6d53833a258e81f2fde58a381f03'
-            '06a9e161821d36e2d90e1f52b7a504dcf04fceedd3eafb8afd18d5bb6dc9e159'
             'fd1e21ce297cccec7dd81d249180d9e3e1a9775fa8ab0e850d24730d0776bf01'
-            'a52767f212739fd124df348689d92f6386b6bc90fb8941130ef365a3c5ef3b93'
             '7f935d4825360fb5cf0e09618417c9b69c5e772cf26337c43c9e35a33f44fdc3'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
