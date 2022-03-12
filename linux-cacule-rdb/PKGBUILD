@@ -128,7 +128,7 @@ else
   pkgbase=linux-cacule-rdb
 fi
 _major=5.16
-_minor=11
+_minor=14
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -138,7 +138,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
-pkgdesc='Linux cacULE scheduler Kernel by CachyOS and with some other patches and other improvements'
+pkgdesc='Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and other improvements'
 pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -157,7 +157,7 @@ source=(
   #  "${_patchsource}/sched/0001-bore-sched.patch"
   #  "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-cachy.patch"
-  "${_patchsource}/0001-arch-patches-v3.patch"
+  "${_patchsource}/0001-arch-patches.patch"
   "${_patchsource}/0001-amdpstate.patch"
   "${_patchsource}/0001-anbox.patch"
   "${_patchsource}/0001-bbr2-patches.patch"
@@ -165,7 +165,6 @@ source=(
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-misc-new.patch"
-  "${_patchsource}/0001-fs-patches.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-MG-LRU-v7.patch"
   "${_patchsource}/0001-hwmon-patches.patch"
@@ -688,11 +687,11 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('6d186158a4c44a4df438e0286ee8186f1cc9cc9d8a909d4c3e25a4f7eca8b023'
+sha256sums=('7a8ba58659d5e5f0f9e1e0a4fbed39ac520149d24d7aec4636fcf8255d0574f6'
             '6495856b1bf8c5ba25adcc6475d4db9427768c41ef62f1973ee282ca94a08c27'
             '480a3399d346b5fe053708a458ba63ae4a074d925114896f899740198bf809f2'
             '80b03a4c65fc49a7059c5f0c31f2b58359c0faabcc960daffd19b5d2fa025cfe'
-            'ce09040d772f2dcba2623b6b3267e9a58a7f67ec6efc630c1147810db847e608'
+            'cb2e0418a5ce0ddd97dd918f1d8faa7d1f8881a98ddc024c128872478ba59261'
             '438e51bd4bfdf94f332dd5c6da70d3b1f0817f86307a0874c94cd8fc6665a06b'
             '0b64f616404ed70757f423c879bf3edf51525bfdb78f7ec8f1ae21412d9e8a2a'
             'bc91fa787a28516b317fdd9e038ed2c10b61703a9848c1a9ad286e92d51c97be'
@@ -700,12 +699,11 @@ sha256sums=('6d186158a4c44a4df438e0286ee8186f1cc9cc9d8a909d4c3e25a4f7eca8b023'
             '7936b61ba25f03597fd563be82c31a5756d8a82c893f69a2d569f99d375b1362'
             '915e992ed5ba2551ca648e4aa7340e9f250f6b7806287a061c1c8e40b1dc348b'
             '9601ce74ce4c5473c220687e5c16437daa6b4f0fcd7cb1d2c51c14715ab12de1'
-            '17b34ae091f31b0a4e7c3576a258f6cbba3fd9db7c7a1f16bedf831d7dd83436'
             'e2d99ace9b54021c5ef53b4b51716816172d6304f6a823b88d5b4e9a68562aef'
             '85f753cbd1936f1f118f53b83bd9ab266d08eda6a630b5821e049c15f02bcbe4'
             '7396f66133bc88f072c03b47ff2b4731b8664a197a4e6873a0fd598f1ea3369e'
             'db0d2fde8f1e994fbb4eb37c8affa3f0b339aa658f9ab5003bb2ce453a68ab95'
-            '4cfa719610773898f75f07b741307b8bda46d5717f288dcfc09298915a2a8afe'
+            '226c403e970bed50a19dabdbacf5a8b2dc8036c665ee903e6fa5392c5d372be1'
             '706f3b04cbce6e5e213d082694117d5fe96cdac9ccaed71e0a9f02ab62d2f431'
             'b3a46271fe16d6136bf71d1a149cfe0e0968e9c8732946d8eb7a4a91413c1ea5'
             '39a98308126050de9e250f16cfc9ae8b04fd40962ae106f1ebec59baeedae8c5'
