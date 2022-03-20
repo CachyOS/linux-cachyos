@@ -122,7 +122,7 @@ else
   pkgbase=linux-bore
 fi
 _major=5.16
-_minor=15
+_minor=16
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -682,8 +682,8 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('8f30c408e0b360def95777edd340b99916f66b27e1fa5121c3368639af0d24d6'
-            '5e5e1de998faa4e761225c22c4b0b6cb750682ef6570fc74cf65b44852804e48'
+sha256sums=('cca7d6e053e33f44af1b39f7becec73a387911d81ede5a84ecf671692533138f'
+            'a52ed7ba32952851ddd4cb562ff3b685f3abd594a679abc67185d51c961a8099'
             '01f025337fff24c6b929d307c0e1ea82275578046b3c21601ca4f63047af44a1'
             '80b03a4c65fc49a7059c5f0c31f2b58359c0faabcc960daffd19b5d2fa025cfe'
             'cb2e0418a5ce0ddd97dd918f1d8faa7d1f8881a98ddc024c128872478ba59261'
