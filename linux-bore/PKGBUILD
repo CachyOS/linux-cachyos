@@ -24,7 +24,7 @@ _makenconfig=
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
-_NUMAdisable=y
+_NUMAdisable=
 
 # Compile ONLY used modules to VASTLYreduce the number of modules built
 # and the build time.
@@ -52,9 +52,6 @@ _per_gov=y
 ### Enable TCP_CONG_BBR2
 _tcp_bbr2=y
 
-#enable winesync
-_winesync=y
-
 ### Running with a 1000HZ, 750Hz or  500HZ tick rate
 _1k_HZ_ticks=
 _750_HZ_ticks=y
@@ -73,11 +70,8 @@ _mm_protect=y
 ### Enable multigenerational LRU
 _lru_enable=y
 
-## Enable Page-Table-Check
-#_page_table_check=y
-
 ### Enable DAMON
-_damon=y
+_damon=
 
 ### Enable Linux Random Number Generator
 _lrng_enable=y
@@ -95,6 +89,12 @@ _use_optimization_select=
 _zstd_level='ultra'
 
 ### Selecting the ZSTD module compression level
+# If you want to use ZSTD compression,
+# first install mkinitcpio-zstd:
+# https://gitlab.com/sirlucjan/lucjan-kernels/tree/master/depends
+# or
+# https://github.com/sirlucjan/lucjan-kernels/tree/master/depends
+# ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
 # 'normal' - standard compression ratio
 # WARNING: the ultra settings can sometimes
@@ -121,18 +121,18 @@ if [ -n "$_use_llvm_lto" ]; then
 else
   pkgbase=linux-bore
 fi
-_major=5.16
-_minor=16
+_major=5.17
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
 _stable=${_major}.${_minor}
 #_stable=${_major}
 #_stablerc=${_major}-${_rcver}
-_srcname=linux-${_stable}
-#_srcname=linux-${_major}
+#_srcname=linux-${_stable}
+_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
-pkgdesc='Linux BORE scheduler Kernel by CachyOS with some other patches and other improvements'
+pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
 pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -142,31 +142,31 @@ makedepends=('bc' 'kmod' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'xmlt
 if [ -n "$_use_llvm_lto" ]; then
   depends=(clang llvm lld python)
 fi
-_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.16"
+_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17"
 source=(
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
   #  "${_patchsource}/sched/0001-pjrc.patch"
-  #  "${_patchsource}/sched/0001-cacULE-5.16-full.patch"
+  #  "${_patchsource}/sched/0001-cacULE.patch"
   "${_patchsource}/sched/0001-bore-sched.patch"
   #  "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-cachy.patch"
-  "${_patchsource}/0001-arch-patches.patch"
-  "${_patchsource}/0001-amdpstate.patch"
   "${_patchsource}/0001-anbox.patch"
-  "${_patchsource}/0001-bbr2-patches.patch"
+  "${_patchsource}/0001-block-patches.patch"
+  "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-cfi.patch"
-  "${_patchsource}/0001-cpu.patch"
-  "${_patchsource}/0001-clearlinux.patch"
-  "${_patchsource}/0001-misc-new.patch"
+  "${_patchsource}/0001-kbuild.patch"
   "${_patchsource}/0001-lrng.patch"
-  "${_patchsource}/0001-MG-LRU-v7.patch"
-  "${_patchsource}/0001-hwmon-patches.patch"
-  "${_patchsource}/0001-net-patches.patch"
+  "${_patchsource}/0001-cpu.patch"
+  "${_patchsource}/0001-clearlinux-patches.patch"
   "${_patchsource}/0001-pf-patches.patch"
+  "${_patchsource}/0001-hwmon.patch"
+  "${_patchsource}/0001-MG-LRU.patch"
+  "${_patchsource}/0001-spf-lru-patches.patch"
+  "${_patchsource}/0001-ksm.patch"
+  "${_patchsource}/0001-xanmod.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
-  "${_patchsource}/0001-xanmod-patches.patch"
   "auto-cpu-optimization.sh"
 )
 #if [ -n "$_use_pgo" ]; then
@@ -244,7 +244,6 @@ prepare() {
   elif [ "$_cpusched" = "bore" ]; then
     echo "Selecting BORE Scheduler..."
     scripts/config --disable CONFIG_SCHED_ALT
-    scripts/config --enable CONFIG_SCHED_BORE
   elif [ "$_cpusched" = "cfs" ]; then
     echo "Selecting Completely Fair Scheduler..."
     scripts/config --disable CONFIG_SCHED_ALT
@@ -378,22 +377,18 @@ prepare() {
     scripts/config --set-val CONFIG_CLEAN_MIN_KBYTES 0
   fi
 
-  ### Enable multigenerational LRU
-  #  if [ -n "$_page_table_check" ]; then
-  #    echo "Enabling Page-Table-Check..."
-  #    scripts/config --enable CONFIG_PAGE_TABLE_CHECK
-  #    scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
-  #    scripts/config --enable CONFIG_ARCH_SUPPORTS_PAGE_TABLE_CHECK
-  #  fi
+  ### Enable SPF
+  if [ -n "$_spf_enable" ]; then
+    echo "Enabling multigenerational LRU..."
+    scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
+  fi
 
   ### Enable multigenerational LRU
   if [ -n "$_lru_enable" ]; then
     echo "Enabling multigenerational LRU..."
     scripts/config --enable CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG
     scripts/config --enable CONFIG_LRU_GEN
-    scripts/config --set-val CONFIG_NR_LRU_GENS 7
-    scripts/config --set-val CONFIG_TIERS_PER_GEN 4
-    scripts/config --disable CONFIG_LRU_GEN_ENABLED
+    scripts/config --enable CONFIG_LRU_GEN_ENABLED
     scripts/config --disable CONFIG_LRU_GEN_STATS
   fi
 
@@ -682,24 +677,24 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('cca7d6e053e33f44af1b39f7becec73a387911d81ede5a84ecf671692533138f'
-            'a52ed7ba32952851ddd4cb562ff3b685f3abd594a679abc67185d51c961a8099'
+sha256sums=('555fef61dddb591a83d62dd04e252792f9af4ba9ef14683f64840e46fa20b1b1'
+            '51654d70390531e21c8fccd785c1304291b329e97f372bc680e7823d3918cb32'
             '01f025337fff24c6b929d307c0e1ea82275578046b3c21601ca4f63047af44a1'
-            '80b03a4c65fc49a7059c5f0c31f2b58359c0faabcc960daffd19b5d2fa025cfe'
-            'cb2e0418a5ce0ddd97dd918f1d8faa7d1f8881a98ddc024c128872478ba59261'
-            '438e51bd4bfdf94f332dd5c6da70d3b1f0817f86307a0874c94cd8fc6665a06b'
-            '0b64f616404ed70757f423c879bf3edf51525bfdb78f7ec8f1ae21412d9e8a2a'
-            'bc91fa787a28516b317fdd9e038ed2c10b61703a9848c1a9ad286e92d51c97be'
-            'eb57a61e3c1bf2966211f02a9ae080c3af4c7faf3f706821440e324a70d0cd20'
-            '7936b61ba25f03597fd563be82c31a5756d8a82c893f69a2d569f99d375b1362'
-            '915e992ed5ba2551ca648e4aa7340e9f250f6b7806287a061c1c8e40b1dc348b'
-            '9601ce74ce4c5473c220687e5c16437daa6b4f0fcd7cb1d2c51c14715ab12de1'
-            'e2d99ace9b54021c5ef53b4b51716816172d6304f6a823b88d5b4e9a68562aef'
-            '85f753cbd1936f1f118f53b83bd9ab266d08eda6a630b5821e049c15f02bcbe4'
-            '7396f66133bc88f072c03b47ff2b4731b8664a197a4e6873a0fd598f1ea3369e'
-            'db0d2fde8f1e994fbb4eb37c8affa3f0b339aa658f9ab5003bb2ce453a68ab95'
-            '226c403e970bed50a19dabdbacf5a8b2dc8036c665ee903e6fa5392c5d372be1'
-            'd90123825d8c2cbf110569134ed3769322d79d9dc78d57736889ddd6958c88b6'
-            'b3a46271fe16d6136bf71d1a149cfe0e0968e9c8732946d8eb7a4a91413c1ea5'
-            '39a98308126050de9e250f16cfc9ae8b04fd40962ae106f1ebec59baeedae8c5'
+            'cbd65e8ed6949034d15d42288579a2e32576bda34eb32a83cc8c47244ca0e032'
+            'b81d81435984662cc5948e5e26389402d6803ceb4cd3fe346f632fdf4c81f9ed'
+            '863d3627ef5eb474840a5847ee0b479a80e2521261b8ca3e0f71fcfb78a392b4'
+            'ec150c2d74c58de56ab230679fe4c27b63a8bb4180f57e1985ff7fe7dced0401'
+            'fbc98ae990ef1f75ac5a11eb822e01503b5cc09b412f3b3d2e03adde04123068'
+            'c8cc9414b0f63f088942db5b1051e28a3e097313631fc0762138a0ec1f849613'
+            '3439e178798812c2f6d72b2e6e596b7869f4bf9b1e6fce4688359fc6ef0303d9'
+            'd8be9d58186b09cd6d8ac0633889e9483f88c59702579b26d45d0a42a906de8f'
+            '6ebfc99cf7c82adee6e8cfe4cb54c78f9cd157ccf024da06dfca22708129bdc9'
+            '83cf18b9f0aaea76b828258d6fd040eacc416d52cb6cbb5d2cb52257f0fb0b4c'
+            '9675c0ab1914bc9d31b520089bd40e8d5f311f6d481e737f7f3f6e122e7c4eb4'
+            'ba9c6058daafa76dfe8585da638da6434d2f7ce65b54623a002b6581a0ad553a'
+            '02f29a2326e4cbffd12a01b6ab01d401af04f134ece970f60c1411962172f867'
+            'b230bab0efeddd7044d820a4109982d636d07ff07866123eb430535573143e30'
+            '66c4c8935a995f552fa612ad8d039149559144c2ea5b54f873d7eebebd5c18f6'
+            '98bcd7467b0ac9c6f2db4b38c590bf6db7f6dbd58e66e56459efcb31329cb213'
+            '8490dd7d0b9f6731187e682e90e77fbd191533de339a008a8d5009046ef4f822'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
