@@ -19,7 +19,7 @@ _cpusched='cfs'
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=
+_makenconfig=y
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -65,7 +65,7 @@ _mq_deadline_disable=y
 _kyber_disable=y
 
 ### Enable protect file mappings under memory pressure
-_mm_protect=y
+_mm_protect=
 
 ### Enable multigenerational LRU
 _lru_enable=y
@@ -86,7 +86,7 @@ _use_optimization_select=
 # ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
 # 'normal' - standard compression ratio
-_zstd_level='ultra'
+_zstd_level='normal'
 
 ### Selecting the ZSTD module compression level
 # If you want to use ZSTD compression,
@@ -112,9 +112,6 @@ _use_llvm_lto=
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
 
-## Enable PGO (patch is failing when cfi is also used)
-#_use_pgo=
-
 
 if [ -n "$_use_llvm_lto" ]; then
   pkgbase=linux-cachyos-lto
@@ -133,7 +130,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with other patches and improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -148,30 +145,28 @@ source=(
   "config"
   #  "${_patchsource}/sched/0001-pjrc.patch"
   #  "${_patchsource}/sched/0001-cacULE.patch"
-  #  "${_patchsource}/sched/0001-bore-sched.patch"
+  # "${_patchsource}/sched/0001-bore-sched.patch"
   #  "${_patchsource}/sched/0001-tt.patch"
   "${_patchsource}/0001-cachy.patch"
   "${_patchsource}/0001-anbox.patch"
-  "${_patchsource}/0001-block-patches.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-cfi.patch"
   "${_patchsource}/0001-kbuild.patch"
   "${_patchsource}/0001-lrng.patch"
+  "${_patchsource}/0001-fast-headers.patch"
   "${_patchsource}/0001-cpu.patch"
-  "${_patchsource}/0001-clearlinux-patches.patch"
+  "${_patchsource}/0001-clr.patch"
   "${_patchsource}/0001-pf-patches.patch"
   "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-MG-LRU.patch"
-  "${_patchsource}/0001-spf-lru-patches.patch"
   "${_patchsource}/0001-ksm.patch"
-  "${_patchsource}/0001-xanmod.patch"
   "${_patchsource}/0001-zstd-patches.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
+  #  "${_patchsource}/0001-zen-patches.patch"
+  #  "${_patchsource}/0001-FG-KASLR.patch"
   "auto-cpu-optimization.sh"
 )
-#if [ -n "$_use_pgo" ]; then
-#  source+=("${_patchsource}/0001-PGO.patch")
-#fi
+#if [
 
 if [ -n "$_use_llvm_lto" ]; then
   BUILD_FLAGS=(
@@ -478,7 +473,7 @@ prepare() {
     scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22
   elif [ "$_zstd_module_level" = "normal" ]; then
     echo "Enabling standard ZSTD module compression ratio..."
-    scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL 19
+    scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL 9
     scripts/config --disable CONFIG_MODULE_COMPRESS_ZSTD_ULTRA
   else
     if [ -n "$_zstd_module_level" ]; then
@@ -678,22 +673,20 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('555fef61dddb591a83d62dd04e252792f9af4ba9ef14683f64840e46fa20b1b1'
-            '51654d70390531e21c8fccd785c1304291b329e97f372bc680e7823d3918cb32'
+            'a97a365b633338b87a869f86a0ae315fa39c672ca0303e7425e430f6b3bbbada'
             'cbd65e8ed6949034d15d42288579a2e32576bda34eb32a83cc8c47244ca0e032'
             'b81d81435984662cc5948e5e26389402d6803ceb4cd3fe346f632fdf4c81f9ed'
-            '863d3627ef5eb474840a5847ee0b479a80e2521261b8ca3e0f71fcfb78a392b4'
             'ec150c2d74c58de56ab230679fe4c27b63a8bb4180f57e1985ff7fe7dced0401'
             'fbc98ae990ef1f75ac5a11eb822e01503b5cc09b412f3b3d2e03adde04123068'
             'c8cc9414b0f63f088942db5b1051e28a3e097313631fc0762138a0ec1f849613'
             '3439e178798812c2f6d72b2e6e596b7869f4bf9b1e6fce4688359fc6ef0303d9'
+            '9baa40f901f2b8a9630377c2955a998afa3758bea2ebca3f26ca32ee2b57bbd5'
             'd8be9d58186b09cd6d8ac0633889e9483f88c59702579b26d45d0a42a906de8f'
-            '6ebfc99cf7c82adee6e8cfe4cb54c78f9cd157ccf024da06dfca22708129bdc9'
+            '8ea353787ab41f9d2566cc166d763b1cd4aa33a302df7f0f39c1a3a69aaa56e6'
             '83cf18b9f0aaea76b828258d6fd040eacc416d52cb6cbb5d2cb52257f0fb0b4c'
             '9675c0ab1914bc9d31b520089bd40e8d5f311f6d481e737f7f3f6e122e7c4eb4'
             'ba9c6058daafa76dfe8585da638da6434d2f7ce65b54623a002b6581a0ad553a'
-            '02f29a2326e4cbffd12a01b6ab01d401af04f134ece970f60c1411962172f867'
             'b230bab0efeddd7044d820a4109982d636d07ff07866123eb430535573143e30'
-            '66c4c8935a995f552fa612ad8d039149559144c2ea5b54f873d7eebebd5c18f6'
             '98bcd7467b0ac9c6f2db4b38c590bf6db7f6dbd58e66e56459efcb31329cb213'
             '8490dd7d0b9f6731187e682e90e77fbd191533de339a008a8d5009046ef4f822'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
