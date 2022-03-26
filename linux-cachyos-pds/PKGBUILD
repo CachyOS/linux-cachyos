@@ -13,7 +13,7 @@
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'cfs' - select 'Completely Fair Scheduler'
-_cpusched='bmq'
+_cpusched='pds'
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null to enable them
@@ -24,7 +24,7 @@ _makenconfig=
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
-_NUMAdisable=
+_NUMAdisable=y
 
 # Compile ONLY used modules to VASTLYreduce the number of modules built
 # and the build time.
@@ -71,7 +71,7 @@ _mm_protect=y
 _lru_enable=y
 
 ### Enable DAMON
-_damon=
+_damon=y
 
 ### Enable Linux Random Number Generator
 _lrng_enable=y
@@ -133,7 +133,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux PDS scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=4
+pkgrel=5
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -679,7 +679,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('555fef61dddb591a83d62dd04e252792f9af4ba9ef14683f64840e46fa20b1b1'
-            '78beeb5823cc1cf34f00dc5686a46d06852c047e3b302a423bcfe30b4b240b6b'
+            '12528c68981695b4b72c6c605f0a5405f032f24540467f164d5816ffee657542'
             '739897b9eeecf73232102b665f40ce26e57b631694ddcba9e81e84afc1bfa7aa'
             'b81d81435984662cc5948e5e26389402d6803ceb4cd3fe346f632fdf4c81f9ed'
             'ec150c2d74c58de56ab230679fe4c27b63a8bb4180f57e1985ff7fe7dced0401'
@@ -690,9 +690,9 @@ sha256sums=('555fef61dddb591a83d62dd04e252792f9af4ba9ef14683f64840e46fa20b1b1'
             '8ea353787ab41f9d2566cc166d763b1cd4aa33a302df7f0f39c1a3a69aaa56e6'
             'd8be9d58186b09cd6d8ac0633889e9483f88c59702579b26d45d0a42a906de8f'
             'c92373359de38b4ac831ab69f57c6bb962a14d214beba55593616c9077003aff'
-            'b12ca9780cdeda7f00f3928bd262b2b95ddd4000e83c1e0661742e537cdb8da7'
+            '6d392c1ac65810c5a532f107536919e8675436b34cea421c0a6052d28cf9c84e'
             '3439e178798812c2f6d72b2e6e596b7869f4bf9b1e6fce4688359fc6ef0303d9'
-            '83cf18b9f0aaea76b828258d6fd040eacc416d52cb6cbb5d2cb52257f0fb0b4c'
+            '0ee3af3d964de63c0f90fe4622b0b1ccfd240e547e797f3a4be8c1b1c0b0ea98'
             '9675c0ab1914bc9d31b520089bd40e8d5f311f6d481e737f7f3f6e122e7c4eb4'
             'ba9c6058daafa76dfe8585da638da6434d2f7ce65b54623a002b6581a0ad553a'
             '8490dd7d0b9f6731187e682e90e77fbd191533de339a008a8d5009046ef4f822'
