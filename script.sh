@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
 
 
