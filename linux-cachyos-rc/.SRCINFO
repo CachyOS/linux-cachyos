@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-rc-lto
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.18.rc1
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -37,6 +37,7 @@ pkgbase = linux-cachyos-rc-lto
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0005-cpu.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0006-fixes-miscellaneous.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0008-xanmod.patch
+	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0009-MG-LRU.patch
 	source = auto-cpu-optimization.sh
 	sha256sums = a7ae23d354937723b3ee65513c2707c02541a0553ae9a7d5c7136525335d4423
 	sha256sums = 788b05974c28d1166226a49e2c8dc67079321e5e44a5a0e164ad4bcc27edb809
@@ -47,6 +48,7 @@ pkgbase = linux-cachyos-rc-lto
 	sha256sums = a10698058fe1c3dfd48c555bf8a387214a7f4f7c19ee56eb58816f23206b4cdf
 	sha256sums = 9199053284b303fe0d2072cde279838536fb99447f46655e172f86e8db5c1488
 	sha256sums = 63a4687014b0bbf779fdcfc8405ff6325e375b1f7d60c97997f5f0a5f91ce820
+	sha256sums = 0d76e7afe41bcfbec5afc2b387036855adef49c22795055bfaf9e1b90b313b4f
 	sha256sums = 65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b
 
 pkgname = linux-cachyos-rc-lto
