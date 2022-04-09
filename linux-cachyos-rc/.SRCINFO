@@ -1,13 +1,13 @@
 pkgbase = linux-cachyos-rc-lto
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.18.rc1
-	pkgrel = 2
+	pkgrel = 3
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
 	license = GPL2
 	makedepends = bc
-	makedepends = kmod
+	makedepends = texlive-latexextra
 	makedepends = libelf
 	makedepends = pahole
 	makedepends = cpio

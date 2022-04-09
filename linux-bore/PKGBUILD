@@ -130,12 +130,12 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
 options=('!strip')
-makedepends=('bc' 'kmod' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'xmlto' 'git' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch')
+makedepends=('bc' 'texlive-latexextra' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'xmlto' 'git' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch')
 if [ -n "$_use_llvm_lto" ]; then
   depends=(clang llvm lld python)
 fi
@@ -586,8 +586,8 @@ _package() {
   echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
   echo "Installing modules..."
-  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
-
+  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+    DEPMOD=/doesnt/exist modules_install  # Suppress depmod
   # remove build and source links
   rm "$modulesdir"/{source,build}
 }
@@ -684,7 +684,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('2da20f8437cfe813ddee7dcb95e2c4e9e4e8f6168060c05787668ac3ff3f0b99'
-            '208053b92e0fa091096c056ff8c6b02254e6c544a970ca621093aad314dd1f2e'
+            '4c0791ba64d611421f76d7729ae3394d403351149da3eaa733e82d8f1b1f65b6'
             '9bcdb1bff0acc3ed43c985fb04e5df01aff17d16bdc4686e0daae0d7326230be'
             '01a80b483c4e0499fbd3f5ff8845ff49b7bd4ffdfd9b97ff38933a48e6f8cc8b'
             'b81d81435984662cc5948e5e26389402d6803ceb4cd3fe346f632fdf4c81f9ed'
