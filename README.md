@@ -19,26 +19,22 @@ The CachyOS are improved kernels which improve the performance and other improve
 - 5 Different scheduler are supported, CacULE-,CFS-,tt-,bmq-,bore-, and pds scheduler
 - GCC/CLANG Optimization with automatically found cpu arch or also selectable cpu arch
 - Choose between LLVM/LTO or GCC
-- Choose between 500Hz, , 600 Hz ,750Hz, 1000Hz
+- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz
 - Improved BFQ Scheduler
 - Back-ported patches from linux-next
 - General improved sysctl settings and upstream scheduler fixes
-- Latest LRU Patch-set, default disabled
+- Latest LRU Patch-set, default enabled
 - Damon Reclaim enabled at default
 - BBRv2 tcp_congestion_control
 - LLVM ThinLTO provided with \*-lto Kernel (in the cachyos-repo)
 - LRNG Framework (default enabled)
-- WINEFSYNC and the new futex wait v implementation (futex2) which will be upstream in 5.17
 - Android ANBOX patch-set
-- page-table-patch included
 - Latest & improved ZSTD patch-set
 - Latest BTRFS improvements & fixes
 - KSMBD Module for Samba3 Server
-- Using the latest MG-LRU v5 patch paired with and the new implemented damon.
-- AMD PSTATEv8 Driver
+- AMD PSTATE Driver enabled by default 
 - Clearlinux Patchset
-- Control Flow Integrity (CFI) slectable when using LLVM
-- experimental PGO building selectable (at the moment not working)
+- Control Flow Integrity (CFI) selectable when using LLVM
 
 ## Other distros
 
@@ -109,6 +105,16 @@ The CachyOS are improved kernels which improve the performance and other improve
 ## How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS:
 
 Not needed anymore, just install the latest dkms version (3.0.2).
+
+## Support 
+
+You can join the CachyOS Discord with the following link:
+
+<https://discord.gg/qJqj94uFwE>
+
+or at telegram:
+
+<https://t.me/+zCzPX4cAFjk1MTYy>
 
 ## Donations are welcome for the compile server for the repo or a cup of coffee for maintain this repo
 
