@@ -121,7 +121,7 @@ else
   pkgbase=linux-cacule
 fi
 _major=5.17
-_minor=2
+_minor=3
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -132,7 +132,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=3
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -685,20 +685,20 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('2da20f8437cfe813ddee7dcb95e2c4e9e4e8f6168060c05787668ac3ff3f0b99'
+sha256sums=('32d0a8e366b87e1cbde951b9f7a01287546670ba60fac35cccfc8a7c005a162c'
             '4c0791ba64d611421f76d7729ae3394d403351149da3eaa733e82d8f1b1f65b6'
             '33c0d70410ac7e0fccce5796aacea76838b048c79bbdc92eaf2fdbb5eabd4e0d'
-            '336c61382cc3bee820edfe1dc5d291a4a63eb63de597f2b73fa876a724600026'
+            'df466f91e9560e258da5816f037760e511172e789dee01c267ac7213706919b9'
             'b81d81435984662cc5948e5e26389402d6803ceb4cd3fe346f632fdf4c81f9ed'
             'ec150c2d74c58de56ab230679fe4c27b63a8bb4180f57e1985ff7fe7dced0401'
             '863d3627ef5eb474840a5847ee0b479a80e2521261b8ca3e0f71fcfb78a392b4'
-            'e1915b4b947235afd2c21302773e05006aa4ef1bdfb11daf3b38e3dcb4644a5d'
+            '8d3594fdbef77a86b85df751de48d64418efd34813dbf1a2f0c2841928275f37'
             '2ccacea819390dfa67251b0c211804bcc03a079a9970fd6e147bb09248e75b6f'
             'fbc98ae990ef1f75ac5a11eb822e01503b5cc09b412f3b3d2e03adde04123068'
             '2dd17bce8a02bba63e1fb437bbfc6efb2c8e657e3d3049c57d975dac8dadadbb'
             'd8be9d58186b09cd6d8ac0633889e9483f88c59702579b26d45d0a42a906de8f'
             'c92373359de38b4ac831ab69f57c6bb962a14d214beba55593616c9077003aff'
-            '68e8e9bc2c94165216dd52b6c5cceb9a4c24d13971dbd6445c5e4f60f5af207a'
+            '308ce8da7022fae3a5efcc7d87603ed238b044525b42d7203273aaad702a9cd0'
             'ccdc989e3600ec098060696fc87168b655ebbaaaac00d2b424f56c1697c50abb'
             '27b29c0de9ac4e327f76d060c747196c59536754cb2288c7d121e700d9a976c8'
             'c6e3fe5b1736c343f25632a23318c91ccc8b84e896ce7a0a1f7eb2a05e7a596f'
