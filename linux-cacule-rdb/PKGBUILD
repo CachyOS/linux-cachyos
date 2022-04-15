@@ -64,9 +64,6 @@ _mq_deadline_disable=y
 ### Disable Kyber I/O scheduler
 _kyber_disable=y
 
-### Enable protect file mappings under memory pressure
-_mm_protect=
-
 ### Enable multigenerational LRU
 _lru_enable=y
 
@@ -131,7 +128,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -164,6 +161,7 @@ source=(
   "${_patchsource}/0001-hwmon.patch"
   "${_patchsource}/0001-MG-LRU.patch"
   "${_patchsource}/0001-spf-lru-patches.patch"
+  "${_patchsource}/0001-uksm.patch"
   "${_patchsource}/0001-rcu.patch"
   "${_patchsource}/0001-v4l2loopback.patch"
   "${_patchsource}/0001-xanmod.patch"
@@ -366,19 +364,6 @@ prepare() {
     scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
     scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
   fi
-
-
-  ### Enable protect mappings under memory pressure
-	if [ -n "$_mm_protect" ]; then
-		echo "Enabling protect file mappings under memory pressure..."
-		scripts/config --enable CONFIG_UNEVICTABLE_FILE
-		scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_LOW 0
-		scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_MIN 0
-		echo "Enabling protect anonymous mappings under memory pressure..."
-		scripts/config --enable CONFIG_UNEVICTABLE_ANON
-		scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_LOW 0
-		scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_MIN 0
-	fi
 
   ### Enable SPF
   if [ -n "$_spf_enable" ]; then
@@ -684,7 +669,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('32d0a8e366b87e1cbde951b9f7a01287546670ba60fac35cccfc8a7c005a162c'
-            '4c0791ba64d611421f76d7729ae3394d403351149da3eaa733e82d8f1b1f65b6'
+            'd336c4c1123208ba055055db08f24bfe1c9ae9785f3dbe58b7bb6b60fa6786c9'
             '33c0d70410ac7e0fccce5796aacea76838b048c79bbdc92eaf2fdbb5eabd4e0d'
             'df466f91e9560e258da5816f037760e511172e789dee01c267ac7213706919b9'
             'b81d81435984662cc5948e5e26389402d6803ceb4cd3fe346f632fdf4c81f9ed'
@@ -700,8 +685,9 @@ sha256sums=('32d0a8e366b87e1cbde951b9f7a01287546670ba60fac35cccfc8a7c005a162c'
             'ccdc989e3600ec098060696fc87168b655ebbaaaac00d2b424f56c1697c50abb'
             '27b29c0de9ac4e327f76d060c747196c59536754cb2288c7d121e700d9a976c8'
             'c6e3fe5b1736c343f25632a23318c91ccc8b84e896ce7a0a1f7eb2a05e7a596f'
-            '0d91172d863ffd56a676619632075b03a18416e55ed3c66f79dfcbac19eefedb'
+            '0682d64dd5be9699ccfbd8a2c4f39ab899f6d13e18e5e0f1ca30b282606ac958'
             '0c71a8f1cf99f01d2f6fdafde8b5b96e1f56b686b505aa2e18396855966c11f9'
+            'eccb27352c4e87998900a9b8b0e0ec6322c33f542643085a20db45a09c78fdba'
             '91b8eebde0f0704808b16e0c7a64be791d9c93319ecb05cb4cdb35dcce7387f3'
             '65d7b7fe507302e77affbfdd2e92991ae37c413c17d6b96559b5794487421d58'
             'aa87843e5e44e0f5ad20e3acacccc54e9931ae5dce6bb9a357731deb19d182b0'

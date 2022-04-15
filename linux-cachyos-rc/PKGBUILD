@@ -64,8 +64,6 @@ _mq_deadline_disable=y
 ### Disable Kyber I/O scheduler
 _kyber_disable=y
 
-### Enable protect file mappings under memory pressure
-_mm_protect=
 
 ### Enable multigenerational LRU
 _lru_enable=y
@@ -73,7 +71,7 @@ _lru_enable=y
 ### Enable DAMON
 _damon=y
 
-_spf_enable=
+_spf_enable=y
 
 ### Enable Linux Random Number Generator
 _lrng_enable=y
@@ -132,7 +130,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -158,6 +156,9 @@ source=(
 #  "${_patchsource}/0007-lrng.patch"
   "${_patchsource}/0008-xanmod.patch"
   "${_patchsource}/0009-MG-LRU.patch"
+  "${_patchsource}/0009-MG-LRU.patch"
+  "${_patchsource}/0010-spf-lru-patches.patch"
+  "${_patchsource}/0011-uksm.patch"
 #  "${_patchsource}/misc/0001-amd-perf.patch"
   "auto-cpu-optimization.sh"
 )
