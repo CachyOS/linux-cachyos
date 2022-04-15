@@ -32,7 +32,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Latest & improved ZSTD patch-set
 - Latest BTRFS improvements & fixes
 - KSMBD Module for Samba3 Server
-- AMD PSTATE Driver enabled by default 
+- AMD PSTATE Driver enabled by default
 - Clearlinux Patchset
 - Control Flow Integrity (CFI) selectable when using LLVM
 
@@ -106,7 +106,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 
 Not needed anymore, just install the latest dkms version (3.0.2).
 
-## Support 
+## Support
 
 You can join the CachyOS Discord with the following link:
 
