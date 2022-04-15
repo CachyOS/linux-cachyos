@@ -147,18 +147,18 @@ source=(
   #  "${_patchsource}/sched/0001-cacULE-5.18.patch"
   #  "${_patchsource}/sched/0001-bore-sched.patch"
   #  "${_patchsource}/sched/0001-tt.patch"
-  "${_patchsource}/0001-arch-patches.patch"
+  "${_patchsource}/0001-arch.patch"
   "${_patchsource}/0002-bbr2.patch"
   "${_patchsource}/0003-cachy.patch"
   "${_patchsource}/0004-clearlinux.patch"
   "${_patchsource}/0005-cpu.patch"
   "${_patchsource}/0006-fixes-miscellaneous.patch"
-#  "${_patchsource}/0007-lrng.patch"
-  "${_patchsource}/0008-xanmod.patch"
-  "${_patchsource}/0009-MG-LRU.patch"
-  "${_patchsource}/0009-MG-LRU.patch"
-  "${_patchsource}/0010-spf-lru-patches.patch"
-  "${_patchsource}/0011-uksm.patch"
+  "${_patchsource}/0007-xanmod.patch"
+  "${_patchsource}/0008-MG-LRU.patch"
+  "${_patchsource}/0009-spf-lru.patch"
+  "${_patchsource}/0010-uksm.patch"
+  "${_patchsource}/0011-zstd.patch"
+  "${_patchsource}/0012-zen.patch"
 #  "${_patchsource}/misc/0001-amd-perf.patch"
   "auto-cpu-optimization.sh"
 )
@@ -361,19 +361,6 @@ prepare() {
     scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
   fi
 
-
-  ### Enable protect mappings under memory pressure
-	if [ -n "$_mm_protect" ]; then
-		echo "Enabling protect file mappings under memory pressure..."
-		scripts/config --enable CONFIG_UNEVICTABLE_FILE
-		scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_LOW 0
-		scripts/config --set-val CONFIG_UNEVICTABLE_FILE_KBYTES_MIN 0
-		echo "Enabling protect anonymous mappings under memory pressure..."
-		scripts/config --enable CONFIG_UNEVICTABLE_ANON
-		scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_LOW 0
-		scripts/config --set-val CONFIG_UNEVICTABLE_ANON_KBYTES_MIN 0
-	fi
-
   ### Enable SPF
   if [ -n "$_spf_enable" ]; then
     echo "Enabling multigenerational LRU..."
@@ -398,55 +385,6 @@ prepare() {
     scripts/config --enable CONFIG_DAMON_PADDR
     scripts/config --enable CONFIG_DAMON_RECLAIM
   fi
-
-  ### Enable Linux Random Number Generator
-  if [ -n "$_lrng_enable" ]; then
-    echo "Enabling Linux Random Number Generator ..."
-		scripts/config --disable CONFIG_RANDOM_DEFAULT_IMPL
-		scripts/config --enable CONFIG_LRNG
-		scripts/config --enable CONFIG_LRNG_OVERSAMPLE_ENTROPY_SOURCES
-		scripts/config --set-val CONFIG_CONFIG_LRNG_OVERSAMPLE_ES_BITS 64
-		scripts/config --set-val CONFIG_LRNG_SEED_BUFFER_INIT_ADD_BITS 128
-		scripts/config --enable CONFIG_LRNG_IRQ
-		scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
-		scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
-		scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
-		scripts/config --enable CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION
-		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_512
-		scripts/config --enable CONFIG_LRNG_COLLECTION_SIZE_1024
-		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_2048
-		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_4096
-		scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_8192
-		scripts/config --set-val CONFIG_LRNG_COLLECTION_SIZE 1024
-		scripts/config --enable CONFIG_LRNG_HEALTH_TESTS
-		scripts/config --set-val CONFIG_LRNG_RCT_CUTOFF 31
-		scripts/config --set-val CONFIG_LRNG_APT_CUTOFF 325
-		scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
-		scripts/config --enable CONFIG_LRNG_JENT
-		scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
-		scripts/config --enable CONFIG_LRNG_CPU
-		scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
-		scripts/config --enable CONFIG_LRNG_DRNG_SWITCH
-		scripts/config --enable CONFIG_LRNG_KCAPI_HASH
-		scripts/config --module CONFIG_LRNG_DRBG
-		scripts/config --module CONFIG_LRNG_KCAPI
-		scripts/config --enable CONFIG_LRNG_TESTING_MENU
-		scripts/config --disable CONFIG_LRNG_RAW_HIRES_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_JIFFIES_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_IRQ_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_IRQFLAGS_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_RETIP_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_REGS_ENTROPY
-		scripts/config --disable CONFIG_LRNG_RAW_ARRAY
-		scripts/config --disable CONFIG_LRNG_IRQ_PERF
-		scripts/config --disable CONFIG_LRNG_ACVT_HASH
-		scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
-		scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
-		scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
-		scripts/config --enable CONFIG_LRNG_SELFTEST
-		scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
-  fi
-
 
   ### Selecting the ZSTD compression level
   if [ "$_zstd_level" = "ultra" ]; then
@@ -678,13 +616,17 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('427f32cc7ed4495781dd75f934a98d5351f4d0e4451609958f147db37e5449f1'
-            '788b05974c28d1166226a49e2c8dc67079321e5e44a5a0e164ad4bcc27edb809'
-            'b2a2408cb5b40be62d1c531f6475176fa687f10142d658c3d74be5f563a9728d'
-            '4679ec4739e7b4b5bc8ffd0b7aa6267f68ee5777c49b68d900be0874831e9066'
-            '935377a9a0a2e28b6d48b9bfcdbade387c2397db746dee9a04941f19ed38c1e3'
-            '485ed69e95172e14d3b683babde758365d54aa85689a46d4fd6f80aa62d0769c'
-            'a10698058fe1c3dfd48c555bf8a387214a7f4f7c19ee56eb58816f23206b4cdf'
-            '9199053284b303fe0d2072cde279838536fb99447f46655e172f86e8db5c1488'
-            '63a4687014b0bbf779fdcfc8405ff6325e375b1f7d60c97997f5f0a5f91ce820'
-            '0d76e7afe41bcfbec5afc2b387036855adef49c22795055bfaf9e1b90b313b4f'
+            'f62cadf5e4929e443f314369f9bf682ed5c3bd68b3890ced0a928861b3c460ae'
+            '62ff9af1d28cd8f006d0219da58cb730424a1cd00ae4a7da8a1bc4f27eccc035'
+            '8b8ca499a35603dd85d04e779b55ed0c9f428f311a7baea8921cfae05fa6fe4e'
+            'd79abce286277232d5015f1b11d5615cb0ee4869c234af0a4fc00b66070a0d84'
+            '3d9f16d1845b49648643f26d399f639296d0a7c64bd8c2b4c11235d03459657d'
+            '4d996c58755e91c8104fe6267eaec182fb6298cd59973cb288ee1a7b0e15cf76'
+            '902d81f4b6eb5276e4d2b53753b448b26a643258a0cdff7e0dc38334d31ad09f'
+            'd5f387f6a5df200e022e4f8242c3ace6a18ef7708c813b11a594f87f9a67ddb5'
+            'c1a474341ea23d845eae09c9254c0b0fd6882f66f38e9eca84ea21eab5ea74d9'
+            'c1f164e548c4fa82f232f4c43811714c900426dc662477815ed25933546953cd'
+            '54fc8309581f93d87aac5a5cd490889e74fe28e1835d8abbe8070f675e3c141f'
+            '9ba50f4b87746973485a7e3322b80293b1930a9cdfd7771b372ce4cdb9e30b3e'
+            '1c070c67f826eab65c374d7d4ce6a52461e6b29b928b33f3c0f4b2b364bf779a'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
