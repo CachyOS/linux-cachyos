@@ -85,7 +85,7 @@ _use_optimization_select=
 # ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
 # 'normal' - standard compression ratio
-_zstd_level='ultra'
+_zstd_level='normal'
 
 ### Selecting the ZSTD module compression level
 # If you want to use ZSTD compression,
@@ -128,7 +128,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux TT scheduler Kernel by CachyOS and other patches and improvements'
-pkgrel=3
+pkgrel=4
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -137,7 +137,7 @@ makedepends=('bc' 'texlive-latexextra' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz
 if [ -n "$_use_llvm_lto" ]; then
   depends=(clang llvm lld python)
 fi
-_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17"
+_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${_major}"
 source=(
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
@@ -157,10 +157,11 @@ source=(
   "${_patchsource}/0010-hwmon.patch"
   "${_patchsource}/0011-MG-LRU.patch"
   "${_patchsource}/0012-spf-lru.patch"
-  "${_patchsource}/0013-uksm.patch"
   "${_patchsource}/0014-v4l2loopback.patch"
   "${_patchsource}/0015-xanmod.patch"
   "${_patchsource}/0016-lrng.patch"
+  "${_patchsource}/0017-le9.patch"
+  "${_patchsource}/0018-ck-hrtimer.patch"
   "auto-cpu-optimization.sh"
 )
 

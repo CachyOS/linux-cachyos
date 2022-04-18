@@ -85,7 +85,7 @@ _use_optimization_select=
 # ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
 # 'normal' - standard compression ratio
-_zstd_level='ultra'
+_zstd_level='normal'
 
 ### Selecting the ZSTD module compression level
 # If you want to use ZSTD compression,
@@ -128,7 +128,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=3
+pkgrel=4
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -137,7 +137,7 @@ makedepends=('bc' 'texlive-latexextra' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz
 if [ -n "$_use_llvm_lto" ]; then
   depends=(clang llvm lld python)
 fi
-_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17"
+_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${_major}"
 source=(
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
@@ -157,10 +157,11 @@ source=(
   "${_patchsource}/0010-hwmon.patch"
   "${_patchsource}/0011-MG-LRU.patch"
   "${_patchsource}/0012-spf-lru.patch"
-  "${_patchsource}/0013-uksm.patch"
   "${_patchsource}/0014-v4l2loopback.patch"
   "${_patchsource}/0015-xanmod.patch"
   "${_patchsource}/0016-lrng.patch"
+  "${_patchsource}/0017-le9.patch"
+  "${_patchsource}/0018-ck-hrtimer.patch"
   "auto-cpu-optimization.sh"
 )
 
@@ -663,22 +664,23 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('32d0a8e366b87e1cbde951b9f7a01287546670ba60fac35cccfc8a7c005a162c'
-  'd336c4c1123208ba055055db08f24bfe1c9ae9785f3dbe58b7bb6b60fa6786c9'
-  '33c0d70410ac7e0fccce5796aacea76838b048c79bbdc92eaf2fdbb5eabd4e0d'
-  '86881dd86c0982d86b66aca11f440ce3a0c88a28fb7120fdf8f7d6ad7d328e05'
-  '7616bde11139d419ef190f2870e3a848b7157b9a4dc769a6f1ff59cb99508126'
-  '576d14d12b54a8756117d4839fa63241fcde0ff7799ddfd07f0b25e7e852407c'
-  '3b9a5a31c77e1b708793fd735ad82bd5906f0d8c0b055eae03ea0242ef83509c'
-  'a801630a75a59363c99144836a13aef4f36f93b3b5b64299faa11e21e329cfe4'
-  '440f463d88183ced1ca0e1e8dafa227e6c0212752de7a0d5203e293e8ccb2f88'
-  '7c76f76baccf3ca163f7889bb3d5b28a0551b94cd08312a63581b6df9f439693'
-  'bda7360b44d033dc274649d4c99e252321145162cbe7463ac1f97d79eae7101e'
-  'cf3554d737c52663dd3048906788c28ade3e53a660049ea0bdb792f096965c70'
-  '8de7224e9d84605b7498dd003018dc94cc421d9871500ae885176f051fe048f8'
-  'f6e422d11a5389c5da330501a2a816f9fc088627124ab0910252dfa4d5eac367'
-  'ea4174aa8fbeb309c17fb0aedb4eacbf269ba02123d28067ec46142823782ca7'
-  '69d4eb1a09e0c3d942c54b13e5576c372c81deadadaf06f94076c157f8599045'
-  '1e486bf2a8d33762ed429569d4220a218e1d6db0e96d7cfb57e4ed8090a349bf'
-  '6d2c65532a81468d15f8fb326837eef12f07e10c24e7219fc49c941eb40450db'
-  'c921936c051dd5efe66d7b53eb03a2f26b14b138047cd76702ba6cedf4474432'
-'65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
+            'db9bea739fad4ced06fad88b8f86824436899ac06e04d6a0cc4b037856e4aeba'
+            '33c0d70410ac7e0fccce5796aacea76838b048c79bbdc92eaf2fdbb5eabd4e0d'
+            '86881dd86c0982d86b66aca11f440ce3a0c88a28fb7120fdf8f7d6ad7d328e05'
+            '7616bde11139d419ef190f2870e3a848b7157b9a4dc769a6f1ff59cb99508126'
+            '576d14d12b54a8756117d4839fa63241fcde0ff7799ddfd07f0b25e7e852407c'
+            '3b9a5a31c77e1b708793fd735ad82bd5906f0d8c0b055eae03ea0242ef83509c'
+            'a801630a75a59363c99144836a13aef4f36f93b3b5b64299faa11e21e329cfe4'
+            '440f463d88183ced1ca0e1e8dafa227e6c0212752de7a0d5203e293e8ccb2f88'
+            '7c76f76baccf3ca163f7889bb3d5b28a0551b94cd08312a63581b6df9f439693'
+            'bda7360b44d033dc274649d4c99e252321145162cbe7463ac1f97d79eae7101e'
+            'cf3554d737c52663dd3048906788c28ade3e53a660049ea0bdb792f096965c70'
+            '8de7224e9d84605b7498dd003018dc94cc421d9871500ae885176f051fe048f8'
+            'f6e422d11a5389c5da330501a2a816f9fc088627124ab0910252dfa4d5eac367'
+            'ea4174aa8fbeb309c17fb0aedb4eacbf269ba02123d28067ec46142823782ca7'
+            '1e486bf2a8d33762ed429569d4220a218e1d6db0e96d7cfb57e4ed8090a349bf'
+            '6d2c65532a81468d15f8fb326837eef12f07e10c24e7219fc49c941eb40450db'
+            'c921936c051dd5efe66d7b53eb03a2f26b14b138047cd76702ba6cedf4474432'
+            '98d833fb1616e1ef7332e73f3d0ee8dcd58ceca5e5d30279944e9d4b9003d991'
+            '84249d7d74d8510c12a2a0511064eade53ee36f69180f9f0e738615611a0afb2'
+            '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
