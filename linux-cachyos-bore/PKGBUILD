@@ -132,7 +132,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=4
+pkgrel=5
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -152,20 +152,20 @@ source=(
   "${_patchsource}/0001-arch.patch"
   "${_patchsource}/0002-anbox.patch"
   "${_patchsource}/0003-bbr2.patch"
-  "${_patchsource}/0004-fs-patches.patch"
-  "${_patchsource}/0005-cachy.patch"
-  "${_patchsource}/0006-clearlinux.patch"
-  "${_patchsource}/0007-cpu-patches.patch"
-  "${_patchsource}/0008-fixes-miscellaneous.patch"
-  "${_patchsource}/0009-fixes.patch"
-  "${_patchsource}/0010-hwmon.patch"
-  "${_patchsource}/0011-MG-LRU.patch"
-  "${_patchsource}/0012-spf-lru.patch"
-  "${_patchsource}/0014-v4l2loopback.patch"
-  "${_patchsource}/0015-xanmod.patch"
-  "${_patchsource}/0016-lrng.patch"
-  "${_patchsource}/0017-le9.patch"
-  "${_patchsource}/0018-ck-hrtimer.patch"
+  "${_patchsource}/0004-cachy.patch"
+  "${_patchsource}/0005-clearlinux.patch"
+  "${_patchsource}/0006-cpu.patch"
+  "${_patchsource}/0007-fixes-miscellaneous.patch"
+  "${_patchsource}/0008-fs-patches.patch"
+  "${_patchsource}/0009-hwmon.patch"
+  "${_patchsource}/0010-MG-LRU.patch"
+  "${_patchsource}/0011-spf-lru.patch"
+  "${_patchsource}/0012-v4l2loopback.patch"
+  "${_patchsource}/0013-xanmod.patch"
+  "${_patchsource}/0014-lrng.patch"
+  "${_patchsource}/0015-le9.patch"
+  "${_patchsource}/0016-ck-hrtimer.patch"
+  #  "${_patchsource}/0017-FG-KASLR.patch"
   "auto-cpu-optimization.sh"
 )
 
@@ -225,11 +225,10 @@ prepare() {
     scripts/config --enable CONFIG_SCHED_PDS
   elif [ "$_cpusched" = "cacule" ]; then
     echo "Selecting CacULE scheduler..."
-    scripts/config --disable CONFIG_SCHED_ALT
     scripts/config --enable CONFIG_CACULE_SCHED
+    scripts/config --disable CONFIG_CACULE_RDB
   elif [ "$_cpusched" = "cacule-rdb" ]; then
     echo "Selecting CacULE-RDB scheduler..."
-    scripts/config --disable CONFIG_SCHED_ALT
     scripts/config --enable CONFIG_CACULE_SCHED
     scripts/config --enable CONFIG_CACULE_RDB
     scripts/config --set-val CONFIG_RDB_INTERVAL 19
@@ -239,10 +238,9 @@ prepare() {
     scripts/config --enable CONFIG_TT_ACCOUNTING_STATS
   elif [ "$_cpusched" = "bore" ]; then
     echo "Selecting BORE Scheduler..."
-    scripts/config --disable CONFIG_SCHED_ALT
+    scripts/config --enable CONFIG_SCHED_BORE
   elif [ "$_cpusched" = "cfs" ]; then
     echo "Selecting Completely Fair Scheduler..."
-    scripts/config --disable CONFIG_SCHED_ALT
   else
     if [ -n "$_cpusched" ]; then
       error "The value $_cpusched is invalid. Choose the correct one again."
@@ -307,11 +305,17 @@ prepare() {
   if [ -n "$_NUMAdisable" ]; then
     echo "Disabling NUMA from kernel config..."
     scripts/config --disable CONFIG_NUMA
-  fi
-
-  if [ -n "$_winesync" ]; then
-    echo "Enable winesync support"
-    scripts/config --module CONFIG_WINESYNC
+    scripts/config --disable CONFIG_AMD_NUMA
+    scripts/config --disable CONFIG_X86_64_ACPI_NUMA
+    scripts/config --disable CONFIG_NODES_SPAN_OTHER_NODES
+    scripts/config --disable CONFIG_NUMA_EMU
+    scripts/config --disable CONFIG_NEED_MULTIPLE_NODES
+    scripts/config --disable CONFIG_USE_PERCPU_NUMA_NODE_ID
+    scripts/config --disable CONFIG_ACPI_NUMA
+    scripts/config --disable CONFIG_ARCH_SUPPORTS_NUMA_BALANCING
+    scripts/config --disable CONFIG_NODES_SHIFT
+    scripts/config --undefine CONFIG_NODES_SHIFT
+    scripts/config --disable CONFIG_NEED_MULTIPLE_NODES
   fi
 
   ### Disable MQ-Deadline I/O scheduler
@@ -336,6 +340,11 @@ prepare() {
     scripts/config --disable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
     scripts/config --disable CONFIG_CPU_FREQ_GOV_USERSPACE
     scripts/config --disable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+    echo "Set PCIEASPM DRIVER to performance..."
+    scripts/config --enable CONFIG_PCIEASPM
+    scripts/config --enable CONFIG_PCIEASPM_PERFORMANCE
+    echo "Set CONFIG_PCIE_BUS for performance..."
+    scripts/config --enable CONFIG_PCIE_BUS_PERFORMANCE
   fi
 
   ### Enable KBUILD_CFLAGS -O3
@@ -355,7 +364,6 @@ prepare() {
     scripts/config --enable CONFIG_DEFAULT_BBR2
     scripts/config --set-str CONFIG_DEFAULT_TCP_CONG bbr2
   fi
-
 
   ### Enable FULLCONENAT
   if [ -n "$_nf_cone" ]; then
@@ -492,13 +500,24 @@ prepare() {
     scripts/config --set-str CONFIG_ZSWAP_COMPRESSOR_DEFAULT zstd
   fi
 
-
-  echo "Enable Anbox"
+  echo "Enable Anbox..."
   scripts/config --enable CONFIG_ASHMEM
   scripts/config --enable CONFIG_ANDROID
   scripts/config --enable CONFIG_ANDROID_BINDER_IPC
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
+
+  echo "disable debugging features to reduce the size..."
+  scripts/config --disable CONFIG_DEBUG_INFO
+  scripts/config --disable CONFIG_CGROUP_BPF
+  scripts/config --disable CONFIG_BPF_LSM
+  scripts/config --disable CONFIG_BPF_PRELOAD
+  scripts/config --disable CONFIG_BPF_LIRC_MODE2
+  scripts/config --disable CONFIG_BPF_KPROBE_OVERRIDE
+  scripts/config --enable CONFIG_PSI_DEFAULT_DISABLED
+  scripts/config --disable CONFIG_LATENCYTOP
+  scripts/config --disable CONFIG_SCHED_DEBUG
+  scripts/config --disable CONFIG_KVM_WERROR
 
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
@@ -564,14 +583,15 @@ _package() {
   echo "Installing boot image..."
   # systemd expects to find the kernel here to allow hibernation
   # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-  install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
+  install -Dm644 "$(make ${BUILD_FLAGS[*]} -s image_name)" "$modulesdir/vmlinuz"
 
   # Used by mkinitcpio to name the kernel
   echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
   echo "Installing modules..."
-  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+  make ${BUILD_FLAGS[*]} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
     DEPMOD=/doesnt/exist modules_install  # Suppress depmod
+
   # remove build and source links
   rm "$modulesdir"/{source,build}
 }
@@ -594,7 +614,7 @@ _package-headers() {
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
   # required when DEBUG_INFO_BTF_MODULES is enabled
-  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+  # install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
   cp -t "$builddir" -a include
@@ -650,8 +670,9 @@ _package-headers() {
     esac
   done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
 
-  echo "Stripping vmlinux..."
-  strip -v $STRIP_STATIC "$builddir/vmlinux"
+  # echo "Stripping vmlinux..."
+  # strip -v $STRIP_STATIC "$builddir/vmlinux"
+  # not needed since not building with CONFIG_DEBUG_INFO=y
 
   echo "Adding symlink..."
   mkdir -p "$pkgdir/usr/src"
@@ -668,22 +689,21 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('32d0a8e366b87e1cbde951b9f7a01287546670ba60fac35cccfc8a7c005a162c'
-            '70118f513695925cc1f1928032ea79bacca3e3fc0e9e66020f7a6e613601e204'
-            '86881dd86c0982d86b66aca11f440ce3a0c88a28fb7120fdf8f7d6ad7d328e05'
-            '7616bde11139d419ef190f2870e3a848b7157b9a4dc769a6f1ff59cb99508126'
-            '576d14d12b54a8756117d4839fa63241fcde0ff7799ddfd07f0b25e7e852407c'
-            '3b9a5a31c77e1b708793fd735ad82bd5906f0d8c0b055eae03ea0242ef83509c'
-            'a801630a75a59363c99144836a13aef4f36f93b3b5b64299faa11e21e329cfe4'
-            '440f463d88183ced1ca0e1e8dafa227e6c0212752de7a0d5203e293e8ccb2f88'
-            '7c76f76baccf3ca163f7889bb3d5b28a0551b94cd08312a63581b6df9f439693'
-            'bda7360b44d033dc274649d4c99e252321145162cbe7463ac1f97d79eae7101e'
-            'cf3554d737c52663dd3048906788c28ade3e53a660049ea0bdb792f096965c70'
-            '8de7224e9d84605b7498dd003018dc94cc421d9871500ae885176f051fe048f8'
-            'f6e422d11a5389c5da330501a2a816f9fc088627124ab0910252dfa4d5eac367'
-            'ea4174aa8fbeb309c17fb0aedb4eacbf269ba02123d28067ec46142823782ca7'
-            '1e486bf2a8d33762ed429569d4220a218e1d6db0e96d7cfb57e4ed8090a349bf'
-            '6d2c65532a81468d15f8fb326837eef12f07e10c24e7219fc49c941eb40450db'
-            'c921936c051dd5efe66d7b53eb03a2f26b14b138047cd76702ba6cedf4474432'
-            '98d833fb1616e1ef7332e73f3d0ee8dcd58ceca5e5d30279944e9d4b9003d991'
-            '84249d7d74d8510c12a2a0511064eade53ee36f69180f9f0e738615611a0afb2'
+            '29c5dd2ae6b452b75b25816a8f6610fa2ff54f21b22a0ccef5c2e98a7077eb36'
+            'e7a81fb26bb61875c07ba83075522d3d1c1ed463581c7067404a91bc724340b8'
+            'dea401c0efff7f7979b91b1a32524646d0bab38191d70daf18924f944a4f1fd5'
+            '9962cab7ce58729912c70f2dce345d088c0c61f640e0bd9ee2975d571b08a0d2'
+            '9710c78919d651e2266391c129bf89557ee09aabeaa7935ae798c037d3c7c0cc'
+            '6f291e71de3df52728933d2e04da6a59eb08c3bdb3012ebeae40f05183744b93'
+            '18cfe65a2da89006f8aeb701a846a2e6ed2cac2e84b86cd7f6f9a25e988c4057'
+            '832781712c6c6a9523e1a9436f2131cc9f0b9d7131d44477c7e81739fc28e529'
+            '334263fecd6a1fe325c026928ac971fbb8168e23665085f62e3924f4c81029e4'
+            'be3e41373ab7a6f112b5ebd96f4c2b0550333192b54b587be43727bf82003a2a'
+            '9c701eda6fda419ceab4b9e7b21b9d6e2a1eb0844b65404fc04bc609778b7419'
+            'b03d9ea1b2a7e5687e6e954dd3f039c341fa4d69fb047ca688ffe5b953e977be'
+            '6cb2a9282ebb4fd53058d22f8159e10d1d8c321b7d17d0f2d761bdab7f88eaf8'
+            'b64ccbec1080320fec7bfc3b55a6a2ebc33159d216039170ba58008ba7ec37b7'
+            '354616dccd88c5227c276ddbf184c083c77d9cea9ac143993101d9e67b7f0cfc'
+            '93eca845542db214f113c72df69c456f53ea0e77e1db865124384939ecd76e2d'
+            '3a2f95a37b4614f05ac5a7c5d81a99555ba01b0b192667896006db8490cb89fa'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')

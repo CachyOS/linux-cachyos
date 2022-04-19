@@ -224,11 +224,10 @@ prepare() {
     scripts/config --enable CONFIG_SCHED_PDS
   elif [ "$_cpusched" = "cacule" ]; then
     echo "Selecting CacULE scheduler..."
-    scripts/config --disable CONFIG_SCHED_ALT
     scripts/config --enable CONFIG_CACULE_SCHED
+    scripts/config --disable CONFIG_CACULE_RDB
   elif [ "$_cpusched" = "cacule-rdb" ]; then
     echo "Selecting CacULE-RDB scheduler..."
-    scripts/config --disable CONFIG_SCHED_ALT
     scripts/config --enable CONFIG_CACULE_SCHED
     scripts/config --enable CONFIG_CACULE_RDB
     scripts/config --set-val CONFIG_RDB_INTERVAL 19
@@ -238,10 +237,9 @@ prepare() {
     scripts/config --enable CONFIG_TT_ACCOUNTING_STATS
   elif [ "$_cpusched" = "bore" ]; then
     echo "Selecting BORE Scheduler..."
-    scripts/config --disable CONFIG_SCHED_ALT
+    scripts/config --enable CONFIG_SCHED_BORE
   elif [ "$_cpusched" = "cfs" ]; then
     echo "Selecting Completely Fair Scheduler..."
-    scripts/config --disable CONFIG_SCHED_ALT
   else
     if [ -n "$_cpusched" ]; then
       error "The value $_cpusched is invalid. Choose the correct one again."
@@ -622,7 +620,6 @@ sha256sums=('b518d107c6727ebd74eb73b1fa36fbf5aee4e16ec39b1e3a0208ebb5fdd1127e'
             'cd3444ee9fd36a70dc7d6c07ad76695d850c0252484b39a1223bc85285c24a3a'
             'ef442804222f7f304b2a25adf7b31281efefbf311e639f8bc12f937009648616'
             '7a8c85cf0404ddfcb7d550fed06be67b198cfcb16e8b3528078558839d10a847'
-            'ea17118705904459d35f092c0c67ccab461cb5d6d5849a0a8409da95987dc9c8'
             '23dc79105259559e5f9cfabc1e7253656676b63ab8aac3764270ebd2d2550a9b'
             '8d8f532f7d8d39846497f7482d936ea418d0f6ee6cb357df6b661d2af4fce125'
             'd67a8f5e40cbbf68a40864cfebdf05d2797956368f59e795f891b834249ef05f'
