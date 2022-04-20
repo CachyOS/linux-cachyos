@@ -117,7 +117,7 @@ else
   pkgbase=linux-cachyos
 fi
 _major=5.17
-_minor=3
+_minor=4
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -128,7 +128,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with other patches and improvements'
-pkgrel=5
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -684,22 +684,22 @@ for _p in "${pkgname[@]}"; do
   }"
 done
 
-sha256sums=('32d0a8e366b87e1cbde951b9f7a01287546670ba60fac35cccfc8a7c005a162c'
+sha256sums=('6e3cd56ee83a9cb5ac3fde1442c40367ab67368946c4c93bbeb1c65664a0d3c5'
             '29c5dd2ae6b452b75b25816a8f6610fa2ff54f21b22a0ccef5c2e98a7077eb36'
-            'e7a81fb26bb61875c07ba83075522d3d1c1ed463581c7067404a91bc724340b8'
-            'dea401c0efff7f7979b91b1a32524646d0bab38191d70daf18924f944a4f1fd5'
-            '9962cab7ce58729912c70f2dce345d088c0c61f640e0bd9ee2975d571b08a0d2'
-            '9710c78919d651e2266391c129bf89557ee09aabeaa7935ae798c037d3c7c0cc'
-            '6f291e71de3df52728933d2e04da6a59eb08c3bdb3012ebeae40f05183744b93'
-            '18cfe65a2da89006f8aeb701a846a2e6ed2cac2e84b86cd7f6f9a25e988c4057'
-            '832781712c6c6a9523e1a9436f2131cc9f0b9d7131d44477c7e81739fc28e529'
-            '334263fecd6a1fe325c026928ac971fbb8168e23665085f62e3924f4c81029e4'
-            'be3e41373ab7a6f112b5ebd96f4c2b0550333192b54b587be43727bf82003a2a'
-            '9c701eda6fda419ceab4b9e7b21b9d6e2a1eb0844b65404fc04bc609778b7419'
-            'b03d9ea1b2a7e5687e6e954dd3f039c341fa4d69fb047ca688ffe5b953e977be'
-            '6cb2a9282ebb4fd53058d22f8159e10d1d8c321b7d17d0f2d761bdab7f88eaf8'
-            'b64ccbec1080320fec7bfc3b55a6a2ebc33159d216039170ba58008ba7ec37b7'
-            '354616dccd88c5227c276ddbf184c083c77d9cea9ac143993101d9e67b7f0cfc'
-            '93eca845542db214f113c72df69c456f53ea0e77e1db865124384939ecd76e2d'
-            '3a2f95a37b4614f05ac5a7c5d81a99555ba01b0b192667896006db8490cb89fa'
+            'e2109061823fe11e99eb5002b3d553ef9629c8495b974af36fc4113889dd0080'
+            'efd954e75525fb169c3e7d5f4a8b673f8a59469c9c5f8843c9255efbda48e6a9'
+            '80d4a1e4c7f3cbed102de9079859b34a942d4e6424bf86c34a6b00d90f51fdb3'
+            'c1f8023e0c60fb19f34e22616eda55b5aa0d5a9c9d3e801e23b18dd1de9b860f'
+            '983242865137a9b90de992d5b0c1b764da79c4f12e9a85029201b21f954383b5'
+            '0a170fa3526a28e6ff58f98ffa6e4a0fd48a2b0e68f17353086708c04b49898a'
+            'eedb29c8a6844094a21d1c1114f59508a3b03ba84bf54c4338740806bfafa993'
+            'd086a129018c4e8a899f4599a02765f9ebce1f0ec8565bdf802c9957935a3044'
+            'cc43eabeb8773b5a926f9d1897a409d8ac4b9509be662d6d81f590b70ffa0450'
+            '352d36b81ddce85e372e72fd99ddc2ff27f7796f15a8d24bf68a9507b135e9e0'
+            '6c64123aa846d9768c794385fa12cd145c6ad8f5007a6072f8ee4fc4e9c655a2'
+            'c5eb38271687a9952dab922361765b31cc0a0bf779f8386e8bacb6667f93ba35'
+            'd2405846ab0501eb993180a0f6fa1e1ef81bac51a73ca00ff8ee3e75551b1886'
+            'c7048e30409190daa5e1e5a7994f4a3c28d7bc4714b8256d3d67a562a3ab3bec'
+            '0ec74fbdd5c114026f07128fb84d0191157b2787141645545722b3f52aaa2187'
+            'd15fe026c0872ec902dcfd35c180746488b294d9ebf059b8e2699f970ead3734'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
