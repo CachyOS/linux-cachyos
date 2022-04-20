@@ -52,11 +52,15 @@ _per_gov=y
 ### Enable TCP_CONG_BBR2
 _tcp_bbr2=y
 
-### Running with a 1000HZ, 750Hz or  500HZ tick rate
+### Running with a 1000HZ, 750Hz, 600 Hz or 500Hz tick rate
 _1k_HZ_ticks=
 _750_HZ_ticks=y
 _600_HZ_ticks=
 _500_HZ_ticks=
+
+##ä Choose between perodic, tickless idle or full tickless
+### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency. Just tickless idle can perform better on some platforms (mostly AMD based).
+_tickrate=full
 
 ### Disable MQ-Deadline I/O scheduler
 _mq_deadline_disable=y
@@ -105,16 +109,18 @@ _zstd_compression=y
 
 _nf_cone=y
 
-## Enable it for compiling with LLVM and THINLTO
+# Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
+# "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
+# "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 _use_llvm_lto=
 
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
 
 if [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-tt-lto
+  pkgbase=linux-cachyos-${_cpusched}-lto
 else
-  pkgbase=linux-cachyos-tt
+  pkgbase=linux-cachyos-${_cpusched}
 fi
 _major=5.17
 _minor=4
@@ -127,8 +133,8 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
-pkgdesc='Linux TT scheduler Kernel by CachyOS and other patches and improvements'
-pkgrel=1
+pkgdesc='Linux TT scheduler Kernel by CachyOS with other patches and improvements'
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -141,10 +147,26 @@ _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${
 source=(
   "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
   "config"
-  #  "${_patchsource}/sched/0001-prjc.patch"
-  #  "${_patchsource}/sched/0001-cacULE.patch"
-  #  "${_patchsource}/sched/0001-bore-sched.patch"
-  "${_patchsource}/sched/0001-tt.patch"
+)
+if [ "$_cpusched" = "bmq" ]; then
+  source+=("${_patchsource}/sched/0001-prjc.patch")
+fi
+if [ "$_cpusched" = "pds" ]; then
+  source+=("${_patchsource}/sched/0001-prjc.patch")
+fi
+if [ "$_cpusched" = "cacule" ]; then
+  source+=("${_patchsource}/sched/0001-cacULE.patch")
+fi
+if [ "$_cpusched" = "cacule-rdb" ]; then
+  source+=("${_patchsource}/sched/0001-cacULE.patch")
+fi
+if [ "$_cpusched" = "tt" ]; then
+  source+=("${_patchsource}/sched/0001-tt.patch")
+fi
+if [ "$_cpusched" = "bore" ]; then
+  source+=("${_patchsource}/sched/0001-bore-sched.patch")
+fi
+source+=(
   "${_patchsource}/0001-arch.patch"
   "${_patchsource}/0002-anbox.patch"
   "${_patchsource}/0003-bbr2.patch"
@@ -161,7 +183,6 @@ source=(
   "${_patchsource}/0014-lrng.patch"
   "${_patchsource}/0015-le9.patch"
   "${_patchsource}/0016-ck-hrtimer.patch"
-  #  "${_patchsource}/0017-FG-KASLR.patch"
   "auto-cpu-optimization.sh"
 )
 
@@ -253,7 +274,9 @@ prepare() {
     scripts/config --enable CONFIG_CFI_CLANG
   fi
 
-  if [ -n "$_use_llvm_lto" ]; then
+  ### Selecting the THIN or FULL-LTO compression level
+  if [ "$_use_llvm_lto" = "thin" ]; then
+    echo "Enabling highest ZSTD compression ratio..."
     scripts/config --disable LTO_NONE \
       --enable LTO \
       --enable LTO_CLANG \
@@ -262,6 +285,18 @@ prepare() {
       --enable HAS_LTO_CLANG \
       --enable LTO_CLANG_THIN \
       --enable HAVE_GCC_PLUGINS
+  elif [ "$_use_llvm_lto" = "full" ]; then
+    echo "Enabling standard ZSTD compression ratio..."
+    scripts/config --disable LTO_NONE \
+      --enable LTO \
+      --enable LTO_CLANG \
+      --enable ARCH_SUPPORTS_LTO_CLANG \
+      --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
+      --enable HAS_LTO_CLANG \
+      --enable LTO_CLANG \
+      --enable HAVE_GCC_PLUGINS
+  else
+    scripts/config --enable CONFIG_LTO_NONE
   fi
 
   ### Optionally set tickrate to 1000
@@ -331,16 +366,38 @@ prepare() {
     echo "Setting performance governor..."
     scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
     scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
-    echo "Disabling uneeded governors..."
-    scripts/config --disable CONFIG_CPU_FREQ_GOV_ONDEMAND
-    scripts/config --disable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
-    scripts/config --disable CONFIG_CPU_FREQ_GOV_USERSPACE
-    scripts/config --disable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
     echo "Set PCIEASPM DRIVER to performance..."
     scripts/config --enable CONFIG_PCIEASPM
     scripts/config --enable CONFIG_PCIEASPM_PERFORMANCE
     echo "Set CONFIG_PCIE_BUS for performance..."
     scripts/config --enable CONFIG_PCIE_BUS_PERFORMANCE
+  fi
+
+  ### Selecting between tickless idle, perodic tics or full tickless
+  if [ "$_tickrate" = "perodic" ]; then
+    echo "Enabling periodic ticks..."
+    scripts/config --disable CONFIG_NO_HZ_IDLE
+    scripts/config --disable CONFIG_NO_HZ_FULL
+    scripts/config --disable CONFIG_NO_HZ
+    scripts/config --disable CONFIG_NO_HZ_COMMON
+    scripts/config --enable CONFIG_HZ_PERIODIC
+  elif [ "$_tickrate" = "idle" ]; then
+    echo "Enabling tickless idle..."
+    scripts/config --disable CONFIG_HZ_PERIODIC
+    scripts/config --disable CONFIG_NO_HZ_FULL
+    scripts/config --enable CONFIG_NO_HZ_IDLE
+    scripts/config --enable CONFIG_NO_HZ
+    scripts/config --enable CONFIG_NO_HZ_COMMON
+  elif [ "$_tickrate" = "full" ]; then
+    echo "Enabling tickless idle..."
+    scripts/config --disable CONFIG_HZ_PERIODIC
+    scripts/config --disable CONFIG_NO_HZ_IDLE
+    scripts/config --disable CONFIG_CONTEXT_TRACKING_FORCE
+    scripts/config --enable CONFIG_NO_HZ_FULL_NODEF
+    scripts/config --enable CONFIG_NO_HZ_FULL
+    scripts/config --enable CONFIG_NO_HZ
+    scripts/config --enable CONFIG_NO_HZ_COMMON
+    scripts/config --enable CONFIG_CONTEXT_TRACKING
   fi
 
   ### Enable KBUILD_CFLAGS -O3
@@ -370,7 +427,7 @@ prepare() {
 
   ### Enable SPF
   if [ -n "$_spf_enable" ]; then
-    echo "Enabling multigenerational LRU..."
+    echo "Enabling SPECULATIVE_PAGE_FAULT LRU..."
     scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
   fi
 
@@ -514,6 +571,9 @@ prepare() {
   scripts/config --disable CONFIG_LATENCYTOP
   scripts/config --disable CONFIG_SCHED_DEBUG
   scripts/config --disable CONFIG_KVM_WERROR
+
+  echo "Enable CONFIG_USER_NS_UNPRIVILEGED"
+  scripts/config --enable CONFIG_USER_NS
 
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191

@@ -1,7 +1,7 @@
 pkgbase = linux-cacule
 	pkgdesc = Linux cacULE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 5.17.4
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -42,7 +42,6 @@ pkgbase = linux-cacule
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17/0013-xanmod.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17/0014-lrng.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17/0015-le9.patch
-	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17/0016-ck-hrtimer.patch
 	source = auto-cpu-optimization.sh
 	sha256sums = 6e3cd56ee83a9cb5ac3fde1442c40367ab67368946c4c93bbeb1c65664a0d3c5
 	sha256sums = 341d996a829058d17393f4d0cbfdb23c7a7a68ee682fd70cb8e37d27af63efa5
@@ -62,7 +61,6 @@ pkgbase = linux-cacule
 	sha256sums = d2405846ab0501eb993180a0f6fa1e1ef81bac51a73ca00ff8ee3e75551b1886
 	sha256sums = c7048e30409190daa5e1e5a7994f4a3c28d7bc4714b8256d3d67a562a3ab3bec
 	sha256sums = 0ec74fbdd5c114026f07128fb84d0191157b2787141645545722b3f52aaa2187
-	sha256sums = d15fe026c0872ec902dcfd35c180746488b294d9ebf059b8e2699f970ead3734
 	sha256sums = 65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b
 
 pkgname = linux-cacule

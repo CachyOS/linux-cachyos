@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-pds
 	pkgdesc = Linux PDS scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 5.17.4
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -45,7 +45,7 @@ pkgbase = linux-cachyos-pds
 	source = auto-cpu-optimization.sh
 	sha256sums = 6e3cd56ee83a9cb5ac3fde1442c40367ab67368946c4c93bbeb1c65664a0d3c5
 	sha256sums = 29c5dd2ae6b452b75b25816a8f6610fa2ff54f21b22a0ccef5c2e98a7077eb36
-	sha256sums = 25ff374e8fe339dc28042cb38defe245c71aae9689dfaf3e5cc84a546150e45b
+	sha256sums = a1f1dba089c7e66f549e5343462fd87c033c28dc53788417061dc71114b26c5b
 	sha256sums = e2109061823fe11e99eb5002b3d553ef9629c8495b974af36fc4113889dd0080
 	sha256sums = efd954e75525fb169c3e7d5f4a8b673f8a59469c9c5f8843c9255efbda48e6a9
 	sha256sums = 80d4a1e4c7f3cbed102de9079859b34a942d4e6424bf86c34a6b00d90f51fdb3

@@ -35,7 +35,7 @@ mv */*.tar.zst* /home/ptr1337/packages/
 
 
 
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto==y/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto=thin/" {}
 
 
 files=$(find . -name "PKGBUILD")

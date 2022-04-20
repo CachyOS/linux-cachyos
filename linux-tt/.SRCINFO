@@ -1,7 +1,7 @@
 pkgbase = linux-tt
-	pkgdesc = Linux TT scheduler Kernel by CachyOS and other patches and improvements
+	pkgdesc = Linux TT scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 5.17.4
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -66,7 +66,7 @@ pkgbase = linux-tt
 	sha256sums = 65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b
 
 pkgname = linux-tt
-	pkgdesc = The Linux TT scheduler Kernel by CachyOS and other patches and improvements kernel and modules
+	pkgdesc = The Linux TT scheduler Kernel by CachyOS with other patches and improvements kernel and modules
 	depends = coreutils
 	depends = kmod
 	depends = initramfs
@@ -78,5 +78,5 @@ pkgname = linux-tt
 	provides = KSMBD-MODULE
 
 pkgname = linux-tt-headers
-	pkgdesc = Headers and scripts for building modules for the Linux TT scheduler Kernel by CachyOS and other patches and improvements kernel
+	pkgdesc = Headers and scripts for building modules for the Linux TT scheduler Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
