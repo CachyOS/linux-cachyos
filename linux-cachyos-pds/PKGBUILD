@@ -233,10 +233,12 @@ prepare() {
   ### Selecting the CPU scheduler
   if [ "$_cpusched" = "bmq" ]; then
     echo "Selecting BMQ CPU scheduler..."
+    scripts/config --enable CONFIG_SCHED_ALT
     scripts/config --enable CONFIG_SCHED_BMQ
     scripts/config --disable CONFIG_SCHED_PDS
   elif [ "$_cpusched" = "pds" ]; then
     echo "Selecting PDS CPU scheduler..."
+    scripts/config --enable CONFIG_SCHED_ALT
     scripts/config --disable CONFIG_SCHED_BMQ
     scripts/config --enable CONFIG_SCHED_PDS
   elif [ "$_cpusched" = "cacule" ]; then
