@@ -24,7 +24,7 @@ _makenconfig=
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
-_NUMAdisable=
+_NUMAdisable=y
 
 # Compile ONLY used modules to VASTLYreduce the number of modules built
 # and the build time.
@@ -52,18 +52,21 @@ _per_gov=y
 ### Enable TCP_CONG_BBR2
 _tcp_bbr2=y
 
-### Running with a 1000HZ, 750Hz or  500HZ tick rate
+### Running with a 1000HZ, 750Hz, 600 Hz or 500Hz tick rate
 _1k_HZ_ticks=
 _750_HZ_ticks=y
 _600_HZ_ticks=
 _500_HZ_ticks=
+
+##ä Choose between perodic, tickless idle or full tickless
+### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency. Just tickless idle can perform better on some platforms (mostly AMD based).
+_tickrate=full
 
 ### Disable MQ-Deadline I/O scheduler
 _mq_deadline_disable=y
 
 ### Disable Kyber I/O scheduler
 _kyber_disable=y
-
 
 ### Enable multigenerational LRU
 _lru_enable=y
@@ -82,31 +85,14 @@ _use_auto_optimization=y
 ## Apply Kernel Optimization selecting
 _use_optimization_select=
 
-### Selecting the ZSTD compression level
-# ATTENTION - one of two predefined values should be selected!
-# 'ultra' - highest compression ratio
-# 'normal' - standard compression ratio
-_zstd_level='normal'
-
-### Selecting the ZSTD module compression level
-# If you want to use ZSTD compression,
-# first install mkinitcpio-zstd:
-# https://gitlab.com/sirlucjan/lucjan-kernels/tree/master/depends
-# or
-# https://github.com/sirlucjan/lucjan-kernels/tree/master/depends
-# ATTENTION - one of two predefined values should be selected!
-# 'ultra' - highest compression ratio
-# 'normal' - standard compression ratio
-# WARNING: the ultra settings can sometimes
-# be counterproductive in both size and speed.
-_zstd_level_value='normal'
-
 # Enable zram/zswap ZSTD compression
 _zstd_compression=y
 
 _nf_cone=y
 
-## Enable it for compiling with LLVM and THINLTO
+# Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
+# "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
+# "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 _use_llvm_lto=
 
 # Enable it for using the LLVM CFI PATCH for a better security
@@ -216,10 +202,12 @@ prepare() {
   ### Selecting the CPU scheduler
   if [ "$_cpusched" = "bmq" ]; then
     echo "Selecting BMQ CPU scheduler..."
+    scripts/config --enable CONFIG_SCHED_ALT
     scripts/config --enable CONFIG_SCHED_BMQ
     scripts/config --disable CONFIG_SCHED_PDS
   elif [ "$_cpusched" = "pds" ]; then
     echo "Selecting PDS CPU scheduler..."
+    scripts/config --enable CONFIG_SCHED_ALT
     scripts/config --disable CONFIG_SCHED_BMQ
     scripts/config --enable CONFIG_SCHED_PDS
   elif [ "$_cpusched" = "cacule" ]; then
@@ -256,7 +244,9 @@ prepare() {
     scripts/config --enable CONFIG_CFI_CLANG
   fi
 
-  if [ -n "$_use_llvm_lto" ]; then
+  ### Selecting the THIN or FULL-LTO compression level
+  if [ "$_use_llvm_lto" = "thin" ]; then
+    echo "Enabling LLVM THIN LTO..."
     scripts/config --disable LTO_NONE \
       --enable LTO \
       --enable LTO_CLANG \
@@ -265,11 +255,24 @@ prepare() {
       --enable HAS_LTO_CLANG \
       --enable LTO_CLANG_THIN \
       --enable HAVE_GCC_PLUGINS
+  elif [ "$_use_llvm_lto" = "full" ]; then
+    echo "Enabling LLVM FULL LTO..."
+    scripts/config --disable LTO_NONE \
+      --enable LTO \
+      --enable LTO_CLANG \
+      --enable ARCH_SUPPORTS_LTO_CLANG \
+      --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
+      --enable HAS_LTO_CLANG \
+      --enable LTO_CLANG \
+      --enable LTO_CLANG_FULL \
+      --enable HAVE_GCC_PLUGINS
+  else
+    scripts/config --enable CONFIG_LTO_NONE
   fi
 
-  ### Optionally set tickrate to 1000
+  ### Optionally set tickrate to 1000Hz
   if [ -n "$_1k_HZ_ticks" ]; then
-    echo "Setting tick rate to 1k..."
+    echo "Setting tick rate to 1k Hz..."
     scripts/config --disable CONFIG_HZ_300
     scripts/config --enable CONFIG_HZ_1000
     scripts/config --set-val CONFIG_HZ 1000
@@ -277,7 +280,7 @@ prepare() {
 
   ### Optionally set tickrate to 750HZ
   if [ -n "$_750_HZ_ticks" ]; then
-    echo "Setting tick rate to 750HZ..."
+    echo "Setting tick rate to 750Hz..."
     scripts/config --disable CONFIG_HZ_300
     scripts/config --enable CONFIG_HZ_750
     scripts/config --set-val CONFIG_HZ 750
@@ -285,7 +288,7 @@ prepare() {
 
   ### Optionally set tickrate to 600HZ
   if [ -n "$_600_HZ_ticks" ]; then
-    echo "Setting tick rate to 600HZ..."
+    echo "Setting tick rate to 600Hz..."
     scripts/config --disable CONFIG_HZ_300
     scripts/config --enable CONFIG_HZ_600
     scripts/config --set-val CONFIG_HZ 600
@@ -293,7 +296,7 @@ prepare() {
 
   ### Optionally set tickrate to 500HZ
   if [ -n "$_500_HZ_ticks" ]; then
-    echo "Setting tick rate to 500HZ..."
+    echo "Setting tick rate to 500Hz..."
     scripts/config --disable CONFIG_HZ_300
     scripts/config --enable CONFIG_HZ_500
     scripts/config --set-val CONFIG_HZ 500
@@ -304,11 +307,17 @@ prepare() {
   if [ -n "$_NUMAdisable" ]; then
     echo "Disabling NUMA from kernel config..."
     scripts/config --disable CONFIG_NUMA
-  fi
-
-  if [ -n "$_winesync" ]; then
-    echo "Enable winesync support"
-    scripts/config --module CONFIG_WINESYNC
+    scripts/config --disable CONFIG_AMD_NUMA
+    scripts/config --disable CONFIG_X86_64_ACPI_NUMA
+    scripts/config --disable CONFIG_NODES_SPAN_OTHER_NODES
+    scripts/config --disable CONFIG_NUMA_EMU
+    scripts/config --disable CONFIG_NEED_MULTIPLE_NODES
+    scripts/config --disable CONFIG_USE_PERCPU_NUMA_NODE_ID
+    scripts/config --disable CONFIG_ACPI_NUMA
+    scripts/config --disable CONFIG_ARCH_SUPPORTS_NUMA_BALANCING
+    scripts/config --disable CONFIG_NODES_SHIFT
+    scripts/config --undefine CONFIG_NODES_SHIFT
+    scripts/config --disable CONFIG_NEED_MULTIPLE_NODES
   fi
 
   ### Disable MQ-Deadline I/O scheduler
@@ -328,11 +337,38 @@ prepare() {
     echo "Setting performance governor..."
     scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
     scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
-    echo "Disabling uneeded governors..."
-    scripts/config --disable CONFIG_CPU_FREQ_GOV_ONDEMAND
-    scripts/config --disable CONFIG_CPU_FREQ_GOV_CONSERVATIVE
-    scripts/config --disable CONFIG_CPU_FREQ_GOV_USERSPACE
-    scripts/config --disable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+    echo "Set PCIEASPM DRIVER to performance..."
+    scripts/config --enable CONFIG_PCIEASPM
+    scripts/config --enable CONFIG_PCIEASPM_PERFORMANCE
+    echo "Set CONFIG_PCIE_BUS for performance..."
+    scripts/config --enable CONFIG_PCIE_BUS_PERFORMANCE
+  fi
+
+  ### Selecting between tickless idle, perodic tics or full tickless
+  if [ "$_tickrate" = "perodic" ]; then
+    echo "Enabling periodic ticks..."
+    scripts/config --disable CONFIG_NO_HZ_IDLE
+    scripts/config --disable CONFIG_NO_HZ_FULL
+    scripts/config --disable CONFIG_NO_HZ
+    scripts/config --disable CONFIG_NO_HZ_COMMON
+    scripts/config --enable CONFIG_HZ_PERIODIC
+  elif [ "$_tickrate" = "idle" ]; then
+    echo "Enabling tickless idle..."
+    scripts/config --disable CONFIG_HZ_PERIODIC
+    scripts/config --disable CONFIG_NO_HZ_FULL
+    scripts/config --enable CONFIG_NO_HZ_IDLE
+    scripts/config --enable CONFIG_NO_HZ
+    scripts/config --enable CONFIG_NO_HZ_COMMON
+  elif [ "$_tickrate" = "full" ]; then
+    echo "Enabling tickless idle..."
+    scripts/config --disable CONFIG_HZ_PERIODIC
+    scripts/config --disable CONFIG_NO_HZ_IDLE
+    scripts/config --disable CONFIG_CONTEXT_TRACKING_FORCE
+    scripts/config --enable CONFIG_NO_HZ_FULL_NODEF
+    scripts/config --enable CONFIG_NO_HZ_FULL
+    scripts/config --enable CONFIG_NO_HZ
+    scripts/config --enable CONFIG_NO_HZ_COMMON
+    scripts/config --enable CONFIG_CONTEXT_TRACKING
   fi
 
   ### Enable KBUILD_CFLAGS -O3
@@ -353,7 +389,6 @@ prepare() {
     scripts/config --set-str CONFIG_DEFAULT_TCP_CONG bbr2
   fi
 
-
   ### Enable FULLCONENAT
   if [ -n "$_nf_cone" ]; then
     echo "Enabling FULLCONENAT..."
@@ -363,7 +398,7 @@ prepare() {
 
   ### Enable SPF
   if [ -n "$_spf_enable" ]; then
-    echo "Enabling multigenerational LRU..."
+    echo "Enabling SPECULATIVE_PAGE_FAULT LRU..."
     scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
   fi
 
@@ -386,47 +421,52 @@ prepare() {
     scripts/config --enable CONFIG_DAMON_RECLAIM
   fi
 
-  ### Selecting the ZSTD compression level
-  if [ "$_zstd_level" = "ultra" ]; then
-    echo "Enabling highest ZSTD compression ratio..."
-    scripts/config --set-val CONFIG_KERNEL_ZSTD_LEVEL 19
-    scripts/config --enable CONFIG_KERNEL_ZSTD_LEVEL_ULTRA
-  elif [ "$_zstd_level" = "normal" ]; then
-    echo "Enabling standard ZSTD compression ratio..."
-    scripts/config --set-val CONFIG_KERNEL_ZSTD_LEVEL 19
-    scripts/config --disable CONFIG_KERNEL_ZSTD_LEVEL_ULTRA
-  else
-    if [ -n "$_zstd_level" ]; then
-      error "The value $_zstd_level is invalid. Choose the correct one again."
-    else
-      error "The value is empty. Choose the correct one again."
-    fi
-    error "Selecting the ZSTD compression level failed!"
-    exit
-  fi
-
-  ### Selecting the ZSTD modules and kernel compression level
-  if [ "$_zstd_level_value" = "ultra" ]; then
-    echo "Enabling highest ZSTD modules compression ratio..."
-    scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL 19
-    scripts/config --enable CONFIG_MODULE_COMPRESS_ZSTD_ULTRA
-    scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22
-    echo "Enabling highest ZSTD kernel compression ratio..."
-    scripts/config --set-val CONFIG_ZSTD_COMP_VAL 22
-  elif [ "$_zstd_level_value" = "normal" ]; then
-    echo "Enabling standard ZSTD modules compression ratio..."
-    scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL 19
-    scripts/config --disable CONFIG_MODULE_COMPRESS_ZSTD_ULTRA
-    echo "Enabling standard ZSTD kernel compression ratio..."
-    scripts/config --set-val CONFIG_ZSTD_COMP_VAL 19
-  else
-    if [ -n "$_zstd_level_value" ]; then
-      error "The value $_zstd_level_value is invalid. Choose the correct one again."
-    else
-      error "The value is empty. Choose the correct one again."
-    fi
-    error "Selecting the ZSTD modules and kernel compression level failed!"
-    exit
+  ### Enable Linux Random Number Generator
+  if [ -n "$_lrng_enable" ]; then
+    echo "Enabling Linux Random Number Generator ..."
+    scripts/config --disable CONFIG_RANDOM_DEFAULT_IMPL
+    scripts/config --enable CONFIG_LRNG
+    scripts/config --enable CONFIG_LRNG_OVERSAMPLE_ENTROPY_SOURCES
+    scripts/config --set-val CONFIG_CONFIG_LRNG_OVERSAMPLE_ES_BITS 64
+    scripts/config --set-val CONFIG_LRNG_SEED_BUFFER_INIT_ADD_BITS 128
+    scripts/config --enable CONFIG_LRNG_IRQ
+    scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
+    scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
+    scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
+    scripts/config --enable CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION
+    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_512
+    scripts/config --enable CONFIG_LRNG_COLLECTION_SIZE_1024
+    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_2048
+    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_4096
+    scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_8192
+    scripts/config --set-val CONFIG_LRNG_COLLECTION_SIZE 1024
+    scripts/config --enable CONFIG_LRNG_HEALTH_TESTS
+    scripts/config --set-val CONFIG_LRNG_RCT_CUTOFF 31
+    scripts/config --set-val CONFIG_LRNG_APT_CUTOFF 325
+    scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
+    scripts/config --enable CONFIG_LRNG_JENT
+    scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
+    scripts/config --enable CONFIG_LRNG_CPU
+    scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
+    scripts/config --enable CONFIG_LRNG_DRNG_SWITCH
+    scripts/config --enable CONFIG_LRNG_KCAPI_HASH
+    scripts/config --module CONFIG_LRNG_DRBG
+    scripts/config --module CONFIG_LRNG_KCAPI
+    scripts/config --enable CONFIG_LRNG_TESTING_MENU
+    scripts/config --disable CONFIG_LRNG_RAW_HIRES_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_JIFFIES_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_IRQ_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_IRQFLAGS_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_RETIP_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_REGS_ENTROPY
+    scripts/config --disable CONFIG_LRNG_RAW_ARRAY
+    scripts/config --disable CONFIG_LRNG_IRQ_PERF
+    scripts/config --disable CONFIG_LRNG_ACVT_HASH
+    scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
+    scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
+    scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
+    scripts/config --enable CONFIG_LRNG_SELFTEST
+    scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
   fi
 
   ### Enable zram/zswap ZSTD compression
@@ -441,12 +481,27 @@ prepare() {
     scripts/config --set-str CONFIG_ZSWAP_COMPRESSOR_DEFAULT zstd
   fi
 
-  echo "Enable Anbox"
+  echo "Enable Anbox..."
   scripts/config --enable CONFIG_ASHMEM
   scripts/config --enable CONFIG_ANDROID
   scripts/config --enable CONFIG_ANDROID_BINDER_IPC
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
+
+  echo "disable debugging features to reduce the size..."
+  scripts/config --disable CONFIG_DEBUG_INFO
+  scripts/config --disable CONFIG_CGROUP_BPF
+  scripts/config --disable CONFIG_BPF_LSM
+  scripts/config --disable CONFIG_BPF_PRELOAD
+  scripts/config --disable CONFIG_BPF_LIRC_MODE2
+  scripts/config --disable CONFIG_BPF_KPROBE_OVERRIDE
+  scripts/config --enable CONFIG_PSI_DEFAULT_DISABLED
+  scripts/config --disable CONFIG_LATENCYTOP
+  scripts/config --disable CONFIG_SCHED_DEBUG
+  scripts/config --disable CONFIG_KVM_WERROR
+
+  echo "Enable CONFIG_USER_NS_UNPRIVILEGED"
+  scripts/config --enable CONFIG_USER_NS
 
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191

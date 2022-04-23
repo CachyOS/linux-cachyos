@@ -85,25 +85,6 @@ _use_auto_optimization=y
 ## Apply Kernel Optimization selecting
 _use_optimization_select=
 
-### Selecting the ZSTD compression level
-# ATTENTION - one of two predefined values should be selected!
-# 'ultra' - highest compression ratio
-# 'normal' - standard compression ratio
-_zstd_level='normal'
-
-### Selecting the ZSTD module compression level
-# If you want to use ZSTD compression,
-# first install mkinitcpio-zstd:
-# https://gitlab.com/sirlucjan/lucjan-kernels/tree/master/depends
-# or
-# https://github.com/sirlucjan/lucjan-kernels/tree/master/depends
-# ATTENTION - one of two predefined values should be selected!
-# 'ultra' - highest compression ratio
-# 'normal' - standard compression ratio
-# WARNING: the ultra settings can sometimes
-# be counterproductive in both size and speed.
-_zstd_level_value='normal'
-
 # Enable zram/zswap ZSTD compression
 _zstd_compression=y
 
@@ -277,7 +258,7 @@ prepare() {
 
   ### Selecting the THIN or FULL-LTO compression level
   if [ "$_use_llvm_lto" = "thin" ]; then
-    echo "Enabling highest ZSTD compression ratio..."
+    echo "Enabling LLVM THIN LTO..."
     scripts/config --disable LTO_NONE \
       --enable LTO \
       --enable LTO_CLANG \
@@ -287,7 +268,7 @@ prepare() {
       --enable LTO_CLANG_THIN \
       --enable HAVE_GCC_PLUGINS
   elif [ "$_use_llvm_lto" = "full" ]; then
-    echo "Enabling standard ZSTD compression ratio..."
+    echo "Enabling LLVM FULL LTO..."
     scripts/config --disable LTO_NONE \
       --enable LTO \
       --enable LTO_CLANG \
@@ -295,14 +276,15 @@ prepare() {
       --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
       --enable HAS_LTO_CLANG \
       --enable LTO_CLANG \
+      --enable LTO_CLANG_FULL \
       --enable HAVE_GCC_PLUGINS
   else
     scripts/config --enable CONFIG_LTO_NONE
   fi
 
-  ### Optionally set tickrate to 1000
+  ### Optionally set tickrate to 1000Hz
   if [ -n "$_1k_HZ_ticks" ]; then
-    echo "Setting tick rate to 1k..."
+    echo "Setting tick rate to 1k Hz..."
     scripts/config --disable CONFIG_HZ_300
     scripts/config --enable CONFIG_HZ_1000
     scripts/config --set-val CONFIG_HZ 1000
@@ -310,7 +292,7 @@ prepare() {
 
   ### Optionally set tickrate to 750HZ
   if [ -n "$_750_HZ_ticks" ]; then
-    echo "Setting tick rate to 750HZ..."
+    echo "Setting tick rate to 750Hz..."
     scripts/config --disable CONFIG_HZ_300
     scripts/config --enable CONFIG_HZ_750
     scripts/config --set-val CONFIG_HZ 750
@@ -318,7 +300,7 @@ prepare() {
 
   ### Optionally set tickrate to 600HZ
   if [ -n "$_600_HZ_ticks" ]; then
-    echo "Setting tick rate to 600HZ..."
+    echo "Setting tick rate to 600Hz..."
     scripts/config --disable CONFIG_HZ_300
     scripts/config --enable CONFIG_HZ_600
     scripts/config --set-val CONFIG_HZ 600
@@ -326,7 +308,7 @@ prepare() {
 
   ### Optionally set tickrate to 500HZ
   if [ -n "$_500_HZ_ticks" ]; then
-    echo "Setting tick rate to 500HZ..."
+    echo "Setting tick rate to 500Hz..."
     scripts/config --disable CONFIG_HZ_300
     scripts/config --enable CONFIG_HZ_500
     scripts/config --set-val CONFIG_HZ 500
@@ -497,49 +479,6 @@ prepare() {
     scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
     scripts/config --enable CONFIG_LRNG_SELFTEST
     scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
-  fi
-
-  ### Selecting the ZSTD compression level
-  if [ "$_zstd_level" = "ultra" ]; then
-    echo "Enabling highest ZSTD compression ratio..."
-    scripts/config --set-val CONFIG_KERNEL_ZSTD_LEVEL 19
-    scripts/config --enable CONFIG_KERNEL_ZSTD_LEVEL_ULTRA
-  elif [ "$_zstd_level" = "normal" ]; then
-    echo "Enabling standard ZSTD compression ratio..."
-    scripts/config --set-val CONFIG_KERNEL_ZSTD_LEVEL 19
-    scripts/config --disable CONFIG_KERNEL_ZSTD_LEVEL_ULTRA
-  else
-    if [ -n "$_zstd_level" ]; then
-      error "The value $_zstd_level is invalid. Choose the correct one again."
-    else
-      error "The value is empty. Choose the correct one again."
-    fi
-    error "Selecting the ZSTD compression level failed!"
-    exit
-  fi
-
-  ### Selecting the ZSTD modules and kernel compression level
-  if [ "$_zstd_level_value" = "ultra" ]; then
-    echo "Enabling highest ZSTD modules compression ratio..."
-    scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL 19
-    scripts/config --enable CONFIG_MODULE_COMPRESS_ZSTD_ULTRA
-    scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22
-    echo "Enabling highest ZSTD kernel compression ratio..."
-    scripts/config --set-val CONFIG_ZSTD_COMP_VAL 22
-  elif [ "$_zstd_level_value" = "normal" ]; then
-    echo "Enabling standard ZSTD modules compression ratio..."
-    scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL 19
-    scripts/config --disable CONFIG_MODULE_COMPRESS_ZSTD_ULTRA
-    echo "Enabling standard ZSTD kernel compression ratio..."
-    scripts/config --set-val CONFIG_ZSTD_COMP_VAL 19
-  else
-    if [ -n "$_zstd_level_value" ]; then
-      error "The value $_zstd_level_value is invalid. Choose the correct one again."
-    else
-      error "The value is empty. Choose the correct one again."
-    fi
-    error "Selecting the ZSTD modules and kernel compression level failed!"
-    exit
   fi
 
   ### Enable zram/zswap ZSTD compression
