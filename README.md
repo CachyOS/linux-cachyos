@@ -35,6 +35,26 @@ The CachyOS are improved kernels which improve the performance and other improve
 - AMD PSTATE Driver enabled by default
 - Clearlinux Patchset
 - Control Flow Integrity (CFI) selectable when using LLVM
+- ZFS Filesystem Support and prebuilt in the repo!
+- WINESYNC Fastsync
+
+## WINESYNC Usage:
+
+Insall following packages from the AUR:
+
+- [winesync](https://aur.archlinux.org/packages/winesync)
+- [winesync-dkms](https://aur.archlinux.org/packages/winesync-dkms)
+- [winesync-header](https://aur.archlinux.org/packages/winesync-header)
+- [winesync-udev-rule](https://aur.archlinux.org/packages/winesync-udev-rule)
+
+And disable following enviroment variables in lutris/steam/..
+
+```
+WINEESYNC=0
+WINEFSYNC=0
+WINEFSYNC_FUTEX2=0
+```
+Also you need a wine/proton which includes the winesync patch. I would recommend to built one from [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git) or you will find prebuilt ones in our repo.
 
 ## Other distros
 

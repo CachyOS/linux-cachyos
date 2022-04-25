@@ -40,22 +40,28 @@ else
 fi
 
 _linuxprefix=linux-${_linuxpostfix}
-_kernver=5.17.4-1
+_kernver=5.17.4-3
 pkgname="${_linuxprefix}-zfs"
 pkgver=2.1.4
-pkgrel=1
+pkgrel=3
 pkgdesc='Kernel modules for the Zettabyte File System.'
 arch=('x86_64' 'x86_64_v3')
 url="http://zfsonlinux.org/"
 license=("CDDL")
-depends=("$_linuxprefix" "kmod" "zfs-utils=${pkgver}")
+depends=("$_linuxprefix=${_kernver}" "kmod" "zfs-utils=${pkgver}")
 makedepends=("$_linuxprefix-headers")
 provides=("zfs=$pkgver")
 #groups=("$_linuxprefix-extramodules")
 install=zfs.install
 source=("https://github.com/zfsonlinux/zfs/releases/download/zfs-${pkgver}/zfs-${pkgver}.tar.gz")
 sha256sums=('3b52c0d493f806f638dca87dde809f53861cd318c1ebb0e60daeaa061cf1acf6')
-
+if [ -n "$_use_llvm_lto" ]; then
+  depends+=(clang llvm lld python)
+  BUILD_FLAGS=(
+    LLVM=1
+    LLVM_IAS=1
+  )
+fi
 build() {
   cd "zfs-${pkgver}"
   ./autogen.sh
