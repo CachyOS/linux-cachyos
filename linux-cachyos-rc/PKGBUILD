@@ -100,9 +100,9 @@ _use_cfi=
 
 
 if [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-rc-${_cpusched}-lto
+  pkgbase=linux-cachyos-rc-lto
 else
-  pkgbase=linux-cachyos-rc-${_cpusched}
+  pkgbase=linux-cachyos-rc
 fi
 _major=5.18
 _minor=0
@@ -164,6 +164,7 @@ source+=(
   "${_patchsource}/0010-le9.patch"
   "${_patchsource}/0011-ck-hrtimer.patch"
   "${_patchsource}/0012-v4l2loopback.patch"
+  "${_patchsource}/0013-nvidia-5.18.patch"
   #  "${_patchsource}/misc/0001-amd-perf.patch"
   "auto-cpu-optimization.sh"
 )
@@ -510,6 +511,9 @@ prepare() {
   echo "Enable CONFIG_USER_NS_UNPRIVILEGED"
   scripts/config --enable CONFIG_USER_NS
 
+  echo "Enable WINE FASTSYNC"
+  scripts/config --enable CONFIG_WINESYNC
+  
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
   if [ -n "$_use_current" ]; then
@@ -680,10 +684,10 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('7c1cb399461d95e6dff3d18393a5d37c0a3e8398ea6e322b6f40d21cd2ba639e'
-            '88206dfb8433fab5e0d3a44663f1055a80f56b03a3ee36249c331ed26d622cec'
+            '618b2cafc8e3c1db6dbd764f89171e1e5e710ff2b010bf3983576563a1770886'
             'd2de9722eb44869cccf2a78385a10945e8e4db4390691dad8d733faaf8f94df8'
             '63d3e4de3b997a4b7223c64f1b7a13a00436d2b63739838e1572da39461fe62c'
-            'e2278606afc0a963cb1367799a24b078cee7e595b869c2a5d44ec6d82ce27102'
+            '4b8e123071e56e561de7940698c547eef551db3f337835d9ace40e3d91db1f9d'
             '41ac1e8715bca945bbe2cc0e90ca33b73cce15cb9a40dabb371e7072d7967cf2'
             'c50f0c22b8833982f266ebdb35a975bee25fa76e3c2b937649f7ea45ef628753'
             '6ce15ee1c2dae13a3412f99e9ff5584e3c2d5f2629e54bc7f86cd7c7945de8e7'
@@ -693,4 +697,5 @@ sha256sums=('7c1cb399461d95e6dff3d18393a5d37c0a3e8398ea6e322b6f40d21cd2ba639e'
             '73423fe06254f0a8eeec648af604aea9dead3227e43ff8bfc6eaa14e40fc261f'
             '57a721752f998e463929d1feae89c66b1d0a3efdb8ae29f6720606b0b6efb565'
             '172ede998a4e883c0b8532dac5cb928f8f2d3ce682c32a5118f98c94280210bd'
+            '8c9a32da31f16cf2caec8a6b7d67d1f5ff3a1f0f3fb06a1d92f519a4b01fec85'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
