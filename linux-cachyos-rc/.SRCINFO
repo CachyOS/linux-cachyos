@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-cfs-lto
+pkgbase = linux-cachyos-rc-cfs
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.18.rc4
 	pkgrel = 1
@@ -40,7 +40,7 @@ pkgbase = linux-cachyos-cfs-lto
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0012-v4l2loopback.patch
 	source = auto-cpu-optimization.sh
 	sha256sums = 7c1cb399461d95e6dff3d18393a5d37c0a3e8398ea6e322b6f40d21cd2ba639e
-	sha256sums = 9d24d096ed1f0e51846d6539b19a54664eb6fb06909195a5d73abe7418755f96
+	sha256sums = 88206dfb8433fab5e0d3a44663f1055a80f56b03a3ee36249c331ed26d622cec
 	sha256sums = d2de9722eb44869cccf2a78385a10945e8e4db4390691dad8d733faaf8f94df8
 	sha256sums = 63d3e4de3b997a4b7223c64f1b7a13a00436d2b63739838e1572da39461fe62c
 	sha256sums = e2278606afc0a963cb1367799a24b078cee7e595b869c2a5d44ec6d82ce27102
@@ -55,7 +55,7 @@ pkgbase = linux-cachyos-cfs-lto
 	sha256sums = 172ede998a4e883c0b8532dac5cb928f8f2d3ce682c32a5118f98c94280210bd
 	sha256sums = 65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b
 
-pkgname = linux-cachyos-cfs-lto
+pkgname = linux-cachyos-rc-cfs
 	pkgdesc = The Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -67,6 +67,6 @@ pkgname = linux-cachyos-cfs-lto
 	provides = WIREGUARD-MODULE
 	provides = KSMBD-MODULE
 
-pkgname = linux-cachyos-cfs-lto-headers
+pkgname = linux-cachyos-rc-cfs-headers
 	pkgdesc = Headers and scripts for building modules for the Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements kernel
 	depends = pahole
