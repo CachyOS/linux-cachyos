@@ -1,0 +1,13 @@
+EXTRAMODULES='${_kernver}-${_linuxpostfix}'
+
+post_install() {
+  depmod $(cat /usr/lib/modules/$EXTRAMODULES/version)
+}
+
+post_upgrade() {
+  depmod $(cat /usr/lib/modules/$EXTRAMODULES/version)
+}
+
+post_remove() {
+  depmod $(cat /usr/lib/modules/$EXTRAMODULES/version)
+}
