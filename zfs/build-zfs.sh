@@ -13,12 +13,12 @@ docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccac
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-pds/_pkgcore=cachyos-tt/" {}
 docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg
 docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-v3
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-pds/_pkgcore=cachyos-cacule/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-tt/_pkgcore=cachyos-cacule/" {}
 docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg
 docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-v3
 
 ## LTO ##
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-pds/_pkgcore=cachyos/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-cacule/_pkgcore=cachyos/" {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto=thin/" {}
 docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg
 docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-v3
@@ -34,6 +34,6 @@ docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccac
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-pds/_pkgcore=cachyos-tt/" {}
 docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg
 docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-v3
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-pds/_pkgcore=cachyos-cacule/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-tt/_pkgcore=cachyos-cacule/" {}
 docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg
 docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-v3
