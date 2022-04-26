@@ -58,6 +58,9 @@ _750_HZ_ticks=y
 _600_HZ_ticks=
 _500_HZ_ticks=
 
+## Enable Anbox support ##
+_anbox=y
+
 ##ä Choose between perodic, tickless idle or full tickless
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency. Just tickless idle can perform better on some platforms (mostly AMD based).
 _tickrate=full
@@ -153,7 +156,6 @@ if [ "$_cpusched" = "bore" ]; then
 fi
 source+=(
   "${_patchsource}/0001-arch.patch"
-  "${_patchsource}/0002-anbox.patch"
   "${_patchsource}/0003-bbr2.patch"
   "${_patchsource}/0004-cachy.patch"
   "${_patchsource}/0005-clearlinux.patch"
@@ -170,6 +172,11 @@ source+=(
   "${_patchsource}/0016-ck-hrtimer.patch"
   "${_patchsource}/0017-futex-winesync.patch"
   "auto-cpu-optimization.sh"
+)
+
+if [ -n "$_anbox" ]; then
+source+(=
+  "${_patchsource}/0002-anbox.patch"
 )
 
 export KBUILD_BUILD_HOST=archlinux
@@ -491,14 +498,15 @@ prepare() {
     scripts/config --enable CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD
     scripts/config --set-str CONFIG_ZSWAP_COMPRESSOR_DEFAULT zstd
   fi
-
+  ## Enable Anbox Support
+  if [ -n "$_anbox" ]; then
   echo "Enable Anbox..."
   scripts/config --enable CONFIG_ASHMEM
   scripts/config --enable CONFIG_ANDROID
   scripts/config --enable CONFIG_ANDROID_BINDER_IPC
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
-
+  fi
   echo "disable debugging features to reduce the size..."
   scripts/config --disable CONFIG_DEBUG_INFO
   scripts/config --disable CONFIG_CGROUP_BPF
