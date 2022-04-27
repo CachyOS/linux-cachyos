@@ -185,7 +185,7 @@ source+=(
   ## Change the thin lto cachedir for fixing building several dkms modules
 if [ -n "$_thin_lto_cachedir" ] && [ "$_use_llvm_lto" = "thin" ]; then
 source+=(
-  "${_patchsource}/0016-thinlto-cache-dir.patch"
+  "${_patchsource}/0016-thinlto-cachedir.patch"
 )
 fi
 
