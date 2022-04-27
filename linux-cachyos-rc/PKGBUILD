@@ -26,6 +26,9 @@ _makenconfig=
 # See, https://bugs.archlinux.org/task/31187
 _NUMAdisable=y
 
+## Enable Anbox
+_anbox=
+
 # Compile ONLY used modules to VASTLYreduce the number of modules built
 # and the build time.
 #
@@ -95,6 +98,9 @@ _nf_cone=y
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 _use_llvm_lto=
 
+## Change the thin lto cachedir for fixing building several dkms modules including zfs
+_thin_lto_cachedir=
+
 # Enable it for using the LLVM CFI PATCH for a better security
 _use_cfi=
 
@@ -125,6 +131,8 @@ makedepends=('bc' 'texlive-latexextra' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz
 if [ -n "$_use_llvm_lto" ]; then
   depends+=(clang llvm lld python)
   BUILD_FLAGS=(
+    CC=clang
+    LD=ld.lld
     LLVM=1
     LLVM_IAS=1
   )
@@ -246,10 +254,17 @@ prepare() {
     exit
   fi
 
+  ## Enable it for using the LLVM CFI PATCH for a better security
   if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
     echo "Enabling CFI"
     scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
     scripts/config --enable CONFIG_CFI_CLANG
+  fi
+
+  ## Change the thin lto cachedir for fixing building several dkms modules
+  if [ -n "$_thin_lto_cachedir" ] && [ "$_use_llvm_lto" = "thin" ]; then
+    echo "Enabling CFI"
+    scripts/config --set-val LTO_CLANG_THIN_CACHEDIR "/tmp"
   fi
 
   ### Selecting the THIN or FULL-LTO compression level
@@ -513,7 +528,7 @@ prepare() {
 
   echo "Enable WINE FASTSYNC"
   scripts/config --enable CONFIG_WINESYNC
-  
+
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
   if [ -n "$_use_current" ]; then

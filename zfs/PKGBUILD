@@ -34,16 +34,15 @@ _use_llvm_lto=
 
 if [ -n "$_use_llvm_lto" ]; then
   _linuxpostfix=${_pkgcore}-lto
-  export LLVM=1 LLVM_IAS=1 CC=clang LD=lld
 else
   _linuxpostfix=${_pkgcore}
 fi
 
 _linuxprefix=linux-${_linuxpostfix}
-_kernver=5.17.4-3
+_kernver=5.17.5-1
 pkgname="${_linuxprefix}-zfs"
 pkgver=2.1.4
-pkgrel=3
+pkgrel=4
 pkgdesc='Kernel modules for the Zettabyte File System.'
 arch=('x86_64' 'x86_64_v3')
 url="http://zfsonlinux.org/"
@@ -58,6 +57,8 @@ sha256sums=('3b52c0d493f806f638dca87dde809f53861cd318c1ebb0e60daeaa061cf1acf6')
 if [ -n "$_use_llvm_lto" ]; then
   depends+=(clang llvm lld python)
   BUILD_FLAGS=(
+    CC=clang
+    LD=ld.lld
     LLVM=1
     LLVM_IAS=1
   )
@@ -71,7 +72,7 @@ build() {
     --libexecdir=/usr/lib/zfs-${pkgver} --with-config=kernel \
     --with-linux=/usr/lib/modules/${_kernver}-${_linuxpostfix}/build \
     --with-linux-obj=/usr/lib/modules/${_kernver}-${_linuxpostfix}/build
-  make
+  make ${BUILD_FLAGS[*]}
 }
 
 package(){
