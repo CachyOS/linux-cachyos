@@ -8,12 +8,11 @@ files=$(find . -name "PKGBUILD")
 
 for f in $files
 do
-  d=$(dirname $f)
-  cd $d
-
-  docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-kernel
-  docker rm kernelbuild
-  cd ..
+    d=$(dirname $f)
+    cd $d
+    docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-kernel
+    docker rm kernelbuild
+    cd ..
 done
 
 mv */*.tar.zst* /home/ptr1337/packages/
@@ -24,12 +23,11 @@ files=$(find . -name "PKGBUILD")
 
 for f in $files
 do
-  d=$(dirname $f)
-  cd $d
-
-  docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-kernel-v3
-  docker rm kernelbuild
-  cd ..
+    d=$(dirname $f)
+    cd $d
+    docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-kernel-v3
+    docker rm kernelbuild
+    cd ..
 done
 
 mv */*.tar.zst* /home/ptr1337/packages/
@@ -43,11 +41,11 @@ files=$(find . -name "PKGBUILD")
 
 for f in $files
 do
-  d=$(dirname $f)
-  cd $d
-  docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-kernel-v3
-  docker rm kernelbuild
-  cd ..
+    d=$(dirname $f)
+    cd $d
+    docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-kernel-v3
+    docker rm kernelbuild
+    cd ..
 done
 
 mv */*.tar.zst* /home/ptr1337/packages/
@@ -58,11 +56,11 @@ files=$(find . -name "PKGBUILD")
 
 for f in $files
 do
-  d=$(dirname $f)
-  cd $d
-  docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-kernel
-  docker rm kernelbuild
-  cd ..
+    d=$(dirname $f)
+    cd $d
+    docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/ccache-kernel:/home/notroot/ccache pttrr/docker-makepkg-kernel
+    docker rm kernelbuild
+    cd ..
 done
 
 mv */*.tar.zst* /home/ptr1337/packages/
