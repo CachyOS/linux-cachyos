@@ -1,4 +1,4 @@
-# Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev>
+s# Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev>
 # Contributor: Piotr Gorski <lucjan.lucjanov@gmail.com>
 # Contributor: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
 # Contributor: Tobias Powalowski <tpowa@archlinux.org>
@@ -19,7 +19,7 @@ _cpusched='cfs'
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=
+_makenconfig=y
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -56,8 +56,8 @@ _per_gov=y
 _tcp_bbr2=y
 
 ### Running with a 1000HZ, 750Hz, 600 Hz or 500Hz tick rate
-_1k_HZ_ticks=
-_750_HZ_ticks=y
+_1k_HZ_ticks=y
+_750_HZ_ticks=
 _600_HZ_ticks=
 _500_HZ_ticks=
 
@@ -96,7 +96,7 @@ _nf_cone=y
 # Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
-_use_llvm_lto=
+_use_llvm_lto=full
 
 ## Change the thin lto cachedir for fixing building several dkms modules including zfs
 _thin_lto_cachedir=
@@ -167,9 +167,7 @@ source+=(
     "${_patchsource}/0001-ck-hrtimer.patch"
     "${_patchsource}/0001-cpu.patch"
     "${_patchsource}/0001-fixes.patch"
-    "${_patchsource}/0001-fs-patches.patch"
     "${_patchsource}/0001-spf-lru.patch"
-    #    "${_patchsource}/0011-kbuild.patch"
     #    "${_patchsource}/0012-kcfi.patch"
     #    "${_patchsource}/0013-thinlto-cachdir.patch"
     #    "${_patchsource}/misc/0001-amd-perf.patch"

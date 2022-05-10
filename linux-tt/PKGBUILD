@@ -122,7 +122,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux TT scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -738,7 +738,7 @@ sha256sums=('64ccf18380be5b5491322a3fd54904538b544e523e4bf86289dd8df7404cb10c'
             '09aa0e17190ee113a352573b2d2386cc04b522641fd277306e8ace9fd7af0037'
             'ddaf45cc72ed743f70c8754505357e94d6dd4133bfde6e9c6afc59f4cc12ee69'
             '6b31e4655e5ff9dbe95fb7db665426dad2bf3e33b5102d040a256f707cc99a23'
-            'c222aa0b958c16db5f840f6d6890257319bfc8c1d26e39322ab0dfebf635ce49'
+            '7936c3cc3c7be010539414b392f942664f95d9659a44c614a2e57c5c72cdacbf'
             'ef7d6253dc8a149ffea1293f65ef43fe9277ba6a629bc54d656f594429813b5e'
             'ab87b51fcacd9c7c5bf5d363ac45dab994c2c53d0e80e552390c7cbf752d7dca'
             '748d5b112d10870ce214c5fab1cc793492416faab73637e95c0a1b877b2574b7'
