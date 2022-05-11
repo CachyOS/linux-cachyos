@@ -1,7 +1,7 @@
-pkgbase = linux-cachyos
+pkgbase = linux-cachyos-cfs
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 5.17.6
-	pkgrel = 3
+	pkgrel = 4
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -43,7 +43,7 @@ pkgbase = linux-cachyos
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17/0015-futex-winesync.patch
 	source = auto-cpu-optimization.sh
 	sha256sums = 64ccf18380be5b5491322a3fd54904538b544e523e4bf86289dd8df7404cb10c
-	sha256sums = 29c5dd2ae6b452b75b25816a8f6610fa2ff54f21b22a0ccef5c2e98a7077eb36
+	sha256sums = c9b426fa0b72d3f412e8d60fa2d07b8792eb3fb48d84104a251fa312ad5782fe
 	sha256sums = 09aa0e17190ee113a352573b2d2386cc04b522641fd277306e8ace9fd7af0037
 	sha256sums = ddaf45cc72ed743f70c8754505357e94d6dd4133bfde6e9c6afc59f4cc12ee69
 	sha256sums = 6b31e4655e5ff9dbe95fb7db665426dad2bf3e33b5102d040a256f707cc99a23
@@ -61,7 +61,7 @@ pkgbase = linux-cachyos
 	sha256sums = 179b540f8848b03ccb1a0d12e24feab63fd0576b5e9eed8f214d6e9cb790f151
 	sha256sums = 65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b
 
-pkgname = linux-cachyos
+pkgname = linux-cachyos-cfs
 	pkgdesc = The Linux CFS scheduler Kernel by CachyOS with other patches and improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -73,6 +73,6 @@ pkgname = linux-cachyos
 	provides = WIREGUARD-MODULE
 	provides = KSMBD-MODULE
 
-pkgname = linux-cachyos-headers
+pkgname = linux-cachyos-cfs-headers
 	pkgdesc = Headers and scripts for building modules for the Linux CFS scheduler Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
