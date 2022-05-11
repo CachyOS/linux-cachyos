@@ -1,13 +1,16 @@
-EXTRAMODULES='${_kernver}-${_linuxpostfix}'
+EXTRAMODULES='5.17.6-4-cachyos-lto'
 
 post_install() {
   depmod $(cat /usr/lib/modules/$EXTRAMODULES/version)
+  mkinitcpio -P
 }
 
 post_upgrade() {
   depmod $(cat /usr/lib/modules/$EXTRAMODULES/version)
+  mkinitcpio -P
 }
 
 post_remove() {
   depmod $(cat /usr/lib/modules/$EXTRAMODULES/version)
+  mkinitcpio -P
 }

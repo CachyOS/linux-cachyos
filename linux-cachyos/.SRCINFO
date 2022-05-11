@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-cfs
+pkgbase = linux-cachyos-lto
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 5.17.6
 	pkgrel = 4
@@ -61,7 +61,7 @@ pkgbase = linux-cachyos-cfs
 	sha256sums = 179b540f8848b03ccb1a0d12e24feab63fd0576b5e9eed8f214d6e9cb790f151
 	sha256sums = 65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b
 
-pkgname = linux-cachyos-cfs
+pkgname = linux-cachyos-lto
 	pkgdesc = The Linux CFS scheduler Kernel by CachyOS with other patches and improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -73,6 +73,6 @@ pkgname = linux-cachyos-cfs
 	provides = WIREGUARD-MODULE
 	provides = KSMBD-MODULE
 
-pkgname = linux-cachyos-cfs-headers
+pkgname = linux-cachyos-lto-headers
 	pkgdesc = Headers and scripts for building modules for the Linux CFS scheduler Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
