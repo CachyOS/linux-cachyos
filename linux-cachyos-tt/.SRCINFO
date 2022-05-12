@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-tt
 	pkgdesc = Linux TT scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 5.17.6
-	pkgrel = 4
+	pkgrel = 5
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -44,7 +44,7 @@ pkgbase = linux-cachyos-tt
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17/0015-futex-winesync.patch
 	source = auto-cpu-optimization.sh
 	sha256sums = 64ccf18380be5b5491322a3fd54904538b544e523e4bf86289dd8df7404cb10c
-	sha256sums = bce05218cb52e8f70fd0e652483d0413cf3d3f8bcbe0302bfb2d2f195ea6ef7c
+	sha256sums = 7ad9dced23394e7db11dc70e5ad95589828001c8b09d3c1f9d54375e3c396dcb
 	sha256sums = c048c4d43196d5d003897012b40da442d932f322b85e9805824450faa5df00ef
 	sha256sums = 09aa0e17190ee113a352573b2d2386cc04b522641fd277306e8ace9fd7af0037
 	sha256sums = ddaf45cc72ed743f70c8754505357e94d6dd4133bfde6e9c6afc59f4cc12ee69
