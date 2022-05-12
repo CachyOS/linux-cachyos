@@ -122,7 +122,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=5
+pkgrel=6
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -505,55 +505,6 @@ prepare() {
                        --enable ANDROID_BINDERFS \
                        --enable ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
     fi
-
-    scripts/config --enable ACPI_REV_OVERRIDE_POSSIBLE \
-                   --enable ACPI_TABLE_UPGRADE
-
-    # General architecture-dependent options
-    scripts/config --enable KPROBES
-
-    # Enable loadable module support
-    scripts/config --undefine MODULE_SIG_FORCE \
-                    --enable MODULE_COMPRESS_ZSTD
-
-    # Networking support
-    scripts/config --enable NETFILTER_INGRESS
-
-    # Device Drivers
-    scripts/config --enable FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER \
-                   --enable DELL_SMBIOS_SMM \
-                   --module PATA_JMICRON \
-                   --enable-after SOUND SOUND_OSS_CORE \
-                   --enable SND_OSSEMUL \
-                   --module-after SND_OSSEMUL SND_MIXER_OSS \
-                   --module-after SND_MIXER_OSS SND_PCM_OSS \
-                   --enable-after SND_PCM_OSS SND_PCM_OSS_PLUGINS \
-                   --module AGP --module-after AGP AGP_INTEL --module-after AGP_INTEL AGP_VIA \
-                   --enable FW_LOADER_COMPRESS
-
-    # Kernel hacking -> Compile-time checks and compiler options -> Make section mismatch errors non-fatal
-    scripts/config --enable SECTION_MISMATCH_WARN_ONLY
-
-    # File systems
-    scripts/config --module NTFS3_FS \
-                   --enable NTFS3_LZX_XPRESS \
-                   --enable NTFS3_FS_POSIX_ACL
-
-    scripts/config --module SMB_SERVER \
-                   --enable SMB_SERVER_SMBDIRECT \
-                   --enable SMB_SERVER_CHECK_CAP_NET_ADMIN \
-                   --enable SMB_SERVER_KERBEROS5
-
-    # Security options
-    scripts/config --enable SECURITY_SELINUX \
-                   --enable SECURITY_SELINUX_BOOTPARAM \
-                   --enable SECURITY_SMACK \
-                   --enable SECURITY_SMACK_BRINGUP \
-                   --enable SECURITY_SMACK_NETFILTER \
-                   --enable SECURITY_SMACK_APPEND_SIGNALS \
-                   --enable SECURITY_TOMOYO \
-                   --enable SECURITY_APPARMOR \
-                   --enable SECURITY_YAMA
 
     scripts/config --disable DEBUG_INFO \
                    --disable DEBUG_INFO_BTF \
