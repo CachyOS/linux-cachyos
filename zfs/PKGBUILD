@@ -39,10 +39,10 @@ else
 fi
 
 _linuxprefix=linux-${_linuxpostfix}
-_kernver=5.17.6-6
+_kernver=5.17.7-1
 pkgname="${_linuxprefix}-zfs"
 pkgver=2.1.4
-pkgrel=10
+pkgrel=11
 pkgdesc='Kernel modules for the Zettabyte File System.'
 arch=('x86_64' 'x86_64_v3')
 url="http://zfsonlinux.org/"

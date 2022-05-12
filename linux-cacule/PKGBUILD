@@ -111,7 +111,7 @@ else
     pkgbase=linux-${_cpusched}
 fi
 _major=5.17
-_minor=6
+_minor=7
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -122,7 +122,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=6
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -688,17 +688,17 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('64ccf18380be5b5491322a3fd54904538b544e523e4bf86289dd8df7404cb10c'
+sha256sums=('22f67ef6b12ef6c0c0353be4b90b4bf4b9b18b858c16c346fa495b67ec718c99'
             '7ad9dced23394e7db11dc70e5ad95589828001c8b09d3c1f9d54375e3c396dcb'
             '6ca8fa67a30513e47b2f4dc8566a7297741404195430b589624409d9608b3710'
             '09aa0e17190ee113a352573b2d2386cc04b522641fd277306e8ace9fd7af0037'
             'ddaf45cc72ed743f70c8754505357e94d6dd4133bfde6e9c6afc59f4cc12ee69'
             '6b31e4655e5ff9dbe95fb7db665426dad2bf3e33b5102d040a256f707cc99a23'
             '85703fbf9218d3fa1cbd8d77a4edad0e6726c9aa9c740f9f863601a92dbd46ed'
-            'ef7d6253dc8a149ffea1293f65ef43fe9277ba6a629bc54d656f594429813b5e'
+            'cf82dd64f36ab9ed50dd308b6c1db85fb0841924e1256cf862a88bc26c760f5c'
             'ab87b51fcacd9c7c5bf5d363ac45dab994c2c53d0e80e552390c7cbf752d7dca'
-            '748d5b112d10870ce214c5fab1cc793492416faab73637e95c0a1b877b2574b7'
-            '9625dd5a95a07ea94ea903a1bd7100ff2037c31d72c68ec43b9b6435a8f6dbf6'
+            '9b431688e9c7be5b5a75a0d76cb26e2d0121d03d30fc47e257ea3217d42d0e08'
+            '12ebabff02f66e1583232591fc4ddf09c6437f11a4c59045d6d50d4be0f3693e'
             'b834d558c412add87fec0fc0ce117674216c1b8717f48eaf8134ac64249ba8b3'
             '9c2c0ccee49c17663f27dcdf43cfa02cd45ee15d53ff1a05da7e683098abdde1'
             '1b2dd9147b7443a42ec49e9d1bf01d1209bfcbe625e686e90f0276abb3ed52ec'
