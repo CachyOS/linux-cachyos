@@ -4,7 +4,9 @@
 
 The CachyOS are improved kernels which improve the performance and other improvements. Following Scheduler are supported:
 
-- Standard Scheduler Completely Fair Scheduler (CFS) - linux-cachyos
+### linux-cachyos will now use as default the BORE scheduler! 
+
+- Standard Scheduler Completely Fair Scheduler (CFS) - linux-cachyos-cfs
 - CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
