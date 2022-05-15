@@ -111,7 +111,7 @@ else
     pkgbase=linux-${_cpusched}
 fi
 _major=5.17
-_minor=7
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -122,7 +122,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -156,6 +156,7 @@ if [ "$_cpusched" = "bore" ]; then
 fi
 source+=(
     "${_patchsource}/0001-arch.patch"
+    "${_patchsource}/0001-latency_nice.patch"
     "${_patchsource}/0002-anbox.patch"
     "${_patchsource}/0003-bbr2.patch"
     "${_patchsource}/0004-cachy.patch"
@@ -689,10 +690,11 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('22f67ef6b12ef6c0c0353be4b90b4bf4b9b18b858c16c346fa495b67ec718c99'
+sha256sums=('117961d8c75178d386b0aac1dee2e34046eee7f6f075a4c2be6ac10c4324236a'
             '7ad9dced23394e7db11dc70e5ad95589828001c8b09d3c1f9d54375e3c396dcb'
             '9924e5e0326f3574cda706923efde24e19f347b599f1863ab949b7c6d8ce7868'
             '09aa0e17190ee113a352573b2d2386cc04b522641fd277306e8ace9fd7af0037'
+            '5095ab381e4d68a5e5b75c5e6c7be120ca4107b28ea399a791392325d4c5e630'
             'ddaf45cc72ed743f70c8754505357e94d6dd4133bfde6e9c6afc59f4cc12ee69'
             '6b31e4655e5ff9dbe95fb7db665426dad2bf3e33b5102d040a256f707cc99a23'
             '8d327824362a7484bf7a8e4bfbe37e969ee39bbbb1c09c9e1e909b7e5941240d'

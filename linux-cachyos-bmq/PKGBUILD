@@ -111,7 +111,7 @@ else
     pkgbase=linux-cachyos-${_cpusched}
 fi
 _major=5.17
-_minor=7
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -122,7 +122,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -689,7 +689,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('22f67ef6b12ef6c0c0353be4b90b4bf4b9b18b858c16c346fa495b67ec718c99'
+sha256sums=('117961d8c75178d386b0aac1dee2e34046eee7f6f075a4c2be6ac10c4324236a'
             '7ad9dced23394e7db11dc70e5ad95589828001c8b09d3c1f9d54375e3c396dcb'
             '56c7c89373bb1cd1cfb7446b350f4fc590971fc15e0ee16e23fcb40ffc09482a'
             '09aa0e17190ee113a352573b2d2386cc04b522641fd277306e8ace9fd7af0037'

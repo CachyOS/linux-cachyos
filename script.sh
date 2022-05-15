@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto=thin/" {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_thinlto_cachedir=/_thin_lto_cachedir=y/" {}
-
 files=$(find . -name "PKGBUILD")
 
 for f in $files
@@ -33,9 +29,9 @@ done
 
 mv */*.tar.zst* /home/ptr1337/packages/
 
-find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU3=y/GENERIC_CPU=y/' {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=thin/_use_llvm_lto=/" {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_thinlto_cachedir=y/_thin_lto_cachedir=/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto=thin/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_thinlto_cachedir=/_thin_lto_cachedir=y/" {}
 
 files=$(find . -name "PKGBUILD")
 
