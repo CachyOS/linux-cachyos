@@ -56,14 +56,14 @@ _per_gov=y
 _tcp_bbr2=y
 
 ### Running with a 1000HZ, 750Hz, 600 Hz or 500Hz tick rate
-_1k_HZ_ticks=y
-_750_HZ_ticks=
-_600_HZ_ticks=
-_500_HZ_ticks=
+_HZ_ticks=750
 
-##ä Choose between perodic, tickless idle or full tickless
-### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency. Just tickless idle can perform better on some platforms (mostly AMD based).
+## Choose between perodic, tickless idle or full tickless
+### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 _tickrate=full
+
+## Choose between full(low-latency), voluntary or server
+_preempt=voluntary
 
 ### Disable MQ-Deadline I/O scheduler
 _mq_deadline_disable=y
@@ -74,12 +74,13 @@ _kyber_disable=y
 ### Enable multigenerational LRU
 _lru_enable=y
 
-### Enable DAMON
+## Enable DAMON
 _damon=y
 
+## enable SPECULATIVE_PAGE_FAULT
 _spf_enable=y
 
-### Enable Linux Random Number Generator
+## Enable Linux Random Number Generator
 _lrng_enable=y
 
 ## Apply Kernel automatic Optimization
@@ -88,7 +89,7 @@ _use_auto_optimization=y
 ## Apply Kernel Optimization selecting
 _use_optimization_select=
 
-# Enable zram/zswap ZSTD compression
+## Enable zram/zswap ZSTD compression
 _zstd_compression=y
 
 _nf_cone=y
@@ -96,13 +97,10 @@ _nf_cone=y
 # Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
-_use_llvm_lto=full
+_use_llvm_lto=
 
 ## Change the thin lto cachedir for fixing building several dkms modules including zfs
 _thin_lto_cachedir=
-
-# Enable it for using the LLVM CFI PATCH for a better security
-_use_cfi=
 
 
 if [ -n "$_use_llvm_lto" ]; then
@@ -113,7 +111,7 @@ fi
 _major=5.18
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc6
+_rcver=rc7
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -163,13 +161,16 @@ source+=(
     "${_patchsource}/0001-arch.patch"
     "${_patchsource}/0001-bbr2.patch"
     "${_patchsource}/0001-cachy.patch"
-    "${_patchsource}/0001-futex-winesync.patch"
+    "${_patchsource}/0001-clearlinux.patch"
     "${_patchsource}/0001-ck-hrtimer.patch"
     "${_patchsource}/0001-cpu.patch"
+    "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
+    "${_patchsource}/001-futex-winesync.patch"
     "${_patchsource}/0001-fixes.patch"
-    "${_patchsource}/0001-spf-lru.patch"
+    "${_patchsource}/0001-latency_nice.patch"
+    "${_patchsource}/0001-lru-le9-spf.patch"
+    "${_patchsource}/0001-amd-perf.patch"
     #    "${_patchsource}/0012-kcfi.patch"
-    #    "${_patchsource}/0013-thinlto-cachdir.patch"
     #    "${_patchsource}/misc/0001-amd-perf.patch"
     "auto-cpu-optimization.sh"
 )
@@ -182,13 +183,11 @@ prepare() {
 
     cd $_srcname
 
-    ### Setting version
     echo "Setting version..."
     scripts/setlocalversion --save-scmversion
     echo "-$pkgrel" > localversion.10-pkgrel
     echo "${pkgbase#linux}" > localversion.20-pkgname
 
-    ### Patching sources
     local src
     for src in "${source[@]}"; do
         src="${src%%::*}"
@@ -198,11 +197,9 @@ prepare() {
         patch -Np1 < "../$src"
     done
 
-    ### Setting config
     echo "Setting config..."
     cp ../config .config
 
-    ### Microarchitecture Optimization (GCC/CLANG)
     if [ -n "$_use_auto_optimization" ]; then
         "${srcdir}"/auto-cpu-optimization.sh
     fi
@@ -215,30 +212,30 @@ prepare() {
     ### Selecting the CPU scheduler
     if [ "$_cpusched" = "bmq" ]; then
         echo "Selecting BMQ CPU scheduler..."
-        scripts/config --enable CONFIG_SCHED_ALT
-        scripts/config --enable CONFIG_SCHED_BMQ
-        scripts/config --disable CONFIG_SCHED_PDS
+        scripts/config --enable SCHED_ALT \
+                       --enable SCHED_BMQ \
+                       --disable SCHED_PDS
     elif [ "$_cpusched" = "pds" ]; then
         echo "Selecting PDS CPU scheduler..."
-        scripts/config --enable CONFIG_SCHED_ALT
-        scripts/config --disable CONFIG_SCHED_BMQ
-        scripts/config --enable CONFIG_SCHED_PDS
+        scripts/config --enable SCHED_ALT \
+                       --disable SCHED_BMQ \
+                       --enable SCHED_PDS
     elif [ "$_cpusched" = "cacule" ]; then
         echo "Selecting CacULE scheduler..."
-        scripts/config --enable CONFIG_CACULE_SCHED
-        scripts/config --disable CONFIG_CACULE_RDB
+        scripts/config --enable CACULE_SCHED \
+                       --disable CACULE_RDB
     elif [ "$_cpusched" = "cacule-rdb" ]; then
         echo "Selecting CacULE-RDB scheduler..."
-        scripts/config --enable CONFIG_CACULE_SCHED
-        scripts/config --enable CONFIG_CACULE_RDB
-        scripts/config --set-val CONFIG_RDB_INTERVAL 19
+        scripts/config --enable CACULE_SCHED \
+                       --enable CACULE_RDB \
+                       --set-val RDB_INTERVAL 19
     elif [ "$_cpusched" = "tt" ]; then
         echo "Enable TT CPU scheduler..."
-        scripts/config --enable CONFIG_TT_SCHED
-        scripts/config --enable CONFIG_TT_ACCOUNTING_STATS
+        scripts/config --enable TT_SCHED \
+                       --enable TT_ACCOUNTING_STATS
     elif [ "$_cpusched" = "bore" ]; then
         echo "Selecting BORE Scheduler..."
-        scripts/config --enable CONFIG_SCHED_BORE
+        scripts/config --enable SCHED_BORE
     elif [ "$_cpusched" = "cfs" ]; then
         echo "Selecting Completely Fair Scheduler..."
     else
@@ -251,280 +248,272 @@ prepare() {
         exit
     fi
 
-    ## Enable it for using the LLVM CFI PATCH for a better security
-    if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
-        echo "Enabling CFI"
-        scripts/config --enable CONFIG_ARCH_SUPPORTS_CFI_CLANG
-        scripts/config --enable CONFIG_CFI_CLANG
-    fi
+#    if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
+#        echo "Enabling CFI"
+#        scripts/config --enable ARCH_SUPPORTS_CFI_CLANG \
+#                       --enable CFI_CLANG
+#    fi
 
-    ## Change the thin lto cachedir for fixing building several dkms modules
-    if [ -n "$_thin_lto_cachedir" ] && [ "$_use_llvm_lto" = "thin" ]; then
-        echo "Enabling CFI"
-        scripts/config --set-val LTO_CLANG_THIN_CACHEDIR "/tmp"
-    fi
-
-    ### Selecting the THIN or FULL-LTO compression level
     if [ "$_use_llvm_lto" = "thin" ]; then
         echo "Enabling LLVM THIN LTO..."
         scripts/config --disable LTO_NONE \
-            --enable LTO \
-            --enable LTO_CLANG \
-            --enable ARCH_SUPPORTS_LTO_CLANG \
-            --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
-            --enable HAS_LTO_CLANG \
-            --enable LTO_CLANG_THIN \
-            --enable HAVE_GCC_PLUGINS
-    elif [ "$_use_llvm_lto" = "full" ]; then
+                       --enable LTO \
+                       --enable LTO_CLANG \
+                       --enable ARCH_SUPPORTS_LTO_CLANG \
+                       --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
+                       --enable HAS_LTO_CLANG \
+                       --enable LTO_CLANG_THIN \
+                       --enable HAVE_GCC_PLUGINS
+        elif [ "$_use_llvm_lto" = "full" ]; then
         echo "Enabling LLVM FULL LTO..."
         scripts/config --disable LTO_NONE \
-            --enable LTO \
-            --enable LTO_CLANG \
-            --enable ARCH_SUPPORTS_LTO_CLANG \
-            --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
-            --enable HAS_LTO_CLANG \
-            --enable LTO_CLANG \
-            --enable LTO_CLANG_FULL \
-            --enable HAVE_GCC_PLUGINS
+                       --enable LTO \
+                       --enable LTO_CLANG \
+                       --enable ARCH_SUPPORTS_LTO_CLANG \
+                       --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
+                       --enable HAS_LTO_CLANG \
+                       --enable LTO_CLANG \
+                       --enable LTO_CLANG_FULL \
+                       --enable HAVE_GCC_PLUGINS
     else
-        scripts/config --enable CONFIG_LTO_NONE
+        scripts/config --enable LTO_NONE
     fi
 
-    ### Optionally set tickrate to 1000Hz
-    if [ -n "$_1k_HZ_ticks" ]; then
+    if [ "$_HZ_ticks" = "1000" ]; then
         echo "Setting tick rate to 1k Hz..."
-        scripts/config --disable CONFIG_HZ_300
-        scripts/config --enable CONFIG_HZ_1000
-        scripts/config --set-val CONFIG_HZ 1000
-    fi
-
-    ### Optionally set tickrate to 750HZ
-    if [ -n "$_750_HZ_ticks" ]; then
+        scripts/config --disable HZ_300 \
+                       --enable HZ_1000 \
+                       --set-val HZ 1000
+    elif [ "$_HZ_ticks" = "750" ]; then
         echo "Setting tick rate to 750Hz..."
-        scripts/config --disable CONFIG_HZ_300
-        scripts/config --enable CONFIG_HZ_750
-        scripts/config --set-val CONFIG_HZ 750
-    fi
-
-    ### Optionally set tickrate to 600HZ
-    if [ -n "$_600_HZ_ticks" ]; then
+        scripts/config --disable HZ_300 \
+                       --enable HZ_750 \
+                       --set-val HZ 750
+    elif [ "$_HZ_ticks" = "600" ]; then
         echo "Setting tick rate to 600Hz..."
-        scripts/config --disable CONFIG_HZ_300
-        scripts/config --enable CONFIG_HZ_600
-        scripts/config --set-val CONFIG_HZ 600
-    fi
-
-    ### Optionally set tickrate to 500HZ
-    if [ -n "$_500_HZ_ticks" ]; then
+        scripts/config --disable HZ_300 \
+                       --enable HZ_600 \
+                       --set-val HZ 600
+    elif [ "$_HZ_ticks" = "500" ]; then
         echo "Setting tick rate to 500Hz..."
-        scripts/config --disable CONFIG_HZ_300
-        scripts/config --enable CONFIG_HZ_500
-        scripts/config --set-val CONFIG_HZ 500
+        scripts/config --disable HZ_300 \
+                       --enable HZ_500 \
+                       --set-val HZ 500
+    elif [ "$_HZ_ticks" = "300" ]; then
+        echo "Setting tick rate to 300Hz..."
     fi
 
-    ### Optionally disable NUMA for 64-bit kernels only
-    # (x86 kernels do not support NUMA)
     if [ -n "$_NUMAdisable" ]; then
         echo "Disabling NUMA from kernel config..."
-        scripts/config --disable CONFIG_NUMA
-        scripts/config --disable CONFIG_AMD_NUMA
-        scripts/config --disable CONFIG_X86_64_ACPI_NUMA
-        scripts/config --disable CONFIG_NODES_SPAN_OTHER_NODES
-        scripts/config --disable CONFIG_NUMA_EMU
-        scripts/config --disable CONFIG_NEED_MULTIPLE_NODES
-        scripts/config --disable CONFIG_USE_PERCPU_NUMA_NODE_ID
-        scripts/config --disable CONFIG_ACPI_NUMA
-        scripts/config --disable CONFIG_ARCH_SUPPORTS_NUMA_BALANCING
-        scripts/config --disable CONFIG_NODES_SHIFT
-        scripts/config --undefine CONFIG_NODES_SHIFT
-        scripts/config --disable CONFIG_NEED_MULTIPLE_NODES
+        scripts/config --disable NUMA \
+                       --disable AMD_NUMA \
+                       --disable X86_64_ACPI_NUMA \
+                       --disable NODES_SPAN_OTHER_NODES \
+                       --disable NUMA_EMU \
+                       --disable NEED_MULTIPLE_NODES \
+                       --disable USE_PERCPU_NUMA_NODE_ID \
+                       --disable ACPI_NUMA \
+                       --disable ARCH_SUPPORTS_NUMA_BALANCING \
+                       --disable NODES_SHIFT \
+                       --undefine NODES_SHIFT \
+                       --disable NEED_MULTIPLE_NODES
     fi
 
-    ### Disable MQ-Deadline I/O scheduler
     if [ -n "$_mq_deadline_disable" ]; then
         echo "Disabling MQ-Deadline I/O scheduler..."
-        scripts/config --disable CONFIG_MQ_IOSCHED_DEADLINE
+        scripts/config --disable MQ_IOSCHED_DEADLINE
     fi
 
-    ### Disable Kyber I/O scheduler
     if [ -n "$_kyber_disable" ]; then
         echo "Disabling Kyber I/O scheduler..."
-        scripts/config --disable CONFIG_MQ_IOSCHED_KYBER
+        scripts/config --disable MQ_IOSCHED_KYBER
     fi
 
-    ### Set performance governor
     if [ -n "$_per_gov" ]; then
         echo "Setting performance governor..."
-        scripts/config --disable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
-        scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE
-        echo "Set PCIEASPM DRIVER to performance..."
-        scripts/config --enable CONFIG_PCIEASPM
-        scripts/config --enable CONFIG_PCIEASPM_PERFORMANCE
-        echo "Set CONFIG_PCIE_BUS for performance..."
-        scripts/config --enable CONFIG_PCIE_BUS_PERFORMANCE
-    fi
+        scripts/config --disable CPU_FREQ_DEFAULT_GOV_SCHEDUTIL \
+                       --enable CPU_FREQ_DEFAULT_GOV_PERFORMANCE \
+                       --enable PCIEASPM \
+                       --enable PCIEASPM_PERFORMANCE \
+                       --enable PCIE_BUS_PERFORMANCE
+  fi
 
-    ### Selecting between tickless idle, perodic tics or full tickless
     if [ "$_tickrate" = "perodic" ]; then
         echo "Enabling periodic ticks..."
-        scripts/config --disable CONFIG_NO_HZ_IDLE
-        scripts/config --disable CONFIG_NO_HZ_FULL
-        scripts/config --disable CONFIG_NO_HZ
-        scripts/config --disable CONFIG_NO_HZ_COMMON
-        scripts/config --enable CONFIG_HZ_PERIODIC
+        scripts/config --disable NO_HZ_IDLE \
+                      --disable NO_HZ_FULL \
+                      --disable NO_HZ \
+                      --disable NO_HZ_COMMON \
+                      --enable HZ_PERIODIC
     elif [ "$_tickrate" = "idle" ]; then
         echo "Enabling tickless idle..."
-        scripts/config --disable CONFIG_HZ_PERIODIC
-        scripts/config --disable CONFIG_NO_HZ_FULL
-        scripts/config --enable CONFIG_NO_HZ_IDLE
-        scripts/config --enable CONFIG_NO_HZ
-        scripts/config --enable CONFIG_NO_HZ_COMMON
+        scripts/config --disable HZ_PERIODIC \
+                       --disable NO_HZ_FULL \
+                       --enable NO_HZ_IDLE \
+                       --enable NO_HZ \
+                       --enable NO_HZ_COMMON
     elif [ "$_tickrate" = "full" ]; then
         echo "Enabling tickless idle..."
-        scripts/config --disable CONFIG_HZ_PERIODIC
-        scripts/config --disable CONFIG_NO_HZ_IDLE
-        scripts/config --disable CONFIG_CONTEXT_TRACKING_FORCE
-        scripts/config --enable CONFIG_NO_HZ_FULL_NODEF
-        scripts/config --enable CONFIG_NO_HZ_FULL
-        scripts/config --enable CONFIG_NO_HZ
-        scripts/config --enable CONFIG_NO_HZ_COMMON
-        scripts/config --enable CONFIG_CONTEXT_TRACKING
+        scripts/config --disable HZ_PERIODIC \
+                       --disable NO_HZ_IDLE \
+                       --disable CONTEXT_TRACKING_FORCE \
+                       --enable NO_HZ_FULL_NODEF \
+                       --enable NO_HZ_FULL \
+                       --enable NO_HZ \
+                       --enable NO_HZ_COMMON \
+                       --enable CONTEXT_TRACKING
     fi
 
-    ### Enable KBUILD_CFLAGS -O3
+    if [ "$_preempt" = "full" ]; then
+        echo "Enabling low latency preempt..."
+        scripts/config --enable PREEMPT_BUILD \
+                      --disable PREEMPT_NONE \
+                      --disable PREEMPT_VOLUNTARY \
+                      --enable PREEMPT \
+                      --enable PREEMPT_COUNT \
+                      --enable PREEMPTION \
+                      --enable PREEMPT_DYNAMIC
+    elif [ "$_preempt" = "voluntary" ]; then
+        echo "Enabling tickless idle..."
+        scripts/config --enable PREEMPT_BUILD \
+                      --disable PREEMPT_NONE \
+                      --enable PREEMPT_VOLUNTARY \
+                      --disable PREEMPT \
+                      --enable PREEMPT_COUNT \
+                      --enable PREEMPTION \
+                      --enable PREEMPT_DYNAMIC
+    elif [ "$_tickrate" = "server" ]; then
+        echo "Enabling tickless idle..."
+        scripts/config --enable PREEMPT_NONE_BUILD \
+                       --enable PREEMPT_NONE \
+                       --disable PREEMPT_VOLUNTARY \
+                       --disable PREEMPT \
+                       --disable PREEMPT_COUNT \
+                       --disable PREEMPTION \
+                       --disable PREEMPT_DYNAMIC
+    fi
+
     if [ -n "$_cc_harder" ]; then
         echo "Enabling KBUILD_CFLAGS -O3..."
-        scripts/config --disable CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
-        scripts/config --enable CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
+        scripts/config --disable CC_OPTIMIZE_FOR_PERFORMANCE \
+                       --enable CC_OPTIMIZE_FOR_PERFORMANCE_O3
     fi
 
-    ### Enable TCP_CONG_BBR2
     if [ -n "$_tcp_bbr2" ]; then
         echo "Disabling TCP_CONG_CUBIC..."
-        scripts/config --module CONFIG_TCP_CONG_CUBIC
-        scripts/config --disable CONFIG_DEFAULT_CUBIC
-        echo "Enabling TCP_CONG_BBR2..."
-        scripts/config --enable CONFIG_TCP_CONG_BBR2
-        scripts/config --enable CONFIG_DEFAULT_BBR2
-        scripts/config --set-str CONFIG_DEFAULT_TCP_CONG bbr2
+        scripts/config --module TCP_CONG_CUBIC \
+                       --disable DEFAULT_CUBIC \
+                       --enable TCP_CONG_BBR2 \
+                       --enable DEFAULT_BBR2 \
+                       --set-str DEFAULT_TCP_CONG bbr2
     fi
 
-    ### Enable FULLCONENAT
     if [ -n "$_nf_cone" ]; then
         echo "Enabling FULLCONENAT..."
-        scripts/config --module CONFIG_IP_NF_TARGET_FULLCONENAT
-        scripts/config --module CONFIG_NETFILTER_XT_TARGET_FULLCONENAT
+        scripts/config --module IP_NF_TARGET_FULLCONENAT \
+                       --module NETFILTER_XT_TARGET_FULLCONENAT
     fi
 
-    ### Enable SPF
     if [ -n "$_spf_enable" ]; then
         echo "Enabling SPECULATIVE_PAGE_FAULT LRU..."
-        scripts/config --enable CONFIG_SPECULATIVE_PAGE_FAULT
+        scripts/config --enable SPECULATIVE_PAGE_FAULT
     fi
 
-    ### Enable multigenerational LRU
     if [ -n "$_lru_enable" ]; then
         echo "Enabling multigenerational LRU..."
-        scripts/config --enable CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG
-        scripts/config --enable CONFIG_LRU_GEN
-        scripts/config --enable CONFIG_LRU_GEN_ENABLED
-        scripts/config --disable CONFIG_LRU_GEN_STATS
+        scripts/config --enable ARCH_HAS_NONLEAF_PMD_YOUNG \
+                       --enable LRU_GEN \
+                       --enable LRU_GEN_ENABLED \
+                       --disable LRU_GEN_STATS
     fi
 
-    ### Enable DAMON
     if [ -n "$_damon" ]; then
         echo "Enabling DAMON..."
-        scripts/config --enable CONFIG_DAMON
-        scripts/config --disable CONFIG_DAMON_VADDR
-        scripts/config --disable CONFIG_DAMON_DBGFS
-        scripts/config --enable CONFIG_DAMON_PADDR
-        scripts/config --enable CONFIG_DAMON_RECLAIM
+        scripts/config --enable DAMON \
+                       --enable DAMON_VADDR \
+                       --enable DAMON_DBGFS \
+                       --enable DAMON_SYSFS \
+                       --enable DAMON_PADDR \
+                       --enable DAMON_RECLAIM
     fi
 
-    ### Enable Linux Random Number Generator
     if [ -n "$_lrng_enable" ]; then
         echo "Enabling Linux Random Number Generator ..."
-        scripts/config --disable CONFIG_RANDOM_DEFAULT_IMPL
-        scripts/config --enable CONFIG_LRNG
-        scripts/config --enable CONFIG_LRNG_OVERSAMPLE_ENTROPY_SOURCES
-        scripts/config --set-val CONFIG_CONFIG_LRNG_OVERSAMPLE_ES_BITS 64
-        scripts/config --set-val CONFIG_LRNG_SEED_BUFFER_INIT_ADD_BITS 128
-        scripts/config --enable CONFIG_LRNG_IRQ
-        scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
-        scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
-        scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
-        scripts/config --enable CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION
-        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_512
-        scripts/config --enable CONFIG_LRNG_COLLECTION_SIZE_1024
-        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_2048
-        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_4096
-        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_8192
-        scripts/config --set-val CONFIG_LRNG_COLLECTION_SIZE 1024
-        scripts/config --enable CONFIG_LRNG_HEALTH_TESTS
-        scripts/config --set-val CONFIG_LRNG_RCT_CUTOFF 31
-        scripts/config --set-val CONFIG_LRNG_APT_CUTOFF 325
-        scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
-        scripts/config --enable CONFIG_LRNG_JENT
-        scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
-        scripts/config --enable CONFIG_LRNG_CPU
-        scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
-        scripts/config --enable CONFIG_LRNG_DRNG_SWITCH
-        scripts/config --enable CONFIG_LRNG_KCAPI_HASH
-        scripts/config --module CONFIG_LRNG_DRBG
-        scripts/config --module CONFIG_LRNG_KCAPI
-        scripts/config --enable CONFIG_LRNG_TESTING_MENU
-        scripts/config --disable CONFIG_LRNG_RAW_HIRES_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_JIFFIES_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_IRQ_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_IRQFLAGS_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_RETIP_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_REGS_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_ARRAY
-        scripts/config --disable CONFIG_LRNG_IRQ_PERF
-        scripts/config --disable CONFIG_LRNG_ACVT_HASH
-        scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
-        scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
-        scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
-        scripts/config --enable CONFIG_LRNG_SELFTEST
-        scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
+        scripts/config --disable RANDOM_DEFAULT_IMPL \
+                        --enable LRNG \
+                        --enable LRNG_OVERSAMPLE_ENTROPY_SOURCES \
+                        --set-val LRNG_OVERSAMPLE_ES_BITS 64 \
+                        --set-val LRNG_SEED_BUFFER_INIT_ADD_BITS 128 \
+                        --enable LRNG_IRQ \
+                        --enable LRNG_CONTINUOUS_COMPRESSION_ENABLED \
+                        --disable LRNG_CONTINUOUS_COMPRESSION_DISABLED \
+                        --enable LRNG_ENABLE_CONTINUOUS_COMPRESSION \
+                        --enable LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION \
+                        --disable LRNG_COLLECTION_SIZE_512 \
+                        --enable LRNG_COLLECTION_SIZE_1024 \
+                        --disable LRNG_COLLECTION_SIZE_2048 \
+                        --disable LRNG_COLLECTION_SIZE_4096 \
+                        --disable LRNG_COLLECTION_SIZE_8192 \
+                        --set-val LRNG_COLLECTION_SIZE 1024 \
+                        --enable LRNG_HEALTH_TESTS \
+                        --set-val LRNG_RCT_CUTOFF 31 \
+                        --set-val LRNG_APT_CUTOFF 325 \
+                        --set-val LRNG_IRQ_ENTROPY_RATE 256 \
+                        --enable LRNG_JENT \
+                        --set-val LRNG_JENT_ENTROPY_RATE 16 \
+                        --enable LRNG_CPU \
+                        --set-val LRNG_CPU_ENTROPY_RATE 8 \
+                        --enable LRNG_DRNG_SWITCH \
+                        --enable LRNG_KCAPI_HASH \
+                        --module LRNG_DRBG \
+                        --module LRNG_KCAPI \
+                        --enable LRNG_TESTING_MENU \
+                        --disable LRNG_RAW_HIRES_ENTROPY \
+                        --disable LRNG_RAW_JIFFIES_ENTROPY \
+                        --disable LRNG_RAW_IRQ_ENTROPY \
+                        --disable LRNG_RAW_IRQFLAGS_ENTROPY \
+                        --disable LRNG_RAW_RETIP_ENTROPY \
+                        --disable LRNG_RAW_REGS_ENTROPY \
+                        --disable LRNG_RAW_ARRAY \
+                        --disable LRNG_IRQ_PERF \
+                        --disable LRNG_ACVT_HASH \
+                        --enable LRNG_RUNTIME_ES_CONFIG \
+                        --disable LRNG_RUNTIME_MAX_WO_RESEED_CONFIG \
+                        --disable LRNG_TEST_CPU_ES_COMPRESSION \
+                        --enable LRNG_SELFTEST \
+                        --disable LRNG_SELFTEST_PANIC
     fi
 
-    ### Enable zram/zswap ZSTD compression
     if [ -n "$_zstd_swap_compression" ]; then
         echo "Enabling zram ZSTD compression..."
-        scripts/config --disable CONFIG_ZRAM_DEF_COMP_LZORLE
-        scripts/config --enable CONFIG_ZRAM_DEF_COMP_ZSTD
-        scripts/config --set-str CONFIG_ZRAM_DEF_COMP zstd
-        echo "Enabling zswap ZSTD compression..."
-        scripts/config --disable CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4
-        scripts/config --enable CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD
-        scripts/config --set-str CONFIG_ZSWAP_COMPRESSOR_DEFAULT zstd
+        scripts/config --disable ZRAM_DEF_COMP_LZORLE \
+                       --enable ZRAM_DEF_COMP_ZSTD \
+                       --set-str ZRAM_DEF_COMP zstd \
+                       --disable ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
+                       --enable ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
+                       --set-str ZSWAP_COMPRESSOR_DEFAULT zstd
     fi
 
-    echo "Enable Anbox..."
-    scripts/config --enable CONFIG_ASHMEM
-    scripts/config --enable CONFIG_ANDROID
-    scripts/config --enable CONFIG_ANDROID_BINDER_IPC
-    scripts/config --enable CONFIG_ANDROID_BINDERFS
-    scripts/config --enable CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
+    if [ -n "$_anbox" ]; then
+        echo "Enable Anbox..."
+        scripts/config --enable ASHMEM \
+                       --enable ANDROID \
+                       --enable ANDROID_BINDER_IPC \
+                       --enable ANDROID_BINDERFS \
+                       --enable ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
+    fi
 
-    echo "disable debugging features to reduce the size..."
-    scripts/config --disable CONFIG_DEBUG_INFO
-    scripts/config --disable CONFIG_CGROUP_BPF
-    scripts/config --disable CONFIG_BPF_LSM
-    scripts/config --disable CONFIG_BPF_PRELOAD
-    scripts/config --disable CONFIG_BPF_LIRC_MODE2
-    scripts/config --disable CONFIG_BPF_KPROBE_OVERRIDE
-    scripts/config --enable CONFIG_PSI_DEFAULT_DISABLED
-    scripts/config --disable CONFIG_LATENCYTOP
-    scripts/config --disable CONFIG_SCHED_DEBUG
-    scripts/config --disable CONFIG_KVM_WERROR
+    scripts/config --disable DEBUG_INFO \
+                   --disable DEBUG_INFO_BTF \
+                   --disable DEBUG_INFO_DWARF4 \
+                   --disable PAHOLE_HAS_SPLIT_BTF \
+                   --disable DEBUG_INFO_BTF_MODULES
 
-    echo "Enable CONFIG_USER_NS_UNPRIVILEGED"
-    scripts/config --enable CONFIG_USER_NS
+    echo "Enable USER_NS_UNPRIVILEGED"
+    scripts/config --enable USER_NS
 
     echo "Enable WINE FASTSYNC"
-    scripts/config --enable CONFIG_WINESYNC
+    scripts/config --enable WINESYNC
 
     ### Optionally use running kernel's config
     # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
@@ -534,7 +523,7 @@ prepare() {
             # modprobe configs
             zcat /proc/config.gz > ./.config
         else
-            warning "Your kernel was not compiled with IKCONFIG_PROC!"
+            warning "Your kernel was not compiled with IKPROC!"
             warning "You cannot read the current config!"
             warning "Aborting!"
             exit
@@ -557,7 +546,6 @@ prepare() {
 
 
     echo "Applying default config..."
-
     make ${BUILD_FLAGS[*]}  olddefconfig
     make ${BUILD_FLAGS[*]} -s kernelrelease > version
     echo "Prepared $pkgbase version $(<version)"
@@ -584,19 +572,20 @@ _package() {
     provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE)
 
     cd $_srcname
+
     local kernver="$(<version)"
     local modulesdir="$pkgdir/usr/lib/modules/$kernver"
 
     echo "Installing boot image..."
     # systemd expects to find the kernel here to allow hibernation
     # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-    install -Dm644 "$(make ${BUILD_FLAGS[*]} -s image_name)" "$modulesdir/vmlinuz"
+    install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
 
     # Used by mkinitcpio to name the kernel
     echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
     echo "Installing modules..."
-    make ${BUILD_FLAGS[*]} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+    make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist modules_install  # Suppress depmod
 
     # remove build and source links
@@ -607,7 +596,7 @@ _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
     depends=(pahole)
 
-    cd $_srcname
+    cd ${_srcname}
     local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
     echo "Installing build files..."
@@ -620,8 +609,10 @@ _package-headers() {
     # required when STACK_VALIDATION is enabled
     install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
-    # required when DEBUG_INFO_BTF_MODULES is enabled
-    # install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+#    # required when DEBUG_INFO_BTF_MODULES is enabled
+#    if [ -f tools/bpf/resolve_btfids/resolve_btfids ]; then
+#        install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+#    fi
 
     echo "Installing headers..."
     cp -t "$builddir" -a include
@@ -677,14 +668,12 @@ _package-headers() {
         esac
     done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
 
-    # echo "Stripping vmlinux..."
-    # strip -v $STRIP_STATIC "$builddir/vmlinux"
-    # not needed since not building with CONFIG_DEBUG_INFO=y
+    echo "Stripping vmlinux..."
+    strip -v $STRIP_STATIC "$builddir/vmlinux"
 
     echo "Adding symlink..."
     mkdir -p "$pkgdir/usr/src"
     ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
-
 }
 
 pkgname=("$pkgbase" "$pkgbase-headers")
@@ -695,16 +684,18 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('1ee5c56028c0a0cd566d0bf3e0e92b0d1693ae5460755729e3f683573d4e80f8'
-            '618b2cafc8e3c1db6dbd764f89171e1e5e710ff2b010bf3983576563a1770886'
-            'c88166f63c1dcef387085306c37bbd5d305417af40b88fefbfc3e692fa1fe454'
-            '1ce216aec27e5bdde4279457ee8b9d46a7c39c2b0211429e64d991a744689aae'
-            '19e2c8ca1d69b3027a452b67e0668eacf6f9063eb87400d7f4dfade64de75bbf'
-            '91d9c5fed6f4d0eefddbfa6f042c9dcdf87d943a97e60522654dca9addeb63a2'
-            '9a4ac5bef5a905413728ebca8cceaa6947cca7056361fd85cbd6bf0c630d1955'
-            'b4b8f805a236f1893df41968df44f40fb381e07a1c8fb96787faecc6aa3a8176'
-            'a4981a02556a328e69a244167231d5fa437fb93d0ee495627242bb7fa311f4ff'
-            '2b6c66db34e299e2d5948a8c37383bf982d0a64835ddb8984273ac15c4096c29'
-            '8ba8626e9a1812438a3d5de22de20ab81638c915a02ca0b9e227081d213eedff'
-            '002edd8058c116b699d3118474b7ea775f9499558be38ac99e37731a42672272'
+sha256sums=('da477700e2a5e91ae5b0a6f5c70b2618aab07aa39dcfe78106b9d742df411a24'
+            '044aecbf8d6ddfe2682b8c4901f05c60b0a60061041c5f3df55f3fe090071b3c'
+            '0ca024e3dde6be3a4e50f5b0fabf12785bafdac1c0aeff5ab4f51e86742b32bf'
+            '56f58801a73e6d930d7680806dc734b50b69617a0eef96244627d7a946b62efd'
+            '11b13c1fdf2714c573d94fbd6d620ca47903bcfedeec6794460b371250b36253'
+            '98fba56e85d9e883e9702cd23bd76af8f95ec5060ccd9e42296f219c0b61b527'
+            '097e6faccc2dc15e7c02fc4e22616608c7d26e515a3580f3ef1a6a2ef705ef68'
+            'c2bf57d37db1f93c5f3eeff2e2957f01618f4786613c13755f9ae6989d2b745c'
+            'afcb2cb90b275baf2adb67f8a9274f7f03b0f061f5b1d419b76640fb62a38b5c'
+            '179b540f8848b03ccb1a0d12e24feab63fd0576b5e9eed8f214d6e9cb790f151'
+            'a54bb0fe432c787971d481f9b2fcf41b24c1f7242f6fbd44fa8894149b40b52b'
+            '890e9f9953f3650a8e2523bca0fdf84ffc763367a8a792a7f3ef72eb18aed9ad'
+            '67e5ac55b14ea74f0ff4c93d6b33be3b60a4079743d46fbbfd8eafdcb3b1a6a8'
+            '7260a50b88b95723c9a7f45dcfcbc37bf351941f8446866cdad60b1ea7a1b7e8'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
