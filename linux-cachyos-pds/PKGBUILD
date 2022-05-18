@@ -156,7 +156,6 @@ if [ "$_cpusched" = "bore" ]; then
 fi
 source+=(
     "${_patchsource}/0001-arch.patch"
-    "${_patchsource}/0001-latency_nice.patch"
     "${_patchsource}/0002-anbox.patch"
     "${_patchsource}/0003-bbr2.patch"
     "${_patchsource}/0004-cachy.patch"
