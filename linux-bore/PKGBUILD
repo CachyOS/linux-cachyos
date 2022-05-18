@@ -111,7 +111,7 @@ else
     pkgbase=linux-${_cpusched}
 fi
 _major=5.17
-_minor=8
+_minor=9
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -171,7 +171,7 @@ source+=(
     "${_patchsource}/0013-xanmod.patch"
     "${_patchsource}/0014-lrng.patch"
     "${_patchsource}/0015-ck-hrtimer.patch"
-#    "${_patchsource}/0016-futex-winesync.patch"
+    "${_patchsource}/0016-futex-winesync.patch"
     "auto-cpu-optimization.sh"
 )
 
@@ -431,7 +431,7 @@ prepare() {
         scripts/config --enable ARCH_HAS_NONLEAF_PMD_YOUNG \
                        --enable LRU_GEN \
                        --enable LRU_GEN_ENABLED \
-                       --disable LRU_GEN_STATS 
+                       --disable LRU_GEN_STATS
     fi
 
     if [ -n "$_damon" ]; then
@@ -690,7 +690,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('117961d8c75178d386b0aac1dee2e34046eee7f6f075a4c2be6ac10c4324236a'
+sha256sums=('172424bc41ef2df9b19457ceb022b56a51eb9497529b15ce7e9b8d6f90ad5978'
             '7ad9dced23394e7db11dc70e5ad95589828001c8b09d3c1f9d54375e3c396dcb'
             'e08fb439ba424c9c8db8f41fe9328dd3e30d4405094b6972dcce3863f04a9f46'
             '09aa0e17190ee113a352573b2d2386cc04b522641fd277306e8ace9fd7af0037'
@@ -709,4 +709,5 @@ sha256sums=('117961d8c75178d386b0aac1dee2e34046eee7f6f075a4c2be6ac10c4324236a'
             '0e5177f086ddcac9b0e6596d29588c0730cce5c827e4c51e57f835a32f25ee85'
             '761abc5bd65c194b6b810af1022df5888ce0ecbe70ffe4cd67e6e0c748fb78a2'
             '07e34ca2f03d96837166ff4764503a76ff6f499107716455073e5e081b40a146'
+            '179b540f8848b03ccb1a0d12e24feab63fd0576b5e9eed8f214d6e9cb790f151'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')

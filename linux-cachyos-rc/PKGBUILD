@@ -168,6 +168,7 @@ source+=(
     "${_patchsource}/001-futex-winesync.patch"
     "${_patchsource}/0001-fixes.patch"
     "${_patchsource}/0001-latency_nice.patch"
+    "${_patchsource}/0001-lrng.patch"
     "${_patchsource}/0001-lru-le9-spf.patch"
     "${_patchsource}/0001-amd-perf.patch"
     #    "${_patchsource}/0012-kcfi.patch"
@@ -686,16 +687,17 @@ done
 
 sha256sums=('da477700e2a5e91ae5b0a6f5c70b2618aab07aa39dcfe78106b9d742df411a24'
             '044aecbf8d6ddfe2682b8c4901f05c60b0a60061041c5f3df55f3fe090071b3c'
-            '0ca024e3dde6be3a4e50f5b0fabf12785bafdac1c0aeff5ab4f51e86742b32bf'
+            '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
             '56f58801a73e6d930d7680806dc734b50b69617a0eef96244627d7a946b62efd'
             '11b13c1fdf2714c573d94fbd6d620ca47903bcfedeec6794460b371250b36253'
-            '98fba56e85d9e883e9702cd23bd76af8f95ec5060ccd9e42296f219c0b61b527'
+            'd6e9d3a5a87b4d43ceb4a415e9a15a949c755a2b65f9cf3dcc4bfac15a68af02'
             '097e6faccc2dc15e7c02fc4e22616608c7d26e515a3580f3ef1a6a2ef705ef68'
             'c2bf57d37db1f93c5f3eeff2e2957f01618f4786613c13755f9ae6989d2b745c'
             'afcb2cb90b275baf2adb67f8a9274f7f03b0f061f5b1d419b76640fb62a38b5c'
             '179b540f8848b03ccb1a0d12e24feab63fd0576b5e9eed8f214d6e9cb790f151'
             'a54bb0fe432c787971d481f9b2fcf41b24c1f7242f6fbd44fa8894149b40b52b'
             '890e9f9953f3650a8e2523bca0fdf84ffc763367a8a792a7f3ef72eb18aed9ad'
+            'c096a4f069c9cfb4efeaa571bf33a4b31e9e8720d300bbe9de6a08b6ed4434e8'
             '67e5ac55b14ea74f0ff4c93d6b33be3b60a4079743d46fbbfd8eafdcb3b1a6a8'
-            '7260a50b88b95723c9a7f45dcfcbc37bf351941f8446866cdad60b1ea7a1b7e8'
+            'fb32360e492ee63e87dcaeaab9fec75871480d20e6c24f74a8856585b2dc70aa'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
