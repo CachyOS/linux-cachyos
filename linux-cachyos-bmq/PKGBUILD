@@ -122,7 +122,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -698,9 +698,9 @@ sha256sums=('172424bc41ef2df9b19457ceb022b56a51eb9497529b15ce7e9b8d6f90ad5978'
             '8d327824362a7484bf7a8e4bfbe37e969ee39bbbb1c09c9e1e909b7e5941240d'
             'a13c4f5a688a86c8c67642a4129d2c89efd5f1afd3625e15ce5abe0b983d60d0'
             'ab87b51fcacd9c7c5bf5d363ac45dab994c2c53d0e80e552390c7cbf752d7dca'
-            '9b431688e9c7be5b5a75a0d76cb26e2d0121d03d30fc47e257ea3217d42d0e08'
+            '4567a7b51d98643b599a9cd5029c7c433661a3519ecf9816d4557e6bd8174917'
             '12ebabff02f66e1583232591fc4ddf09c6437f11a4c59045d6d50d4be0f3693e'
-            'b834d558c412add87fec0fc0ce117674216c1b8717f48eaf8134ac64249ba8b3'
+            '82f546fe2e1fc686703ae3f5910c5867ddb4d1a517ac3eec154ba8de32e91cda'
             '9c2c0ccee49c17663f27dcdf43cfa02cd45ee15d53ff1a05da7e683098abdde1'
             '1b2dd9147b7443a42ec49e9d1bf01d1209bfcbe625e686e90f0276abb3ed52ec'
             '0e5177f086ddcac9b0e6596d29588c0730cce5c827e4c51e57f835a32f25ee85'
