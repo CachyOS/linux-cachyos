@@ -76,7 +76,7 @@ Also you need a wine/proton which includes the winesync patch. I would recommend
 ```
 wget https://mirror.cachyos.org/cachyos-repo.tar.xz
 tar xvf cachyos-repo.tar.xz
-cd repo
+cd cachyos-repo
 sudo ./cachyos-repo.sh
 ```
 
