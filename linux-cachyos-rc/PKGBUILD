@@ -120,7 +120,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=4
+pkgrel=6
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -172,11 +172,12 @@ source+=(
     "${_patchsource}/0001-hwmon.patch"
     "${_patchsource}/0001-kbuild.patch"
     "${_patchsource}/0001-kcfi.patch"
-    #     "${_patchsource}/0001-latency_nice.patch"
+    "${_patchsource}/0001-latency_nice.patch"
     "${_patchsource}/0001-lrng.patch"
     "${_patchsource}/0001-lru-le9-spf.patch"
     "${_patchsource}/0001-migrate.patch"
     "${_patchsource}/0001-randstruct.patch"
+    "${_patchsource}/0001-zram-entropy-calculation.patch"
     "auto-cpu-optimization.sh"
 )
 
@@ -499,21 +500,7 @@ prepare() {
                        --set-str ZSWAP_COMPRESSOR_DEFAULT zstd
     fi
 
-    if [ -n "$_anbox" ]; then
-        echo "Enable Anbox..."
-        scripts/config --enable ASHMEM \
-                       --enable ANDROID \
-                       --enable ANDROID_BINDER_IPC \
-                       --enable ANDROID_BINDERFS \
-                       --enable ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
-    fi
-
-    scripts/config --disable DEBUG_INFO \
-                   --disable DEBUG_INFO_BTF \
-                   --disable DEBUG_INFO_DWARF4 \
-                   --disable PAHOLE_HAS_SPLIT_BTF \
-                   --disable DEBUG_INFO_BTF_MODULES
-
+	scripts/config --enable ZRAM_ENTROPY
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config --enable USER_NS
 
@@ -614,10 +601,10 @@ _package-headers() {
     # required when STACK_VALIDATION is enabled
     install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
-#    # required when DEBUG_INFO_BTF_MODULES is enabled
-#    if [ -f tools/bpf/resolve_btfids/resolve_btfids ]; then
-#        install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
-#    fi
+    # required when DEBUG_INFO_BTF_MODULES is enabled
+    if [ -f tools/bpf/resolve_btfids/resolve_btfids ]; then
+        install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+    fi
 
     echo "Installing headers..."
     cp -t "$builddir" -a include
@@ -690,7 +677,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('da477700e2a5e91ae5b0a6f5c70b2618aab07aa39dcfe78106b9d742df411a24'
-            '23c95af5f4377143592316f474ea64cd4194035c72b9a9a4c07cecdafb825383'
+            '21252930adc0a7fe02ded8bc2622a536c58053513b77f5642b57aed3da3a28d5'
             'e08fb439ba424c9c8db8f41fe9328dd3e30d4405094b6972dcce3863f04a9f46'
             'fb32360e492ee63e87dcaeaab9fec75871480d20e6c24f74a8856585b2dc70aa'
             '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
@@ -705,9 +692,11 @@ sha256sums=('da477700e2a5e91ae5b0a6f5c70b2618aab07aa39dcfe78106b9d742df411a24'
             '67134052d1dc7332ba5a991ec54a2a957539bec4eb4a1a0ed0f0ad7daa8fe763'
             'c1aae07261bafc711c2d66e26c2c30e444e11509cacc7aec148dc021761294cd'
             '4746c9b16f41403c78c6d20c8dc5d09f49dc8e0f73441faa260c1b6f022529aa'
-            '7c2ffee8e2a983df812aacdae6db21337a883494e6ddb4f0bc48a6dd485411be'
+            '1f4231ba732c0c39918d744eb83d9483a9315917481ec5c3db9afd46675f8e74'
+            '890e9f9953f3650a8e2523bca0fdf84ffc763367a8a792a7f3ef72eb18aed9ad'
             'c8b76830adc1cbc82cc4d12859e4f4cc0006d90c9824296c8350fc6ace741ad9'
             '9d5556c194fe3dbd75125cd8e17e34cb6cc5b94d6ff24d596c52225c46fbf868'
             'e8179f661dc9ba2ad89455f0c7e952e9dd9b4d6445476384cbac2730cdd46b65'
-            'b152bc0af497c3ac9fd9ee91140e753464306cd09b2abe458462fc88e703c25d'
+            '916fd520eb8414f0b4dc87bd1987cff801529517fb4dc9814eb8d51435fa1146'
+            'efe8558b63feb0e76b61d69952c5300ad54c951d9044101be7c01932a54fb4fb'
             '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
