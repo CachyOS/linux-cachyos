@@ -83,11 +83,11 @@ _lrng_enable=y
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
 
-## Apply Kernel Optimization selecting
-_use_optimization_select=
+## Apply Kernel automatic Optimization
+_use_auto_optimization=
 
-## Enable zram/zswap ZSTD compression
-_zstd_compression=y
+## Apply Kernel Optimization selecting
+_use_optimization_select=y
 
 _nf_cone=y
 
@@ -114,10 +114,10 @@ if [ -n "$_use_llvm_lto" ]; then
 else
     pkgbase=linux-cachyos-rc
 fi
-_major=5.18
+_major=5.19
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc7
+_rcver=rc1
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}

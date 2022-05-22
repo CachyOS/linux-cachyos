@@ -39,10 +39,10 @@ else
 fi
 
 _linuxprefix=linux-${_linuxpostfix}
-_kernver=5.17.9-3
+_kernver=5.18.0-1
 pkgname="${_linuxprefix}-zfs"
-pkgver=2.1.4
-pkgrel=14
+pkgver=2.1.5
+pkgrel=1
 pkgdesc='Kernel modules for the Zettabyte File System.'
 arch=('x86_64' 'x86_64_v3')
 url="http://zfsonlinux.org/"
@@ -52,8 +52,10 @@ makedepends=("$_linuxprefix-headers")
 provides=("zfs=$pkgver")
 #groups=("$_linuxprefix-extramodules")
 install=zfs.install
-source=("https://github.com/zfsonlinux/zfs/releases/download/zfs-${pkgver}/zfs-${pkgver}.tar.gz")
-sha256sums=('3b52c0d493f806f638dca87dde809f53861cd318c1ebb0e60daeaa061cf1acf6')
+source=("https://github.com/openzfs/zfs/releases/download/zfs-2.1.4/zfs-2.1.4.tar.gz"
+"0001-zfs-2.1.5-staging.patch")
+sha256sums=('3b52c0d493f806f638dca87dde809f53861cd318c1ebb0e60daeaa061cf1acf6'
+            '6ce4e5b44efc4c280b90b222ea66e2b78445866f4b5c3e0a0de98ef437cfb78e')
 if [ -n "$_use_llvm_lto" ]; then
   depends+=(clang llvm lld python)
   BUILD_FLAGS=(
@@ -61,7 +63,11 @@ if [ -n "$_use_llvm_lto" ]; then
       LLVM_IAS=1
   )
 fi
+prepare () {
+	cd "zfs-${pkgver}"
+    patch -Np1 < "${srcdir}"/0001-zfs-2.1.5-staging.patch
 
+}
 build() {
   cd "zfs-${pkgver}"
 

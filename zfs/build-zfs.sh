@@ -22,25 +22,13 @@ docker rm kernelbuild-zfs
 docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
 docker rm kernelbuild-zfs
 
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-pds/_pkgcore=cachyos-tt/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-pds/_pkgcore=cachyos-cacule/" {}
 docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg
 docker rm kernelbuild-zfs
 docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
 docker rm kernelbuild-zfs
 
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-tt/_pkgcore=cachyos-cacule/" {}
-docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg
-docker rm kernelbuild-zfs
-docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
-docker rm kernelbuild-zfs
-
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-cacule/_pkgcore=tt/" {}
-docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg
-docker rm kernelbuild-zfs
-docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
-docker rm kernelbuild-zfs
-
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=tt/_pkgcore=bore/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-cacule/_pkgcore=bore/" {}
 docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg
 docker rm kernelbuild-zfs
 docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3

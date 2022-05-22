@@ -11,7 +11,6 @@
 # 'cacule' - select 'CacULE scheduler'
 # 'cacule-rdb' - select 'CacULE-RDB scheduler'
 # 'bore' - select 'Burst-Oriented Response Enhancer'
-# 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'cfs' - select 'Completely Fair Scheduler'
 _cpusched='bmq'
 
@@ -25,9 +24,6 @@ _makenconfig=
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
 _NUMAdisable=y
-
-## Enable Anbox
-_anbox=
 
 # Compile ONLY used modules to VASTLYreduce the number of modules built
 # and the build time.
@@ -75,7 +71,7 @@ _kyber_disable=y
 _lru_enable=y
 
 ## Enable DAMON
-_damon=
+_damon=y
 
 ## enable SPECULATIVE_PAGE_FAULT
 _spf_enable=y
@@ -84,10 +80,10 @@ _spf_enable=y
 _lrng_enable=y
 
 ## Apply Kernel automatic Optimization
-_use_auto_optimization=y
+_use_auto_optimization=
 
 ## Apply Kernel Optimization selecting
-_use_optimization_select=
+_use_optimization_select=y
 
 ## Enable zram/zswap ZSTD compression
 _zstd_compression=y
@@ -102,27 +98,34 @@ _use_llvm_lto=
 ## Change the thin lto cachedir for fixing building several dkms modules including zfs
 _thin_lto_cachedir=
 
-## Enable it for using the LLVM CFI PATCH for a better security
-_use_cfi=
+# KCFI is a proposed forward-edge control-flow integrity scheme for
+# Clang, which is more suitable for kernel use than the existing CFI
+# scheme used by CONFIG_CFI_CLANG. KCFI doesn't require LTO, doesn't
+# alter function references to point to a jump table, and won't break
+# function address equality.
+# ATTENTION!: you do need a patched llvm for the usage of kcfi,
+# you can find a patched llvm-git in the cachyos-repo's.
+# The packagename is called "llvm-kcfi"
+_use_kcfi=
 
 if [ -n "$_use_llvm_lto" ]; then
     pkgbase=linux-cachyos-${_cpusched}-lto
 else
     pkgbase=linux-cachyos-${_cpusched}
 fi
-_major=5.17
-_minor=9
+_major=5.18
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=3
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -130,12 +133,18 @@ options=('!strip')
 makedepends=('bc' 'texlive-latexextra' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'xmlto' 'git' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch')
 if [ -n "$_use_llvm_lto" ]; then
     makedepends+=(clang llvm lld python)
+    BUILD_FLAGS=(
+        CC=clang
+        LD=ld.lld
+        LLVM=1
+        LLVM_IAS=1
+    )
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${_major}"
 source=(
-    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
-    "config"
-)
+"https://github.com/torvalds/linux/archive/refs/tags/v${_major}.tar.gz"
+#    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
+"config")
 if [ "$_cpusched" = "bmq" ]; then
     source+=("${_patchsource}/sched/0001-prjc.patch")
 fi
@@ -143,42 +152,45 @@ if [ "$_cpusched" = "pds" ]; then
     source+=("${_patchsource}/sched/0001-prjc.patch")
 fi
 if [ "$_cpusched" = "cacule" ]; then
-    source+=("${_patchsource}/sched/0001-cacULE.patch")
+    source+=("${_patchsource}/sched/0001-cacULE-5.18.patch")
 fi
 if [ "$_cpusched" = "cacule-rdb" ]; then
-    source+=("${_patchsource}/sched/0001-cacULE.patch")
-fi
-if [ "$_cpusched" = "tt" ]; then
-    source+=("${_patchsource}/sched/0001-tt.patch")
+    source+=("${_patchsource}/sched/0001-cacULE-5.18.patch")
 fi
 if [ "$_cpusched" = "bore" ]; then
     source+=("${_patchsource}/sched/0001-bore-sched.patch")
 fi
 source+=(
+    "${_patchsource}/0001-amd-perf.patch"
     "${_patchsource}/0001-arch.patch"
-    "${_patchsource}/0002-anbox.patch"
-    "${_patchsource}/0003-bbr2.patch"
-    "${_patchsource}/0004-cachy.patch"
-#    "${_patchsource}/0005-migrate.patch"
-    "${_patchsource}/0006-clearlinux.patch"
-    "${_patchsource}/0007-cpu.patch"
-    "${_patchsource}/0008-fixes-miscellaneous.patch"
-    "${_patchsource}/0009-fs-patches.patch"
-    "${_patchsource}/0010-hwmon.patch"
-    "${_patchsource}/0011-lru-le9.patch"
-    "${_patchsource}/0012-spf-lru.patch"
-    "${_patchsource}/0013-xanmod.patch"
-    "${_patchsource}/0014-lrng.patch"
-#    "${_patchsource}/0015-ck-hrtimer.patch"
-    "${_patchsource}/0016-futex-winesync.patch"
+    "${_patchsource}/0001-bbr2.patch"
+    "${_patchsource}/0001-cachy.patch"
+#    "${_patchsource}/0001-ck-hrtimer.patch"
+    "${_patchsource}/0001-clearlinux.patch"
+    "${_patchsource}/0001-cpu.patch"
+    "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
+    "${_patchsource}/0001-fixes.patch"
+    "${_patchsource}/0001-fs-patches.patch"
+    "${_patchsource}/0001-futex-winesync.patch"
+    "${_patchsource}/0001-hwmon.patch"
+    "${_patchsource}/0001-kbuild.patch"
+#    "${_patchsource}/0001-latency_nice.patch"
+    "${_patchsource}/0001-lrng.patch"
+    "${_patchsource}/0001-lru-le9-spf.patch"
+#    "${_patchsource}/0001-migrate.patch"
+    "${_patchsource}/0001-ksm.patch"
+    "${_patchsource}/0001-zram-entropy-calculation.patch"
     "auto-cpu-optimization.sh"
 )
 
-if [ -n "$_use_llvm_lto" ]; then
-    BUILD_FLAGS=(
-        LLVM=1
-        LLVM_IAS=1
-    )
+if [ -n "$_use_kcfi" ]; then
+source+=("${_patchsource}/0001-kcfi.patch")
+depends+=(clang llvm lld python)
+BUILD_FLAGS=(
+    CC=clang
+    LD=ld.lld
+    LLVM=1
+)
 fi
 
 export KBUILD_BUILD_HOST=archlinux
@@ -235,10 +247,6 @@ prepare() {
         scripts/config --enable CACULE_SCHED \
                        --enable CACULE_RDB \
                        --set-val RDB_INTERVAL 19
-    elif [ "$_cpusched" = "tt" ]; then
-        echo "Enable TT CPU scheduler..."
-        scripts/config --enable TT_SCHED \
-                       --enable TT_ACCOUNTING_STATS
     elif [ "$_cpusched" = "bore" ]; then
         echo "Selecting BORE Scheduler..."
         scripts/config --enable SCHED_BORE
@@ -254,11 +262,11 @@ prepare() {
         exit
     fi
 
-#    if [ -n "$_use_cfi" ] && [ -n "$_use_llvm_lto" ]; then
-#        echo "Enabling CFI"
-#        scripts/config --enable ARCH_SUPPORTS_CFI_CLANG \
-#                       --enable CFI_CLANG
-#    fi
+    if [ -n "$_use_kcfi" ]; then
+        echo "Enabling kCFI"
+        scripts/config --enable ARCH_SUPPORTS_CFI_CLANG \
+                       --enable CFI_CLANG
+    fi
 
     if [ "$_use_llvm_lto" = "thin" ]; then
         echo "Enabling LLVM THIN LTO..."
@@ -436,8 +444,9 @@ prepare() {
     if [ -n "$_damon" ]; then
         echo "Enabling DAMON..."
         scripts/config --enable DAMON \
-                       --disable DAMON_VADDR \
-                       --disable DAMON_DBGFS \
+                       --enable DAMON_VADDR \
+                       --enable DAMON_DBGFS \
+                       --enable DAMON_SYSFS \
                        --enable DAMON_PADDR \
                        --enable DAMON_RECLAIM
     fi
@@ -499,24 +508,10 @@ prepare() {
                        --set-str ZSWAP_COMPRESSOR_DEFAULT zstd
     fi
 
-    if [ -n "$_anbox" ]; then
-        echo "Enable Anbox..."
-        scripts/config --enable ASHMEM \
-                       --enable ANDROID \
-                       --enable ANDROID_BINDER_IPC \
-                       --enable ANDROID_BINDERFS \
-                       --enable ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
-    fi
-
-    scripts/config --disable DEBUG_INFO \
-                   --disable DEBUG_INFO_BTF \
-                   --disable DEBUG_INFO_DWARF4 \
-                   --disable PAHOLE_HAS_SPLIT_BTF \
-                   --disable DEBUG_INFO_BTF_MODULES
-
+    echo "Enable ZRAM_ENTROPY"
+	  scripts/config --enable ZRAM_ENTROPY
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config --enable USER_NS
-
     echo "Enable WINE FASTSYNC"
     scripts/config --enable WINESYNC
 
@@ -614,10 +609,10 @@ _package-headers() {
     # required when STACK_VALIDATION is enabled
     install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
-#    # required when DEBUG_INFO_BTF_MODULES is enabled
-#    if [ -f tools/bpf/resolve_btfids/resolve_btfids ]; then
-#        install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
-#    fi
+    # required when DEBUG_INFO_BTF_MODULES is enabled
+    if [ -f tools/bpf/resolve_btfids/resolve_btfids ]; then
+        install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+    fi
 
     echo "Installing headers..."
     cp -t "$builddir" -a include
@@ -689,21 +684,23 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('172424bc41ef2df9b19457ceb022b56a51eb9497529b15ce7e9b8d6f90ad5978'
-            '7ad9dced23394e7db11dc70e5ad95589828001c8b09d3c1f9d54375e3c396dcb'
-            '56c7c89373bb1cd1cfb7446b350f4fc590971fc15e0ee16e23fcb40ffc09482a'
-            '09aa0e17190ee113a352573b2d2386cc04b522641fd277306e8ace9fd7af0037'
-            'ddaf45cc72ed743f70c8754505357e94d6dd4133bfde6e9c6afc59f4cc12ee69'
-            '6b31e4655e5ff9dbe95fb7db665426dad2bf3e33b5102d040a256f707cc99a23'
-            '8d327824362a7484bf7a8e4bfbe37e969ee39bbbb1c09c9e1e909b7e5941240d'
-            'a13c4f5a688a86c8c67642a4129d2c89efd5f1afd3625e15ce5abe0b983d60d0'
-            'ab87b51fcacd9c7c5bf5d363ac45dab994c2c53d0e80e552390c7cbf752d7dca'
-            '4567a7b51d98643b599a9cd5029c7c433661a3519ecf9816d4557e6bd8174917'
-            '12ebabff02f66e1583232591fc4ddf09c6437f11a4c59045d6d50d4be0f3693e'
-            '82f546fe2e1fc686703ae3f5910c5867ddb4d1a517ac3eec154ba8de32e91cda'
-            '9c2c0ccee49c17663f27dcdf43cfa02cd45ee15d53ff1a05da7e683098abdde1'
-            '1b2dd9147b7443a42ec49e9d1bf01d1209bfcbe625e686e90f0276abb3ed52ec'
-            '0e5177f086ddcac9b0e6596d29588c0730cce5c827e4c51e57f835a32f25ee85'
-            '761abc5bd65c194b6b810af1022df5888ce0ecbe70ffe4cd67e6e0c748fb78a2'
-            '179b540f8848b03ccb1a0d12e24feab63fd0576b5e9eed8f214d6e9cb790f151'
-            '65ec9ac5b8b28d5b61df1c72498059be2e7cb1f9b965bac0e4ffed3c05520b2b')
+sha256sums=('4037b6912e2b6c5102ce89840e32a16839dadd846ee3afdfb6704f44273b0c95'
+            '37ee10cdd091325b470ad6c0969d9e81deb8194f482d154efe97382afbd6e43a'
+            '7679a8d3ccb761f00203a12b24a0d17016031b72a6cd71e2e25cc0249a7185fa'
+            '9824cd3a41db040bf28d6538aa4805f869333139cbcf43e0422e1b42f5401270'
+            '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
+            '56f58801a73e6d930d7680806dc734b50b69617a0eef96244627d7a946b62efd'
+            '09d2b3d6b919091f0f313609bdfd7603bfaa8765f0edeaf15efca2aec78284eb'
+            'd6e9d3a5a87b4d43ceb4a415e9a15a949c755a2b65f9cf3dcc4bfac15a68af02'
+            'c2bf57d37db1f93c5f3eeff2e2957f01618f4786613c13755f9ae6989d2b745c'
+            '30fd4ca078cb1eee0bc4005700da4d15515a577ccdb96ea7922040aa9086d6b7'
+            'e6e02392982b7ce5ca7070231144d9d1c861f4ff45b41f34551450b52fb206ba'
+            '9ea85b97b92c01a8d620a74ab3c375c5cb5017a8f3a5c9996bfff31997521f61'
+            '67134052d1dc7332ba5a991ec54a2a957539bec4eb4a1a0ed0f0ad7daa8fe763'
+            'c1aae07261bafc711c2d66e26c2c30e444e11509cacc7aec148dc021761294cd'
+            'ca0e1507579f146ee952a2432954095c59e2ab428d843d9e7de739dc93d319c8'
+            'ffa7f63135f093e04cd3af1ec2a9c43381357b6477d59a569580f9f0889f5cfc'
+            'd2c542b3d44ef11364248c550d20ec7b52261cd98ee5191c24d59c9e0a69392e'
+            '8edf9b9b1a9c26cc4d6dfaf5f14c06b197a04c5bbb8459dd292c033aa2534d19'
+            'efe8558b63feb0e76b61d69952c5300ad54c951d9044101be7c01932a54fb4fb'
+            'be21f15aeb22b2ca1e35e4975590d30736af0483ea7464e3464a60d993e37e22')

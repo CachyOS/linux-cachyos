@@ -1,18 +1,20 @@
 pkgbase = linux-cachyos-zfs
 	pkgdesc = Kernel modules for the Zettabyte File System.
-	pkgver = 2.1.4
-	pkgrel = 14
+	pkgver = 2.1.5
+	pkgrel = 1
 	url = http://zfsonlinux.org/
 	install = zfs.install
 	arch = x86_64
 	arch = x86_64_v3
 	license = CDDL
 	makedepends = linux-cachyos-headers
-	depends = linux-cachyos=5.17.9-1
+	depends = linux-cachyos=5.18.0-1
 	depends = kmod
-	depends = zfs-utils=2.1.4
-	provides = zfs=2.1.4
-	source = https://github.com/zfsonlinux/zfs/releases/download/zfs-2.1.4/zfs-2.1.4.tar.gz
+	depends = zfs-utils=2.1.5
+	provides = zfs=2.1.5
+	source = https://github.com/openzfs/zfs/releases/download/zfs-2.1.4/zfs-2.1.4.tar.gz
+	source = 0001-zfs-2.1.5-staging.patch
 	sha256sums = 3b52c0d493f806f638dca87dde809f53861cd318c1ebb0e60daeaa061cf1acf6
+	sha256sums = 6ce4e5b44efc4c280b90b222ea66e2b78445866f4b5c3e0a0de98ef437cfb78e
 
 pkgname = linux-cachyos-zfs

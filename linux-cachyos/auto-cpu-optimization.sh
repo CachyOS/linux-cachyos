@@ -22,6 +22,10 @@ then
 elif [[ ${MARCH} == "ZNVER3" ]]
 then
 	MARCH="ZEN3"
+
+elif [[ ${MARCH} == "BDVER2" ]]
+then
+	MARCH="MPILEDRIVER"
 fi
 
 echo "----------------------------------"
