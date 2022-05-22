@@ -25,7 +25,7 @@ do
     cd ..
 done
 
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_optimization_select=y/_use_optimization_select=/" {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto=thin/" {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_thinlto_cachedir=/_thin_lto_cachedir=y/" {}
 
