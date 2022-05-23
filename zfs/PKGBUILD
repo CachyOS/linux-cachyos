@@ -39,10 +39,11 @@ else
 fi
 
 _linuxprefix=linux-${_linuxpostfix}
-_kernver=5.18.0-1
+_kernver=5.18.0-2
 pkgname="${_linuxprefix}-zfs"
 pkgver=2.1.5
-pkgrel=1
+_pkgver=2.14
+pkgrel=2
 pkgdesc='Kernel modules for the Zettabyte File System.'
 arch=('x86_64' 'x86_64_v3')
 url="http://zfsonlinux.org/"
@@ -64,12 +65,12 @@ if [ -n "$_use_llvm_lto" ]; then
   )
 fi
 prepare () {
-	cd "zfs-${pkgver}"
+	cd "zfs-${_pkgver}"
     patch -Np1 < "${srcdir}"/0001-zfs-2.1.5-staging.patch
 
 }
 build() {
-  cd "zfs-${pkgver}"
+  cd "zfs-${_pkgver}"
 
 if [ -n "$_use_llvm_lto" ]; then
   ./autogen.sh
