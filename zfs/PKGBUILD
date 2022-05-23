@@ -41,7 +41,7 @@ fi
 _linuxprefix=linux-${_linuxpostfix}
 _kernver=5.18.0-2
 pkgname="${_linuxprefix}-zfs"
-pkgver=2.1.4
+pkgver=2.1.5
 _pkgver=2.1.4
 pkgrel=2
 pkgdesc='Kernel modules for the Zettabyte File System.'
