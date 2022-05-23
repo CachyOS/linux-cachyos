@@ -250,13 +250,13 @@ prepare() {
         scripts/config --enable CACULE_SCHED \
                        --enable CACULE_RDB \
                        --set-val RDB_INTERVAL 19
-    elif [ "$_cpusched" = "tt" ]; then
-        echo "Enable TT CPU scheduler..."
-        scripts/config --enable TT_SCHED \
-                       --enable TT_ACCOUNTING_STATS
     elif [ "$_cpusched" = "bore" ]; then
         echo "Selecting BORE Scheduler..."
         scripts/config --enable SCHED_BORE
+    elif [ "$_cpusched" = "tt" ]; then
+        echo "Selecting TT Scheduler..."
+        scripts/config --enable TT_SCHED
+        scripts/config --enable TT_ACCOUNTING_STATS
     elif [ "$_cpusched" = "cfs" ]; then
         echo "Selecting Completely Fair Scheduler..."
     else

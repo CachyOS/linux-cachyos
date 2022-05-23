@@ -1,4 +1,4 @@
-EXTRAMODULES='5.18.0-1-bore-lto'
+EXTRAMODULES='5.18.0-2-cachyos'
 
 post_install() {
   depmod $(cat /usr/lib/modules/$EXTRAMODULES/version)

@@ -252,6 +252,10 @@ prepare() {
     elif [ "$_cpusched" = "bore" ]; then
         echo "Selecting BORE Scheduler..."
         scripts/config --enable SCHED_BORE
+    elif [ "$_cpusched" = "tt" ]; then
+        echo "Selecting TT Scheduler..."
+        scripts/config --enable TT_SCHED
+        scripts/config --enable TT_ACCOUNTING_STATS
     elif [ "$_cpusched" = "cfs" ]; then
         echo "Selecting Completely Fair Scheduler..."
     else
