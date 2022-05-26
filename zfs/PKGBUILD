@@ -39,11 +39,11 @@ else
 fi
 
 _linuxprefix=linux-${_linuxpostfix}
-_kernver=5.18.0-2
+_kernver=5.18.0-3
 pkgname="${_linuxprefix}-zfs"
 pkgver=2.1.5
 _pkgver=2.1.4
-pkgrel=2
+pkgrel=3
 pkgdesc='Kernel modules for the Zettabyte File System.'
 arch=('x86_64' 'x86_64_v3')
 url="http://zfsonlinux.org/"
@@ -54,7 +54,7 @@ provides=("zfs=$pkgver")
 #groups=("$_linuxprefix-extramodules")
 install=zfs.install
 source=("https://github.com/openzfs/zfs/releases/download/zfs-2.1.4/zfs-2.1.4.tar.gz"
-"0001-zfs-2.1.5-staging.patch")
+"https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0001-zfs-2.1.5-staging.patch")
 sha256sums=('3b52c0d493f806f638dca87dde809f53861cd318c1ebb0e60daeaa061cf1acf6'
             '6ce4e5b44efc4c280b90b222ea66e2b78445866f4b5c3e0a0de98ef437cfb78e')
 if [ -n "$_use_llvm_lto" ]; then
@@ -93,7 +93,7 @@ fi
 }
 
 package(){
-  cd "zfs-${pkgver}"
+  cd "zfs-${_pkgver}"
   install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${_linuxpostfix}"
   install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${_linuxpostfix}"
   find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +

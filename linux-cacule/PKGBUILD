@@ -128,7 +128,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=3
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -167,7 +167,6 @@ source+=(
     "${_patchsource}/0001-arch.patch"
     "${_patchsource}/0001-bbr2.patch"
     "${_patchsource}/0001-cachy.patch"
-    "${_patchsource}/0001-ck-hrtimer.patch"
     "${_patchsource}/0001-clearlinux.patch"
     "${_patchsource}/0001-cpu.patch"
     "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
@@ -176,10 +175,8 @@ source+=(
     "${_patchsource}/0001-futex-winesync.patch"
     "${_patchsource}/0001-hwmon.patch"
     "${_patchsource}/0001-kbuild.patch"
-#    "${_patchsource}/0001-latency_nice.patch"
     "${_patchsource}/0001-lrng.patch"
     "${_patchsource}/0001-lru-le9-spf.patch"
-#    "${_patchsource}/0001-migrate.patch"
     "${_patchsource}/0001-ksm.patch"
     "${_patchsource}/0001-zram-entropy-calculation.patch"
     "auto-cpu-optimization.sh"
@@ -707,13 +704,12 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('51f3f1684a896e797182a0907299cc1f0ff5e5b51dd9a55478ae63a409855cee'
-            '37ee10cdd091325b470ad6c0969d9e81deb8194f482d154efe97382afbd6e43a'
+            'd85aa9f4b2f1848f23ce4cbe77ee35949877e590917be2d1dd5a686c596750b1'
             'bc7d00587607fbb2e5ad00d727ffe4e1a021322b1bdbd7c2611a4f0eead39d59'
             '9824cd3a41db040bf28d6538aa4805f869333139cbcf43e0422e1b42f5401270'
             '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
             '56f58801a73e6d930d7680806dc734b50b69617a0eef96244627d7a946b62efd'
             '09d2b3d6b919091f0f313609bdfd7603bfaa8765f0edeaf15efca2aec78284eb'
-            '097e6faccc2dc15e7c02fc4e22616608c7d26e515a3580f3ef1a6a2ef705ef68'
             'd6e9d3a5a87b4d43ceb4a415e9a15a949c755a2b65f9cf3dcc4bfac15a68af02'
             'c2bf57d37db1f93c5f3eeff2e2957f01618f4786613c13755f9ae6989d2b745c'
             '30fd4ca078cb1eee0bc4005700da4d15515a577ccdb96ea7922040aa9086d6b7'
@@ -721,7 +717,7 @@ sha256sums=('51f3f1684a896e797182a0907299cc1f0ff5e5b51dd9a55478ae63a409855cee'
             '9ea85b97b92c01a8d620a74ab3c375c5cb5017a8f3a5c9996bfff31997521f61'
             '67134052d1dc7332ba5a991ec54a2a957539bec4eb4a1a0ed0f0ad7daa8fe763'
             'c1aae07261bafc711c2d66e26c2c30e444e11509cacc7aec148dc021761294cd'
-            'ca0e1507579f146ee952a2432954095c59e2ab428d843d9e7de739dc93d319c8'
+            'babe3ae636742e8b3fa593d6eebc4422fcf894b38764735d6f1477ccf580eca9'
             'ffa7f63135f093e04cd3af1ec2a9c43381357b6477d59a569580f9f0889f5cfc'
             'd2c542b3d44ef11364248c550d20ec7b52261cd98ee5191c24d59c9e0a69392e'
             '8edf9b9b1a9c26cc4d6dfaf5f14c06b197a04c5bbb8459dd292c033aa2534d19'
