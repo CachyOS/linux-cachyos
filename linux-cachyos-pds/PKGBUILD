@@ -515,8 +515,9 @@ prepare() {
     scripts/config --disable DEBUG_INFO \
                        --disable DEBUG_INFO_BTF \
                        --disable DEBUG_INFO_DWARF4 \
+                       --disable DEBUG_INFO_DWARF5 \
                        --disable PAHOLE_HAS_SPLIT_BTF \
-                       --disable DEBUG_INFO_BTF_MODULES \ \
+                       --disable DEBUG_INFO_BTF_MODULES \
                        --disable SLUB_DEBUG \
                        --disable PM_DEBUG \
                        --disable PM_ADVANCED_DEBUG \
