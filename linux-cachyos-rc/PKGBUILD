@@ -163,6 +163,9 @@ fi
 if [ "$_cpusched" = "bore" ]; then
     source+=("${_patchsource}/sched/0001-bore-sched.patch")
 fi
+if [ "$_cpusched" = "cfs" ]; then
+             source+=("${_patchsource}/0001-migrate.patch")
+fi
 source+=(
     "${_patchsource}/0001-amd-perf.patch"
     "${_patchsource}/0001-arch.patch"
