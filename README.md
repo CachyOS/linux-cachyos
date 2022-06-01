@@ -7,11 +7,11 @@ The CachyOS are improved kernels which improve the performance and other improve
 ### linux-cachyos will now use as default the BORE scheduler!
 
 - Standard Scheduler Completely Fair Scheduler (CFS) - linux-cachyos-cfs
-- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
+- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule # actually broken does not load ramdisk
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
 - Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - linux-cachyos-tt ## fixed for 5.18 by @psndna88
-- BORE (Burst-Oriented Response Enhancer) CPU Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) - linux-cachyos-bore
+- BORE (Burst-Oriented Response Enhancer) CPU Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) - linux-cachyos-bore / linux-cachyos
 
 **All kernels are prebuilt in two different march versions (x86_64 and x86_64_v3) and also with the lto enabled kernels in the cachyos repo.**
 
@@ -25,7 +25,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Improved BFQ Scheduler
 - Back-ported patches from linux-next
 - General improved sysctl settings and upstream scheduler fixes
-- Latest LRU Patch-set, default enabled
+- Latest LRU-le9-spf Patch-set, default enabled
 - Damon Reclaim enabled at default
 - BBRv2 tcp_congestion_control
 - LLVM ThinLTO provided with *-lto Kernel (in the cachyos-repo)
@@ -36,7 +36,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 - KSMBD Module for Samba3 Server
 - AMD PSTATE Driver enabled by default
 - Clearlinux Patchset
-- Kernel Control Flow Integrity (kCFI) selectable when using LLVM
+- Kernel Control Flow Integrity (kCFI) selectable when using LLVM(patched llvm needed)
 - ZFS Filesystem Support and prebuilt in the repo!
 - WINESYNC Fastsync
 
