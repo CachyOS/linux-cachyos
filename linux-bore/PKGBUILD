@@ -72,7 +72,7 @@ _kyber_disable=y
 _lru_enable=y
 
 ## Enable DAMON
-_damon=y
+_damon=
 
 ## enable SPECULATIVE_PAGE_FAULT
 _spf_enable=y
@@ -184,7 +184,6 @@ source+=(
     "${_patchsource}/0001-kbuild.patch"
     "${_patchsource}/0001-lrng.patch"
     "${_patchsource}/0001-lru-le9-spf.patch"
-    "${_patchsource}/0001-ksm.patch"
     "${_patchsource}/0001-zram-entropy-calculation.patch"
     "auto-cpu-optimization.sh"
 )
@@ -515,7 +514,9 @@ prepare() {
                        --set-str ZRAM_DEF_COMP zstd \
                        --disable ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
                        --enable ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
-                       --set-str ZSWAP_COMPRESSOR_DEFAULT zstd
+                       --set-str ZSWAP_COMPRESSOR_DEFAULT zstd \
+                       --enable ZRAM_ENTROPY \
+                       --set-val ZRAM_ENTROPY_THRESHOLD 100000
     fi
 
     if [ -n "$_disable_debug" ]; then

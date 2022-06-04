@@ -26,11 +26,10 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Back-ported patches from linux-next
 - General improved sysctl settings and upstream scheduler fixes
 - Latest LRU-le9-spf Patch-set, default enabled
-- Damon Reclaim enabled at default
+- DAMON Proactive-LRU-lists-Sorting and DAMON_RECLAIM
 - BBRv2 tcp_congestion_control
 - LLVM ThinLTO provided with *-lto Kernel (in the cachyos-repo)
 - LRNG Framework (default enabled)
-- Android ANBOX patch-set
 - Latest & improved ZSTD patch-set
 - Latest BTRFS improvements & fixes
 - KSMBD Module for Samba3 Server
@@ -39,12 +38,12 @@ The CachyOS are improved kernels which improve the performance and other improve
 - Kernel Control Flow Integrity (kCFI) selectable when using LLVM(patched llvm needed)
 - ZFS Filesystem Support and prebuilt in the repo!
 - WINESYNC Fastsync
+- Use entropy optimization for zram
 
 ## WINESYNC Usage:
 
 Insall following packages from the AUR, if you get into issue's:
 
-- [winesync](https://aur.archlinux.org/packages/winesync)
 - [winesync-dkms](https://aur.archlinux.org/packages/winesync-dkms)
 - [winesync-header](https://aur.archlinux.org/packages/winesync-header)
 - [winesync-udev-rule](https://aur.archlinux.org/packages/winesync-udev-rule)
@@ -57,7 +56,14 @@ WINEFSYNC=0
 WINEFSYNC_FUTEX2=0
 ```
 
-Also you need a wine/proton which includes the winesync patch. I would recommend to built one from [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git) or you will find prebuilt ones in our repo.
+for steam following in the launch options:
+
+```
+WINEESYNC=0 WINEFSYNC=0 WINEFSYNC_FUTEX2=0 %command%
+```
+
+Also you need a wine/proton which includes the winesync patch. I build weekly into the cachyos-repo a proton-tkg-git and wine-tkg-git into the repo with winesync Fastsync.
+Simply install it with ```sudo pacman -S proton-tkg-git wine-tkg-git``` or you built it your self from [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git).
 
 ## Other distros
 
@@ -91,7 +97,7 @@ sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
 
 sudo pacman-key --lsign-key F3B607488DB35A47
 
-sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-10-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-10-1-any.pkg.tar.zst'
+sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-11-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-11-1-any.pkg.tar.zst'
 
   **Checking x86_64_v3 cpu support:**
 

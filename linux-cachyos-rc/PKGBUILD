@@ -72,7 +72,7 @@ _kyber_disable=y
 _lru_enable=y
 
 ## Enable DAMON
-_damon=y
+_damon=
 
 ## enable SPECULATIVE_PAGE_FAULT
 _spf_enable=y
