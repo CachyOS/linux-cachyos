@@ -117,7 +117,7 @@ else
     pkgbase=linux-cachyos-${_cpusched}
 fi
 _major=5.18
-_minor=1
+_minor=2
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -128,7 +128,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=4
+pkgrel=1
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -175,8 +175,10 @@ source+=(
     "${_patchsource}/0001-cpu.patch"
     "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
     "${_patchsource}/0001-fixes.patch"
+    "${_patchsource}/0001-fs-patches.patch"
     "${_patchsource}/0001-futex-winesync.patch"
     "${_patchsource}/0001-hwmon.patch"
+    "${_patchsource}/0001-hardening.patch"
     "${_patchsource}/0001-kbuild.patch"
     "${_patchsource}/0001-lrng.patch"
     "${_patchsource}/0001-lru-le9-spf.patch"
@@ -708,19 +710,21 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('83d14126c660186a7a1774a4a5c29d38e170fa5e52cfd2d08fd344dcf1f57d22'
+sha256sums=('ef9ff2dfa5416a03e7e5fd9c308aaec385fe8ff9f4a62d957b167843849659a2'
             'fbff2747a1d8916f2de80455fb40f0ce1bf9d5df5dca7157234242b5b286fc90'
             '616390dc143695ac216696e86f58beee5df420fb3af22a6a098f7a14aaf5251e'
             '85eeddbd0b1fdb44333c450e6d93e370dcd7e230cecccce47667aaa746bea3ae'
             '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
-            '56f58801a73e6d930d7680806dc734b50b69617a0eef96244627d7a946b62efd'
+            'dc2898751118804bc3f36b5a6928a2927d04919ce41c0ce013009f5564d6d232'
             '3754c1ad6bc2fb4e73e9d77137e9f245b3be1a73a05685f0ca03f4c086e5d04d'
             'e2266d499cebdd5d195a044048ae4a13755f1d3edb3ece2c3f8837228b4cd521'
             'c2bf57d37db1f93c5f3eeff2e2957f01618f4786613c13755f9ae6989d2b745c'
             '30fd4ca078cb1eee0bc4005700da4d15515a577ccdb96ea7922040aa9086d6b7'
-            '75aabb11608394725b8f38a7d813a12e6fb1a521a48eb3c078df80419c2675c7'
+            '4fde226af6680d151143c30143d1594d2b2994350ba1e4726f1768584df2a117'
+            '08bde51de2d012219628bf1831a475115266cf4a6969be8064e719140cc9c232'
             '1d9c83de97d541f5a7ae4612a96c05aea8ce38de5471cc21fd2197dbd6644d00'
             'c1aae07261bafc711c2d66e26c2c30e444e11509cacc7aec148dc021761294cd'
+            'a2701625ea310c809fd7ecdf96c43a51ba28ed1dd8583fdbc06897a0a18230e2'
             '781cd26d7b0794d11f103ada94140061117c628471a4c49f0228f22f0a6cf425'
             '99b18e00ca3e038481a23f4c83bc285a1ad0e209d049a8476c8f997627aaea79'
             'd2c542b3d44ef11364248c550d20ec7b52261cd98ee5191c24d59c9e0a69392e'

@@ -115,7 +115,7 @@ else
     pkgbase=linux-cachyos-rc
 fi
 _major=5.19
-_minor=1
+_minor=2
 #_minorc=$((_minor+1))
 _rcver=rc1
 pkgver=${_major}.${_rcver}
