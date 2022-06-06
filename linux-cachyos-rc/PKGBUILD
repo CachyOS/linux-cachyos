@@ -13,13 +13,13 @@
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'cfs' - select 'Completely Fair Scheduler'
-_cpusched='bore'
+_cpusched='cfs'
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=
+_makenconfig=y
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -72,7 +72,7 @@ _kyber_disable=y
 _lru_enable=y
 
 ## Enable DAMON
-_damon=
+_damon=y
 
 ## enable SPECULATIVE_PAGE_FAULT
 _spf_enable=y
@@ -165,12 +165,11 @@ if [ "$_cpusched" = "bore" ]; then
 fi
 source+=(
     "${_patchsource}/0001-arch.patch"
-    "${_patchsource}/0001-bbr2.patch"
     "${_patchsource}/0001-cachy.patch"
     "${_patchsource}/0001-cpu.patch"
     "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
     "${_patchsource}/0001-futex-winesync.patch"
-    "${_patchsource}/0001-lrng.patch"
+#    "${_patchsource}/0001-lrng.patch"
     "${_patchsource}/0001-ksm.patch"
     "${_patchsource}/0001-zram-entropy-calculation.patch"
     "auto-cpu-optimization.sh"
@@ -502,7 +501,26 @@ prepare() {
                        --set-str ZRAM_DEF_COMP zstd \
                        --disable ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
                        --enable ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
-                       --set-str ZSWAP_COMPRESSOR_DEFAULT zstd
+                       --set-str ZSWAP_COMPRESSOR_DEFAULT zstd \
+                       --enable ZRAM_ENTROPY \
+                       --set-val ZRAM_ENTROPY_THRESHOLD 100000
+    fi
+
+    if [ -n "$_disable_debug" ]; then
+    scripts/config --disable DEBUG_INFO \
+                       --disable DEBUG_INFO_BTF \
+                       --disable DEBUG_INFO_DWARF4 \
+                       --disable DEBUG_INFO_DWARF5 \
+                       --disable PAHOLE_HAS_SPLIT_BTF \
+                       --disable DEBUG_INFO_BTF_MODULES \
+                       --disable SLUB_DEBUG \
+                       --disable PM_DEBUG \
+                       --disable PM_ADVANCED_DEBUG \
+                       --disable PM_SLEEP_DEBUG \
+                       --disable ACPI_DEBUG \
+                       --disable SCHED_DEBUG \
+                       --disable LATENCYTOP \
+                       --disable DEBUG_PREEMPT
     fi
 
     echo "Enable ZRAM_ENTROPY"
@@ -563,10 +581,11 @@ build() {
 _package() {
     pkgdesc="The $pkgdesc kernel and modules"
     depends=('coreutils' 'kmod' 'initramfs')
-    optdepends=('crda: to set the correct wireless channels of your country'
-        'linux-firmware: firmware images needed for some devices'
-    'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig')
-    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE)
+    optdepends=('wireless-regdb: to set the correct wireless channels of your country'
+                  'linux-firmware: firmware images needed for some devices'
+                  'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
+                  'uksmd: Userspace KSM helper daemon')
+    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
 
     cd $_srcname
 
@@ -682,15 +701,12 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('c2d2400bbf52688a1d2d1e45171331ddbc69ba1c3864e922c1c3f5b546b4d21b'
-            'fbff2747a1d8916f2de80455fb40f0ce1bf9d5df5dca7157234242b5b286fc90'
-            '114de325b79abf71532047001d6000f77f6b255c3542f7eeedb36ce99c14d4a9'
+            '342a952420fa373daac811b4bf04746c6a3ba75eb76f72dd24fee566ae89d827'
             '8cb5f04d2b4da0db29cac021f97152e2eb2346547685f49532c1e352be05fb4a'
-            '02f8e33655904232eb5145a149d535304e3c4e09ac115f6f72174586c71735fe'
-            '5d72c709aaf3792d8dd6643a0c41cd530e76549ee3e01483c53a5def4648f056'
+            '578fddfc337c7015f2e3de13e8ce40e10e27280384d5c51c2f43c1d6ce8279e3'
             'a3befe7b001470decc08b1e7cae0e436b5bc355c2f2b43148c6ab30ed9821ec7'
             '0df9c5ae437a7a685493afebf7b5274ce1b73e89a090c31bd3af0b0fdf18ff9e'
             '7cf2e27ae7ca49c8d20a6c10b0a34187f8c63f2dab3063b3649a692d65065fad'
-            'ebd400761038eefa792bd980b73cf44e9ec65598e571912b84e0a0f3eb6da9fd'
             'f94ee42a540d935c3fa05d27485b7f6b66d6220ea2e603db8a3d9ca55e19f7ef'
             'f31972b5cdb0a9ffebe63070ce5706b9d28e47c96f5979820b3fb57f236a93bf'
             'be21f15aeb22b2ca1e35e4975590d30736af0483ea7464e3464a60d993e37e22')
