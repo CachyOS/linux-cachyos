@@ -13,13 +13,13 @@
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'cfs' - select 'Completely Fair Scheduler'
-_cpusched='cfs'
+_cpusched='bore'
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=y
+_makenconfig=
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -169,7 +169,6 @@ source+=(
     "${_patchsource}/0001-cpu.patch"
     "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
     "${_patchsource}/0001-futex-winesync.patch"
-#    "${_patchsource}/0001-lrng.patch"
     "${_patchsource}/0001-ksm.patch"
     "${_patchsource}/0001-zram-entropy-calculation.patch"
     "auto-cpu-optimization.sh"
@@ -701,9 +700,10 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('c2d2400bbf52688a1d2d1e45171331ddbc69ba1c3864e922c1c3f5b546b4d21b'
-            '342a952420fa373daac811b4bf04746c6a3ba75eb76f72dd24fee566ae89d827'
+            '4f4543f2d58fa9a9b5689e8dcadb86aea02ce102b1a8dbb76e66d47c5fadfd9b'
+            '114de325b79abf71532047001d6000f77f6b255c3542f7eeedb36ce99c14d4a9'
             '8cb5f04d2b4da0db29cac021f97152e2eb2346547685f49532c1e352be05fb4a'
-            '578fddfc337c7015f2e3de13e8ce40e10e27280384d5c51c2f43c1d6ce8279e3'
+            'fb091f718c8e683c158dc0d3f3aa8f80f8dfd710f09da257e6bc5a418e16c2b9'
             'a3befe7b001470decc08b1e7cae0e436b5bc355c2f2b43148c6ab30ed9821ec7'
             '0df9c5ae437a7a685493afebf7b5274ce1b73e89a090c31bd3af0b0fdf18ff9e'
             '7cf2e27ae7ca49c8d20a6c10b0a34187f8c63f2dab3063b3649a692d65065fad'

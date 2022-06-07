@@ -40,6 +40,7 @@ fi
 
 _linuxprefix=linux-${_linuxpostfix}
 _kernver=5.18.2-1
+# _kernver=5.19.0-rc1-1 ## for rc kernel
 pkgname="${_linuxprefix}-zfs"
 pkgver=2.1.5
 _pkgver=2.1.4
@@ -49,6 +50,7 @@ arch=('x86_64' 'x86_64_v3')
 url="http://zfsonlinux.org/"
 license=("CDDL")
 depends=("$_linuxprefix=${_kernver}" "kmod" "zfs-utils=${pkgver}")
+# depends=("$_linuxprefix" "kmod" "zfs-utils=${pkgver}") ## for rc kernel
 makedepends=("$_linuxprefix-headers")
 provides=("zfs=$pkgver")
 #groups=("$_linuxprefix-extramodules")

@@ -44,8 +44,6 @@ The CachyOS are improved kernels which improve the performance and other improve
 
 Insall following packages from the AUR, if you get into issue's:
 
-- [winesync-dkms](https://aur.archlinux.org/packages/winesync-dkms)
-- [winesync-header](https://aur.archlinux.org/packages/winesync-header)
 - [winesync-udev-rule](https://aur.archlinux.org/packages/winesync-udev-rule)
 
 And disable following enviroment variables in lutris/steam/..
