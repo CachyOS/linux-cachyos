@@ -26,11 +26,11 @@
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'cfs' - select 'Completely Fair Scheduler'
-_pkgcore=cachyos-bore
+_pkgcore=cachyos-hardened
 # Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
-_use_llvm_lto=thin
+_use_llvm_lto=
 
 if [ -n "$_use_llvm_lto" ]; then
   _linuxpostfix=${_pkgcore}-lto

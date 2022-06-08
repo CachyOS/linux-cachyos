@@ -58,6 +58,12 @@ docker rm kernelbuild-zfs
 docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
 docker rm kernelbuild-zfs
 
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_pkgcore=cachyos-tt/_pkgcore=cachyos-hardened/" {}
+docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg
+docker rm kernelbuild-zfs
+docker run --name kernelbuild-zfs -e EXPORT_PKG=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
+docker rm kernelbuild-zfs
+
 mv *-x86_64.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64/cachyos/
 repoctl update -P cachyos
 
