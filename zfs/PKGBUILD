@@ -26,11 +26,11 @@
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'cfs' - select 'Completely Fair Scheduler'
-_pkgcore=cachyos
+_pkgcore=cachyos-bore
 # Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
-_use_llvm_lto=
+_use_llvm_lto=thin
 
 if [ -n "$_use_llvm_lto" ]; then
   _linuxpostfix=${_pkgcore}-lto
@@ -39,12 +39,12 @@ else
 fi
 
 _linuxprefix=linux-${_linuxpostfix}
-_kernver=5.18.2-1
+_kernver=5.18.2-2
 # _kernver=5.19.0-rc1-1 ## for rc kernel
 pkgname="${_linuxprefix}-zfs"
 pkgver=2.1.5
 _pkgver=2.1.4
-pkgrel=8
+pkgrel=9
 pkgdesc='Kernel modules for the Zettabyte File System.'
 arch=('x86_64' 'x86_64_v3')
 url="http://zfsonlinux.org/"
