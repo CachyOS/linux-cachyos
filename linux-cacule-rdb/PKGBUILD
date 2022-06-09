@@ -157,7 +157,7 @@ source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config")
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/bwatkinson/zfs.git#commit=d82a8a8c31d19fc59ad46d782ffb03e633429958")
+    source+=("git+https://github.com/ptr1337/zfs.git#commit=8941b63a931ca6fdc6d0ab46c037540569ba04a4")
 fi
 if [ "$_cpusched" = "bmq" ]; then
   source+=("${_patchsource}/sched/0001-prjc.patch")
