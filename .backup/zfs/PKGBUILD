@@ -58,7 +58,7 @@ install=zfs.install
 source=("https://github.com/openzfs/zfs/releases/download/zfs-2.1.4/zfs-2.1.4.tar.gz"
 "https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0001-zfs-2.1.5-staging.patch")
 sha256sums=('3b52c0d493f806f638dca87dde809f53861cd318c1ebb0e60daeaa061cf1acf6'
-            '7c507461a31da8739822885d778bd68621aaeee44045a4bab585a3195ba66a9d')
+            '84e7cc4a6ef33c1ddc88a300be640bb997ac5c2e73a2f3b7418dc1b586843b20')
 if [ -n "$_use_llvm_lto" ]; then
   depends+=(clang llvm lld python)
   BUILD_FLAGS=(

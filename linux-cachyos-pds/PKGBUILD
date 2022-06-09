@@ -45,7 +45,7 @@ _localmodcfg=
 _use_current=
 
 ### Enable KBUILD_CFLAGS -O3
-_cc_harder=y
+_cc_harder=
 
 ### Set performance governor as default
 _per_gov=y
@@ -113,23 +113,19 @@ _thin_lto_cachedir=
 # The packagename is called "llvm-kcfi"
 _use_kcfi=
 
-# Build the zfs module builtin in to the kernel only works with GCC!
+# Build the zfs module builtin in to the kernel
 _build_zfs=
 
 if [ -n "$_use_llvm_lto" ]; then
-  _linuxpostfix=cachyos-${_cpusched}-lto
+    pkgsuffix=cachyos-${_cpusched}-lto
+    pkgbase=linux-$pkgsuffix
+
 else
-  _linuxpostfix=cachyos-${_cpusched}
-fi
-if [ -n "$_use_llvm_lto" ]; then
-  pkgbase=linux-cachyos-${_cpusched}-lto
-else
-  pkgbase=linux-cachyos-${_cpusched}
+    pkgsuffix=cachyos-${_cpusched}
+    pkgbase=linux-$pkgsuffix
 fi
 _major=5.18
 _minor=3
-_kernver=5.18.3-1
-_extramodules=${_kernver}-${_linuxpostfix}
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -141,6 +137,7 @@ _srcname=linux-${_stable}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux PDS scheduler Kernel by CachyOS with other patches and improvements'
 pkgrel=1
+_kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
@@ -157,8 +154,11 @@ if [ -n "$_use_llvm_lto" ]; then
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${_major}"
 source=(
-  "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
-  "config")
+    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
+    "config")
+if [ -n "$_build_zfs" ]; then
+    source+=("git+https://github.com/ptr1337/zfs.git#commit=8941b63a931ca6fdc6d0ab46c037540569ba04a4")
+fi
 if [ "$_cpusched" = "bmq" ]; then
   source+=("${_patchsource}/sched/0001-prjc.patch")
 fi
@@ -172,9 +172,8 @@ if [ "$_cpusched" = "cacule-rdb" ]; then
   source+=("${_patchsource}/sched/0001-cacULE-5.18.patch")
 fi
 if [ "$_cpusched" = "bore" ]; then
-  source+=(
-    "${_patchsource}/sched/0001-bore-sched.patch"
-  "${_patchsource}/0001-migrate.patch")
+    source+=("${_patchsource}/sched/0001-bore-sched.patch"
+             "${_patchsource}/0001-migrate.patch")
 fi
 if [ "$_cpusched" = "cfs" ]; then
   source+=("${_patchsource}/0001-migrate.patch")
@@ -187,21 +186,21 @@ if [ "$_cpusched" = "hardened" ]; then
     "${_patchsource}/sched/0001-bore-sched.patch"
     "${_patchsource}/0001-migrate.patch"
     "${_patchsource}/0001-hardening.patch"
-  "${_patchsource}/0001-hardened.patch")
+    "${_patchsource}/0001-hardened.patch")
 fi
 source+=(
-  "${_patchsource}/dev/0001-amd-perf.patch"
+  "${_patchsource}/0001-amd-perf.patch"
   "${_patchsource}/0001-arch.patch"
   "${_patchsource}/0001-bbr2.patch"
   "${_patchsource}/0001-cachy.patch"
   "${_patchsource}/0001-clearlinux.patch"
   "${_patchsource}/0001-cpu.patch"
   "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
-  "${_patchsource}/dev/0001-fixes.patch"
-  "${_patchsource}/dev/0001-fs-patches.patch"
+  "${_patchsource}/0001-fixes.patch"
+  "${_patchsource}/0001-fs-patches.patch"
   "${_patchsource}/0001-futex-winesync.patch"
   "${_patchsource}/0001-hwmon.patch"
-  "${_patchsource}/dev/0001-kbuild.patch"
+  "${_patchsource}/0001-kbuild.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-lru-le9-spf.patch"
   "${_patchsource}/0001-ksm.patch"
@@ -220,31 +219,28 @@ if [ -n "$_use_kcfi" ]; then
   )
 fi
 
-if [ -n "$_build_zfs" ]; then
-  source+=("git+https://github.com/openzfs/zfs.git#commit=fc18fa92c8cf3bd8febed784a15804e86aa08cb5")
-fi
-
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
 
 prepare() {
 
-  cd $_srcname
+cd ${srcdir}/$_srcname
 
   echo "Setting version..."
   scripts/setlocalversion --save-scmversion
   echo "-$pkgrel" > localversion.10-pkgrel
   echo "${pkgbase#linux}" > localversion.20-pkgname
 
-  local src
-  for src in "${source[@]}"; do
-    src="${src%%::*}"
-    src="${src##*/}"
-    [[ $src = *.patch ]] || continue
-    echo "Applying patch $src..."
-    patch -Np1 < "../$src"
-  done
+#        [[ $src = 0001-zfs-2.1.5-staging.patch ]] && continue
+    local src
+    for src in "${source[@]}"; do
+        src="${src%%::*}"
+        src="${src##*/}"
+        [[ $src = *.patch ]] || continue
+        echo "Applying patch $src..."
+        patch -Np1 < "../$src"
+    done
 
   echo "Setting config..."
   cp ../config .config
@@ -319,8 +315,8 @@ prepare() {
       --enable HAVE_GCC_PLUGINS
   elif [ "$_use_llvm_lto" = "full" ]; then
     echo "Enabling LLVM FULL LTO..."
-    scripts/config --disable
-    --enable LTO \
+    scripts/config \
+      --enable LTO \
       --enable LTO_CLANG \
       --enable ARCH_SUPPORTS_LTO_CLANG \
       --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
@@ -595,6 +591,7 @@ prepare() {
   scripts/config --enable USER_NS
   echo "Enable WINE FASTSYNC"
   scripts/config --enable WINESYNC
+
   ### Optionally use running kernel's config
   # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
   if [ -n "$_use_current" ]; then
@@ -623,63 +620,64 @@ prepare() {
     fi
   fi
 
-
-
   ### Rewrite configuration
-  echo "Rewrite configuration..."
-  make ${BUILD_FLAGS[*]} prepare
-  if [ -n "$_build_zfs" ]; then
+    echo "Rewrite configuration..."
+    make ${BUILD_FLAGS[*]} prepare
+    yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
+    diff -u ../config .config || :
 
-    cd "${srcdir}/zfs"
-    ./autogen.sh
-    ./configure --with-linux=${srcdir}/$_srcname \
-      --with-linux-obj=${srcdir}/$_srcname --enable-linux-builtin \
-      --prefix=$pkgdir/usr/lib/modules/$(<version)/build --exec-prefix=$pkgdir/usr/lib/modules/$(<version)/build \
-      --with-config=kernel --without-udevdir --disable-sysvinit
-    ./copy-builtin ${srcdir}/$_srcname
-    cd ${srcdir}/$_srcname
-    scripts/config --enable CONFIG_ZFS
-  fi
+    ### Prepared version
+    make ${BUILD_FLAGS[*]} -s kernelrelease > version
+    echo "Prepared $pkgbase version $(<version)"
 
-  yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
-  diff -u ../config .config || :
+    ### Running make nconfig
+	[[ -z "$_makenconfig" ]] ||  make ${BUILD_FLAGS[*]} nconfig
 
-  ### Prepared version
-  make ${BUILD_FLAGS[*]} -s kernelrelease > version
-  echo "Prepared $pkgbase version $(<version)"
-
-  ### Running make nconfig
-  [[ -z "$_makenconfig" ]] ||  make ${BUILD_FLAGS[*]} nconfig
+    ### Save configuration for later reuse
+	echo "Save configuration for later reuse..."
+	cat .config > "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
 
   ### Save configuration for later reuse
-  echo "Save configuration for later reuse..."
-  cat .config > "${startdir}/config.last"
-
-  ### Save configuration for later reuse
-  # cp -Tf ./.config "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
+ # cp -Tf ./.config "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
 
 }
 
 build() {
+    cd ${srcdir}/${_srcname}
+    make ${BUILD_FLAGS[*]} -j$(nproc) all
 
-  cd ${srcdir}/$_srcname
-  make ${BUILD_FLAGS[*]} -j$(nproc) all
+    if [ -n "$_build_zfs" ]; then
+        cd ${srcdir}/"zfs"
+
+        if [ -n "$_use_llvm_lto" ]; then
+            ./autogen.sh
+            sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
+            ./configure KERNEL_LLVM=1 --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin --libdir=/usr/lib \
+                --datadir=/usr/share --includedir=/usr/include --with-udevdir=/lib/udev \
+                --libexecdir=/usr/lib/zfs --with-config=kernel \
+                --with-linux=${srcdir}/$_srcname
+        else
+            ./autogen.sh
+            sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
+            ./configure --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin --libdir=/usr/lib \
+                --datadir=/usr/share --includedir=/usr/include --with-udevdir=/lib/udev \
+                --libexecdir=/usr/lib/zfs --with-config=kernel \
+                --with-linux=${srcdir}/$_srcname
+        fi
+        make ${BUILD_FLAGS[*]}
+    fi
 }
 
 _package() {
-  pkgdesc="The $pkgdesc kernel and modules"
-  depends=('coreutils' 'kmod' 'initramfs')
-  optdepends=('wireless-regdb: to set the correct wireless channels of your country'
-    'linux-firmware: firmware images needed for some devices'
-    'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
-  'uksmd: Userspace KSM helper daemon')
-  provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
-  if [ -n "$_build_zfs" ]; then
-    provides+=($pkgbase-zfs)
-    optdepends+=('zfs-utils')
-  fi
+    pkgdesc="The $pkgdesc kernel and modules"
+    depends=('coreutils' 'kmod' 'initramfs')
+    optdepends=('wireless-regdb: to set the correct wireless channels of your country'
+                  'linux-firmware: firmware images needed for some devices'
+                  'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
+                  'uksmd: Userspace KSM helper daemon')
+    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
 
-  cd $_srcname
+    cd ${srcdir}/$_srcname
 
   local kernver="$(<version)"
   local modulesdir="$pkgdir/usr/lib/modules/$kernver"
@@ -694,21 +692,18 @@ _package() {
 
   echo "Installing modules..."
   make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
-    DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
+  DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
   # remove build and source links
   rm "$modulesdir"/{source,build}
 }
 
 _package-headers() {
-  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-  depends=(pahole)
-  if [ -n "$_build_zfs" ]; then
-    provides=("zfs-headers" "spl-headers")
-  fi
+    pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
+    depends=('pahole' linux-${pkgsuffix} )
 
-  cd ${_srcname}
-  local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
+    cd ${srcdir}/${_srcname}
+    local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
   echo "Installing build files..."
   install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
@@ -782,37 +777,51 @@ _package-headers() {
   echo "Stripping vmlinux..."
   strip -v $STRIP_STATIC "$builddir/vmlinux"
 
-  echo "Adding symlink..."
-  mkdir -p "$pkgdir/usr/src"
-  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+    echo "Adding symlink..."
+    mkdir -p "$pkgdir/usr/src"
+    ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+}
+
+_package-zfs(){
+    pkgdesc="zfs module for the $pkgdesc kernel"
+    depends=('pahole' linux-$pkgsuffix=$_kernver)
+
+  cd ${srcdir}/"zfs"
+  install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+  install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+  find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
+#  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
 
 pkgname=("$pkgbase" "$pkgbase-headers")
+if [ -n "$_build_zfs" ]; then
+    pkgname+=("$pkgbase-zfs")
+fi
 for _p in "${pkgname[@]}"; do
-  eval "package_$_p() {
+    eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
     _package${_p#$pkgbase}
-  }"
+    }"
 done
 
-sha256sums=('ef9ff2dfa5416a03e7e5fd9c308aaec385fe8ff9f4a62d957b167843849659a2'
-  'fbff2747a1d8916f2de80455fb40f0ce1bf9d5df5dca7157234242b5b286fc90'
-  '616390dc143695ac216696e86f58beee5df420fb3af22a6a098f7a14aaf5251e'
-  '85eeddbd0b1fdb44333c450e6d93e370dcd7e230cecccce47667aaa746bea3ae'
-  '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
-  'dc2898751118804bc3f36b5a6928a2927d04919ce41c0ce013009f5564d6d232'
-  '3754c1ad6bc2fb4e73e9d77137e9f245b3be1a73a05685f0ca03f4c086e5d04d'
-  'e2266d499cebdd5d195a044048ae4a13755f1d3edb3ece2c3f8837228b4cd521'
-  'c2bf57d37db1f93c5f3eeff2e2957f01618f4786613c13755f9ae6989d2b745c'
-  '30fd4ca078cb1eee0bc4005700da4d15515a577ccdb96ea7922040aa9086d6b7'
-  '4fde226af6680d151143c30143d1594d2b2994350ba1e4726f1768584df2a117'
-  '08bde51de2d012219628bf1831a475115266cf4a6969be8064e719140cc9c232'
-  '1d9c83de97d541f5a7ae4612a96c05aea8ce38de5471cc21fd2197dbd6644d00'
-  'c1aae07261bafc711c2d66e26c2c30e444e11509cacc7aec148dc021761294cd'
-  'a2701625ea310c809fd7ecdf96c43a51ba28ed1dd8583fdbc06897a0a18230e2'
-  '781cd26d7b0794d11f103ada94140061117c628471a4c49f0228f22f0a6cf425'
-  '99b18e00ca3e038481a23f4c83bc285a1ad0e209d049a8476c8f997627aaea79'
-  'd2c542b3d44ef11364248c550d20ec7b52261cd98ee5191c24d59c9e0a69392e'
-  '8edf9b9b1a9c26cc4d6dfaf5f14c06b197a04c5bbb8459dd292c033aa2534d19'
-  'efe8558b63feb0e76b61d69952c5300ad54c951d9044101be7c01932a54fb4fb'
-'be21f15aeb22b2ca1e35e4975590d30736af0483ea7464e3464a60d993e37e22')
+sha256sums=('c70cb405076c3cfd73e4de729430b0342ea21b92a04d8284a03fac664ef1cfea'
+            '0e19b226d8234bbe4d6b05a850488695dadffcd00fe8f0265b8779beaff7e03c'
+            'c6c332c3cd44bdbb82923cdeb6b8c6bfc539ed42e439b11d82093d575c79bbc0'
+            '326d129f9435145add756dc967accd56ffe1d8ff1b6650f84d2578c41bd6dfd6'
+            '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
+            'dc2898751118804bc3f36b5a6928a2927d04919ce41c0ce013009f5564d6d232'
+            '3754c1ad6bc2fb4e73e9d77137e9f245b3be1a73a05685f0ca03f4c086e5d04d'
+            'e2266d499cebdd5d195a044048ae4a13755f1d3edb3ece2c3f8837228b4cd521'
+            'c2bf57d37db1f93c5f3eeff2e2957f01618f4786613c13755f9ae6989d2b745c'
+            '30fd4ca078cb1eee0bc4005700da4d15515a577ccdb96ea7922040aa9086d6b7'
+            '4b18c6a82b62c50b45568526eeb16ae877c8f52c407a4bb9c6144c07a0d1233a'
+            'f4ed599589fdd44270229492505f5f88e20d79e93b8044f8041a2fc90486bb4e'
+            '1d9c83de97d541f5a7ae4612a96c05aea8ce38de5471cc21fd2197dbd6644d00'
+            'c1aae07261bafc711c2d66e26c2c30e444e11509cacc7aec148dc021761294cd'
+            '781cd26d7b0794d11f103ada94140061117c628471a4c49f0228f22f0a6cf425'
+            '99b18e00ca3e038481a23f4c83bc285a1ad0e209d049a8476c8f997627aaea79'
+            'd2c542b3d44ef11364248c550d20ec7b52261cd98ee5191c24d59c9e0a69392e'
+            '8edf9b9b1a9c26cc4d6dfaf5f14c06b197a04c5bbb8459dd292c033aa2534d19'
+            'efe8558b63feb0e76b61d69952c5300ad54c951d9044101be7c01932a54fb4fb'
+            'cb2494f5ad43fd260e26d771305dade3f9499fa1ffaf53cb9ef8c19b66dab7d7'
+            'be21f15aeb22b2ca1e35e4975590d30736af0483ea7464e3464a60d993e37e22')
