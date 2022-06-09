@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_optimization_select=y/_use_optimization_select=/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs=/_build_zfs=y/" {}
 
 files=$(find . -name "PKGBUILD")
 
