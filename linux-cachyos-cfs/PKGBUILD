@@ -200,7 +200,6 @@ source+=(
   "${_patchsource}/0001-fs-patches.patch"
   "${_patchsource}/0001-futex-winesync.patch"
   "${_patchsource}/0001-hwmon.patch"
-  "${_patchsource}/0001-kbuild.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-lru-le9-spf.patch"
   "${_patchsource}/0001-ksm.patch"
@@ -805,7 +804,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('c70cb405076c3cfd73e4de729430b0342ea21b92a04d8284a03fac664ef1cfea'
-            '0e19b226d8234bbe4d6b05a850488695dadffcd00fe8f0265b8779beaff7e03c'
+            '83425e8b1553f4ad0d8fdadbad3980b71f7a36742b3238813ff4d00cd3bf08f8'
             'e8179f661dc9ba2ad89455f0c7e952e9dd9b4d6445476384cbac2730cdd46b65'
             '326d129f9435145add756dc967accd56ffe1d8ff1b6650f84d2578c41bd6dfd6'
             '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
@@ -817,8 +816,7 @@ sha256sums=('c70cb405076c3cfd73e4de729430b0342ea21b92a04d8284a03fac664ef1cfea'
             '4b18c6a82b62c50b45568526eeb16ae877c8f52c407a4bb9c6144c07a0d1233a'
             'f4ed599589fdd44270229492505f5f88e20d79e93b8044f8041a2fc90486bb4e'
             '1d9c83de97d541f5a7ae4612a96c05aea8ce38de5471cc21fd2197dbd6644d00'
-            'c1aae07261bafc711c2d66e26c2c30e444e11509cacc7aec148dc021761294cd'
-            '781cd26d7b0794d11f103ada94140061117c628471a4c49f0228f22f0a6cf425'
+            '344806f8ea9f0f7da883e2c27835153944df7a4b15bb3f97ec6b7b7709682f5d'
             '99b18e00ca3e038481a23f4c83bc285a1ad0e209d049a8476c8f997627aaea79'
             'd2c542b3d44ef11364248c550d20ec7b52261cd98ee5191c24d59c9e0a69392e'
             '8edf9b9b1a9c26cc4d6dfaf5f14c06b197a04c5bbb8459dd292c033aa2534d19'

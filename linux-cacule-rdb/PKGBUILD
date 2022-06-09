@@ -114,7 +114,7 @@ _thin_lto_cachedir=
 _use_kcfi=
 
 # Build the zfs module builtin in to the kernel
-_build_zfs=
+_build_zfs=y
 
 if [ -n "$_use_llvm_lto" ]; then
     pkgsuffix=${_cpusched}-lto
@@ -157,7 +157,7 @@ source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config")
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/ptr1337/zfs.git#commit=8941b63a931ca6fdc6d0ab46c037540569ba04a4")
+    source+=("git+https://github.com/bwatkinson/zfs.git#commit=d82a8a8c31d19fc59ad46d782ffb03e633429958")
 fi
 if [ "$_cpusched" = "bmq" ]; then
   source+=("${_patchsource}/sched/0001-prjc.patch")
@@ -200,7 +200,6 @@ source+=(
   "${_patchsource}/0001-fs-patches.patch"
   "${_patchsource}/0001-futex-winesync.patch"
   "${_patchsource}/0001-hwmon.patch"
-  "${_patchsource}/0001-kbuild.patch"
   "${_patchsource}/0001-lrng.patch"
   "${_patchsource}/0001-lru-le9-spf.patch"
   "${_patchsource}/0001-ksm.patch"
