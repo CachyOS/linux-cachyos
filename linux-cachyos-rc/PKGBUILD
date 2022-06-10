@@ -83,11 +83,8 @@ _lrng_enable=y
 ## Apply Kernel automatic Optimization
 _use_auto_optimization=y
 
-## Apply Kernel automatic Optimization
-_use_auto_optimization=
-
 ## Apply Kernel Optimization selecting
-_use_optimization_select=y
+_use_optimization_select=
 
 _nf_cone=y
 
@@ -209,13 +206,15 @@ prepare() {
     echo "Setting config..."
     cp ../config .config
 
-    if [ -n "$_use_auto_optimization" ]; then
-        "${srcdir}"/auto-cpu-optimization.sh
+    if [ -n "$_processor_opt" ]; then
+      MARCH=$(echo $_processor_opt|tr '[:lower:]' '[:upper:]'&&echo)
+      MARCH2=M${MARCH}
+      scripts/config -k --disable CONFIG_GENERIC_CPU
+      scripts/config -k --enable CONFIG_${MARCH2}
     fi
 
-    if [ -n "$_use_optimization_select" ]; then
-        source "${startdir}"/configure
-        cpu_arch
+    if [ -n "$_use_auto_optimization" ]; then
+      "${srcdir}"/auto-cpu-optimization.sh
     fi
 
     ### Selecting the CPU scheduler
@@ -709,4 +708,4 @@ sha256sums=('c2d2400bbf52688a1d2d1e45171331ddbc69ba1c3864e922c1c3f5b546b4d21b'
             '7cf2e27ae7ca49c8d20a6c10b0a34187f8c63f2dab3063b3649a692d65065fad'
             'f94ee42a540d935c3fa05d27485b7f6b66d6220ea2e603db8a3d9ca55e19f7ef'
             'f31972b5cdb0a9ffebe63070ce5706b9d28e47c96f5979820b3fb57f236a93bf'
-            'be21f15aeb22b2ca1e35e4975590d30736af0483ea7464e3464a60d993e37e22')
+            'c89ea5d5791b1cf5227917627a383439b0d8e459f6320372b4758e6f0814ecc6')
