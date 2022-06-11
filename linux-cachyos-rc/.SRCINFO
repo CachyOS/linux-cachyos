@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.19.rc1
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -37,7 +37,7 @@ pkgbase = linux-cachyos-rc
 	source = auto-cpu-optimization.sh
 	sha256sums = c2d2400bbf52688a1d2d1e45171331ddbc69ba1c3864e922c1c3f5b546b4d21b
 	sha256sums = 4f4543f2d58fa9a9b5689e8dcadb86aea02ce102b1a8dbb76e66d47c5fadfd9b
-	sha256sums = 114de325b79abf71532047001d6000f77f6b255c3542f7eeedb36ce99c14d4a9
+	sha256sums = 7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271
 	sha256sums = 8cb5f04d2b4da0db29cac021f97152e2eb2346547685f49532c1e352be05fb4a
 	sha256sums = fb091f718c8e683c158dc0d3f3aa8f80f8dfd710f09da257e6bc5a418e16c2b9
 	sha256sums = a3befe7b001470decc08b1e7cae0e436b5bc355c2f2b43148c6ab30ed9821ec7
@@ -45,7 +45,7 @@ pkgbase = linux-cachyos-rc
 	sha256sums = 7cf2e27ae7ca49c8d20a6c10b0a34187f8c63f2dab3063b3649a692d65065fad
 	sha256sums = f94ee42a540d935c3fa05d27485b7f6b66d6220ea2e603db8a3d9ca55e19f7ef
 	sha256sums = f31972b5cdb0a9ffebe63070ce5706b9d28e47c96f5979820b3fb57f236a93bf
-	sha256sums = c89ea5d5791b1cf5227917627a383439b0d8e459f6320372b4758e6f0814ecc6
+	sha256sums = ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f
 
 pkgname = linux-cachyos-rc
 	pkgdesc = The Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
