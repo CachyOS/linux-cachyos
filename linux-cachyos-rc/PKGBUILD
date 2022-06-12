@@ -11,15 +11,16 @@
 # 'cacule' - select 'CacULE scheduler'
 # 'cacule-rdb' - select 'CacULE-RDB scheduler'
 # 'bore' - select 'Burst-Oriented Response Enhancer'
-# 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'cfs' - select 'Completely Fair Scheduler'
+# 'tt' - select 'Task Type Scheduler by Hamad Marri'
+# 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 _cpusched='bore'
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=
+_makenconfig=y
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -80,11 +81,24 @@ _spf_enable=y
 ## Enable Linux Random Number Generator
 _lrng_enable=y
 
-## Apply Kernel automatic Optimization
+# CPU compiler optimizations - Defaults to prompt at kernel config if left empty
+# AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3"
+# Intel CPUs : "mpsc"(P4 & older Netburst based Xeon) "atom" "core2" "nehalem" "westmere" "silvermont" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "skylakex" "cannonlake" "icelake" "goldmont" "goldmontplus" "cascadelake" "cooperlake" "tigerlake" "sapphirerapids" "rocketlake" "alderlake"
+# Other options :
+# - "native_amd" (use compiler autodetection - Selecting your arch manually in the list above is recommended instead of this option)
+# - "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
+# - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
+#
+# Or use the _use_auto_optimization with _use_auto_optimization=y
+_processor_opt=
+
 _use_auto_optimization=y
 
-## Apply Kernel Optimization selecting
-_use_optimization_select=
+# disable debug to lower the size of the kernel
+_disable_debug=
+
+## Enable zram/zswap ZSTD compression
+_zstd_compression=y
 
 _nf_cone=y
 
@@ -106,13 +120,19 @@ _thin_lto_cachedir=
 # The packagename is called "llvm-kcfi"
 _use_kcfi=
 
+# Build the zfs module builtin in to the kernel only works with GCC!
+_build_zfs=
+
 if [ -n "$_use_llvm_lto" ]; then
-    pkgbase=linux-cachyos-rc-lto
+    pkgsuffix=cachyos-${_cpusched}-rc-lto
+    pkgbase=linux-$pkgsuffix
+
 else
-    pkgbase=linux-cachyos-rc
+    pkgsuffix=cachyos-${_cpusched}-rc
+    pkgbase=linux-$pkgsuffix
 fi
 _major=5.19
-#_minor=
+_minor=0
 #_minorc=$((_minor+1))
 _rcver=rc1
 pkgver=${_major}.${_rcver}
@@ -124,13 +144,14 @@ _srcname=linux-${_stable}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
 pkgrel=2
+_kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
 options=('!strip')
 makedepends=('bc' 'texlive-latexextra' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'xmlto' 'git' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch')
 if [ -n "$_use_llvm_lto" ]; then
-    depends+=(clang llvm lld python)
+    makedepends+=(clang llvm lld python)
     BUILD_FLAGS=(
         CC=clang
         LD=ld.lld
@@ -152,19 +173,30 @@ if [ "$_cpusched" = "cacule" ]; then
     source+=("${_patchsource}/sched/0001-cacULE-5.19.patch")
 fi
 if [ "$_cpusched" = "cacule-rdb" ]; then
-    source+=("${_patchsource}/sched/0001-cacULE-5.19.patch")
-fi
-if [ "$_cpusched" = "tt" ]; then
-    source+=("${_patchsource}/sched/0001-tt-5.19.patch")
+    source+=("${_patchsource}/sched/0001-cacULE-5.18.patch")
 fi
 if [ "$_cpusched" = "bore" ]; then
     source+=("${_patchsource}/sched/0001-bore-5.19.patch")
 fi
+if [ "$_cpusched" = "cfs" ]; then
+    source+=("${_patchsource}/0001-migrate.patch")
+fi
+if [ "$_cpusched" = "tt" ]; then
+    source+=("${_patchsource}/sched/0001-tt-5.18.patch")
+fi
+if [ "$_cpusched" = "hardened" ]; then
+    source+=(
+        "${_patchsource}/sched/0001-bore-5.19.patch"
+        "${_patchsource}/0001-migrate.patch"
+        "${_patchsource}/0001-hardening.patch"
+        "${_patchsource}/0001-hardened.patch")
+fi
 source+=(
     "${_patchsource}/0001-arch.patch"
+    "${_patchsource}/0001-bbr2.patch"
     "${_patchsource}/0001-cachy.patch"
     "${_patchsource}/0001-cpu.patch"
-    "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
+    "${_patchsource}/0001-DAMON-LRU-SORT.patch"
     "${_patchsource}/0001-futex-winesync.patch"
     "${_patchsource}/0001-ksm.patch"
     "${_patchsource}/0001-zram-entropy-calculation.patch"
@@ -179,6 +211,10 @@ if [ -n "$_use_kcfi" ]; then
         LD=ld.lld
         LLVM=1
     )
+fi
+
+if [ -n "$_build_zfs" ]; then
+    source+=("git+https://github.com/ptr1337/zfs.git#commit=ef3c4f0cdddd8ec6690adf6d48d42d19002d2659")
 fi
 
 export KBUILD_BUILD_HOST=archlinux
@@ -246,6 +282,8 @@ prepare() {
         scripts/config --enable TT_ACCOUNTING_STATS
     elif [ "$_cpusched" = "cfs" ]; then
         echo "Selecting Completely Fair Scheduler..."
+    elif [ "$_cpusched" = "hardened" ]; then
+        echo "Selecting hardened..."
     else
         if [ -n "$_cpusched" ]; then
             error "The value $_cpusched is invalid. Choose the correct one again."
@@ -264,24 +302,27 @@ prepare() {
 
     if [ "$_use_llvm_lto" = "thin" ]; then
         echo "Enabling LLVM THIN LTO..."
-        scripts/config --disable LTO_NONE \
+        scripts/config \
             --enable LTO \
             --enable LTO_CLANG \
             --enable ARCH_SUPPORTS_LTO_CLANG \
             --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
+            --disable LTO_NONE \
             --enable HAS_LTO_CLANG \
+            --disable LTO_CLANG_FULL \
             --enable LTO_CLANG_THIN \
             --enable HAVE_GCC_PLUGINS
     elif [ "$_use_llvm_lto" = "full" ]; then
         echo "Enabling LLVM FULL LTO..."
-        scripts/config --disable LTO_NONE \
+        scripts/config \
             --enable LTO \
             --enable LTO_CLANG \
             --enable ARCH_SUPPORTS_LTO_CLANG \
             --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
+            --disable LTO_NONE \
             --enable HAS_LTO_CLANG \
-            --enable LTO_CLANG \
             --enable LTO_CLANG_FULL \
+            --disable LTO_CLANG_THIN \
             --enable HAVE_GCC_PLUGINS
     else
         scripts/config --enable LTO_NONE
@@ -389,7 +430,7 @@ prepare() {
             --disable PREEMPT \
             --enable PREEMPT_COUNT \
             --enable PREEMPTION \
-            --enable PREEMPT_DYNAMIC
+            --disable PREEMPT_DYNAMIC
     elif [ "$_tickrate" = "server" ]; then
         echo "Enabling tickless idle..."
         scripts/config --enable PREEMPT_NONE_BUILD \
@@ -442,54 +483,79 @@ prepare() {
             --enable DAMON_DBGFS \
             --enable DAMON_SYSFS \
             --enable DAMON_PADDR \
-            --enable DAMON_RECLAIM
+            --enable DAMON_RECLAIM \
+            --enable DAMON_LRU_SORT
     fi
 
     if [ -n "$_lrng_enable" ]; then
         echo "Enabling Linux Random Number Generator ..."
-        scripts/config --disable RANDOM_DEFAULT_IMPL \
-            --enable LRNG \
-            --enable LRNG_OVERSAMPLE_ENTROPY_SOURCES \
-            --set-val LRNG_OVERSAMPLE_ES_BITS 64 \
-            --set-val LRNG_SEED_BUFFER_INIT_ADD_BITS 128 \
-            --enable LRNG_IRQ \
-            --enable LRNG_CONTINUOUS_COMPRESSION_ENABLED \
-            --disable LRNG_CONTINUOUS_COMPRESSION_DISABLED \
-            --enable LRNG_ENABLE_CONTINUOUS_COMPRESSION \
-            --enable LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION \
-            --disable LRNG_COLLECTION_SIZE_512 \
-            --enable LRNG_COLLECTION_SIZE_1024 \
-            --disable LRNG_COLLECTION_SIZE_2048 \
-            --disable LRNG_COLLECTION_SIZE_4096 \
-            --disable LRNG_COLLECTION_SIZE_8192 \
-            --set-val LRNG_COLLECTION_SIZE 1024 \
-            --enable LRNG_HEALTH_TESTS \
-            --set-val LRNG_RCT_CUTOFF 31 \
-            --set-val LRNG_APT_CUTOFF 325 \
-            --set-val LRNG_IRQ_ENTROPY_RATE 256 \
-            --enable LRNG_JENT \
-            --set-val LRNG_JENT_ENTROPY_RATE 16 \
-            --enable LRNG_CPU \
-            --set-val LRNG_CPU_ENTROPY_RATE 8 \
-            --enable LRNG_DRNG_SWITCH \
-            --enable LRNG_KCAPI_HASH \
-            --module LRNG_DRBG \
-            --module LRNG_KCAPI \
-            --enable LRNG_TESTING_MENU \
-            --disable LRNG_RAW_HIRES_ENTROPY \
-            --disable LRNG_RAW_JIFFIES_ENTROPY \
-            --disable LRNG_RAW_IRQ_ENTROPY \
-            --disable LRNG_RAW_IRQFLAGS_ENTROPY \
-            --disable LRNG_RAW_RETIP_ENTROPY \
-            --disable LRNG_RAW_REGS_ENTROPY \
-            --disable LRNG_RAW_ARRAY \
-            --disable LRNG_IRQ_PERF \
-            --disable LRNG_ACVT_HASH \
-            --enable LRNG_RUNTIME_ES_CONFIG \
-            --disable LRNG_RUNTIME_MAX_WO_RESEED_CONFIG \
-            --disable LRNG_TEST_CPU_ES_COMPRESSION \
-            --enable LRNG_SELFTEST \
-            --disable LRNG_SELFTEST_PANIC
+        scripts/config --disable CONFIG_RANDOM_DEFAULT_IMPL
+        scripts/config --enable CONFIG_LRNG
+        scripts/config --enable CONFIG_LRNG_SHA256
+        scripts/config --enable CONFIG_LRNG_COMMON_DEV_IF
+        scripts/config --enable CONFIG_LRNG_DRNG_ATOMIC
+        scripts/config --enable CONFIG_LRNG_SYSCTL
+        scripts/config --enable CONFIG_LRNG_RANDOM_IF
+        scripts/config --module CONFIG_LRNG_KCAPI_IF
+        scripts/config --module CONFIG_LRNG_HWRAND_IF
+        scripts/config --enable CONFIG_LRNG_DEV_IF
+        scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
+        scripts/config --enable CONFIG_LRNG_IRQ_DFLT_TIMER_ES
+        scripts/config --disable CONFIG_LRNG_SCHED_DFLT_TIMER_ES
+        scripts/config --enable CONFIG_LRNG_TIMER_COMMON
+        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_256
+        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_512
+        scripts/config --enable CONFIG_LRNG_COLLECTION_SIZE_1024
+        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_2048
+        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_4096
+        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_8192
+        scripts/config --set-val CONFIG_LRNG_COLLECTION_SIZE 1024
+        scripts/config --enable CONFIG_LRNG_HEALTH_TESTS
+        scripts/config --set-val CONFIG_LRNG_RCT_CUTOFF 31
+        scripts/config --set-val CONFIG_LRNG_APT_CUTOFF 325
+        scripts/config --enable CONFIG_LRNG_IRQ
+        scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
+        scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
+        scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
+        scripts/config --enable CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION
+        scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
+        scripts/config --enable CONFIG_LRNG_JENT
+        scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
+        scripts/config --enable CONFIG_LRNG_CPU
+        scripts/config --set-val CONFIG_LRNG_CPU_FULL_ENT_MULTIPLIER 1
+        scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
+        scripts/config --enable CONFIG_LRNG_SCHED
+        scripts/config --set-val CONFIG_LRNG_SCHED_ENTROPY_RATE 4294967295
+        scripts/config --enable CONFIG_LRNG_DRNG_CHACHA20
+        scripts/config --module CONFIG_LRNG_DRBG
+        scripts/config --module CONFIG_LRNG_DRNG_KCAPI
+        scripts/config --enable CONFIG_LRNG_SWITCH
+        scripts/config --enable CONFIG_LRNG_SWITCH_HASH
+        scripts/config --module CONFIG_LRNG_HASH_KCAPI
+        scripts/config --enable CONFIG_LRNG_SWITCH_DRNG
+        scripts/config --module CONFIG_LRNG_SWITCH_DRBG
+        scripts/config --module CONFIG_LRNG_SWITCH_DRNG_KCAPI
+        scripts/config --enable CONFIG_LRNG_DFLT_DRNG_CHACHA20
+        scripts/config --disable CONFIG_LRNG_DFLT_DRNG_DRBG
+        scripts/config --disable CONFIG_LRNG_DFLT_DRNG_KCAPI
+        scripts/config --enable CONFIG_LRNG_TESTING_MENU
+        scripts/config --disable CONFIG_LRNG_RAW_HIRES_ENTROPY
+        scripts/config --disable CONFIG_LRNG_RAW_JIFFIES_ENTROPY
+        scripts/config --disable CONFIG_LRNG_RAW_IRQ_ENTROPY
+        scripts/config --disable CONFIG_LRNG_RAW_RETIP_ENTROPY
+        scripts/config --disable CONFIG_LRNG_RAW_REGS_ENTROPY
+        scripts/config --disable CONFIG_LRNG_RAW_ARRAY
+        scripts/config --disable CONFIG_LRNG_IRQ_PERF
+        scripts/config --disable CONFIG_LRNG_RAW_SCHED_HIRES_ENTROPY
+        scripts/config --disable CONFIG_LRNG_RAW_SCHED_PID_ENTROPY
+        scripts/config --disable CONFIG_LRNG_RAW_SCHED_START_TIME_ENTROPY
+        scripts/config --disable CONFIG_LRNG_RAW_SCHED_NVCSW_ENTROPY
+        scripts/config --disable CONFIG_LRNG_SCHED_PERF
+        scripts/config --disable CONFIG_LRNG_ACVT_HASH
+        scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
+        scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
+        scripts/config --enable CONFIG_LRNG_SELFTEST
+        scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
     fi
 
     if [ -n "$_zstd_swap_compression" ]; then
@@ -521,8 +587,6 @@ prepare() {
             --disable DEBUG_PREEMPT
     fi
 
-    echo "Enable ZRAM_ENTROPY"
-    scripts/config --enable ZRAM_ENTROPY
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config --enable USER_NS
     echo "Enable WINE FASTSYNC"
@@ -556,23 +620,43 @@ prepare() {
         fi
     fi
 
+    yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
+    diff -u ../config .config || :
 
-
-    echo "Applying default config..."
-    make ${BUILD_FLAGS[*]}  olddefconfig
+    ### Prepared version
     make ${BUILD_FLAGS[*]} -s kernelrelease > version
     echo "Prepared $pkgbase version $(<version)"
 
+    ### Rewrite configuration
+    echo "Rewrite configuration..."
+    make ${BUILD_FLAGS[*]} prepare
+    if [ -n "$_build_zfs" ]; then
+        #  KERNEL_CC="-fno-lto"
+        cd "${srcdir}/zfs"
+        ./autogen.sh
+        ./configure CC=clang LD=lld KERNEL_LLVM=1 --with-linux=${srcdir}/$_srcname \
+            --with-linux-obj=${srcdir}/$_srcname --enable-linux-builtin \
+            --prefix=$pkgdir/usr/lib/modules/$(<version)/build --exec-prefix=$pkgdir/usr/lib/modules/$(<version)/build \
+            --with-config=kernel --enable-systemd
+        ./copy-builtin ${srcdir}/$_srcname
+        cd ${srcdir}/$_srcname
+        scripts/config --enable CONFIG_ZFS
+    fi
     ### Running make nconfig
-    [[ -z "$_makenconfig" ]] || make ${BUILD_FLAGS[*]} nconfig
+    [[ -z "$_makenconfig" ]] ||  make ${BUILD_FLAGS[*]} nconfig
 
     ### Save configuration for later reuse
-    cp -Tf ./.config "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
+    echo "Save configuration for later reuse..."
+    cat .config > "${startdir}/config.last"
+
+    ### Save configuration for later reuse
+    # cp -Tf ./.config "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
 
 }
 
 build() {
-    cd ${_srcname}
+
+    cd ${srcdir}/$_srcname
     make ${BUILD_FLAGS[*]} -j$(nproc) all
 }
 
@@ -584,6 +668,10 @@ _package() {
         'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
     'uksmd: Userspace KSM helper daemon')
     provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
+    if [ -n "$_build_zfs" ]; then
+        provides+=($pkgbase-zfs)
+        optdepends+=('zfs-utils')
+    fi
 
     cd $_srcname
 
@@ -600,7 +688,7 @@ _package() {
 
     echo "Installing modules..."
     make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
-        DEPMOD=/doesnt/exist modules_install  # Suppress depmod
+        DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
     # remove build and source links
     rm "$modulesdir"/{source,build}
@@ -609,6 +697,9 @@ _package() {
 _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
     depends=(pahole)
+    if [ -n "$_build_zfs" ]; then
+        provides=("zfs-headers" "spl-headers")
+    fi
 
     cd ${_srcname}
     local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
@@ -699,13 +790,14 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('c2d2400bbf52688a1d2d1e45171331ddbc69ba1c3864e922c1c3f5b546b4d21b'
-    '4f4543f2d58fa9a9b5689e8dcadb86aea02ce102b1a8dbb76e66d47c5fadfd9b'
-    '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271'
-    '8cb5f04d2b4da0db29cac021f97152e2eb2346547685f49532c1e352be05fb4a'
-    'fb091f718c8e683c158dc0d3f3aa8f80f8dfd710f09da257e6bc5a418e16c2b9'
-    'a3befe7b001470decc08b1e7cae0e436b5bc355c2f2b43148c6ab30ed9821ec7'
-    '0df9c5ae437a7a685493afebf7b5274ce1b73e89a090c31bd3af0b0fdf18ff9e'
-    '7cf2e27ae7ca49c8d20a6c10b0a34187f8c63f2dab3063b3649a692d65065fad'
-    'f94ee42a540d935c3fa05d27485b7f6b66d6220ea2e603db8a3d9ca55e19f7ef'
-    'f31972b5cdb0a9ffebe63070ce5706b9d28e47c96f5979820b3fb57f236a93bf'
-'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f')
+            'd7d8bb7c2183700b1ca07e4c8365ea668ac036b9978cf02848596002607ffe68'
+            '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271'
+            '8cb5f04d2b4da0db29cac021f97152e2eb2346547685f49532c1e352be05fb4a'
+            '9975135d105b69a2efec4a868ce3a4aaf3ffeda5841dc9e6601858d0773e8829'
+            'fb091f718c8e683c158dc0d3f3aa8f80f8dfd710f09da257e6bc5a418e16c2b9'
+            'a3befe7b001470decc08b1e7cae0e436b5bc355c2f2b43148c6ab30ed9821ec7'
+            'ac721eb31d49af962ab4fb005f086d587a6bda10592d79c870e3b6ab7484e946'
+            '7cf2e27ae7ca49c8d20a6c10b0a34187f8c63f2dab3063b3649a692d65065fad'
+            'f94ee42a540d935c3fa05d27485b7f6b66d6220ea2e603db8a3d9ca55e19f7ef'
+            'f31972b5cdb0a9ffebe63070ce5706b9d28e47c96f5979820b3fb57f236a93bf'
+            'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f')

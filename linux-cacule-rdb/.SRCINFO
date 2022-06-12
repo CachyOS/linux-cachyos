@@ -26,7 +26,6 @@ pkgbase = linux-cacule-rdb
 	options = !strip
 	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.18.3.tar.xz
 	source = config
-	source = git+https://github.com/ptr1337/zfs.git#commit=8941b63a931ca6fdc6d0ab46c037540569ba04a4
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/sched/0001-cacULE-5.18.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0001-amd-perf.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0001-arch.patch
@@ -46,8 +45,7 @@ pkgbase = linux-cacule-rdb
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0001-PCI-Allow-BAR-movement-during-boot-and-hotplug.patch
 	source = auto-cpu-optimization.sh
 	sha256sums = c70cb405076c3cfd73e4de729430b0342ea21b92a04d8284a03fac664ef1cfea
-	sha256sums = 83425e8b1553f4ad0d8fdadbad3980b71f7a36742b3238813ff4d00cd3bf08f8
-	sha256sums = SKIP
+	sha256sums = d85c9b7f38b960a59ebb9b0c7538f00139f4572b06bf863320cf0f28012ede47
 	sha256sums = 616390dc143695ac216696e86f58beee5df420fb3af22a6a098f7a14aaf5251e
 	sha256sums = 326d129f9435145add756dc967accd56ffe1d8ff1b6650f84d2578c41bd6dfd6
 	sha256sums = 2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2
@@ -85,8 +83,3 @@ pkgname = linux-cacule-rdb-headers
 	pkgdesc = Headers and scripts for building modules for the Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
 	depends = linux-cacule-rdb
-
-pkgname = linux-cacule-rdb-zfs
-	pkgdesc = zfs module for the Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and improvements kernel
-	depends = pahole
-	depends = linux-cacule-rdb=5.18.3-2
