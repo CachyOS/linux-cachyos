@@ -183,7 +183,7 @@ if [ "$_cpusched" = "cacule-rdb" ]; then
 fi
 if [ "$_cpusched" = "bore" ]; then
     source+=("${_patchsource}/sched/0001-bore-sched.patch"
-    "${_patchsource}/0001-migrate.patch")
+            "${_patchsource}/0001-migrate.patch")
 fi
 if [ "$_cpusched" = "cfs" ]; then
     source+=("${_patchsource}/0001-migrate.patch")
@@ -196,11 +196,10 @@ if [ "$_cpusched" = "hardened" ]; then
         "${_patchsource}/sched/0001-bore-sched.patch"
         "${_patchsource}/0001-migrate.patch"
         "${_patchsource}/0001-hardening.patch"
-    "${_patchsource}/0001-hardened.patch")
+ 	    "${_patchsource}/0001-hardened.patch")
 fi
 source+=(
     "${_patchsource}/0001-amd-perf.patch"
-    "${_patchsource}/0001-arch.patch"
     "${_patchsource}/0001-bbr2.patch"
     "${_patchsource}/0001-cachy.patch"
     "${_patchsource}/0001-clearlinux.patch"
@@ -820,13 +819,12 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('4b7193476f79c56b0d9988f68777dd0f885a1965e6fd55ec015922aa789492dd'
-            '67d3496c8c737618f2ef5e0b03fd7767153fd2a2e967c818727f2fb7670a9966'
+            'eccccc58c0349dc292fc7a3dadfe97e02910b8a405db517187e3fb4bb4975d5c'
             '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271'
             'e8179f661dc9ba2ad89455f0c7e952e9dd9b4d6445476384cbac2730cdd46b65'
             'd00f5a8cf77ddec750e267f793c5c66c7f3a5199e40014b00fc580d5a53ccb07'
-            '4feadc76643df988fd2ca0b1934bd7bd9e3a2b08d6e5c0db6ad27350d086542e'
+            '3ec144eecb1f5c8384b76e4ac963a07dd39d2546297e5feef6e97a43ede2d383'
             '326d129f9435145add756dc967accd56ffe1d8ff1b6650f84d2578c41bd6dfd6'
-            '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
             'dc2898751118804bc3f36b5a6928a2927d04919ce41c0ce013009f5564d6d232'
             '2d89b2b95cc61623cbd5d0a7bbce68711cb1c9c77f338cd7201cf4d9ab24a1a2'
             'e2266d499cebdd5d195a044048ae4a13755f1d3edb3ece2c3f8837228b4cd521'
