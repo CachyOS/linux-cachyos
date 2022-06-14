@@ -73,7 +73,7 @@ _kyber_disable=y
 _lru_enable=y
 
 ## Enable DAMON
-_damon=
+_damon=y
 
 ## enable SPECULATIVE_PAGE_FAULT
 _spf_enable=y
@@ -135,7 +135,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.18
-_minor=3
+_minor=4
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -146,7 +146,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux PDS scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -167,7 +167,7 @@ source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
 "config")
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/ptr1337/zfs.git#commit=8941b63a931ca6fdc6d0ab46c037540569ba04a4")
+    source+=("git+https://github.com/ptr1337/zfs.git#commit=24414b85f1b0fce4b13c10be4af47ebb826fef27")
 fi
 if [ "$_cpusched" = "bmq" ]; then
     source+=("${_patchsource}/sched/0001-prjc.patch")
@@ -498,7 +498,8 @@ prepare() {
             --enable DAMON_DBGFS \
             --enable DAMON_SYSFS \
             --enable DAMON_PADDR \
-            --enable DAMON_RECLAIM
+            --enable DAMON_RECLAIM \
+            --enable DAMON_LRU_SORT
     fi
 
     if [ -n "$_lrng_enable" ]; then
@@ -818,21 +819,21 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('c70cb405076c3cfd73e4de729430b0342ea21b92a04d8284a03fac664ef1cfea'
-            'd85c9b7f38b960a59ebb9b0c7538f00139f4572b06bf863320cf0f28012ede47'
+sha256sums=('4b7193476f79c56b0d9988f68777dd0f885a1965e6fd55ec015922aa789492dd'
+            '0eef0883fcf7d1e6f9d8c9c5ea50066004e19d08d3ed183ad92e5d8f76ef1fbf'
             'c6c332c3cd44bdbb82923cdeb6b8c6bfc539ed42e439b11d82093d575c79bbc0'
             '326d129f9435145add756dc967accd56ffe1d8ff1b6650f84d2578c41bd6dfd6'
             '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
             'dc2898751118804bc3f36b5a6928a2927d04919ce41c0ce013009f5564d6d232'
-            '3754c1ad6bc2fb4e73e9d77137e9f245b3be1a73a05685f0ca03f4c086e5d04d'
+            '2d89b2b95cc61623cbd5d0a7bbce68711cb1c9c77f338cd7201cf4d9ab24a1a2'
             'e2266d499cebdd5d195a044048ae4a13755f1d3edb3ece2c3f8837228b4cd521'
             'c2bf57d37db1f93c5f3eeff2e2957f01618f4786613c13755f9ae6989d2b745c'
-            '30fd4ca078cb1eee0bc4005700da4d15515a577ccdb96ea7922040aa9086d6b7'
-            '6b6c8d1fbefe7aa165fc62aef527665777d474133e2507e1dc9d09b12282f857'
-            'f4ed599589fdd44270229492505f5f88e20d79e93b8044f8041a2fc90486bb4e'
+            '71c33bf75dbf84673ad26a35c20b0f9ae0fa9944d91cd93a0b128752ca2eab0e'
+            'adace5a6666cee4ec5fccde405bc99d06b395bc9812c31b046826cc93f7d364c'
+            '5d1e60a13e2dfe002d31392172ca8df758b822ecd784f9c35c18202a33874d6f'
             '1d9c83de97d541f5a7ae4612a96c05aea8ce38de5471cc21fd2197dbd6644d00'
-            '344806f8ea9f0f7da883e2c27835153944df7a4b15bb3f97ec6b7b7709682f5d'
-            '99b18e00ca3e038481a23f4c83bc285a1ad0e209d049a8476c8f997627aaea79'
+            'b14fc8ef91b4558220920d129808f42462f0c05b315e532a60423cd164752e9b'
+            '73baad17b251566783730e4ff881fe38d6b9566a0c1acd95ada354166e65e4f3'
             'd2c542b3d44ef11364248c550d20ec7b52261cd98ee5191c24d59c9e0a69392e'
             '8edf9b9b1a9c26cc4d6dfaf5f14c06b197a04c5bbb8459dd292c033aa2534d19'
             'efe8558b63feb0e76b61d69952c5300ad54c951d9044101be7c01932a54fb4fb'

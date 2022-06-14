@@ -20,7 +20,7 @@ _cpusched='bore'
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=y
+_makenconfig=
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -124,11 +124,11 @@ _use_kcfi=
 _build_zfs=
 
 if [ -n "$_use_llvm_lto" ]; then
-    pkgsuffix=cachyos-${_cpusched}-rc-lto
+    pkgsuffix=cachyos-rc-lto
     pkgbase=linux-$pkgsuffix
 
 else
-    pkgsuffix=cachyos-${_cpusched}-rc
+    pkgsuffix=cachyos-rc
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.19
@@ -143,7 +143,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -196,7 +196,8 @@ source+=(
     "${_patchsource}/0001-bbr2.patch"
     "${_patchsource}/0001-cachy.patch"
     "${_patchsource}/0001-cpu.patch"
-    "${_patchsource}/0001-DAMON-LRU-SORT.patch"
+    "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
+    "${_patchsource}/0001-MG-LRU-v12.patch"
     "${_patchsource}/0001-futex-winesync.patch"
     "${_patchsource}/0001-ksm.patch"
     "${_patchsource}/0001-zram-entropy-calculation.patch"
@@ -214,7 +215,7 @@ if [ -n "$_use_kcfi" ]; then
 fi
 
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/ptr1337/zfs.git#commit=ef3c4f0cdddd8ec6690adf6d48d42d19002d2659")
+    source+=("git+https://github.com/ptr1337/zfs.git#commit=24414b85f1b0fce4b13c10be4af47ebb826fef27")
 fi
 
 export KBUILD_BUILD_HOST=archlinux
@@ -796,7 +797,8 @@ sha256sums=('530cb48a3bd084367d65f89a3e52af90676e155a65c39d3967726a5a4337339b'
             '9975135d105b69a2efec4a868ce3a4aaf3ffeda5841dc9e6601858d0773e8829'
             'fb091f718c8e683c158dc0d3f3aa8f80f8dfd710f09da257e6bc5a418e16c2b9'
             'a3befe7b001470decc08b1e7cae0e436b5bc355c2f2b43148c6ab30ed9821ec7'
-            'ac721eb31d49af962ab4fb005f086d587a6bda10592d79c870e3b6ab7484e946'
+            '826c20a4bdd642d41147edeb801e32041db1c6aabf2b3a74306f333dcf3a3054'
+            '7c486f166c9de16a661233ef2a72c55a27629563e8e6c52e54a3f2f617b2ac62'
             '7cf2e27ae7ca49c8d20a6c10b0a34187f8c63f2dab3063b3649a692d65065fad'
             'f94ee42a540d935c3fa05d27485b7f6b66d6220ea2e603db8a3d9ca55e19f7ef'
             'f31972b5cdb0a9ffebe63070ce5706b9d28e47c96f5979820b3fb57f236a93bf'
