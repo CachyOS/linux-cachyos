@@ -635,7 +635,7 @@ prepare() {
         #  KERNEL_CC="-fno-lto"
         cd "${srcdir}/zfs"
         ./autogen.sh
-        ./configure CC=clang LD=lld KERNEL_LLVM=1 --with-linux=${srcdir}/$_srcname \
+        ./configure --with-linux=${srcdir}/$_srcname \
             --with-linux-obj=${srcdir}/$_srcname --enable-linux-builtin \
             --prefix=$pkgdir/usr/lib/modules/$(<version)/build --exec-prefix=$pkgdir/usr/lib/modules/$(<version)/build \
             --with-config=kernel --enable-systemd
