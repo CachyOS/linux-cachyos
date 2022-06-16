@@ -45,7 +45,7 @@ _localmodcfg=
 _use_current=
 
 ### Enable KBUILD_CFLAGS -O3
-_cc_harder=
+_cc_harder=y
 
 ### Set performance governor as default
 _per_gov=y
@@ -135,7 +135,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.18
-_minor=4
+_minor=5
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -146,7 +146,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -165,7 +165,9 @@ fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${_major}"
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
-"config")
+	"config"
+    "${_patchsource}/0001-cachy.patch"
+)
 if [ -n "$_build_zfs" ]; then
     source+=("git+https://github.com/ptr1337/zfs.git#commit=24414b85f1b0fce4b13c10be4af47ebb826fef27")
 fi
@@ -175,18 +177,14 @@ fi
 if [ "$_cpusched" = "pds" ]; then
     source+=("${_patchsource}/sched/0001-prjc.patch")
 fi
+if [ "$_cpusched" = "bore" ]; then
+    source+=("${_patchsource}/sched/0001-bore-sched.patch")
+fi
 if [ "$_cpusched" = "cacule" ]; then
-    source+=("${_patchsource}/sched/0001-cacULE-5.18.patch")
+    source+=("${_patchsource}/sched/0001-cacULE-5.18-migrate.patch")
 fi
 if [ "$_cpusched" = "cacule-rdb" ]; then
-    source+=("${_patchsource}/sched/0001-cacULE-5.18.patch")
-fi
-if [ "$_cpusched" = "bore" ]; then
-    source+=("${_patchsource}/sched/0001-bore-sched.patch"
-    "${_patchsource}/0001-migrate.patch")
-fi
-if [ "$_cpusched" = "cfs" ]; then
-    source+=("${_patchsource}/0001-migrate.patch")
+    source+=("${_patchsource}/sched/0001-cacULE-5.18-migrate.patch")
 fi
 if [ "$_cpusched" = "tt" ]; then
     source+=("${_patchsource}/sched/0001-tt-5.18.patch")
@@ -194,29 +192,23 @@ fi
 if [ "$_cpusched" = "hardened" ]; then
     source+=(
         "${_patchsource}/sched/0001-bore-sched.patch"
-        "${_patchsource}/0001-migrate.patch"
         "${_patchsource}/0001-hardening.patch"
         "${_patchsource}/0001-hardened.patch")
 fi
 source+=(
     "${_patchsource}/0001-amd-perf.patch"
-    "${_patchsource}/0001-arch.patch"
     "${_patchsource}/0001-bbr2.patch"
-    "${_patchsource}/0001-cachy.patch"
     "${_patchsource}/0001-clearlinux.patch"
-    "${_patchsource}/0001-cpu.patch"
     "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
     "${_patchsource}/0001-fixes.patch"
     "${_patchsource}/0001-fs-patches.patch"
     "${_patchsource}/0001-futex-winesync.patch"
     "${_patchsource}/0001-hwmon.patch"
+    "${_patchsource}/0001-kbuild.patch"
     "${_patchsource}/0001-lrng.patch"
     "${_patchsource}/0001-lru-le9-spf.patch"
-    "${_patchsource}/0001-ksm.patch"
-    "${_patchsource}/0001-zram-entropy-calculation.patch"
     "auto-cpu-optimization.sh"
 )
-
 if [ -n "$_use_kcfi" ]; then
     source+=("${_patchsource}/0001-kcfi.patch")
     depends+=(clang llvm lld python)
@@ -819,23 +811,19 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('4b7193476f79c56b0d9988f68777dd0f885a1965e6fd55ec015922aa789492dd'
-            '0eef0883fcf7d1e6f9d8c9c5ea50066004e19d08d3ed183ad92e5d8f76ef1fbf'
+sha256sums=('9c3731d405994f9cd3a1bb72e83140735831b19c7cec18e0d7a8f3046fa034e7'
+            '49ddff0aac1493c3049450f8dacb9de5217c5d9254bc736cd012b3e7bda6baf2'
+            '59279d00aae10848b167aab32baead615dc147996bd7c9542c8a65ec0bb33c21'
             '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271'
-            'e8179f661dc9ba2ad89455f0c7e952e9dd9b4d6445476384cbac2730cdd46b65'
             '326d129f9435145add756dc967accd56ffe1d8ff1b6650f84d2578c41bd6dfd6'
-            '2bfe45a67732a97cea01bf760a8f9fb297057c2488eb9e61720a0bb26c9b11e2'
             'dc2898751118804bc3f36b5a6928a2927d04919ce41c0ce013009f5564d6d232'
-            '2d89b2b95cc61623cbd5d0a7bbce68711cb1c9c77f338cd7201cf4d9ab24a1a2'
             'e2266d499cebdd5d195a044048ae4a13755f1d3edb3ece2c3f8837228b4cd521'
-            'c2bf57d37db1f93c5f3eeff2e2957f01618f4786613c13755f9ae6989d2b745c'
             '71c33bf75dbf84673ad26a35c20b0f9ae0fa9944d91cd93a0b128752ca2eab0e'
-            'adace5a6666cee4ec5fccde405bc99d06b395bc9812c31b046826cc93f7d364c'
-            '5d1e60a13e2dfe002d31392172ca8df758b822ecd784f9c35c18202a33874d6f'
+            '74797806c5f0fd05138e184dc7d871fae448648d57200f0a2df9c78ea04b8b99'
+            'c60891c18687da053ed826a9195b070e19657d72e87424a48011ebbb42af37d5'
             '1d9c83de97d541f5a7ae4612a96c05aea8ce38de5471cc21fd2197dbd6644d00'
-            'b14fc8ef91b4558220920d129808f42462f0c05b315e532a60423cd164752e9b'
-            '73baad17b251566783730e4ff881fe38d6b9566a0c1acd95ada354166e65e4f3'
-            'd2c542b3d44ef11364248c550d20ec7b52261cd98ee5191c24d59c9e0a69392e'
-            '8edf9b9b1a9c26cc4d6dfaf5f14c06b197a04c5bbb8459dd292c033aa2534d19'
-            'efe8558b63feb0e76b61d69952c5300ad54c951d9044101be7c01932a54fb4fb'
+            '16085e0bba8e1843180f82df00d6040b97531cebb2c0c4c7fe23860322d06beb'
+            '180baf6baf2474b3ce2b1841b41659e909f9367271f03be443937fbd5d518004'
+            'f5b02a27a6324fc5aaabbca03e76d483da9ff51c389e4fabda51fd85f77217fc'
+            '292240ee42f4e34b97528c9b2b2afcef7bc892501a3750b8825ac6ef9c87072e'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f')

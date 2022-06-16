@@ -45,7 +45,7 @@ _localmodcfg=
 _use_current=
 
 ### Enable KBUILD_CFLAGS -O3
-_cc_harder=y
+_cc_harder=yy
 
 ### Set performance governor as default
 _per_gov=y
@@ -143,7 +143,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux CFS scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
