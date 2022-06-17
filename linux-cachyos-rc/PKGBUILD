@@ -215,7 +215,7 @@ if [ -n "$_use_kcfi" ]; then
 fi
 
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/ptr1337/zfs.git#commit=24414b85f1b0fce4b13c10be4af47ebb826fef27")
+    source+=("git+https://github.com/ptr1337/zfs.git#commit=543b84c329dfc73d73293447b7dbc4d0755cb901")
 fi
 
 export KBUILD_BUILD_HOST=archlinux
