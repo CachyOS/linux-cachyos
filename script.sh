@@ -8,7 +8,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel:/home/notroot/.buildcache pttrr/docker-makepkg
+    docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel:/home/notroot/.buildcache pttrr/docker-makepkg
     docker rm kernelbuild
     cd ..
 done
@@ -22,13 +22,12 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    docker run --name kernelbuild -e EXPORT_PKG=1 v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-v3:/home/notroot/.buildcache pttrr/docker-makepkg-v3
+    docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-v3:/home/notroot/.buildcache pttrr/docker-makepkg-v3
     docker rm kernelbuild
     cd ..
 done
 
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto=thin/" {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_thinlto_cachedir=/_thin_lto_cachedir=y/" {}
 
 files=$(find . -name "PKGBUILD")
 
@@ -36,7 +35,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-v3:/home/notroot/.buildcache pttrr/docker-makepkg-v3
+    docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-v3:/home/notroot/.buildcache pttrr/docker-makepkg-v3
     docker rm kernelbuild
     cd ..
 done
@@ -49,7 +48,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    docker run --name kernelbuild -e EXPORT_PKG=1 -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel:/home/notroot/.buildcache pttrr/docker-makepkg
+    docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1  -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel:/home/notroot/.buildcache pttrr/docker-makepkg
     docker rm kernelbuild
     cd ..
 done

@@ -107,9 +107,6 @@ _nf_cone=y
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 _use_llvm_lto=
 
-## Change the thin lto cachedir for fixing building several dkms modules including zfs
-_thin_lto_cachedir=
-
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
 # scheme used by CONFIG_CFI_CLANG. KCFI doesn't require LTO, doesn't
@@ -146,7 +143,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux PDS scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -169,7 +166,7 @@ source=(
     "${_patchsource}/0001-cachy.patch"
 )
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/ptr1337/zfs.git#commit=543b84c329dfc73d73293447b7dbc4d0755cb901")
+    source+=("git+https://github.com/openzfs/zfs.git#commit=6c3c5fcfbe27d9193cd131753cc7e47ee2784621")
 fi
 if [ "$_cpusched" = "bmq" ]; then
     source+=("${_patchsource}/sched/0001-prjc.patch")
@@ -205,6 +202,7 @@ source+=(
     "${_patchsource}/0001-hwmon.patch"
     "${_patchsource}/0001-lrng.patch"
     "${_patchsource}/0001-lru-le9-spf.patch"
+    "${_patchsource}/0001-kbuild.patch"
     "${_patchsource}/0001-rcu.patch"
     "auto-cpu-optimization.sh"
 )
@@ -219,7 +217,7 @@ if [ -n "$_use_kcfi" ]; then
 fi
 
 if [ -n "$_bcachefs" ]; then
-    source+=("${_patchsource}/0001-bcachefs.patch")
+    source+=("${_patchsource}/0001-bcachefs-after-lru.patch")
 fi
 
 export KBUILD_BUILD_HOST=archlinux
@@ -812,7 +810,7 @@ done
 
 sha256sums=('4e1c2a9e79847850029571a1dd04761e5f657b52c558070a085365641f133478'
             '49ddff0aac1493c3049450f8dacb9de5217c5d9254bc736cd012b3e7bda6baf2'
-            'b408ec778cfe5f85246138b0fc4d1077fc0a598ad81d158f5d4a6287eb12eb2b'
+            'cdeb94550047982e9a69e4f1068e06884bc8e25bba8d6653b0addbe6d43ee137'
             'c19faeba9674229e409f9eca4ad7dfd291cae3d15a83d4f78cc7357b88c43440'
             '326d129f9435145add756dc967accd56ffe1d8ff1b6650f84d2578c41bd6dfd6'
             'dc2898751118804bc3f36b5a6928a2927d04919ce41c0ce013009f5564d6d232'
@@ -823,5 +821,6 @@ sha256sums=('4e1c2a9e79847850029571a1dd04761e5f657b52c558070a085365641f133478'
             '16085e0bba8e1843180f82df00d6040b97531cebb2c0c4c7fe23860322d06beb'
             'f5b02a27a6324fc5aaabbca03e76d483da9ff51c389e4fabda51fd85f77217fc'
             '292240ee42f4e34b97528c9b2b2afcef7bc892501a3750b8825ac6ef9c87072e'
-            '05e1a58f3ebb397575892ea6b1f08032c710d495ae0df89acf40229277c5af81'
+            'f534b60c0d90ef59312ac874f0fbbcd60434ceac673148e76c503752e837126b'
+            'e3bb6ca80b9156c409fdd0ca55916f028213f7b4fc7dcf7cea7702e08822ea5f'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f')
