@@ -189,7 +189,7 @@ if [ "$_cpusched" = "hardened" ]; then
         "${_patchsource}/sched/0001-bore-5.19.patch"
         "${_patchsource}/0001-migrate.patch"
         "${_patchsource}/0001-hardening.patch"
-        "${_patchsource}/0001-hardened.patch")
+    "${_patchsource}/0001-hardened.patch")
 fi
 source+=(
     "${_patchsource}/0001-arch.patch"
