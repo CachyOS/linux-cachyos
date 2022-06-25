@@ -44,9 +44,6 @@ _localmodcfg=
 # a new kernel is released, but again, convenient for package bumps.
 _use_current=
 
-### Enable KBUILD_CFLAGS -O3
-_cc_harder=y
-
 ### Set performance governor as default
 _per_gov=y
 
@@ -56,12 +53,12 @@ _tcp_bbr2=y
 ### Running with a 1000HZ, 750Hz, 600 Hz or 500Hz tick rate
 _HZ_ticks=750
 
-## Choose between perodic, tickless idle or full tickless
+## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
-_tickrate=full
+_tickrate=idle
 
 ## Choose between full(low-latency), voluntary or server
-_preempt=voluntary
+_preempt=full
 
 ### Disable MQ-Deadline I/O scheduler
 _mq_deadline_disable=y
@@ -132,7 +129,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.18
-_minor=6
+_minor=7
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -143,7 +140,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -189,8 +186,7 @@ fi
 if [ "$_cpusched" = "hardened" ]; then
     source+=(
         "${_patchsource}/sched/0001-bore-sched.patch"
-        "${_patchsource}/0001-hardening.patch"
-    "${_patchsource}/0001-hardened.patch")
+        "${_patchsource}/0001-hardening.patch")
 fi
 source+=(
     "${_patchsource}/0001-amd-perf.patch"
@@ -203,6 +199,7 @@ source+=(
     "${_patchsource}/0001-lrng.patch"
     "${_patchsource}/0001-lru-le9-spf.patch"
     "${_patchsource}/0001-kbuild.patch"
+    "${_patchsource}/0001-misc.patch"
     "${_patchsource}/0001-rcu.patch"
     "auto-cpu-optimization.sh"
 )
@@ -807,19 +804,20 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('4e1c2a9e79847850029571a1dd04761e5f657b52c558070a085365641f133478'
-            '49ddff0aac1493c3049450f8dacb9de5217c5d9254bc736cd012b3e7bda6baf2'
-            '0437704f362dbcd917af531824841683e16ea1a49d750a6ffc0b060b17b97057'
+sha256sums=('a1a2d064bf5a1f02021f66931237ec3d2920994d49910d27d3fe581e2e21525b'
+            '58a21aaa4dda3d7cd3c617fd655782b35b27ef52c9e55157d5b2092dba61c5ab'
+            'c20867bdfff8d30013fc6d39b38ff62b349d19fa2b662dae6b129dd7ad444c66'
             '28e51fdc88e67e82285390f883ff34ba7cf86a9502e55d8c46deae1cdbe40f25'
             '326d129f9435145add756dc967accd56ffe1d8ff1b6650f84d2578c41bd6dfd6'
             'dc2898751118804bc3f36b5a6928a2927d04919ce41c0ce013009f5564d6d232'
             '71c33bf75dbf84673ad26a35c20b0f9ae0fa9944d91cd93a0b128752ca2eab0e'
-            '39551bf08e6b965db7b125c81a17f60f695a686b13ddc6499463222fd6cec9b4'
-            'efa0cd8f02f1289d8775ce64dc4a2a061b225612e8f1513591c147a3925dc7bd'
+            '4955b9243d354ba8d0ce9206da9e73e510f28d1f2af4bcbd3e86b1ee5c50baed'
+            '0e89fc0e60c95e3fd6b43502a36df2eb6e05be9c21f30020c4fa0576ee9f7d6e'
             '1d9c83de97d541f5a7ae4612a96c05aea8ce38de5471cc21fd2197dbd6644d00'
             '16085e0bba8e1843180f82df00d6040b97531cebb2c0c4c7fe23860322d06beb'
             'f5b02a27a6324fc5aaabbca03e76d483da9ff51c389e4fabda51fd85f77217fc'
             '292240ee42f4e34b97528c9b2b2afcef7bc892501a3750b8825ac6ef9c87072e'
-            'f534b60c0d90ef59312ac874f0fbbcd60434ceac673148e76c503752e837126b'
-            'e3bb6ca80b9156c409fdd0ca55916f028213f7b4fc7dcf7cea7702e08822ea5f'
+            'b0796e67e91254b9aeef1fdf5167121e7e58712077a2d58aa3d98cd59ba924b7'
+            'a5744336734938379628760addd6df123b3e7b0f808dd7308f7acd2ba27e74cd'
+            '270babf4c5e1b7fda61d17e4cb0c7411f5ab67de5e5085bdd9a6c10ae98a5074'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f')

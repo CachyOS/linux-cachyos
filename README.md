@@ -152,6 +152,8 @@ or at telegram:
 
 <https://paypal.me/pttrr>
 
+<https://www.patreon.com/CachyOS>
+
 ### Valueable Contributors
 
 [Hamad Marri](https://github.com/hamadmarri) for the CacULE Scheduler
