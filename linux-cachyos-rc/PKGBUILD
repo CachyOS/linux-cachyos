@@ -44,9 +44,6 @@ _localmodcfg=
 # a new kernel is released, but again, convenient for package bumps.
 _use_current=
 
-### Enable KBUILD_CFLAGS -O3
-_cc_harder=y
-
 ### Set performance governor as default
 _per_gov=y
 
@@ -56,12 +53,12 @@ _tcp_bbr2=y
 ### Running with a 1000HZ, 750Hz, 600 Hz or 500Hz tick rate
 _HZ_ticks=750
 
-## Choose between perodic, tickless idle or full tickless
+## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
-_tickrate=full
+_tickrate=idle
 
 ## Choose between full(low-latency), voluntary or server
-_preempt=voluntary
+_preempt=full
 
 ### Disable MQ-Deadline I/O scheduler
 _mq_deadline_disable=y
@@ -118,8 +115,10 @@ _use_llvm_lto=
 _use_kcfi=
 
 # Build the zfs module builtin in to the kernel
-_build_zfs=
+_build_zfs=y
 
+# Enable bcachefs
+_bcachefs=
 
 if [ -n "$_use_llvm_lto" ]; then
     pkgsuffix=cachyos-rc-lto
@@ -132,7 +131,7 @@ fi
 _major=5.19
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc3
+_rcver=rc4
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -162,41 +161,39 @@ source=(
     "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
     "config"
     "${_patchsource}/0001-cachy.patch")
+if [ -n "$_build_zfs" ]; then
+    source+=("git+https://github.com/openzfs/zfs.git#commit=6c3c5fcfbe27d9193cd131753cc7e47ee2784621")
+fi
 if [ "$_cpusched" = "bmq" ]; then
-    source+=("${_patchsource}/sched/0001-prjc-5.19.patch")
+    source+=("${_patchsource}/sched/0001-prjc.patch")
 fi
 if [ "$_cpusched" = "pds" ]; then
-    source+=("${_patchsource}/sched/0001-prjc-5.19.patch")
-fi
-if [ "$_cpusched" = "cacule" ]; then
-    source+=("${_patchsource}/sched/0001-cacULE-5.19.patch")
-fi
-if [ "$_cpusched" = "cacule-rdb" ]; then
-    source+=("${_patchsource}/sched/0001-cacULE-5.18.patch")
+    source+=("${_patchsource}/sched/0001-prjc.patch")
 fi
 if [ "$_cpusched" = "bore" ]; then
     source+=("${_patchsource}/sched/0001-bore-5.19.patch")
 fi
-if [ "$_cpusched" = "cfs" ]; then
-    source+=("${_patchsource}/0001-migrate.patch")
+if [ "$_cpusched" = "cacule" ]; then
+    source+=("${_patchsource}/sched/0001-cacULE-5.18-migrate.patch")
+fi
+if [ "$_cpusched" = "cacule-rdb" ]; then
+    source+=("${_patchsource}/sched/0001-cacULE-5.18-migrate.patch")
 fi
 if [ "$_cpusched" = "tt" ]; then
     source+=("${_patchsource}/sched/0001-tt-5.18.patch")
 fi
 if [ "$_cpusched" = "hardened" ]; then
     source+=(
-        "${_patchsource}/sched/0001-bore-5.19.patch"
-        "${_patchsource}/0001-migrate.patch"
-        "${_patchsource}/0001-hardening.patch"
-        "${_patchsource}/0001-hardened.patch")
+        "${_patchsource}/sched/0001-bore-sched.patch"
+        "${_patchsource}/0001-hardening.patch")
 fi
 source+=(
     "${_patchsource}/0001-bbr2.patch"
     "${_patchsource}/0001-Extend-DAMOS-for-Proactive-LRU-lists-Sorting.patch"
     "${_patchsource}/0001-MG-LRU-v12.patch"
+    "${_patchsource}/0001-futex-winesync.patch"
     "${_patchsource}/0001-rcu.patch"
     "${_patchsource}/0001-xfs-async-buffered.patch"
-    "${_patchsource}/0001-futex-winesync.patch"
     "auto-cpu-optimization.sh"
 )
 
@@ -210,8 +207,8 @@ if [ -n "$_use_kcfi" ]; then
     )
 fi
 
-if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/ptr1337/zfs.git#commit=543b84c329dfc73d73293447b7dbc4d0755cb901")
+if [ -n "$_bcachefs" ]; then
+    source+=("${_patchsource}/0001-bcachefs-after-lru.patch")
 fi
 
 export KBUILD_BUILD_HOST=archlinux
@@ -299,8 +296,7 @@ prepare() {
 
     if [ "$_use_llvm_lto" = "thin" ]; then
         echo "Enabling LLVM THIN LTO..."
-        scripts/config \
-            --enable LTO \
+        scripts/config --enable LTO \
             --enable LTO_CLANG \
             --enable ARCH_SUPPORTS_LTO_CLANG \
             --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
@@ -311,8 +307,7 @@ prepare() {
             --enable HAVE_GCC_PLUGINS
     elif [ "$_use_llvm_lto" = "full" ]; then
         echo "Enabling LLVM FULL LTO..."
-        scripts/config \
-            --enable LTO \
+        scripts/config --enable LTO \
             --enable LTO_CLANG \
             --enable ARCH_SUPPORTS_LTO_CLANG \
             --enable ARCH_SUPPORTS_LTO_CLANG_THIN \
@@ -623,6 +618,18 @@ prepare() {
     yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
     diff -u ../config .config || :
 
+    if [ -n "$_build_zfs" ]; then
+        #  KERNEL_CC="-fno-lto"
+        cd "${srcdir}/zfs"
+        ./autogen.sh
+        ./configure --with-linux=${srcdir}/$_srcname \
+            --with-linux-obj=${srcdir}/$_srcname --enable-linux-builtin \
+            --prefix=$pkgdir/usr/lib/modules/$(<version)/build --exec-prefix=$pkgdir/usr/lib/modules/$(<version)/build \
+            --with-config=kernel --enable-systemd
+        ./copy-builtin ${srcdir}/$_srcname
+        cd ${srcdir}/$_srcname
+        scripts/config --enable CONFIG_ZFS
+    fi
     ### Prepared version
     make ${BUILD_FLAGS[*]} -s kernelrelease > version
     echo "Prepared $pkgbase version $(<version)"
@@ -642,27 +649,6 @@ prepare() {
 build() {
     cd ${srcdir}/${_srcname}
     make ${BUILD_FLAGS[*]} -j$(nproc) all
-
-    if [ -n "$_build_zfs" ]; then
-        cd ${srcdir}/"zfs"
-
-        if [ -n "$_use_llvm_lto" ]; then
-            ./autogen.sh
-            sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
-            ./configure KERNEL_LLVM=1 --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin --libdir=/usr/lib \
-                --datadir=/usr/share --includedir=/usr/include --with-udevdir=/lib/udev \
-                --libexecdir=/usr/lib/zfs --with-config=kernel \
-                --with-linux=${srcdir}/$_srcname
-        else
-            ./autogen.sh
-            sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
-            ./configure --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin --libdir=/usr/lib \
-                --datadir=/usr/share --includedir=/usr/include --with-udevdir=/lib/udev \
-                --libexecdir=/usr/lib/zfs --with-config=kernel \
-                --with-linux=${srcdir}/$_srcname
-        fi
-        make ${BUILD_FLAGS[*]}
-    fi
 }
 
 _package() {
@@ -673,7 +659,10 @@ _package() {
         'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
     'uksmd: Userspace KSM helper daemon')
     provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
-
+  	if [ -n "$_build_zfs" ]; then
+        provides+=($pkgbase-zfs)
+        optdepends+=('zfs-utils')
+    fi
     cd ${srcdir}/$_srcname
 
     local kernver="$(<version)"
@@ -698,7 +687,9 @@ _package() {
 _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
     depends=('pahole' linux-${pkgsuffix} )
-
+    if [ -n "$_build_zfs" ]; then
+        provides=("zfs-headers" "spl-headers")
+    fi
     cd ${srcdir}/${_srcname}
     local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
@@ -779,36 +770,23 @@ _package-headers() {
     ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
 
-_package-zfs(){
-    pkgdesc="zfs module for the $pkgdesc kernel"
-    depends=('pahole' linux-$pkgsuffix=$_kernver)
-
-    cd ${srcdir}/"zfs"
-    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
-    #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
-}
-
-pkgname=("$pkgbase" "$pkgbase-headers")
-if [ -n "$_build_zfs" ]; then
-    pkgname+=("$pkgbase-zfs")
-fi
+pkgname=("${pkgbase}" "${pkgbase}-headers")
 for _p in "${pkgname[@]}"; do
-    eval "package_$_p() {
+  eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
     _package${_p#$pkgbase}
-    }"
+  }"
 done
 
-sha256sums=('d38da4f2094651d1ee766e864982df2433af33daed0b7bd159c52e2fa9d5f1cd'
+sha256sums=('ccd7110dad8dcc260e2891ea3c89bd4aaad0cbe2c055b1280147e76ece20f06c'
             '45c25965fa5f04ddc479e8a79dd409063749140a2f5573caebb35b41ad1b3e42'
             '97b7a140f84774e8313ba7f9c8404ce90e029d347b6a189c71854571ab3330ba'
+            'SKIP'
             '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271'
             '9975135d105b69a2efec4a868ce3a4aaf3ffeda5841dc9e6601858d0773e8829'
             '826c20a4bdd642d41147edeb801e32041db1c6aabf2b3a74306f333dcf3a3054'
             '7c486f166c9de16a661233ef2a72c55a27629563e8e6c52e54a3f2f617b2ac62'
+            '7cf2e27ae7ca49c8d20a6c10b0a34187f8c63f2dab3063b3649a692d65065fad'
             '325e282dcb0786090584267f9b1ed5646128a5a88f061850e24f900ea495a1e9'
             '2346332059809e82c60b3bc988966e2cda08428a0239b4eb4c04e8e1b6cbe576'
-            '7cf2e27ae7ca49c8d20a6c10b0a34187f8c63f2dab3063b3649a692d65065fad'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f')
