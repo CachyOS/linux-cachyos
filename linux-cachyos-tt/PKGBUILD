@@ -140,7 +140,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux TT scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=3
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -161,6 +161,7 @@ source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
     #"${_patchsource}/0001-cachy.patch"
+    '0001-cachy-tt.patch'
 )
 if [ -n "$_build_zfs" ]; then
     source+=("git+https://github.com/openzfs/zfs.git#commit=6c3c5fcfbe27d9193cd131753cc7e47ee2784621")
@@ -806,6 +807,7 @@ done
 
 sha256sums=('0823eb05dba001cf9e2560a76dfa4d81c854e1dcfbfb25cc73ba64cd7e900a36'
             '58a21aaa4dda3d7cd3c617fd655782b35b27ef52c9e55157d5b2092dba61c5ab'
+            '9b2dd4b454d7d57522ed0227df3b3c230d254ba3c3e59dc8da619f5f3372bf24'
             'dcf5df8bd041a44d8657effc6cd13477957b100110038875ae7872c515e3d680'
             '326d129f9435145add756dc967accd56ffe1d8ff1b6650f84d2578c41bd6dfd6'
             'dc2898751118804bc3f36b5a6928a2927d04919ce41c0ce013009f5564d6d232'
