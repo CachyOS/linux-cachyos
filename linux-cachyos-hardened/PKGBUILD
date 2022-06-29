@@ -129,7 +129,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.18
-_minor=7
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -805,21 +805,21 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('a1a2d064bf5a1f02021f66931237ec3d2920994d49910d27d3fe581e2e21525b'
+sha256sums=('0823eb05dba001cf9e2560a76dfa4d81c854e1dcfbfb25cc73ba64cd7e900a36'
             'eccccc58c0349dc292fc7a3dadfe97e02910b8a405db517187e3fb4bb4975d5c'
-            'c20867bdfff8d30013fc6d39b38ff62b349d19fa2b662dae6b129dd7ad444c66'
+            '852cb848f2ea3ea7415f6d4f6a9cf08f3bcb7f99786b58cfcb72667abf83837c'
             '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271'
             'b14b6c16454a314568a00ce30ef9e3384e2269f78771d38f4076013bbe9ef116'
             '326d129f9435145add756dc967accd56ffe1d8ff1b6650f84d2578c41bd6dfd6'
             'dc2898751118804bc3f36b5a6928a2927d04919ce41c0ce013009f5564d6d232'
             '71c33bf75dbf84673ad26a35c20b0f9ae0fa9944d91cd93a0b128752ca2eab0e'
-            '4955b9243d354ba8d0ce9206da9e73e510f28d1f2af4bcbd3e86b1ee5c50baed'
-            '0e89fc0e60c95e3fd6b43502a36df2eb6e05be9c21f30020c4fa0576ee9f7d6e'
+            '835526ef9fe5e13f1209f15a93eaebb70961cc8176d215c8e233142bc38f8799'
+            '22dc37e641acd949f390c2c7586ed744b6dd6acf258ff0e2289c78aef4178d63'
             '1d9c83de97d541f5a7ae4612a96c05aea8ce38de5471cc21fd2197dbd6644d00'
             '16085e0bba8e1843180f82df00d6040b97531cebb2c0c4c7fe23860322d06beb'
-            'f5b02a27a6324fc5aaabbca03e76d483da9ff51c389e4fabda51fd85f77217fc'
-            '292240ee42f4e34b97528c9b2b2afcef7bc892501a3750b8825ac6ef9c87072e'
-            'b0796e67e91254b9aeef1fdf5167121e7e58712077a2d58aa3d98cd59ba924b7'
-            'a5744336734938379628760addd6df123b3e7b0f808dd7308f7acd2ba27e74cd'
+            'fd4f654119a23a22c0dfaf96dab1b70ea01be707c72c5c194d12877b1c088642'
+            '7aefcf468f5a71566b00daa7e18f4e4a9ef0175b6837c1f2d9d3a4da178a8c75'
+            '24052afee41ee0251598051afd13afa7e078f03c84b3daeda70a24b0bf0b3c72'
+            '5c73aa06f5cbb2a0546f876cfc09efa6a0741821e71ce7cf5e28d166a325420f'
             '270babf4c5e1b7fda61d17e4cb0c7411f5ab67de5e5085bdd9a6c10ae98a5074'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f')
