@@ -101,7 +101,7 @@ _nf_cone=y
 # Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
-_use_llvm_lto=full
+_use_llvm_lto=
 
 # Build the zfs module builtin in to the kernel
 _build_zfs=
