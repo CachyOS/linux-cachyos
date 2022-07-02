@@ -1,5 +1,4 @@
-# Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev>
-# Contributor: Piotr Gorski <lucjan.lucjanov@gmail.com>
+# Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev> && Piotr Gorski <lucjan.lucjanov@gmail.com>
 # Contributor: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
 # Contributor: Tobias Powalowski <tpowa@archlinux.org>
 # Contributor: Thomas Baechler <thomas@archlinux.org>
@@ -92,7 +91,7 @@ _processor_opt=
 _use_auto_optimization=y
 
 # disable debug to lower the size of the kernel
-_disable_debug=y
+_disable_debug=
 
 ## Enable zram/zswap ZSTD compression
 _zstd_compression=y
@@ -119,7 +118,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.18
-_minor=8
+_minor=9
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -130,7 +129,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -766,8 +765,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('0823eb05dba001cf9e2560a76dfa4d81c854e1dcfbfb25cc73ba64cd7e900a36'
-            '261174a3b6ed73d5c8923e4125afe49d2c853e0e8dd571bdc7dc060e88c2820d'
+sha256sums=('3882e26fcedcfe3ccfc158b9be2d95df25f26c3795ecf1ad95708ed532f5c93c'
+            '1ab1729334e09f4a37e2bfbc2723d2f2570018776546288b10a0908eb712b866'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            'e59d7f63be73a74df46954f3525969f150fab9ae5fce7f57e42a2f6c16cd3c0b'
+            '1bf8ad541c0c4d01877f3d6ac9bd9dcb7315eb7516328353f860a2789937dd4f'
             '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271')
