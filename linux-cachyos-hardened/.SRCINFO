@@ -30,12 +30,14 @@ pkgbase = linux-cachyos-hardened
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/sched/0001-bore-sched.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0001-hardening.patch
+	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/0001-hardened.patch
 	sha256sums = 3882e26fcedcfe3ccfc158b9be2d95df25f26c3795ecf1ad95708ed532f5c93c
-	sha256sums = 1ab1729334e09f4a37e2bfbc2723d2f2570018776546288b10a0908eb712b866
+	sha256sums = 99d33d202ea55e52db74d75c1cd269362c1cfc608b02a0cd89bfaefb3119a7a4
 	sha256sums = ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f
 	sha256sums = 1bf8ad541c0c4d01877f3d6ac9bd9dcb7315eb7516328353f860a2789937dd4f
 	sha256sums = 7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271
-	sha256sums = b14b6c16454a314568a00ce30ef9e3384e2269f78771d38f4076013bbe9ef116
+	sha256sums = d09b35736cf6b5b9b269bfe3b8f32a68463d1ae9d591a256f94bcc6a62425c28
+	sha256sums = acf8ca58f229a487e6a3654bee4ce63e8b8679985e0a1e1f26406e3f1a092b02
 
 pkgname = linux-cachyos-hardened
 	pkgdesc = The Linux hardened kernel with the BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules
