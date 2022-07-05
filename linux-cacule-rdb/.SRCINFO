@@ -1,7 +1,7 @@
 pkgbase = linux-cacule-rdb
 	pkgdesc = Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 5.18.9
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -30,10 +30,10 @@ pkgbase = linux-cacule-rdb
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.18/sched/0001-cacULE-5.18-migrate.patch
 	sha256sums = 3882e26fcedcfe3ccfc158b9be2d95df25f26c3795ecf1ad95708ed532f5c93c
-	sha256sums = 1ab1729334e09f4a37e2bfbc2723d2f2570018776546288b10a0908eb712b866
+	sha256sums = 77b27a36371d871b8fb22e43310df46a385ae9d1c69e35679eda7fca57d6eb26
 	sha256sums = ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f
-	sha256sums = 1bf8ad541c0c4d01877f3d6ac9bd9dcb7315eb7516328353f860a2789937dd4f
-	sha256sums = 28e51fdc88e67e82285390f883ff34ba7cf86a9502e55d8c46deae1cdbe40f25
+	sha256sums = 4cf793dc79c93baffea45f005bd4045f3bfd80c6ff72643377b6178b24ca618d
+	sha256sums = 767e142a3f0af19ee8a50287c453f34657fdf93451d5c94a4a8190b56715feb6
 
 pkgname = linux-cacule-rdb
 	pkgdesc = The Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and improvements kernel and modules

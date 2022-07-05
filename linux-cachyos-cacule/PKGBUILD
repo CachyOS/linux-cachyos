@@ -50,7 +50,7 @@ _per_gov=y
 _tcp_bbr2=y
 
 ### Running with a 1000HZ, 750Hz, 600 Hz or 500Hz tick rate
-_HZ_ticks=750
+_HZ_ticks=1000
 
 ## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
@@ -91,7 +91,7 @@ _processor_opt=
 _use_auto_optimization=y
 
 # disable debug to lower the size of the kernel
-_disable_debug=
+_disable_debug=y
 
 ## Enable zram/zswap ZSTD compression
 _zstd_compression=y
@@ -129,7 +129,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -770,7 +770,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('3882e26fcedcfe3ccfc158b9be2d95df25f26c3795ecf1ad95708ed532f5c93c'
-            '1ab1729334e09f4a37e2bfbc2723d2f2570018776546288b10a0908eb712b866'
+            '77b27a36371d871b8fb22e43310df46a385ae9d1c69e35679eda7fca57d6eb26'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            '1bf8ad541c0c4d01877f3d6ac9bd9dcb7315eb7516328353f860a2789937dd4f'
-            '28e51fdc88e67e82285390f883ff34ba7cf86a9502e55d8c46deae1cdbe40f25')
+            '4cf793dc79c93baffea45f005bd4045f3bfd80c6ff72643377b6178b24ca618d'
+            '767e142a3f0af19ee8a50287c453f34657fdf93451d5c94a4a8190b56715feb6')
