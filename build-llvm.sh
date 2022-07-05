@@ -10,7 +10,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    docker run --name kernelbuild -e LLVM_BOLT=1 -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-v3:/home/notroot/.buildcache pttrr/docker-makepkg-v3
+    docker run --name kernelbuild -e LLVM_BOLT=1 -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -v /tmp/docker-makepkg-v3:/tmp/makepkg -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-v3:/home/notroot/.buildcache pttrr/docker-makepkg-v3
     docker rm kernelbuild
     cd ..
 done
@@ -23,7 +23,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    docker run --name kernelbuild -e LLVM_BOLT=1 -e EXPORT_PKG=1 -e SYNC_DATABASE=1  -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel:/home/notroot/.buildcache pttrr/docker-makepkg
+    docker run --name kernelbuild -e LLVM_BOLT=1 -e EXPORT_PKG=1 -e SYNC_DATABASE=1  -v /tmp/docker-makepkg:/tmp/makepkg -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel:/home/notroot/.buildcache pttrr/docker-makepkg
     docker rm kernelbuild
     cd ..
 done
