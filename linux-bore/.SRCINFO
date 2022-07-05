@@ -1,4 +1,4 @@
-pkgbase = linux-bore-lto
+pkgbase = linux-bore
 	pkgdesc = Linux BORE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 5.18.9
 	pkgrel = 2
@@ -23,10 +23,6 @@ pkgbase = linux-bore-lto
 	makedepends = binutils
 	makedepends = make
 	makedepends = patch
-	makedepends = clang
-	makedepends = llvm
-	makedepends = lld
-	makedepends = python
 	options = !strip
 	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.18.9.tar.xz
 	source = config
@@ -39,7 +35,7 @@ pkgbase = linux-bore-lto
 	sha256sums = 4cf793dc79c93baffea45f005bd4045f3bfd80c6ff72643377b6178b24ca618d
 	sha256sums = 7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271
 
-pkgname = linux-bore-lto
+pkgname = linux-bore
 	pkgdesc = The Linux BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -53,7 +49,7 @@ pkgname = linux-bore-lto
 	provides = KSMBD-MODULE
 	provides = UKSMD-BUILTIN
 
-pkgname = linux-bore-lto-headers
+pkgname = linux-bore-headers
 	pkgdesc = Headers and scripts for building modules for the Linux BORE scheduler Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
-	depends = linux-bore-lto
+	depends = linux-bore
