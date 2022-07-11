@@ -118,7 +118,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.18
-_minor=9
+_minor=10
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -129,7 +129,7 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 arch=(x86_64 x86_64_v3)
 pkgdesc='Linux PDS scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -771,8 +771,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('3882e26fcedcfe3ccfc158b9be2d95df25f26c3795ecf1ad95708ed532f5c93c'
+sha256sums=('f99e3d01dbb8ee6fe765d9cb2b2e073afd2dc581c0d3979751c862745d73dee3'
             '77b27a36371d871b8fb22e43310df46a385ae9d1c69e35679eda7fca57d6eb26'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            '4cf793dc79c93baffea45f005bd4045f3bfd80c6ff72643377b6178b24ca618d'
+            'c58bda90a576c795bb70a53a5fabb4e3d5a56bf0b4b33bf033e63b376c38c739'
             'd09fc86685d3873bac59e52fddc22aaa70bfe6668ec597a88f1931350f7c6cc6')
