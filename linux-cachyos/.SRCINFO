@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-lto
+pkgbase = linux-cachyos
 	pkgdesc = Linux BORE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 5.18.12
 	pkgrel = 1
@@ -23,10 +23,6 @@ pkgbase = linux-cachyos-lto
 	makedepends = binutils
 	makedepends = make
 	makedepends = patch
-	makedepends = clang
-	makedepends = llvm
-	makedepends = lld
-	makedepends = python
 	options = !strip
 	source = https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.18.12.tar.xz
 	source = config
@@ -39,7 +35,7 @@ pkgbase = linux-cachyos-lto
 	sha256sums = 37763b7f098fadd029923dafb952f9c9485ff3527e48087b6c5e557e043fa324
 	sha256sums = 7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271
 
-pkgname = linux-cachyos-lto
+pkgname = linux-cachyos
 	pkgdesc = The Linux BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -53,7 +49,7 @@ pkgname = linux-cachyos-lto
 	provides = KSMBD-MODULE
 	provides = UKSMD-BUILTIN
 
-pkgname = linux-cachyos-lto-headers
+pkgname = linux-cachyos-headers
 	pkgdesc = Headers and scripts for building modules for the Linux BORE scheduler Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
-	depends = linux-cachyos-lto
+	depends = linux-cachyos
