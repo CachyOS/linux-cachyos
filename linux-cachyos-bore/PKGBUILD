@@ -54,7 +54,7 @@ _HZ_ticks=1000
 
 ## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
-_tickrate=idle
+_tickrate=full
 
 ## Choose between full(low-latency), voluntary or server
 _preempt=full
@@ -118,7 +118,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.18
-_minor=11
+_minor=12
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -770,8 +770,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('e20d8e54a782f7079b22762e8ee8adec0d08351b1083553adb2d6885ad1815af'
-            '77b27a36371d871b8fb22e43310df46a385ae9d1c69e35679eda7fca57d6eb26'
+sha256sums=('40b74d0942f255da07481710e1083412d06e37e45b8f9d9e34ae856db37b9527'
+            '5ca5d7a30453fbb2891458fea6de84923218cd161a4137fe76c8e699fddb7037'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            '9a8c1a728fd999d7784c55d07d58bf32b84fe6ad2dc661c018c9cc1eff090190'
+            '37763b7f098fadd029923dafb952f9c9485ff3527e48087b6c5e557e043fa324'
             '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271')

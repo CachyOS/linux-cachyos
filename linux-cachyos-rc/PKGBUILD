@@ -54,7 +54,7 @@ _HZ_ticks=1000
 
 ## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
-_tickrate=idle
+_tickrate=full
 
 ## Choose between full(low-latency), voluntary or server
 _preempt=full
@@ -130,7 +130,7 @@ fi
 _major=5.19
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc6
+_rcver=rc7
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
