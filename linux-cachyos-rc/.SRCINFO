@@ -29,10 +29,10 @@ pkgbase = linux-cachyos-rc
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.19/all/0001-cachyos-base-rc-all-dev.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.19/sched/0001-bore-5.19.patch
-	sha256sums = 4589a4237cb3d17061a0c940fd44e1c87796794eda64fe729c4e916c9d30c579
-	sha256sums = 91323784024d14a444fbf2320ded460f21e52233b7606175d9379165c911f16a
+	sha256sums = 4cf0d0d0e46c31781a3f571845973b616c07af90d059922bdff3c6ff941bfda4
+	sha256sums = 259af8ad931e6ec2e78271969de460f1876c7fb1b9031a7b36991ad7f2c64e02
 	sha256sums = ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f
-	sha256sums = 1f64b9bbd5b4ca33da5cfcb114bac63283b84df12e69ef9bda83ce6e4b076b3c
+	sha256sums = 23ee7d79eb9c237676a72dba94536989345128532a6dfc53157896da6916b8ea
 	sha256sums = 7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271
 
 pkgname = linux-cachyos-rc
