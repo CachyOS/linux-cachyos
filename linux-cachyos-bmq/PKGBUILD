@@ -458,73 +458,73 @@ prepare() {
 
     if [ -n "$_lrng_enable" ]; then
         echo "Enabling Linux Random Number Generator ..."
-        scripts/config --disable CONFIG_RANDOM_DEFAULT_IMPL
-        scripts/config --enable CONFIG_LRNG
-        scripts/config --enable CONFIG_LRNG_SHA256
-        scripts/config --enable CONFIG_LRNG_COMMON_DEV_IF
-        scripts/config --enable CONFIG_LRNG_DRNG_ATOMIC
-        scripts/config --enable CONFIG_LRNG_SYSCTL
-        scripts/config --enable CONFIG_LRNG_RANDOM_IF
-        scripts/config --module CONFIG_LRNG_KCAPI_IF
-        scripts/config --module CONFIG_LRNG_HWRAND_IF
-        scripts/config --enable CONFIG_LRNG_DEV_IF
-        scripts/config --enable CONFIG_LRNG_RUNTIME_ES_CONFIG
-        scripts/config --enable CONFIG_LRNG_IRQ_DFLT_TIMER_ES
-        scripts/config --disable CONFIG_LRNG_SCHED_DFLT_TIMER_ES
-        scripts/config --enable CONFIG_LRNG_TIMER_COMMON
-        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_256
-        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_512
-        scripts/config --enable CONFIG_LRNG_COLLECTION_SIZE_1024
-        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_2048
-        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_4096
-        scripts/config --disable CONFIG_LRNG_COLLECTION_SIZE_8192
-        scripts/config --set-val CONFIG_LRNG_COLLECTION_SIZE 1024
-        scripts/config --enable CONFIG_LRNG_HEALTH_TESTS
-        scripts/config --set-val CONFIG_LRNG_RCT_CUTOFF 31
-        scripts/config --set-val CONFIG_LRNG_APT_CUTOFF 325
-        scripts/config --enable CONFIG_LRNG_IRQ
-        scripts/config --enable CONFIG_LRNG_CONTINUOUS_COMPRESSION_ENABLED
-        scripts/config --disable CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED
-        scripts/config --enable CONFIG_LRNG_ENABLE_CONTINUOUS_COMPRESSION
-        scripts/config --enable CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION
-        scripts/config --set-val CONFIG_LRNG_IRQ_ENTROPY_RATE 256
-        scripts/config --enable CONFIG_LRNG_JENT
-        scripts/config --set-val CONFIG_LRNG_JENT_ENTROPY_RATE 16
-        scripts/config --enable CONFIG_LRNG_CPU
-        scripts/config --set-val CONFIG_LRNG_CPU_FULL_ENT_MULTIPLIER 1
-        scripts/config --set-val CONFIG_LRNG_CPU_ENTROPY_RATE 8
-        scripts/config --enable CONFIG_LRNG_SCHED
-        scripts/config --set-val CONFIG_LRNG_SCHED_ENTROPY_RATE 4294967295
-        scripts/config --enable CONFIG_LRNG_DRNG_CHACHA20
-        scripts/config --module CONFIG_LRNG_DRBG
-        scripts/config --module CONFIG_LRNG_DRNG_KCAPI
-        scripts/config --enable CONFIG_LRNG_SWITCH
-        scripts/config --enable CONFIG_LRNG_SWITCH_HASH
-        scripts/config --module CONFIG_LRNG_HASH_KCAPI
-        scripts/config --enable CONFIG_LRNG_SWITCH_DRNG
-        scripts/config --module CONFIG_LRNG_SWITCH_DRBG
-        scripts/config --module CONFIG_LRNG_SWITCH_DRNG_KCAPI
-        scripts/config --enable CONFIG_LRNG_DFLT_DRNG_CHACHA20
-        scripts/config --disable CONFIG_LRNG_DFLT_DRNG_DRBG
-        scripts/config --disable CONFIG_LRNG_DFLT_DRNG_KCAPI
-        scripts/config --enable CONFIG_LRNG_TESTING_MENU
-        scripts/config --disable CONFIG_LRNG_RAW_HIRES_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_JIFFIES_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_IRQ_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_RETIP_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_REGS_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_ARRAY
-        scripts/config --disable CONFIG_LRNG_IRQ_PERF
-        scripts/config --disable CONFIG_LRNG_RAW_SCHED_HIRES_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_SCHED_PID_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_SCHED_START_TIME_ENTROPY
-        scripts/config --disable CONFIG_LRNG_RAW_SCHED_NVCSW_ENTROPY
-        scripts/config --disable CONFIG_LRNG_SCHED_PERF
-        scripts/config --disable CONFIG_LRNG_ACVT_HASH
-        scripts/config --disable CONFIG_LRNG_RUNTIME_MAX_WO_RESEED_CONFIG
-        scripts/config --disable CONFIG_LRNG_TEST_CPU_ES_COMPRESSION
-        scripts/config --enable CONFIG_LRNG_SELFTEST
-        scripts/config --disable CONFIG_LRNG_SELFTEST_PANIC
+        scripts/config --disable RANDOM_DEFAULT_IMPL \
+            --enable LRNG \
+            --enable LRNG_SHA256 \
+            --enable LRNG_COMMON_DEV_IF \
+            --enable LRNG_DRNG_ATOMIC \
+            --enable LRNG_SYSCTL \
+            --enable LRNG_RANDOM_IF \
+            --module LRNG_KCAPI_IF \
+            --module LRNG_HWRAND_IF \
+            --enable LRNG_DEV_IF \
+            --enable LRNG_RUNTIME_ES_CONFIG \
+            --enable LRNG_IRQ_DFLT_TIMER_ES \
+            --disable LRNG_SCHED_DFLT_TIMER_ES \
+            --enable LRNG_TIMER_COMMON \
+            --disable LRNG_COLLECTION_SIZE_256 \
+            --disable LRNG_COLLECTION_SIZE_512 \
+            --enable LRNG_COLLECTION_SIZE_1024 \
+            --disable LRNG_COLLECTION_SIZE_2048 \
+            --disable LRNG_COLLECTION_SIZE_4096 \
+            --disable LRNG_COLLECTION_SIZE_8192 \
+            --set-val LRNG_COLLECTION_SIZE 1024 \
+            --enable LRNG_HEALTH_TESTS \
+            --set-val LRNG_RCT_CUTOFF 31 \
+            --set-val LRNG_APT_CUTOFF 325 \
+            --enable LRNG_IRQ \
+            --enable LRNG_CONTINUOUS_COMPRESSION_ENABLED \
+            --disable LRNG_CONTINUOUS_COMPRESSION_DISABLED \
+            --enable LRNG_ENABLE_CONTINUOUS_COMPRESSION \
+            --enable LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION \
+            --set-val LRNG_IRQ_ENTROPY_RATE 256 \
+            --enable LRNG_JENT \
+            --set-val LRNG_JENT_ENTROPY_RATE 16 \
+            --enable LRNG_CPU \
+            --set-val LRNG_CPU_FULL_ENT_MULTIPLIER 1 \
+            --set-val LRNG_CPU_ENTROPY_RATE 8 \
+            --enable LRNG_SCHED \
+            --set-val LRNG_SCHED_ENTROPY_RATE 4294967295 \
+            --enable LRNG_DRNG_CHACHA20 \
+            --module LRNG_DRBG \
+            --module LRNG_DRNG_KCAPI \
+            --enable LRNG_SWITCH \
+            --enable LRNG_SWITCH_HASH \
+            --module LRNG_HASH_KCAPI \
+            --enable LRNG_SWITCH_DRNG \
+            --module LRNG_SWITCH_DRBG \
+            --module LRNG_SWITCH_DRNG_KCAPI \
+            --enable LRNG_DFLT_DRNG_CHACHA20 \
+            --disable LRNG_DFLT_DRNG_DRBG \
+            --disable LRNG_DFLT_DRNG_KCAPI \
+            --enable LRNG_TESTING_MENU \
+            --disable LRNG_RAW_HIRES_ENTROPY \
+            --disable LRNG_RAW_JIFFIES_ENTROPY \
+            --disable LRNG_RAW_IRQ_ENTROPY \
+            --disable LRNG_RAW_RETIP_ENTROPY \
+            --disable LRNG_RAW_REGS_ENTROPY \
+            --disable LRNG_RAW_ARRAY \
+            --disable LRNG_IRQ_PERF \
+            --disable LRNG_RAW_SCHED_HIRES_ENTROPY \
+            --disable LRNG_RAW_SCHED_PID_ENTROPY \
+            --disable LRNG_RAW_SCHED_START_TIME_ENTROPY \
+            --disable LRNG_RAW_SCHED_NVCSW_ENTROPY \
+            --disable LRNG_SCHED_PERF \
+            --disable LRNG_ACVT_HASH \
+            --disable LRNG_RUNTIME_MAX_WO_RESEED_CONFIG \
+            --disable LRNG_TEST_CPU_ES_COMPRESSION \
+            --enable LRNG_SELFTEST \
+            --disable LRNG_SELFTEST_PANIC
     fi
 
     if [ -n "$_zstd_swap_compression" ]; then
