@@ -123,18 +123,6 @@ _aufs=
 # Enable spadefs
 _spadfs=
 
-if [ -n "$_bcachefs" ]; then
-source+=("${_patchsource}/0001-bcachefs-after-lru.patch")
-fi
-
-if [ -n "$_aufs" ]; then
-source+=("${_patchsource}/0001-aufs-20220620.patch")
-fi
-
-if [ -n "$_spadfs" ]; then
-source+=("${_patchsource}/0001-spadfs-5.18-merge-v1.0.16.patch")
-fi
-
 if [ -n "$_use_llvm_lto" ]; then
     pkgsuffix=cachyos-lto
     pkgbase=linux-$pkgsuffix
@@ -206,6 +194,14 @@ fi
 
 if [ -n "$_bcachefs" ]; then
 source+=("${_patchsource}/0001-bcachefs-after-lru.patch")
+fi
+
+if [ -n "$_aufs" ]; then
+source+=("${_patchsource}/0001-aufs-20220620.patch")
+fi
+
+if [ -n "$_spadfs" ]; then
+source+=("${_patchsource}/0001-spadfs-5.18-merge-v1.0.16.patch")
 fi
 
 export KBUILD_BUILD_HOST=archlinux
