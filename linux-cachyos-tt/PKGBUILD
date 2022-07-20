@@ -103,13 +103,25 @@ _disable_debug=y
 ## Enable zram/zswap ZSTD compression
 _zstd_compression=y
 
+# Enable FULLCONENAT
 _nf_cone=y
+
+# Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
+# "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
+# "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
+_use_llvm_lto=
 
 # Build the zfs module builtin in to the kernel
 _build_zfs=
 
 # Enable bcachefs
 _bcachefs=
+
+# Enable aufsfs
+_aufs=
+
+# Enable spadefs
+_spadfs=
 
 if [ -n "$_use_llvm_lto" ]; then
     pkgsuffix=cachyos-${_cpusched}-lto
@@ -130,7 +142,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux TT scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=3
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -182,6 +194,14 @@ fi
 
 if [ -n "$_bcachefs" ]; then
 source+=("${_patchsource}/0001-bcachefs-after-lru.patch")
+fi
+
+if [ -n "$_aufs" ]; then
+source+=("${_patchsource}/0001-aufs-20220620.patch")
+fi
+
+if [ -n "$_spadfs" ]; then
+source+=("${_patchsource}/0001-spadfs-5.18-merge-v1.0.16.patch")
 fi
 
 export KBUILD_BUILD_HOST=archlinux
