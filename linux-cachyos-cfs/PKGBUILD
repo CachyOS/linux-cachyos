@@ -149,6 +149,7 @@ url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
 options=('!strip')
 makedepends=('bc' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch')
+# LLVM makedepends
 if [ -n "$_use_llvm_lto" ]; then
     makedepends+=(clang llvm lld python)
     BUILD_FLAGS=(
@@ -157,6 +158,11 @@ if [ -n "$_use_llvm_lto" ]; then
         LLVM=1
         LLVM_IAS=1
     )
+fi
+# ZFS makedepends
+if [ -n "$_build_zfs" ]; then
+    makedepends+=(git)
+
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${_major}"
 source=(
