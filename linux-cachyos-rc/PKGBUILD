@@ -66,13 +66,14 @@ _mq_deadline_disable=y
 _kyber_disable=y
 
 ### Enable multigenerational LRU
-_lru_enable=y
+# ATTENTION - one of three predefined values should be selected!
+# 'standard' - enable multigenerational LRU 
+# 'stats' - enable multigenerational LRU with stats
+# 'none' - disable multigenerational LRU
+_lru_config='standard'
 
 ## Enable DAMON
 _damon=y
-
-## enable SPECULATIVE_PAGE_FAULT
-_spf_enable=y
 
 ## Enable Linux Random Number Generator
 _lrng_enable=y
@@ -441,17 +442,27 @@ prepare() {
             --module NETFILTER_XT_TARGET_FULLCONENAT
     fi
 
-    if [ -n "$_spf_enable" ]; then
-        echo "Enabling SPECULATIVE_PAGE_FAULT LRU..."
-        scripts/config --enable SPECULATIVE_PAGE_FAULT
-    fi
-
-    if [ -n "$_lru_enable" ]; then
-        echo "Enabling multigenerational LRU..."
-        scripts/config --enable ARCH_HAS_NONLEAF_PMD_YOUNG \
-            --enable LRU_GEN \
-            --enable LRU_GEN_ENABLED \
-            --disable LRU_GEN_STATS
+    if [ "$_lru_config" = "standard" ]; then
+       echo "Enabling multigenerational LRU..."
+       scripts/config --enable CONFIG_LRU_GEN \
+           --enable CONFIG_LRU_GEN_ENABLED \
+           --disable CONFIG_LRU_GEN_STATS
+    elif [ "$_lru_config" = "stats" ]; then
+       echo "Enabling multigenerational LRU with stats..."
+       scripts/config --enable CONFIG_LRU_GEN \
+           --enable CONFIG_LRU_GEN_ENABLED \
+           --enable CONFIG_LRU_GEN_STATS
+    elif [ "$_lru_config" = "none" ]; then
+       echo "Disabling multigenerational LRU..."
+       scripts/config --disable CONFIG_LRU_GEN
+    else
+        if [ -n "$_lru_config" ]; then
+           error "The value $_lru_config is invalid. Choose the correct one again."
+        else
+           error "The value is empty. Choose the correct one again."
+         fi
+         error "Enabling multigenerational LRU failed!"
+         exit
     fi
 
     if [ -n "$_damon" ]; then
