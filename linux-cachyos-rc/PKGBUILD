@@ -242,6 +242,7 @@ prepare() {
         scripts/config -k --enable CONFIG_${MARCH2}
     fi
 
+    ### Use autooptimization
     if [ -n "$_use_auto_optimization" ]; then
         "${srcdir}"/auto-cpu-optimization.sh
     fi
@@ -271,8 +272,8 @@ prepare() {
         scripts/config --enable SCHED_BORE
     elif [ "$_cpusched" = "tt" ]; then
         echo "Selecting TT Scheduler..."
-        scripts/config --enable TT_SCHED
-        scripts/config --enable TT_ACCOUNTING_STATS
+        scripts/config --enable TT_SCHED \
+            --enable TT_ACCOUNTING_STATS
     elif [ "$_cpusched" = "cfs" ]; then
         echo "Selecting Completely Fair Scheduler..."
     elif [ "$_cpusched" = "hardened" ]; then
@@ -287,6 +288,7 @@ prepare() {
         exit
     fi
 
+    ### Enable KCFI
     if [ -n "$_use_kcfi" ]; then
         echo "Enabling kCFI"
         scripts/config --enable ARCH_SUPPORTS_CFI_CLANG \
@@ -320,7 +322,7 @@ prepare() {
         scripts/config --enable LTO_NONE
     fi
 
-    ### Seletc tick rate
+    ### Select tick rate
     if [ "$_HZ_ticks" = "1000" ]; then
         echo "Setting tick rate to 1k Hz..."
         scripts/config --disable HZ_300 \
