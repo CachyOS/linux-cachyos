@@ -389,7 +389,7 @@ prepare() {
     fi
 
     ### Select tick type
-    if [ "$_tickrate" = "perodic" ]; then
+    if [ "$_tickrate" = "periodic" ]; then
         echo "Enabling periodic ticks..."
         scripts/config --disable NO_HZ_IDLE \
             --disable NO_HZ_FULL \
