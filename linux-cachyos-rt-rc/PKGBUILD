@@ -19,7 +19,7 @@ _cpusched='bore'
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=
+_makenconfig=y
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -57,7 +57,7 @@ _HZ_ticks=1000
 _tickrate=full
 
 ## Choose between full(low-latency), voluntary or server
-_preempt=full
+#_preempt=
 
 ### Disable MQ-Deadline I/O scheduler
 _mq_deadline_disable=y
@@ -141,7 +141,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=5
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -435,43 +435,43 @@ prepare() {
         exit
     fi
 
-    ### Select preempt type
-    if [ "$_preempt" = "full" ]; then
-        echo "Enabling low latency preempt..."
-        scripts/config --enable PREEMPT_BUILD \
-            --disable PREEMPT_NONE \
-            --disable PREEMPT_VOLUNTARY \
-            --enable PREEMPT \
-            --enable PREEMPT_COUNT \
-            --enable PREEMPTION \
-            --enable PREEMPT_DYNAMIC
-    elif [ "$_preempt" = "voluntary" ]; then
-        echo "Enabling voluntary preempt..."
-        scripts/config --enable PREEMPT_BUILD \
-            --disable PREEMPT_NONE \
-            --enable PREEMPT_VOLUNTARY \
-            --disable PREEMPT \
-            --enable PREEMPT_COUNT \
-            --enable PREEMPTION \
-            --disable PREEMPT_DYNAMIC
-    elif [ "$_preempt" = "server" ]; then
-        echo "Enabling server preempt..."
-        scripts/config --enable PREEMPT_NONE_BUILD \
-            --enable PREEMPT_NONE \
-            --disable PREEMPT_VOLUNTARY \
-            --disable PREEMPT \
-            --disable PREEMPT_COUNT \
-            --disable PREEMPTION \
-            --disable PREEMPT_DYNAMIC
-    else
-        if [ -n "$_preempt" ]; then
-            error "The value $_preempt is invalid. Choose the correct one again."
-        else
-            error "The value is empty. Choose the correct one again."
-        fi
-        error "Selecting PREEMPT failed!"
-        exit
-    fi
+    ### Select preempt type ## commented for RT
+#    if [ "$_preempt" = "full" ]; then
+#        echo "Enabling low latency preempt..."
+#        scripts/config --enable PREEMPT_BUILD \
+#            --disable PREEMPT_NONE \
+#            --disable PREEMPT_VOLUNTARY \
+#            --enable PREEMPT \
+#            --enable PREEMPT_COUNT \
+#            --enable PREEMPTION \
+#            --enable PREEMPT_DYNAMIC
+#    elif [ "$_preempt" = "voluntary" ]; then
+#        echo "Enabling voluntary preempt..."
+#        scripts/config --enable PREEMPT_BUILD \
+#            --disable PREEMPT_NONE \
+#            --enable PREEMPT_VOLUNTARY \
+#            --disable PREEMPT \
+#            --enable PREEMPT_COUNT \
+#            --enable PREEMPTION \
+#            --disable PREEMPT_DYNAMIC
+#    elif [ "$_preempt" = "server" ]; then
+#        echo "Enabling server preempt..."
+#        scripts/config --enable PREEMPT_NONE_BUILD \
+#            --enable PREEMPT_NONE \
+#            --disable PREEMPT_VOLUNTARY \
+#            --disable PREEMPT \
+#            --disable PREEMPT_COUNT \
+#            --disable PREEMPTION \
+#            --disable PREEMPT_DYNAMIC
+#    else
+#        if [ -n "$_preempt" ]; then
+#            error "The value $_preempt is invalid. Choose the correct one again."
+#        else
+#            error "The value is empty. Choose the correct one again."
+#        fi
+#        error "Selecting PREEMPT failed!"
+#        exit
+#    fi
 
     ### Enable O3
     if [ -n "$_cc_harder" ]; then
@@ -857,7 +857,7 @@ done
 
 sha256sums=('4cf0d0d0e46c31781a3f571845973b616c07af90d059922bdff3c6ff941bfda4'
             '2d1bda5bcf29342440877b67180f2a8d1ba1dbf5aa49f881be249986755d0e2f'
-            'c40069af8140f77dad37fd7a171fea3dae81568a1d3dc8fbabdc7809348677ca'
+            '215069eed8ec4034dd47981a00f3a4676ff00a005996e3ba91d9f95d6dba0c64'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
             '21951a949d29800cf74d91b317ed4e61e439562148f5a88da9851854c7366dc3'
             '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271')
