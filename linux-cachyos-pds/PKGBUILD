@@ -142,7 +142,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux PDS scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -630,21 +630,19 @@ prepare() {
     ### Disable DEBUG
     if [ -n "$_disable_debug" ]; then
         scripts/config --disable DEBUG_INFO \
-            --disable CONFIG_DEBUG_INFO_BTF \
-            --disable CONFIG_DEBUG_INFO_DWARF5 \
-            --disable CONFIG_PAHOLE_HAS_SPLIT_BTF \
-            --disable CONFIG_DEBUG_INFO_BTF_MODULES \
-            --disable CONFIG_CGROUP_BPF \
-            --disable CONFIG_BPF_LSM \
-            --disable CONFIG_BPF_PRELOAD \
-            --disable CONFIG_BPF_LIRC_MODE2 \
-            --disable CONFIG_BPF_KPROBE_OVERRIDE \
-            --disable CONFIG_PM_DEBUG \
-            --disable CONFIG_PM_SLEEP_DEBUG \
-            --disable CONFIG_ACPI_DEBUG \
-            --disable CONFIG_SCHED_DEBUG \
-            --disable CONFIG_LATENCYTOP \
-            --disable CONFIG_DEBUG_PREEMPT
+            --disable DEBUG_INFO_BTF \
+            --disable DEBUG_INFO_DWARF4 \
+            --disable DEBUG_INFO_DWARF5 \
+            --disable PAHOLE_HAS_SPLIT_BTF \
+            --disable DEBUG_INFO_BTF_MODULES \
+            --disable SLUB_DEBUG \
+            --disable PM_DEBUG \
+            --disable PM_ADVANCED_DEBUG \
+            --disable PM_SLEEP_DEBUG \
+            --disable ACPI_DEBUG \
+            --disable SCHED_DEBUG \
+            --disable LATENCYTOP \
+            --disable DEBUG_PREEMPT
     fi
 
     echo "Enable USER_NS_UNPRIVILEGED"

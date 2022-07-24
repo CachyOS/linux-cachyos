@@ -142,7 +142,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -629,21 +629,19 @@ prepare() {
     ### Disable DEBUG
     if [ -n "$_disable_debug" ]; then
         scripts/config --disable DEBUG_INFO \
-            --disable CONFIG_DEBUG_INFO_BTF \
-            --disable CONFIG_DEBUG_INFO_DWARF5 \
-            --disable CONFIG_PAHOLE_HAS_SPLIT_BTF \
-            --disable CONFIG_DEBUG_INFO_BTF_MODULES \
-            --disable CONFIG_CGROUP_BPF \
-            --disable CONFIG_BPF_LSM \
-            --disable CONFIG_BPF_PRELOAD \
-            --disable CONFIG_BPF_LIRC_MODE2 \
-            --disable CONFIG_BPF_KPROBE_OVERRIDE \
-            --disable CONFIG_PM_DEBUG \
-            --disable CONFIG_PM_SLEEP_DEBUG \
-            --disable CONFIG_ACPI_DEBUG \
-            --disable CONFIG_SCHED_DEBUG \
-            --disable CONFIG_LATENCYTOP \
-            --disable CONFIG_DEBUG_PREEMPT
+            --disable DEBUG_INFO_BTF \
+            --disable DEBUG_INFO_DWARF4 \
+            --disable DEBUG_INFO_DWARF5 \
+            --disable PAHOLE_HAS_SPLIT_BTF \
+            --disable DEBUG_INFO_BTF_MODULES \
+            --disable SLUB_DEBUG \
+            --disable PM_DEBUG \
+            --disable PM_ADVANCED_DEBUG \
+            --disable PM_SLEEP_DEBUG \
+            --disable ACPI_DEBUG \
+            --disable SCHED_DEBUG \
+            --disable LATENCYTOP \
+            --disable DEBUG_PREEMPT
     fi
 
     echo "Enable USER_NS_UNPRIVILEGED"
@@ -866,5 +864,5 @@ done
 sha256sums=('e17d46451133d3a3099b09e200839e875100b48403171923ab71b6a9b39856af'
             'a8f920b542bedb7aa1d04ac5d98f12fcec21d1f51c6ca9ee2196595223f12df8'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            'dad2f4373faaa6b806b8de60cebe18d59ce54c1d381317cc98eba6c19ef20e66'
+            'b8582784394a098f9b30c48e92a411258109def73b0fdd042bc45c5441db6ba6'
             '767e142a3f0af19ee8a50287c453f34657fdf93451d5c94a4a8190b56715feb6')
