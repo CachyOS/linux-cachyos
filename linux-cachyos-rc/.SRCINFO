@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements
-	pkgver = 5.19.rc7
+	pkgver = 5.19.rc8
 	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,15 +21,15 @@ pkgbase = linux-cachyos-rc
 	makedepends = make
 	makedepends = patch
 	options = !strip
-	source = https://github.com/torvalds/linux/archive/refs/tags/v5.19-rc7.tar.gz
+	source = https://github.com/torvalds/linux/archive/refs/tags/v5.19-rc8.tar.gz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.19/all/0001-cachyos-base-rc-all-dev.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.19/sched/0001-bore.patch
-	sha256sums = 4cf0d0d0e46c31781a3f571845973b616c07af90d059922bdff3c6ff941bfda4
+	sha256sums = 1f52eb88e511c3b7f7e3373418195f0db5d2acf9ff7623554371537bf785399a
 	sha256sums = 4fc1a18a2be45167394e43056683bdd5659701846b0655f0e0b12c351eb2ab99
 	sha256sums = ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f
-	sha256sums = 36f2bfaeaed866fe9cd138ccca10ca9c96830a3540f888a54e7497cb2964a757
+	sha256sums = 78df47b07852385c274ac7c8e272282befe84aa3b212ab15ea33081bfdbeee06
 	sha256sums = 7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271
 
 pkgname = linux-cachyos-rc
