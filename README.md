@@ -1,8 +1,8 @@
 # <center>Linux Kernel with several scheduler and other improvements</center>
 
-## General Informations
+## General Information
 
-The CachyOS are improved kernels which improve the performance and other improvements. Following Scheduler are supported:
+CachyOS are improved kernels that improve performance and other aspects. The Schedulers listed below are supported:
 
 ### linux-cachyos will now use as default the BORE scheduler!
 
@@ -42,7 +42,7 @@ The CachyOS are improved kernels which improve the performance and other improve
 
 ## WINESYNC Usage:
 
-Insall following packages from the AUR, if you get into issue's:
+Install following packages from the AUR, if you get into issues:
 
 - [winesync-udev-rule](https://aur.archlinux.org/packages/winesync-udev-rule)
 
@@ -60,7 +60,7 @@ for steam following in the launch options:
 WINEESYNC=0 WINEFSYNC=0 WINEFSYNC_FUTEX2=0 %command%
 ```
 
-Also you need a wine/proton which includes the winesync patch. I build weekly into the cachyos-repo a proton-tkg-git and wine-tkg-git into the repo with winesync Fastsync.
+You'll also need a wine/proton with the winesync patch. I build a proton-tkg-git and a wine-tkg-git into the cachyos-repo once a week with winesync Fastsync
 Simply install it with ```sudo pacman -S proton-tkg-git wine-tkg-git``` or you built it your self from [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git).
 
 ## Other distros
