@@ -206,7 +206,7 @@ fi
 ## Kernel CFI Patch
 if [ -n "$_use_kcfi" ]; then
     source+=("${_patchsource}/0001-kcfi.patch")
-    depends+=(clang llvm lld python)
+    depends+=(llvm-git llvm-libs-git python)
     BUILD_FLAGS=(
         CC=clang
         LD=ld.lld
