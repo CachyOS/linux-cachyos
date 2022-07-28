@@ -171,7 +171,7 @@ source=(
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 if [ -n "$_build_zfs" ]; then
-source+=("git+https://github.com/openzfs/zfs.git#commit=6c3c5fcfbe27d9193cd131753cc7e47ee2784621")
+source+=("git+https://github.com/openzfs/zfs.git#commit=98315be03600dee78f5c844ed4ef422098493a24")
 fi
 if [ "$_cpusched" = "bmq" ]; then
 source+=("${_patchsource}/sched/0001-prjc.patch")

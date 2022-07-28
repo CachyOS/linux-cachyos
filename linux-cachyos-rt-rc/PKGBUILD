@@ -19,7 +19,7 @@ _cpusched='bore'
 # Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=
+_makenconfig=y
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -172,7 +172,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-rt-rc-all-dev.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/openzfs/zfs.git#commit=6c3c5fcfbe27d9193cd131753cc7e47ee2784621")
+    source+=("git+https://github.com/openzfs/zfs.git#commit=98315be03600dee78f5c844ed4ef422098493a24")
 fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then

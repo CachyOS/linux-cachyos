@@ -112,6 +112,7 @@ _use_llvm_lto=
 # ATTENTION!: you do need a patched llvm for the usage of kcfi,
 # you can find a patched llvm-git in the cachyos-repo's.
 # The packagename is called "llvm-kcfi"
+# ATTENTION!: This is very experimental and could fail and the compilation or have other bugs in the kernel
 _use_kcfi=
 
 # Build the zfs module builtin in to the kernel
@@ -139,7 +140,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -169,7 +170,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/openzfs/zfs.git#commit=6c3c5fcfbe27d9193cd131753cc7e47ee2784621")
+    source+=("git+https://github.com/openzfs/zfs.git#commit=98315be03600dee78f5c844ed4ef422098493a24")
 fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then
@@ -848,7 +849,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('1f52eb88e511c3b7f7e3373418195f0db5d2acf9ff7623554371537bf785399a'
-            '4fc1a18a2be45167394e43056683bdd5659701846b0655f0e0b12c351eb2ab99'
+            '304b36d7713a0daac7c7ca453633aa54582a6b231f250c6f4a9761a79cab912e'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            '2628fadbd562cabd4750f06e929013929748c9583a62fd9411c9fc3c99d4dbcf'
+            '82e34fc5f0c7cd1744260100820cca5d92dd8381d3cd7a10bb9da340afd3ab64'
             '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271')
