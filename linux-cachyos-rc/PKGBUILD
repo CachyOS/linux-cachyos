@@ -203,7 +203,7 @@ if [ "$_cpusched" = "hardened" ]; then
 fi
 ## Kernel CFI Patch
 if [ -n "$_use_kcfi" ]; then
-    source+=("${_patchsource}/0001-kcfi.patch")
+    source+=("${_patchsource}/misc/0001-kcfi.patch")
     depends+=(llvm-git llvm-libs-git python)
     BUILD_FLAGS=(
         CC=clang
@@ -213,7 +213,7 @@ if [ -n "$_use_kcfi" ]; then
 fi
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
-    source+=("${_patchsource}/0001-bcachefs-after-lru.patch")
+    source+=("${_patchsource}/misc(0001-bcachefs-after-lru.patch")
 fi
 
 export KBUILD_BUILD_HOST=archlinux
