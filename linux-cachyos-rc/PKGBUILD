@@ -97,8 +97,6 @@ _disable_debug=y
 ## Enable zram/zswap ZSTD compression
 _zstd_compression=y
 
-_nf_cone=y
-
 # Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
@@ -485,13 +483,6 @@ prepare() {
             --set-str DEFAULT_TCP_CONG bbr2
     fi
 
-    ### Enable FULLCONENAT
-    if [ -n "$_nf_cone" ]; then
-        echo "Enabling FULLCONENAT..."
-        scripts/config --module IP_NF_TARGET_FULLCONENAT \
-            --module NETFILTER_XT_TARGET_FULLCONENAT
-    fi
-
     ### Select LRU config
     if [ "$_lru_config" = "standard" ]; then
        echo "Enabling multigenerational LRU..."
@@ -831,8 +822,8 @@ _package-zfs(){
     depends=('pahole' linux-$pkgsuffix=$_kernver)
 
     cd ${srcdir}/"zfs"
-    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+	install -dm755 "$pkgdir/usr/lib/modules/${_major}.${_minor}-${_rcver}-${pkgrel}-${pkgsuffix}"
+	install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${_major}.${_minor}-${_rcver}-${pkgrel}-${pkgsuffix}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
