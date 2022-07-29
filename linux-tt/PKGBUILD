@@ -132,7 +132,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.18
-_minor=14
+_minor=15
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -142,7 +142,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux TT scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -861,8 +861,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('e17d46451133d3a3099b09e200839e875100b48403171923ab71b6a9b39856af'
-            'a8f920b542bedb7aa1d04ac5d98f12fcec21d1f51c6ca9ee2196595223f12df8'
+sha256sums=('69804febdc388a69dfb64493b7b58d402853de3a14144ea8db7fd67c30dcbe3c'
+            '9b2cfc2cbf7015ec50d6f849fdf49c53a2d257d20a0988465759936db3aaf209'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            'b8582784394a098f9b30c48e92a411258109def73b0fdd042bc45c5441db6ba6'
+            '0b256630b9f79e776cf447a825dad88e5a6daf8693de35b2ff892e14b9212365'
             '97316dfdfea461ef4fadb51962e0e0238f12b0fd3b53d9e4afb59f961021f10f')
