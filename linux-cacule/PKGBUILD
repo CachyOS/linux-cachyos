@@ -1,4 +1,3 @@
-# Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev> && Piotr Gorski <lucjan.lucjanov@gmail.com>
 # Contributor: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
 # Contributor: Tobias Powalowski <tpowa@archlinux.org>
 # Contributor: Thomas Baechler <thomas@archlinux.org>
@@ -13,7 +12,7 @@
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-_cpusched='cacule'
+_cpusched='bore'
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null to enable them
@@ -66,13 +65,20 @@ _mq_deadline_disable=y
 _kyber_disable=y
 
 ### Enable multigenerational LRU
-_lru_enable=y
+# ATTENTION - one of three predefined values should be selected!
+# 'standard' - enable multigenerational LRU 
+# 'stats' - enable multigenerational LRU with stats
+# 'none' - disable multigenerational LRU
+_lru_config='standard'
 
 ## Enable DAMON
 _damon=y
 
-## enable SPECULATIVE_PAGE_FAULT
-_spf_enable=y
+### Enable SPECULATIVE_PAGE_FAULT
+# ATTENTION - one of two predefined values should be selected!
+# 'standard' - enable SPECULATIVE_PAGE_FAULT
+# 'stats' - enable support SPECULATIVE_PAGE_FAULT with stats
+_spf_config='standard'
 
 ## Enable Linux Random Number Generator
 _lrng_enable=y
