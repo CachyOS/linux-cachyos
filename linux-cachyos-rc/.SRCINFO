@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 5.19.rc8
-	pkgrel = 1
+	pkgrel = 3
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -27,10 +27,10 @@ pkgbase = linux-cachyos-rc
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.19/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.19/sched/0001-bore.patch
 	sha256sums = 1f52eb88e511c3b7f7e3373418195f0db5d2acf9ff7623554371537bf785399a
-	sha256sums = d60c162e5eba4099264d5aecac791e70c8666a43cb2a8e923e85b62773063881
+	sha256sums = afac15b6b4ca91e22406c80b5fba92e294d1c04f850096c619f4975b460a60cd
 	sha256sums = ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f
-	sha256sums = 4b1370b2f2a67abc9660b4539a0dcbe868c84c7e57f409357d6aea0285e0dea8
-	sha256sums = 7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271
+	sha256sums = 5e4de1f2712027c90df4517ba992ad372846aa55e42fae0e15a9c6d98fe9216f
+	sha256sums = 0fe7f1698639df033709c6d32e651d378fc6e320dfc6387f8aee83d9ed0231a8
 
 pkgname = linux-cachyos-rc
 	pkgdesc = The Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules

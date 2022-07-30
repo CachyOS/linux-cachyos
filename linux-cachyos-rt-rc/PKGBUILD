@@ -132,16 +132,17 @@ _major=5.19
 _minor=0
 #_minorc=$((_minor+1))
 _rcver=rc8
-_rtver=8
-_rtpatchver=rt${_rtver}
+## We include the rt patch in our all patch
+#_rtver=9
+#_rtpatchver=rt${_rtver}
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
 _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgdesc='Linux BORE-RT scheduler Kernel by CachyOS and with some other patches and other improvements'
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -166,10 +167,9 @@ fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${_major}"
 source=(
     "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
-    "http://www.kernel.org/pub/linux/kernel/projects/rt/${_major}/patch-${_major}-${_rcver}-${_rtpatchver}.patch.xz"
     "config"
     "auto-cpu-optimization.sh"
-    "${_patchsource}/all/0001-cachyos-base-rt-rc-all-dev.patch")
+    "${_patchsource}/all/0001-cachyos-base-rt-all.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
     source+=("git+https://github.com/openzfs/zfs.git#commit=98315be03600dee78f5c844ed4ef422098493a24")
@@ -225,9 +225,6 @@ export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EP
 prepare() {
 
     cd ${srcdir}/$_srcname
-
-    echo "Add rt patch"
-    patch -Np1 -i ../patch-${_major}-${_rcver}-${_rtpatchver}.patch
 
     echo "Setting version..."
     scripts/setlocalversion --save-scmversion
@@ -836,8 +833,8 @@ _package-zfs(){
     depends=('pahole' linux-$pkgsuffix=$_kernver)
 
     cd ${srcdir}/"zfs"
-    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+	install -dm755 "$pkgdir/usr/lib/modules/${_major}.${_minor}-${_rcver}-${pkgrel}-${pkgsuffix}"
+	install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${_major}.${_minor}-${_rcver}-${pkgrel}-${pkgsuffix}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
@@ -854,8 +851,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('1f52eb88e511c3b7f7e3373418195f0db5d2acf9ff7623554371537bf785399a'
-            '6dddd04042e202f9a1929c0a805df1f576ae7701d75bc280c16960ea6e37699a'
-            '0e6ccbf9ee5d5e489ece7f1b5d7b2fa97253fb1a852caf9505857266a5ebb46b'
+            'd32897c6ea7f685f511692552eab0b4208f06f1b287b83393f1fc3ed2d9a0516'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            '21951a949d29800cf74d91b317ed4e61e439562148f5a88da9851854c7366dc3'
-            '7a36fe0a53a644ade0ce85f08f9ca2ebaddd47876966b7cc9d4cae8844649271')
+            '0844e475b66675bbb09a80cd3d52d4ebccd2e708af28661ce5414ef4a39f2818'
+            '0fe7f1698639df033709c6d32e651d378fc6e320dfc6387f8aee83d9ed0231a8')
