@@ -7,10 +7,10 @@ CachyOS are improved kernels that improve performance and other aspects. The Sch
 ### linux-cachyos will now use as default the BORE scheduler!
 
 - Standard Scheduler Completely Fair Scheduler (CFS) - linux-cachyos-cfs
-- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
+- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule / linux-cacule / linux-cacule-rdb (with the rdb balancer)
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
-- Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - linux-cachyos-tt ## fixed for 5.18 by @psndna88
+- Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - linux-cachyos-tt / linux-tt
 - BORE (Burst-Oriented Response Enhancer) CPU Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) - linux-cachyos-bore / linux-cachyos
 
 **All kernels are prebuilt in two different march versions (x86_64 and x86_64_v3) and also with the lto enabled kernels in the cachyos repo.**
@@ -21,24 +21,26 @@ CachyOS are improved kernels that improve performance and other aspects. The Sch
 - 5 Different scheduler are supported, CacULE-,CFS-,tt-,bmq-,bore-, and pds scheduler
 - GCC/CLANG Optimization with automatically found cpu arch or also selectable cpu arch
 - Choose between LLVM/LTO or GCC
-- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz
+- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz # default 750 Hz
 - Improved BFQ Scheduler
 - Back-ported patches from linux-next
 - General improved sysctl settings and upstream scheduler fixes
-- Latest LRU-le9-spf Patch-set, default enabled
-- DAMON Proactive-LRU-lists-Sorting and DAMON_RECLAIM
+- Latest LRU-le9 Patch-set, default enabled
+- DAMON Proactive-LRU-lists-Sorting DAMON_RECLAIM and DAMON_LRU_SORT
 - BBRv2 tcp_congestion_control
-- LLVM ThinLTO provided with *-lto Kernel (in the cachyos-repo)
+- LLVM LTO Kernels prebuilt in x86-64-v3 and x86-64 in the CachyOS repo
 - LRNG Framework (default enabled)
 - Latest & improved ZSTD patch-set
 - Latest BTRFS improvements & fixes
 - KSMBD Module for Samba3 Server
-- AMD PSTATE Driver enabled by default
+- AMD PSTATE Driver enabled by default and with enhancements patches/fixes
 - Clearlinux Patchset
-- Kernel Control Flow Integrity (kCFI) selectable when using LLVM(patched llvm needed)
+- Kernel Control Flow Integrity (kCFI) selectable when using LLVM(patched llvm can be found in the cachyos-repo)
 - ZFS Filesystem Support and prebuilt in the repo!
 - WINESYNC Fastsync
 - Use entropy optimization for zram
+- UserKSM daemon from pf
+- support for bcachefs (default compiled in cachyos-repo)
 
 ## WINESYNC Usage:
 
@@ -61,7 +63,8 @@ WINEESYNC=0 WINEFSYNC=0 WINEFSYNC_FUTEX2=0 %command%
 ```
 
 You'll also need a wine/proton with the winesync patch. I build a proton-tkg-git and a wine-tkg-git into the cachyos-repo once a week with winesync Fastsync
-Simply install it with ```sudo pacman -S proton-tkg-git wine-tkg-git``` or you built it your self from [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git).
+Simply install it with ```sudo pacman -S proton-tkg-git wine-tkg-git``` or you built it your self from [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git). ## Currently fastsync seems not to work
+
 
 ## Other distros
 
@@ -156,9 +159,9 @@ or at telegram:
 
 ### Valueable Contributors
 
-[Hamad Marri](https://github.com/hamadmarri) for the CacULE Scheduler
-
 [SirLucjan (Piotr Gorski)](https://github.com/sirlucjan)
+
+[Hamad Marri](https://github.com/hamadmarri) for the CacULE Scheduler
 
 [Archlinux](https://archlinux.org) for the great linux operating system
 
