@@ -27,9 +27,9 @@ pkgbase = linux-cachyos-rc
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.19/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.19/sched/0001-bore.patch
 	sha256sums = 1f52eb88e511c3b7f7e3373418195f0db5d2acf9ff7623554371537bf785399a
-	sha256sums = afac15b6b4ca91e22406c80b5fba92e294d1c04f850096c619f4975b460a60cd
+	sha256sums = 09a1f39bb2c64a15e1e59add809fe9e4a6d67ef212f6043c582f90e2deb1fbfe
 	sha256sums = ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f
-	sha256sums = 5e4de1f2712027c90df4517ba992ad372846aa55e42fae0e15a9c6d98fe9216f
+	sha256sums = f053ab9b44b1e5164f6ac4f0216fe54a2589a35aee15169b0dea11669705a2af
 	sha256sums = 0fe7f1698639df033709c6d32e651d378fc6e320dfc6387f8aee83d9ed0231a8
 
 pkgname = linux-cachyos-rc
