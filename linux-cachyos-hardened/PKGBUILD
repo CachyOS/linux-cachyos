@@ -70,7 +70,7 @@ _kyber_disable=y
 
 ### Enable multigenerational LRU
 # ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable multigenerational LRU 
+# 'standard' - enable multigenerational LRU
 # 'stats' - enable multigenerational LRU with stats
 # 'none' - disable multigenerational LRU
 _lru_config='standard'
@@ -165,8 +165,7 @@ if [ -n "$_build_zfs" ]; then
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${_major}"
 source=(
-#    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
-	"https://github.com/torvalds/linux/archive/refs/tags/v5.19.tar.gz"
+    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")

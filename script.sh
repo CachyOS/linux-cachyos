@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs=/_build_zfs=y/" {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_bcachefs=/_bcachefs=y/" {}
+#find . -name "PKGBUILD" | xargs -I {} sed -i "s/_bcachefs=/_bcachefs=y/" {} ## currently broken with 5.19
 
 files=$(find . -name "PKGBUILD")
 

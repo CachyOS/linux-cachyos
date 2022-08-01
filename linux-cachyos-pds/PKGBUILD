@@ -70,7 +70,7 @@ _kyber_disable=y
 
 ### Enable multigenerational LRU
 # ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable multigenerational LRU 
+# 'standard' - enable multigenerational LRU
 # 'stats' - enable multigenerational LRU with stats
 # 'none' - disable multigenerational LRU
 _lru_config='standard'
@@ -165,8 +165,7 @@ if [ -n "$_build_zfs" ]; then
 fi
 _patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${_major}"
 source=(
-#    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
-	"https://github.com/torvalds/linux/archive/refs/tags/v5.19.tar.gz"
+    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
@@ -835,8 +834,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('11614fc737638f693d02bf0d95422dfe2b3bcf3088196cd1c4c799cfdf675b70'
+sha256sums=('ff240c579b9ee1affc318917de07394fc1c3bb49dac25ec1287370c2e15005a8'
             '42d2127e3fb3bc96024c8af9d3eaead69007f64b1096d13767249bd9afeb043c'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            'f053ab9b44b1e5164f6ac4f0216fe54a2589a35aee15169b0dea11669705a2af'
+            '4575169c1ed71ddc0ae0d832d0c8df75b506f1bf6891b9166dbb23e628fbfb21'
             'c6e893919b9e2ac7b182bc463ecbf081ffc1f853740b1c35f0e5ad7b4045652f')
