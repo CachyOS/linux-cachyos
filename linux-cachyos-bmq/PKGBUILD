@@ -141,7 +141,7 @@ _stable=${_major}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -175,11 +175,11 @@ if [ -n "$_build_zfs" ]; then
 fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then
-    source+=("${_patchsource}/sched/0001-prjc.patch")
+    source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
 fi
 ## PDS Scheduler
 if [ "$_cpusched" = "pds" ]; then
-    source+=("${_patchsource}/sched/0001-prjc.patch")
+    source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
 fi
 ## BORE Scheduler
 if [ "$_cpusched" = "bore" ]; then
@@ -835,7 +835,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('ff240c579b9ee1affc318917de07394fc1c3bb49dac25ec1287370c2e15005a8'
-            '42d2127e3fb3bc96024c8af9d3eaead69007f64b1096d13767249bd9afeb043c'
+            'c2dc560ac5577e42a5bc09b9d238fdf19997d6e2c5ea0593487ab31536e89d0d'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
             '4575169c1ed71ddc0ae0d832d0c8df75b506f1bf6891b9166dbb23e628fbfb21'
-            'c6e893919b9e2ac7b182bc463ecbf081ffc1f853740b1c35f0e5ad7b4045652f')
+            '0f70de985ae8660af035e23db07a0e56860681c2f09d478208186016d217417d')
