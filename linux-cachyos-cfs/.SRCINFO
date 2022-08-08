@@ -28,7 +28,7 @@ pkgbase = linux-cachyos-cfs
 	sha256sums = ff240c579b9ee1affc318917de07394fc1c3bb49dac25ec1287370c2e15005a8
 	sha256sums = c2dc560ac5577e42a5bc09b9d238fdf19997d6e2c5ea0593487ab31536e89d0d
 	sha256sums = ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f
-	sha256sums = 4575169c1ed71ddc0ae0d832d0c8df75b506f1bf6891b9166dbb23e628fbfb21
+	sha256sums = 200d69d6188e6d54099959a8efffd17c52732b5a64465d947517edea6c2896f1
 
 pkgname = linux-cachyos-cfs
 	pkgdesc = The Linux CFS scheduler Kernel by CachyOS with other patches and improvements kernel and modules
