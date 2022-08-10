@@ -160,7 +160,7 @@ if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
 
 fi
-_patchsource="https://raw.githubusercontent.com/ptr1337/kernel-patches/master/${_major}"
+_patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 source=(
     "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
     "config"
