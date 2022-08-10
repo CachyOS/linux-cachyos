@@ -21,6 +21,15 @@ _cpusched='tt'
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=
 
+### Tweak kernel options prior to a build via menuconfig
+_makemenuconfig=
+
+### Tweak kernel options prior to a build via xconfig
+_makexconfig=
+
+### Tweak kernel options prior to a build via gconfig
+_makegconfig=
+
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
@@ -695,6 +704,15 @@ prepare() {
 
     ### Running make nconfig
     [[ -z "$_makenconfig" ]] ||  make ${BUILD_FLAGS[*]} nconfig
+
+    ### Running make menuconfig
+    [[ -z "$_makemenuconfig" ]] ||  make ${BUILD_FLAGS[*]} menuconfig
+
+    ### Running make xconfig
+    [[ -z "$_makexconfig" ]] ||  make ${BUILD_FLAGS[*]} xconfig
+
+    ### Running make gconfig
+    [[ -z "$_makegconfig" ]] ||  make ${BUILD_FLAGS[*]} gconfig
 
     ### Save configuration for later reuse
     echo "Save configuration for later reuse..."
