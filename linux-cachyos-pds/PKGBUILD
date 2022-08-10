@@ -100,6 +100,14 @@ _disable_debug=y
 ## Enable zram/zswap ZSTD compression
 _zstd_compression=y
 
+### Selecting the ZSTD kernel and modules compression level
+# ATTENTION - one of two predefined values should be selected!
+# 'ultra' - highest compression ratio
+# 'normal' - standard compression ratio
+# WARNING: the ultra settings can sometimes
+# be counterproductive in both size and speed.
+_zstd_level_value='normal'
+
 # Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
@@ -600,6 +608,28 @@ prepare() {
         scripts/config --disable CONFIG_ZSWAP_DEFAULT_ON \
             --enable ZRAM_ENTROPY \
             --set-val ZRAM_ENTROPY_THRESHOLD 100000
+    fi
+
+    ### Selecting the ZSTD modules and kernel compression level
+    if [ "$_zstd_level_value" = "ultra" ]; then
+        echo "Enabling highest ZSTD modules and kernel compression ratio..."
+        scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL 19 \
+            --enable CONFIG_MODULE_COMPRESS_ZSTD_ULTRA \
+            --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22 \
+            --set-val CONFIG_ZSTD_COMP_VAL 22
+    elif [ "$_zstd_level_value" = "normal" ]; then
+        echo "Enabling standard ZSTD modules and kernel compression ratio..."
+        scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL 9 \
+            --disable CONFIG_MODULE_COMPRESS_ZSTD_ULTRA \
+            --set-val CONFIG_ZSTD_COMP_VAL 19
+    else
+        if [ -n "$_zstd_level_value" ]; then
+            error "The value $_zstd_level_value is invalid. Choose the correct one again."
+        else
+            error "The value is empty. Choose the correct one again."
+        fi
+        error "Selecting the ZSTD modules and kernel compression level failed!"
+        exit
     fi
 
     ### Disable DEBUG
