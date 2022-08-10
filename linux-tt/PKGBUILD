@@ -611,12 +611,17 @@ prepare() {
             --disable LRNG_SELFTEST_PANIC
     fi
 
-    ### Enable ZSTD swap/zram compression
-    if [ -n "$_zstd_swap_compression" ]; then
-        echo "Enabling zram ZSTD compression..."
-        scripts/config --disable CONFIG_ZSWAP_DEFAULT_ON \
-            --enable ZRAM_ENTROPY \
-            --set-val ZRAM_ENTROPY_THRESHOLD 100000
+    ### Enable zram/zswap ZSTD compression
+    if [ -n "$_zstd_compression" ]; then
+        echo "Enabling zram/swap ZSTD compression..."
+        scripts/config --disable CONFIG_ZRAM_DEF_COMP_LZORLE \
+            --enable CONFIG_ZRAM_DEF_COMP_ZSTD \
+            --set-str CONFIG_ZRAM_DEF_COMP zstd \
+            --disable CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
+            --enable CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
+            --set-str CONFIG_ZSWAP_COMPRESSOR_DEFAULT zstd \
+            --enable CONFIG_ZRAM_ENTROPY \
+            --set-val CONFIG_ZRAM_ENTROPY_THRESHOLD 100000
     fi
 
     ### Selecting the ZSTD modules and kernel compression level
