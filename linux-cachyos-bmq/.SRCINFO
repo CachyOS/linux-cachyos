@@ -30,7 +30,7 @@ pkgbase = linux-cachyos-bmq
 	sha256sums = 6b0338cb4adcc48b0c9db4b2e9d861562fd1e096144c65fc35b93c788ed97eb3
 	sha256sums = ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f
 	sha256sums = 1d42d128d1a3d414e6fd2b8cf5b5f8867061f749644e8e5600526ac47a770fad
-	sha256sums = 0f70de985ae8660af035e23db07a0e56860681c2f09d478208186016d217417d
+	sha256sums = 7955175e108d86c1a7c0fa12a91b7bb219917e059572d75afcc2674dc0de9c3d
 
 pkgname = linux-cachyos-bmq
 	pkgdesc = The Linux BMQ scheduler Kernel by CachyOS with other patches and improvements kernel and modules
