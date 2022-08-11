@@ -148,17 +148,17 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.19
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux CFS scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -407,10 +407,7 @@ prepare() {
     if [ -n "$_per_gov" ]; then
         echo "Setting performance governor..."
         scripts/config --disable CPU_FREQ_DEFAULT_GOV_SCHEDUTIL \
-            --enable CPU_FREQ_DEFAULT_GOV_PERFORMANCE \
-            --enable PCIEASPM \
-            --enable PCIEASPM_PERFORMANCE \
-            --enable PCIE_BUS_PERFORMANCE
+            --enable CPU_FREQ_DEFAULT_GOV_PERFORMANCE
     fi
 
     ### Select tick type
@@ -887,7 +884,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('ff240c579b9ee1affc318917de07394fc1c3bb49dac25ec1287370c2e15005a8'
+sha256sums=('f4e27b926ea2c66b808db1f5706254cf92a8899e2108eedb0c3a7d12499aea55'
             '6b0338cb4adcc48b0c9db4b2e9d861562fd1e096144c65fc35b93c788ed97eb3'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            '200d69d6188e6d54099959a8efffd17c52732b5a64465d947517edea6c2896f1')
+            '1d42d128d1a3d414e6fd2b8cf5b5f8867061f749644e8e5600526ac47a770fad')
