@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs=/_build_zfs=y/" {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_bcachefs=/_bcachefs=y/" {}
+#find . -name "PKGBUILD" | xargs -I {} sed -i "s/_bcachefs=/_bcachefs=y/" {} # breaks probably /proc/meminfo
 
 files=$(find . -name "PKGBUILD")
 

@@ -1,7 +1,6 @@
 find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU=y/GENERIC_CPU3=y/' {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs=/_build_zfs=y/" {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_bcachefs=/_build_bcachefs=y/" {}
 
 files=$(find . -name "PKGBUILD")
 
