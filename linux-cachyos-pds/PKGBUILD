@@ -148,7 +148,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.19
-_minor=1
+_minor=2
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -158,7 +158,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -188,7 +188,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/openzfs/zfs.git#commit=db5fd16f0b7fd5bd5e19350829c46d526fed6d71")
+    source+=("git+https://github.com/openzfs/zfs.git#commit=979fd5a434ebc422c02dec5deddd485ce6127fc5")
 fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then
@@ -884,8 +884,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('f4e27b926ea2c66b808db1f5706254cf92a8899e2108eedb0c3a7d12499aea55'
+sha256sums=('48e40a1f5501ec6c40e3c86d3d5319200b688f2d9360f72833084d74801fe63d'
             '6b0338cb4adcc48b0c9db4b2e9d861562fd1e096144c65fc35b93c788ed97eb3'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            'c04623bfb274c2422f6286c8befd52b835d2da9f953b1c66007bd851d2756365'
-            '9d70b4f7d6a40454b64ae24c0f36f1c7923f87dbabb2df3d795302c5b2916822')
+            'a71497e5d79665605f3225340e1007c92dd03bca22d421545e86810a21c8f5a0'
+            '3a4cf0b5c301da998e84bf2c651dfd14f4a1dc1da8cf6af1d404dd36e613fdf7')
