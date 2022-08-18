@@ -73,7 +73,7 @@ _kyber_disable=y
 _lru_config='standard'
 
 ## Enable DAMON
-_damon=y
+_damon=
 
 ## Enable Linux Random Number Generator
 _lrng_enable=y
