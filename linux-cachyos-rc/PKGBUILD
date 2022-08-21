@@ -589,7 +589,7 @@ prepare() {
     fi
 
     ### Enable ZSTD swap/zram compression
-    if [ -n "$_zstd_swap_compression" ]; then
+    if [ -n "$_zstd_compression" ]; then
         echo "Enabling zram ZSTD compression..."
         scripts/config --disable ZRAM_DEF_COMP_LZORLE \
             --enable ZRAM_DEF_COMP_ZSTD \
@@ -839,5 +839,5 @@ done
 sha256sums=('451787a0461abe26fce8af5740ac20b81610bf241ba1197be77ee9ebd3fc71ad'
             'f4aedb0547cc412f6ebffd8bb65e17e8d8c0b6835957d308ebdb44630276c37a'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            '8e21365753f0a13221bb8dd3ad0797f59b52abcbe2f8db7b94798fb458cd16f9'
+            '8297283a04d0e6c319f65cf39d43731cfe2680143537ea407622b157717bea3f'
             'b9840635873a03b564cdefa813a3416e9ea08847424e6c284d0f838a99616625')
