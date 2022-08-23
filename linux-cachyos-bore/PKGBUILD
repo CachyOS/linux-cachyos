@@ -216,8 +216,8 @@ if [ "$_cpusched" = "tt" ]; then
 fi
 ## Hardened Patches with BORE Scheduler
 if [ "$_cpusched" = "hardened" ]; then
-    source+=("${_patchsource}/sched/0001-bore-sched.patch"
-         "${_patchsource}/0001-hardening.patch")
+    source+=("${_patchsource}/sched/0001-bore.patch"
+         "${_patchsource}/misc/0001-hardened.patch")
 fi
 ## Kernel CFI Patch
 if [ -n "$_use_kcfi" ]; then
