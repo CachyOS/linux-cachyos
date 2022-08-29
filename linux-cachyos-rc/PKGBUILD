@@ -130,7 +130,7 @@ fi
 _major=6.0
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc2
+_rcver=rc3
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -836,8 +836,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('529d24f9bef65074ff1b6e8d703981b3dbc0c328b3ba3112abca55b4da27dd81'
+sha256sums=('9fbca4f2bbea82311c877377497174b5521f33daf3b0e29cacec92601780e2b3'
             '2fbaccef60e929a901f965a29012b05de38b9424a10bb303513111d725c3ffec'
             'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
-            '21a021437d3b3a4bf99ed9b5a91598b1195ed276b2b5eb7803b6f7b7d58289a5'
+            'c5fe41c72f73edd195aeedd0feba6d2202429a02f8c28272f82eac4d3c8dd9da'
             'b9840635873a03b564cdefa813a3416e9ea08847424e6c284d0f838a99616625')
