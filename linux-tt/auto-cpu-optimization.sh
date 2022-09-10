@@ -29,6 +29,10 @@ elif [[ ${MARCH} == "GOLDMONT-PLUS" ]]; then
     MARCH="GOLDMONTPLUS"
 elif [[ ${MARCH} == "SKYLAKE-AVX512" ]]; then
     MARCH="SKYLAKE2"
+elif [[ ${MARCH} == "MIVYBRIDGE" ]]; then
+    scripts/config --disable CONFIG_AGP_AMD64 
+    scripts/config --disable CONFIG_MICROCODE_AMD
+    MARCH="MIVYBRIDGE"
 elif [[ ${MARCH} == "ICELAKE-CLIENT" ]]; then
     MARCH="ICELAKE"
 fi

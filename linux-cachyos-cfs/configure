@@ -201,7 +201,9 @@ cpu_arch() {
     scripts/config --disable CONFIG_GENERIC_CPU
     scripts/config --enable CONFIG_MSANDYBRIDGE
   elif [[ "$_microarchitecture" = "45" ]]; then
-    scripts/config --disable CONFIG_GENERIC_CPU
+     scripts/config --disable CONFIG_GENERIC_CPU
+    scripts/config --disable CONFIG_AGP_AMD64 
+    scripts/config --disable CONFIG_MICROCODE_AMD
     scripts/config --enable CONFIG_MIVYBRIDGE
   elif [[ "$_microarchitecture" = "46" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
