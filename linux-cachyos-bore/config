@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 5.19.3 Kernel Configuration
+# Linux/x86 5.19.8 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 12.2.0"
 CONFIG_CC_IS_GCC=y
@@ -1196,6 +1196,8 @@ CONFIG_PTE_MARKER_UFFD_WP=y
 # CONFIG_LRU_GEN is not set
 # CONFIG_LRU_GEN_ENABLED is not set
 # CONFIG_LRU_GEN_STATS is not set
+CONFIG_ARCH_SUPPORTS_PER_VMA_LOCK=y
+CONFIG_PER_VMA_LOCK=y
 
 #
 # Data Access Monitoring
@@ -10945,6 +10947,7 @@ CONFIG_DEBUG_WX=y
 CONFIG_GENERIC_PTDUMP=y
 CONFIG_PTDUMP_CORE=y
 # CONFIG_PTDUMP_DEBUGFS is not set
+# CONFIG_PER_VMA_LOCK_STATS is not set
 # CONFIG_DEBUG_OBJECTS is not set
 CONFIG_HAVE_DEBUG_KMEMLEAK=y
 # CONFIG_DEBUG_KMEMLEAK is not set

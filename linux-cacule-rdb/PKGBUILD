@@ -84,6 +84,12 @@ _kyber_disable=y
 # 'none' - disable multigenerational LRU
 _lru_config='standard'
 
+### Enable per-VMA locking
+# ATTENTION - one of two predefined values should be selected!
+# 'standard' - enable per-VMA locking
+# 'stats' - enable per-VMA locking with stats
+_vma_config='standard'
+
 ## Enable DAMON
 _damon=
 
@@ -158,7 +164,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -503,17 +509,17 @@ prepare() {
     ### Select LRU config
     if [ "$_lru_config" = "standard" ]; then
        echo "Enabling multigenerational LRU..."
-       scripts/config --enable CONFIG_LRU_GEN \
-           --enable CONFIG_LRU_GEN_ENABLED \
-           --disable CONFIG_LRU_GEN_STATS
+       scripts/config --enable LRU_GEN \
+           --enable LRU_GEN_ENABLED \
+           --disable LRU_GEN_STATS
     elif [ "$_lru_config" = "stats" ]; then
        echo "Enabling multigenerational LRU with stats..."
-       scripts/config --enable CONFIG_LRU_GEN \
-           --enable CONFIG_LRU_GEN_ENABLED \
-           --enable CONFIG_LRU_GEN_STATS
+       scripts/config --enable LRU_GEN \
+           --enable LRU_GEN_ENABLED \
+           --enable LRU_GEN_STATS
     elif [ "$_lru_config" = "none" ]; then
        echo "Disabling multigenerational LRU..."
-       scripts/config --disable CONFIG_LRU_GEN
+       scripts/config --disable LRU_GEN
     else
         if [ -n "$_lru_config" ]; then
            error "The value $_lru_config is invalid. Choose the correct one again."
@@ -521,6 +527,25 @@ prepare() {
            error "The value is empty. Choose the correct one again."
         fi
          error "Enabling multigenerational LRU failed!"
+         exit
+    fi
+
+    ### Select VMA config
+    if [ "$_vma_config" = "standard" ]; then
+       echo "Enabling per-VMA locking..."
+       scripts/config --enable PER_VMA_LOCK \
+           --disable PER_VMA_LOCK_STATS
+    elif [ "$_vma_config" = "stats" ]; then
+       echo "Enabling per-VMA locking with stats..."
+       scripts/config --enable PER_VMA_LOCK \
+           --enable PER_VMA_LOCK_STATS
+    else
+        if [ -n "$_vma_config" ]; then
+           error "The value $_vma_config is invalid. Choose the correct one again."
+        else
+           error "The value is empty. Choose the correct one again."
+        fi
+         error "Enabling per-VMA locking failed!"
          exit
     fi
 
@@ -611,28 +636,28 @@ prepare() {
     ### Enable zram/zswap ZSTD compression
     if [ -n "$_zstd_compression" ]; then
         echo "Enabling zram/swap ZSTD compression..."
-        scripts/config --disable CONFIG_ZRAM_DEF_COMP_LZORLE \
-            --enable CONFIG_ZRAM_DEF_COMP_ZSTD \
-            --set-str CONFIG_ZRAM_DEF_COMP zstd \
-            --disable CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
-            --enable CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
-            --set-str CONFIG_ZSWAP_COMPRESSOR_DEFAULT zstd \
-            --enable CONFIG_ZRAM_ENTROPY \
-            --set-val CONFIG_ZRAM_ENTROPY_THRESHOLD 100000
+        scripts/config --disable ZRAM_DEF_COMP_LZORLE \
+            --enable ZRAM_DEF_COMP_ZSTD \
+            --set-str ZRAM_DEF_COMP zstd \
+            --disable ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
+            --enable ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
+            --set-str ZSWAP_COMPRESSOR_DEFAULT zstd \
+            --enable ZRAM_ENTROPY \
+            --set-val ZRAM_ENTROPY_THRESHOLD 100000
     fi
 
     ### Selecting the ZSTD modules and kernel compression level
     if [ "$_zstd_level_value" = "ultra" ]; then
         echo "Enabling highest ZSTD modules and kernel compression ratio..."
-        scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL 19 \
-            --enable CONFIG_MODULE_COMPRESS_ZSTD_ULTRA \
-            --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22 \
-            --set-val CONFIG_ZSTD_COMP_VAL 22
+        scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 19 \
+            --enable MODULE_COMPRESS_ZSTD_ULTRA \
+            --set-val MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22 \
+            --set-val ZSTD_COMP_VAL 22
     elif [ "$_zstd_level_value" = "normal" ]; then
         echo "Enabling standard ZSTD modules and kernel compression ratio..."
-        scripts/config --set-val CONFIG_MODULE_COMPRESS_ZSTD_LEVEL 9 \
-            --disable CONFIG_MODULE_COMPRESS_ZSTD_ULTRA \
-            --set-val CONFIG_ZSTD_COMP_VAL 19
+        scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 9 \
+            --disable MODULE_COMPRESS_ZSTD_ULTRA \
+            --set-val ZSTD_COMP_VAL 19
     else
         if [ -n "$_zstd_level_value" ]; then
             error "The value $_zstd_level_value is invalid. Choose the correct one again."
@@ -885,7 +910,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('616308795a952a6a39b4c74807c33916850eb7166d8ed7c9a87a1ba55d7487ce'
-            '0dcff98ce415b81e00648712f8d7d7beb5f332239618bc95c7c3f9ae1573a92a'
-            'ce8bf7807b45a27eed05a5e1de5a0bf6293a3bbc2085bacae70cd1368f368d1f'
+            '4e00d2c15d104f239fd1b320c0fd00f8de6ef7cb0e1eaba477b8b227854d639e'
+            'beb4caa2c83432af264ffac3790ed510596329f52c587860dc1d546065d4e8e7'
             '170239dd75f80d5f3c4a4706b11c6569a97be36a9057cd36c54296da0cc6a2d7'
             '13dc8ec85783b793ddd84472d6baef7154e964dacb179024fc7d0de493059b29')
