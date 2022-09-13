@@ -287,6 +287,16 @@ prepare() {
         "${srcdir}"/auto-cpu-optimization.sh
     fi
 
+    ### Selecting proper RT config
+    if [ -n "$_rtkernel" ]; then
+        scripts/config --enable RCU_NOCB_CPU_CB_BOOST \
+            --enable RCU_NOCB_CPU_DEFAULT_ALL \
+            --enable HZ_1000 \
+            --set-val HZ 1000 \
+            --enable PREEMPT_RT \
+            --enable PREEMPT_LAZY
+     fi
+
     ### Selecting the CPU scheduler
     if [ "$_cpusched" = "bmq" ]; then
         echo "Selecting BMQ CPU scheduler..."
