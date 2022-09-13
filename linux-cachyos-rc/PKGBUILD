@@ -136,8 +136,17 @@ _bcachefs=
 # Enable RT kernel
 _rtkernel=
 
-if [ -n "$_use_llvm_lto" ]; then
+
+if [[ -n "$_use_llvm_lto" && -n "$_rtkernel" ]]; then
+    pkgsuffix=cachyos-rt-rc-lto
+    pkgbase=linux-$pkgsuffix
+
+elif [ -n "$_use_llvm_lto" ]; then
     pkgsuffix=cachyos-rc-lto
+    pkgbase=linux-$pkgsuffix
+    
+elif [ -n "$_rtkernel" ]; then
+    pkgsuffix=cachyos-rt-rc
     pkgbase=linux-$pkgsuffix
 
 else
