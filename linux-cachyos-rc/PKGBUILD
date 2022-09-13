@@ -133,6 +133,9 @@ _build_zfs=
 # Enable bcachefs
 _bcachefs=
 
+# Enable RT kernel
+_rtkernel=
+
 if [ -n "$_use_llvm_lto" ]; then
     pkgsuffix=cachyos-rc-lto
     pkgbase=linux-$pkgsuffix
@@ -152,7 +155,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -177,7 +180,7 @@ fi
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 source=(
     "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
-    "config"
+    "config" "config-rt"
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
@@ -225,7 +228,12 @@ if [ -n "$_use_kcfi" ]; then
 fi
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
-    source+=("${_patchsource}/misc(0001-bcachefs-after-lru.patch")
+    source+=("${_patchsource}/misc/0001-bcachefs-after-lru.patch")
+fi
+
+## rt kernel
+if [ -n "$_rtkernel" ]; then
+    source+=("${_patchsource}/misc/0001-rt-rc.patch")
 fi
 
 export KBUILD_BUILD_HOST=archlinux
@@ -251,7 +259,11 @@ prepare() {
     done
 
     echo "Setting config..."
-    cp ../config .config
+    if [ -n "$_rtkernel" ]; then
+        cp ../config-rt .config
+    else
+        cp ../config .config
+    fi
 
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
@@ -709,8 +721,9 @@ prepare() {
 
     ### Rewrite configuration
     echo "Rewrite configuration..."
-    make ${BUILD_FLAGS[*]} prepare
-    yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
+    #make ${BUILD_FLAGS[*]} prepare
+    #yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
+    make ${BUILD_FLAGS[*]} olddefconfig
     diff -u ../config .config || :
 
     ### Prepared version
@@ -893,6 +906,7 @@ done
 
 sha256sums=('1842d4d5910e339806509c46e78268888f6a2d05c9d8277f93238b729d005a07'
             '961728da1ea6a8a7b8a72971820acbec431e3f02e2949b7e94e828d7587d33ec'
+            'bce631b3669add1257269619dfb22b81ff25ab6b45ca7f75f08832e6c3a25c13'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
             '1487d0e13b2829d360313a6243b244f29b4f348d2a7b77b6410051d72e75f907'
             '1f1651126d1dd082f734ef65e08edb5093d6fe40c474e9e59fd89edea1338071')
