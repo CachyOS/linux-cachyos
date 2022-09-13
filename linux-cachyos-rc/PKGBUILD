@@ -289,7 +289,8 @@ prepare() {
 
     ### Selecting proper RT config
     if [ -n "$_rtkernel" ]; then
-        scripts/config --enable RCU_NOCB_CPU_CB_BOOST \
+        echo "Setting proper RT config"
+        scripts/config --disable RCU_NOCB_CPU_CB_BOOST \
             --enable RCU_NOCB_CPU_DEFAULT_ALL \
             --enable HZ_1000 \
             --set-val HZ 1000 \
