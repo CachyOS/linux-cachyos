@@ -1,7 +1,7 @@
 #!/bin/bash
 CPU=$(gcc -Q -march=native --help=target|grep march=|awk '{print $2}'|head -1)
 MARCH=$(echo $CPU|tr '[:lower:]' '[:upper:]'&&echo)
-if [[ ${MARCH} == "ZNVER1" ]]; then
+if [[ ${MARCH} == "ZNVER" ]]; then
     MARCH="ZEN"
 elif [[ ${MARCH} == "ZNVER2" ]]; then
     MARCH="ZEN2"
