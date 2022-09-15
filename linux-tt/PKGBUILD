@@ -85,9 +85,10 @@ _kyber_disable=y
 _lru_config='standard'
 
 ### Enable per-VMA locking
-# ATTENTION - one of two predefined values should be selected!
+# ATTENTION - one of three predefined values should be selected!
 # 'standard' - enable per-VMA locking
 # 'stats' - enable per-VMA locking with stats
+# 'none' - disable per-VMA locking
 _vma_config='standard'
 
 ## Enable DAMON
@@ -164,7 +165,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux TT scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -539,6 +540,9 @@ prepare() {
        echo "Enabling per-VMA locking with stats..."
        scripts/config --enable PER_VMA_LOCK \
            --enable PER_VMA_LOCK_STATS
+    elif [ "$_vma_config" = "none" ]; then
+       echo "Disabling per-VMA locking..."
+       scripts/config --disable PER_VMA_LOCK
     else
         if [ -n "$_vma_config" ]; then
            error "The value $_vma_config is invalid. Choose the correct one again."
@@ -910,7 +914,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('0ad5b5986693adc1962be807bc3a64423a24b6a9da9df39b259d7e3bfd927f37'
-            '4e00d2c15d104f239fd1b320c0fd00f8de6ef7cb0e1eaba477b8b227854d639e'
+            '2c23daf5bd0dadda120cb6d237f1728130fe3f2bff81a70b3871fa044f74d82b'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
             '85aeec85cfeff447503c7c1f648c82764d22cecc57ce0b33338e7936c8282ee5'
             'cb997a32b4484f586738a81bf96873ee028cc0a206772529c2be337bd811cd74')
