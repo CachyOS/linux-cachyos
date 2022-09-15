@@ -3,6 +3,12 @@
 # Contributor: Tobias Powalowski <tpowa@archlinux.org>
 # Contributor: Thomas Baechler <thomas@archlinux.org>
 
+### Selecting CachyOS config
+# ATTENTION - one of two predefined values should be selected!
+# 'yes' - enable CachyOS config
+# 'no' - disable CachyOS config
+_cachy_config='yes'
+
 ### Selecting the CPU scheduler
 # ATTENTION - one of seven predefined values should be selected!
 # 'bmq' - select 'BitMap Queue CPU scheduler'
@@ -286,6 +292,23 @@ prepare() {
     ### Use autooptimization
     if [ -n "$_use_auto_optimization" ]; then
         "${srcdir}"/auto-cpu-optimization.sh
+    fi
+
+    ### Selecting CachyOS config
+    if [ "$_cachy_config" = "yes" ]; then
+        echo "Enabling CachyOS config..."
+        scripts/config --enable CACHY_CONFIG
+    elif [ "$_cachy_config" = "no" ]; then
+       echo "Disabling CachyOS config..."
+       scripts/config --disable CACHY_CONFIG
+    else
+       if [ -n "$_cachy_config" ]; then
+           error "The value $_cachy_config is invalid. Choose the correct one again."
+       else
+           error "The value is empty. Choose the correct one again."
+       fi
+       error "Selecting CachyOS config failed!"
+       exit
     fi
 
     ### Selecting proper RT config
