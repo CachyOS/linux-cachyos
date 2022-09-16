@@ -288,10 +288,10 @@ prepare() {
     ### Selecting CachyOS config
     if [ "$_cachy_config" = "yes" ]; then
         echo "Enabling CachyOS config..."
-        scripts/config --enable CACHY_CONFIG
+        scripts/config --enable CACHY
     elif [ "$_cachy_config" = "no" ]; then
        echo "Disabling CachyOS config..."
-       scripts/config --disable CACHY_CONFIG
+       scripts/config --disable CACHY
     else
        if [ -n "$_cachy_config" ]; then
            error "The value $_cachy_config is invalid. Choose the correct one again."
@@ -940,4 +940,4 @@ sha256sums=('0ad5b5986693adc1962be807bc3a64423a24b6a9da9df39b259d7e3bfd927f37'
             '2c23daf5bd0dadda120cb6d237f1728130fe3f2bff81a70b3871fa044f74d82b'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
             '85aeec85cfeff447503c7c1f648c82764d22cecc57ce0b33338e7936c8282ee5'
-            '71f3b15838ec68e830953be2593a49713d16f8a40b65fb5d2c9a89d392ef8333')
+            '9659b83b734788c7cecb39d15f3a273d007bfa95fc3ed1951dd92796533fdcb2')

@@ -297,10 +297,10 @@ prepare() {
     ### Selecting CachyOS config
     if [ "$_cachy_config" = "yes" ]; then
         echo "Enabling CachyOS config..."
-        scripts/config --enable CACHY_CONFIG
+        scripts/config --enable CACHY
     elif [ "$_cachy_config" = "no" ]; then
        echo "Disabling CachyOS config..."
-       scripts/config --disable CACHY_CONFIG
+       scripts/config --disable CACHY
     else
        if [ -n "$_cachy_config" ]; then
            error "The value $_cachy_config is invalid. Choose the correct one again."
