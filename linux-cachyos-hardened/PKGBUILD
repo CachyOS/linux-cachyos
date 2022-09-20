@@ -61,6 +61,9 @@ _use_current=
 ### Enable KBUILD_CFLAGS -O3
 _cc_harder=y
 
+### Set this to your number of threads you have in your machine otherwise it will default to 128
+_nr_cpus=
+
 ### Set performance governor as default
 _per_gov=y
 
@@ -423,6 +426,15 @@ prepare() {
             --disable NODES_SHIFT \
             --undefine NODES_SHIFT \
             --disable NEED_MULTIPLE_NODES
+    fi
+
+    ### Setting NR_CPUS
+    if [ -n "$_nr_cpus" ]; then
+        echo "Setting custom NR_CPUS..."
+        scripts/config --set-val NR_CPUS "$_nr_cpus"
+    else
+        echo "Setting default NR_CPUS..."
+        scripts/config --set-val NR_CPUS 128
     fi
 
     ### Disable MQ Deadline I/O scheduler
