@@ -404,22 +404,25 @@ prepare() {
     elif [ "$_HZ_ticks" = "300" ]; then
         echo "Setting tick rate to 300Hz..."
         scripts/config --enable HZ_300 \
-            --enable HZ_300 \
             --set-val HZ 300
     elif [ "$_HZ_ticks" = "250" ]; then
         echo "Setting tick rate to 250Hz..."
-        scripts/config --enable HZ_250 \
+        scripts/config --disable HZ_300 \
             --enable HZ_250 \
             --set-val HZ 250
     elif [ "$_HZ_ticks" = "100" ]; then
         echo "Setting tick rate to 100Hz..."
-        scripts/config --enable HZ_100 \
+        scripts/config --disable HZ_300 \
             --enable HZ_100 \
             --set-val HZ 100
     else
-        echo "Setting tick rate to 300Hz..."
-        scripts/config --enable HZ_300 \
-            --set-val HZ 300
+       if [ -n "$_HZ_ticks" ]; then
+           error "The value $_HZ_ticks is invalid. Choose the correct one again."
+       else
+           error "The value is empty. Choose the correct one again."
+       fi
+       error "Selecting Setting tick rate failed!"
+       exit
     fi
 
     ### Disable NUMA
