@@ -30,7 +30,7 @@ pkgbase = linux-cachyos
 	sha256sums = 2c23daf5bd0dadda120cb6d237f1728130fe3f2bff81a70b3871fa044f74d82b
 	sha256sums = e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e
 	sha256sums = e8c5da2bac99834d059d0514dd751553dec4884ced222b871e13e1b98a6cc39a
-	sha256sums = 9051cc9bd10bd70578eb53f5790c872d539a035d4e7e1268a37a7fc2faf3e58f
+	sha256sums = a2746b23a66d3b78181267e6a6ce50b46824b54d6d4730ca1a8d1d19463a0d36
 
 pkgname = linux-cachyos
 	pkgdesc = The Linux BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules
