@@ -185,7 +185,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=5.19
-_minor=10
+_minor=11
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -195,7 +195,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -995,8 +995,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('67dab932e85f9b9062ced666c8ea888230a1dadfd624b05aead6b6ebc6d3bdd5'
+sha256sums=('5554d2f90b806bb3454fcf3432882cf85077d660a89db5a4e8d7375271e3d973'
             '2c23daf5bd0dadda120cb6d237f1728130fe3f2bff81a70b3871fa044f74d82b'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            '37b05cf8cbefcc7660a548916ceba53adab153ef1202f49f465d02221fd4fa62'
+            'e8c5da2bac99834d059d0514dd751553dec4884ced222b871e13e1b98a6cc39a'
             'a8f6c086e4232071b692d1f696a3e9c356c8f44d1b11acce05632a75c727ac4d')
