@@ -233,7 +233,7 @@ source=(
     "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
     "config" "config-rt"
     "auto-cpu-optimization.sh"
-    "${_patchsource}/all/0001-cachyos-base-all-exp.patch")
+    "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
     source+=("git+https://github.com/openzfs/zfs.git#commit=979fd5a434ebc422c02dec5deddd485ce6127fc5")
@@ -287,11 +287,15 @@ if [ -n "$_rtkernel" ]; then
 fi
 ## NEST Support
 if [ -n "$_nest" ]; then
+ if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
     source+=("${_patchsource}/sched/0001-NEST.patch")
+  fi
 fi
 ## Latency NICE Support
 if [ -n "$_latency_nice" ]; then
+   if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
     source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
+  fi
 fi
 
 export KBUILD_BUILD_HOST=cachyos
@@ -1030,5 +1034,5 @@ sha256sums=('02a8c4ab25997be06d5aa21bd8661737b0deb9096b7ad3e72ec86f429261865d'
             '4dd1014ac507c6a07ef3a2c75309106d367c4930e68e74731b3ea0c399d4591e'
             '434baa4c14f83eebb6b4b1397f74bd8ad97b687cef69092e2d1b0e85c780808c'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            'deb951edd1b35de81679dbb7c9d3512efdaea4fc1d626c94c98b789be209edd1'
+            '670a68797ad43aa74a75fd8a547ebc2f19491a8e8db05b7d836aa5b5166d8393'
             'a72d82432a3b17168d2b82fd841ab417de2f77a88f54309184f2fecc73df928d')
