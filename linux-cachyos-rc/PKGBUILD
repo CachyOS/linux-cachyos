@@ -206,7 +206,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -233,7 +233,7 @@ source=(
     "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
     "config" "config-rt"
     "auto-cpu-optimization.sh"
-    "${_patchsource}/all/0001-cachyos-base-all.patch")
+    "${_patchsource}/all/0001-cachyos-base-all-exp.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
     source+=("git+https://github.com/openzfs/zfs.git#commit=979fd5a434ebc422c02dec5deddd485ce6127fc5")
@@ -1027,8 +1027,8 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('02a8c4ab25997be06d5aa21bd8661737b0deb9096b7ad3e72ec86f429261865d'
-            'dd923e0bc0e23044b041c81ec8900b1e9ef43b14b6fd8edca41fad16abd34e69'
+            '4dd1014ac507c6a07ef3a2c75309106d367c4930e68e74731b3ea0c399d4591e'
             '434baa4c14f83eebb6b4b1397f74bd8ad97b687cef69092e2d1b0e85c780808c'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            'f8ce03bddc270aa91d106af03b8aaa9dae8dfdeda9c29b94d536802133a2bf7b'
+            'deb951edd1b35de81679dbb7c9d3512efdaea4fc1d626c94c98b789be209edd1'
             'a72d82432a3b17168d2b82fd841ab417de2f77a88f54309184f2fecc73df928d')
