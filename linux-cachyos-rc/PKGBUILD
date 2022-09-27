@@ -1027,8 +1027,8 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('02a8c4ab25997be06d5aa21bd8661737b0deb9096b7ad3e72ec86f429261865d'
-            '95af174f1013ff99432dbb01df3c4ef97e8c9b0fb1cc8725acef76fe28d25b4f'
-            '9f275b361dfc7d7006b82b3243603b7361bce2913d5c56f56aff5ee57a9da061'
+            'dd923e0bc0e23044b041c81ec8900b1e9ef43b14b6fd8edca41fad16abd34e69'
+            '434baa4c14f83eebb6b4b1397f74bd8ad97b687cef69092e2d1b0e85c780808c'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
             'f8ce03bddc270aa91d106af03b8aaa9dae8dfdeda9c29b94d536802133a2bf7b'
-            '3f533f33c10b3f3ddeacccf8911a4607d8f3f983a8453dc39e34e387e3a09ce2')
+            'a72d82432a3b17168d2b82fd841ab417de2f77a88f54309184f2fecc73df928d')
