@@ -17,7 +17,7 @@ do
     cd ..
 done
 
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto=full/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto=thin/" {}
 
 ## LLVM v3 Kernel
 
