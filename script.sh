@@ -53,7 +53,7 @@ done
 
 ## Generic Kernel
 
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=full/_use_llvm_lto=/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=thin/_use_llvm_lto=/" {}
 
 files=$(find . -name "PKGBUILD")
 
