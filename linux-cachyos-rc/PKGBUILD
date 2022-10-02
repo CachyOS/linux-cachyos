@@ -156,6 +156,7 @@ _build_zfs=${_build_zfs-}
 _bcachefs=${_bcachefs-}
 
 # Enable RT kernel
+# Only works for CFS Scheduler and BORE Scheduler
 _rtkernel=${_rtkernel-}
 
 # Enable NEST
@@ -240,11 +241,11 @@ if [ -n "$_build_zfs" ]; then
 fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then
-    source+=("${_patchsource}/sched/0001-prjc.patch")
+    source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
 fi
 ## PDS Scheduler
 if [ "$_cpusched" = "pds" ]; then
-    source+=("${_patchsource}/sched/0001-prjc.patch")
+    source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
 fi
 ## BORE Scheduler
 if [ "$_cpusched" = "bore" ]; then
@@ -258,7 +259,7 @@ fi
 if [ "$_cpusched" = "cacule-rdb" ]; then
     source+=("${_patchsource}/sched/0001-cacULE-cachy.patch")
 fi
-#ä TT Scheduler
+## TT Scheduler
 if [ "$_cpusched" = "tt" ]; then
     source+=("${_patchsource}/sched/0001-tt-cachy.patch")
 fi
@@ -1031,9 +1032,9 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('02a8c4ab25997be06d5aa21bd8661737b0deb9096b7ad3e72ec86f429261865d'
-            '1a665af21e479eca072d22441abca1dbc131248258be59fb9020ee1508f87e82'
-            '434baa4c14f83eebb6b4b1397f74bd8ad97b687cef69092e2d1b0e85c780808c'
+            '545f9592ac0bb2959de4799133c53d79c9e2bd3f226804e92693a2e2c20d724a'
+            'f0e02c04001b39a79344a114daceda589658f79035ad8d912c3d3528c13d35ca'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            '953627e38939aefa6eed08ae6677f6078ffad0f1bc248928d26ec8157d584e28'
-            'a72d82432a3b17168d2b82fd841ab417de2f77a88f54309184f2fecc73df928d'
-            'c166958ae5ddd715b12ce85a9a9349c96bc9e6fbf8b6d554fcf05941bdf8a21b')
+            '1ce9300f4dc2984c06f2e4149eb933e315fdb2463e97c317e4ecf6de442a677c'
+            'b487eeabfe71624d89ba4efd5dcdf83f9eb5d0406af43310400035a7060cecd0'
+            'd4b3fc8b159fd1445e34066c6a61bc73249b3733807cb63750e65561f6fa8bc0')

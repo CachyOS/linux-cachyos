@@ -155,6 +155,10 @@ _build_zfs=${_build_zfs-}
 # Enable bcachefs
 _bcachefs=${_bcachefs-}
 
+# Enable RT kernel
+# Only works for CFS Scheduler and BORE Scheduler
+_rtkernel=${_rtkernel-}
+
 # Enable NEST
 # NEST is a experimental cfs scheduler you can find more about here:
 # https://www.phoronix.com/news/Nest-Linux-Scheduling-Warm-Core
@@ -184,17 +188,17 @@ else
     pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=5.19
-_minor=12
+_major=6.0
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux TT scheduler Kernel by CachyOS with other patches and improvements'
+pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
 pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
@@ -219,8 +223,9 @@ if [ -n "$_build_zfs" ]; then
 fi
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 source=(
-    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
-    "config"
+#    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
+	"https://github.com/torvalds/linux/archive/refs/tags/v6.0.tar.gz"
+    "config" "config-rt"
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
@@ -247,7 +252,7 @@ fi
 if [ "$_cpusched" = "cacule-rdb" ]; then
     source+=("${_patchsource}/sched/0001-cacULE-cachy.patch")
 fi
-#ä TT Scheduler
+## TT Scheduler
 if [ "$_cpusched" = "tt" ]; then
     source+=("${_patchsource}/sched/0001-tt-cachy.patch")
 fi
@@ -269,6 +274,10 @@ fi
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
     source+=("${_patchsource}/misc/0001-bcachefs-after-lru.patch")
+fi
+## rt kernel
+if [ -n "$_rtkernel" ]; then
+    source+=("${_patchsource}/misc/0001-rt-rc.patch")
 fi
 ## NEST Support
 if [ -n "$_nest" ]; then
@@ -306,7 +315,11 @@ prepare() {
     done
 
     echo "Setting config..."
-    cp ../config .config
+    if [ -n "$_rtkernel" ]; then
+        cp ../config-rt .config
+    else
+        cp ../config .config
+    fi
 
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
@@ -337,6 +350,17 @@ prepare() {
        error "Selecting CachyOS config failed!"
        exit
     fi
+
+    ### Selecting proper RT config
+    if [ -n "$_rtkernel" ]; then
+        echo "Setting proper RT config"
+        scripts/config --disable RCU_NOCB_CPU_CB_BOOST \
+            --enable RCU_NOCB_CPU_DEFAULT_ALL \
+            --enable HZ_1000 \
+            --set-val HZ 1000 \
+            --enable PREEMPT_RT \
+            --enable PREEMPT_LAZY
+     fi
 
     ### Selecting the CPU scheduler
     if [ "$_cpusched" = "bmq" ]; then
@@ -593,7 +617,7 @@ prepare() {
             --set-str DEFAULT_TCP_CONG bbr2
     fi
 
-    ### Select LRU config
+   ### Select LRU config
     if [ "$_lru_config" = "standard" ]; then
        echo "Enabling multigenerational LRU..."
        scripts/config --enable LRU_GEN \
@@ -999,8 +1023,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('c436a548c7312ce6fc5a3472cbead895eef8f52841fbe7c71fd8e48bdfe2b0ba'
-            'c4543a2528981a6c4be7b368f3648995823ab9a1060afd7b51d06c9d377ad7fa'
+sha256sums=('f63602d33f9b98ab8abd1f668fe1debbb1eea28984e7218a0e051ac1d25aac37'
+            '545f9592ac0bb2959de4799133c53d79c9e2bd3f226804e92693a2e2c20d724a'
+            'f0e02c04001b39a79344a114daceda589658f79035ad8d912c3d3528c13d35ca'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            'efc09a728da21b8a9e068696c26e334d9fa950ad2e165cbd8a695f1897089da5'
-            '76f6e0a1b24f8dea2ce9c2b3d2ab11374f032f5c57064f2d08e6a0bcec40c563')
+            '1ce9300f4dc2984c06f2e4149eb933e315fdb2463e97c317e4ecf6de442a677c'
+            '8a4e4565cb01d3717f9d1ef63ee2b27bfb9e0da6f41d81fb7d30997a2eb3783a')

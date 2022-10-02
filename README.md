@@ -7,7 +7,7 @@ CachyOS are improved kernels that improve performance and other aspects. The Sch
 ### linux-cachyos will now use as default the BORE scheduler!
 
 - Standard Scheduler Completely Fair Scheduler (CFS) - linux-cachyos-cfs
-- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule / linux-cacule / linux-cacule-rdb (with the rdb balancer)
+- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
 - Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - linux-cachyos-tt / linux-tt
@@ -25,15 +25,20 @@ CachyOS are improved kernels that improve performance and other aspects. The Sch
 - Improved BFQ Scheduler
 - Back-ported patches from linux-next
 - General improved sysctl settings and upstream scheduler fixes
-- Latest LRU-le9 Patch-set, default enabled
-- DAMON Proactive-LRU-lists-Sorting DAMON_RECLAIM and DAMON_LRU_SORT
+- Latest LRU (v15) Patch-set, default enabled
+- Maple Tree from linux-next
+- MM Demotion from linux-next
+- Latency Nice Patchset included usuage with ananicy-cpp feature branch (https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t)
+- NEST Scheduler
+- rcu fixes and improvements
+- latest DAMON improvements and fixes
 - BBRv2 tcp_congestion_control
-- LLVM LTO Kernels prebuilt in x86-64-v3 and x86-64 in the CachyOS repo
+- LLVM THIN-LTO Kernels prebuilt in x86-64-v3 and x86-64 in the CachyOS repo
 - LRNG Framework (default enabled)
 - Latest & improved ZSTD patch-set
-- Latest BTRFS improvements & fixes
+- Latest BTRFS/XFS/EXT4 improvements & fixes
 - KSMBD Module for Samba3 Server
-- AMD PSTATE Driver enabled by default and with enhancements patches/fixes
+- AMD PSTATE EPP Driver enabled by default and with enhancements patches/fixes
 - Clearlinux Patchset
 - Kernel Control Flow Integrity (kCFI) selectable when using LLVM(patched llvm can be found in the cachyos-repo)
 - ZFS Filesystem Support and prebuilt in the repo!
@@ -42,35 +47,10 @@ CachyOS are improved kernels that improve performance and other aspects. The Sch
 - UserKSM daemon from pf
 - support for bcachefs (default compiled in cachyos-repo)
 
-## WINESYNC Usage:
-
-Install following packages from the AUR, if you get into issues:
-
-- [winesync-udev-rule](https://aur.archlinux.org/packages/winesync-udev-rule)
-
-And disable following enviroment variables in lutris/steam/..
-
-```
-WINEESYNC=0
-WINEFSYNC=0
-WINEFSYNC_FUTEX2=0
-```
-
-for steam following in the launch options:
-
-```
-WINEESYNC=0 WINEFSYNC=0 WINEFSYNC_FUTEX2=0 %command%
-```
-
-You'll also need a wine/proton with the winesync patch. I build a proton-tkg-git and a wine-tkg-git into the cachyos-repo once a week with winesync Fastsync
-Simply install it with ```sudo pacman -S proton-tkg-git wine-tkg-git``` or you built it your self from [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git). ## Currently fastsync seems not to work
-
-
 ## Other distros
 
 - First I will release every kernel update with a complete patch for every scheduler and their config.
-- Next I will implement a building system so it is possible to build the kernel for several distros.
-- Maybe I will provide some releases for debian based distros.
+- Next I will implement a building system so it is possible to build the kernel for several distros.(Still planned, any help is welcome)
 
 ## We are providing a [repo](https://mirror.cachyos.org/) which includes all kernels in generic-v3 and generic and more optimized packages
 
