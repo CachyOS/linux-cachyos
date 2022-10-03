@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization-y/_use_auto_optimization-/" {}
+## Enable ZFS
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs-/_build_zfs-y/" {}
 #find . -name "PKGBUILD" | xargs -I {} sed -i "s/_bcachefs=/_bcachefs=y/" {} # breaks probably /proc/meminfo
+## Enable Generic v3 
 find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU=y/GENERIC_CPU3=y/' {}
+## Dont compile linux-cacule linux-cacule-rdb into the repo
+rm -rf linux-cacule linux-cacule-rdb
 
 ## GCC v3 Kernel
 

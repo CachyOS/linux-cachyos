@@ -39,7 +39,7 @@ _makegconfig=${_makegconfig-}
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
-_NUMAdisable=${_NUMAdisable-y}
+_NUMAdisable=${_NUMAdisable-}
 
 # Compile ONLY used modules to VASTLYreduce the number of modules built
 # and the build time.
@@ -223,8 +223,7 @@ if [ -n "$_build_zfs" ]; then
 fi
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 source=(
-#    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
-	"https://github.com/torvalds/linux/archive/refs/tags/v6.0.tar.gz"
+    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config" "config-rt"
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
@@ -1023,9 +1022,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('f63602d33f9b98ab8abd1f668fe1debbb1eea28984e7218a0e051ac1d25aac37'
+sha256sums=('5c2443a5538de52688efb55c27ab0539c1f5eb58c0cfd16a2b9fbb08fd81788e'
             '545f9592ac0bb2959de4799133c53d79c9e2bd3f226804e92693a2e2c20d724a'
             'f0e02c04001b39a79344a114daceda589658f79035ad8d912c3d3528c13d35ca'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            '1ce9300f4dc2984c06f2e4149eb933e315fdb2463e97c317e4ecf6de442a677c'
+            '77b773fb79b016610bacddd033508bc6ee89efc1cf9d5fee58aa772a1cc18ba7'
             '8a4e4565cb01d3717f9d1ef63ee2b27bfb9e0da6f41d81fb7d30997a2eb3783a')
