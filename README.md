@@ -45,12 +45,24 @@ CachyOS are improved kernels that improve performance and other aspects. The Sch
 - WINESYNC Fastsync
 - Use entropy optimization for zram
 - UserKSM daemon from pf
-- support for bcachefs (default compiled in cachyos-repo)
+- support for bcachefs
 
 ## Other distros
 
-- First I will release every kernel update with a complete patch for every scheduler and their config.
-- Next I will implement a building system so it is possible to build the kernel for several distros.(Still planned, any help is welcome)
+- Complete patch for simple patching on the kernel
+- It is planned to implement into our kernel builder from cachyos buildsystem, which works also on other distro
+
+### Gentoo
+
+Its a community maintained ebuild from a user, which can be used for a dynamic building:
+(https://github.com/sandikata/ROKO__/tree/master/sys-kernel/cachyos-sources)
+
+Or simply run:
+
+```
+eselect repository enable ROKO__
+emaint sync -r ROKO__
+```
 
 ## We are providing a [repo](https://mirror.cachyos.org/) which includes all kernels in generic-v3 and generic and more optimized packages
 
@@ -78,25 +90,21 @@ sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
 
 sudo pacman-key --lsign-key F3B607488DB35A47
 
-sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-13-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-13-1-any.pkg.tar.zst'
+sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-13-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-13-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-6.0.1-9-x86_64.pkg.tar.zst'
 
   **Checking x86_64_v3 cpu support:**
 
   /lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported, searched)"
 
-  if you get an output change at the /etc/pacman.conf following:
-  ```
-  #Architecture = auto
-  Architecture = x86_64 x86_64_v3
-  ```
   add following under the arch repos the "-v3" repos only if they are supported:
   ```
   # cachyos repos
+  ## Only add if your cpu does v3 architecture
   [cachyos-v3]
   Include = /etc/pacman.d/cachyos-v3-mirrorlist
   [cachyos]
   Include = /etc/pacman.d/cachyos-mirrorlist
-````
+  ```
 
 --------------------------------------------------------------------------------
 
