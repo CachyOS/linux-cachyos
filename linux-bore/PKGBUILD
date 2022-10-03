@@ -178,7 +178,7 @@ _nest=${_nest-}
 # You need to configure ananicy-cpp for this or use existing settings
 # If you want to test it, use the following branch
 # https://gitlab.com/ananicy-cpp/ananicy-cpp/-/tree/feature/latency-nice
-_latency_nice=${_latency-nice-y}
+_latency_nice=${_latency_nice-y}
 
 if [ -n "$_use_llvm_lto" ]; then
     pkgsuffix=${_cpusched}-lto
