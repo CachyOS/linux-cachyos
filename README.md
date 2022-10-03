@@ -147,8 +147,6 @@ or at telegram:
 
 ### Valueable Contributors
 
-[SirLucjan (Piotr Gorski)](https://github.com/sirlucjan)
-
 [Hamad Marri](https://github.com/hamadmarri) for the CacULE Scheduler
 
 [Archlinux](https://archlinux.org) for the great linux operating system
