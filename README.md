@@ -79,10 +79,6 @@ cd cachyos-repo
 sudo ./cachyos-repo.sh
 ```
 
---------------------------------------------------------------------------------
-
---
-
 ## **manually**:
 
 ````
@@ -104,11 +100,8 @@ sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2
   Include = /etc/pacman.d/cachyos-v3-mirrorlist
   [cachyos]
   Include = /etc/pacman.d/cachyos-mirrorlist
-  ```
+  ````
 
---------------------------------------------------------------------------------
-
-```
 This script will also backup your old pacman.conf.
 
 This script will auto-detect you architecture, if your CPU have x86-64-v3 support, it will automatically use the repos which are optimized with this flag and some other flags.
@@ -122,8 +115,7 @@ Also all provided Kernels, Browsers, ... are optimized and compiled.
 - Then run following command to switch the packages to the default arch packages `sudo pacman -Suuy`
 
 
-More information's you will find here [CachyOS](https://github.com/cachyos) or [Discord](https://discord.gg/k39qfrxPNa)
-```
+More information's you will find here [CachyOS](https://github.com/cachyos) or [Discord](https://discord.gg/k39qfrxPNa) 
 
 ## How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS:
 
