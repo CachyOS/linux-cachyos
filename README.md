@@ -7,7 +7,7 @@ CachyOS are improved kernels that improve performance and other aspects. The Sch
 ### linux-cachyos will now use as default the BORE scheduler!
 
 - Standard Scheduler Completely Fair Scheduler (CFS) - linux-cachyos-cfs
-- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule / linux-cacule / linux-cacule-rdb (with the rdb balancer)
+- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
 - BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
 - Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - linux-cachyos-tt / linux-tt
@@ -25,52 +25,44 @@ CachyOS are improved kernels that improve performance and other aspects. The Sch
 - Improved BFQ Scheduler
 - Back-ported patches from linux-next
 - General improved sysctl settings and upstream scheduler fixes
-- Latest LRU-le9 Patch-set, default enabled
-- DAMON Proactive-LRU-lists-Sorting DAMON_RECLAIM and DAMON_LRU_SORT
+- Latest LRU (v15) Patch-set, default enabled
+- Maple Tree from linux-next
+- MM Demotion from linux-next
+- Latency Nice Patchset included usuage with ananicy-cpp feature branch (https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t)
+- NEST Scheduler
+- rcu fixes and improvements
+- latest DAMON improvements and fixes
 - BBRv2 tcp_congestion_control
-- LLVM LTO Kernels prebuilt in x86-64-v3 and x86-64 in the CachyOS repo
+- LLVM THIN-LTO Kernels prebuilt in x86-64-v3 and x86-64 in the CachyOS repo
 - LRNG Framework (default enabled)
 - Latest & improved ZSTD patch-set
-- Latest BTRFS improvements & fixes
+- Latest BTRFS/XFS/EXT4 improvements & fixes
 - KSMBD Module for Samba3 Server
-- AMD PSTATE Driver enabled by default and with enhancements patches/fixes
+- AMD PSTATE EPP Driver enabled by default and with enhancements patches/fixes
 - Clearlinux Patchset
 - Kernel Control Flow Integrity (kCFI) selectable when using LLVM(patched llvm can be found in the cachyos-repo)
 - ZFS Filesystem Support and prebuilt in the repo!
 - WINESYNC Fastsync
 - Use entropy optimization for zram
 - UserKSM daemon from pf
-- support for bcachefs (default compiled in cachyos-repo)
-
-## WINESYNC Usage:
-
-Install following packages from the AUR, if you get into issues:
-
-- [winesync-udev-rule](https://aur.archlinux.org/packages/winesync-udev-rule)
-
-And disable following enviroment variables in lutris/steam/..
-
-```
-WINEESYNC=0
-WINEFSYNC=0
-WINEFSYNC_FUTEX2=0
-```
-
-for steam following in the launch options:
-
-```
-WINEESYNC=0 WINEFSYNC=0 WINEFSYNC_FUTEX2=0 %command%
-```
-
-You'll also need a wine/proton with the winesync patch. I build a proton-tkg-git and a wine-tkg-git into the cachyos-repo once a week with winesync Fastsync
-Simply install it with ```sudo pacman -S proton-tkg-git wine-tkg-git``` or you built it your self from [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git). ## Currently fastsync seems not to work
-
+- support for bcachefs
 
 ## Other distros
 
-- First I will release every kernel update with a complete patch for every scheduler and their config.
-- Next I will implement a building system so it is possible to build the kernel for several distros.
-- Maybe I will provide some releases for debian based distros.
+- Complete patch for simple patching on the kernel
+- It is planned to implement into our kernel builder from cachyos buildsystem, which works also on other distro
+
+### Gentoo
+
+Its a community maintained ebuild from a user, which can be used for a dynamic building:
+(https://github.com/sandikata/ROKO__/tree/master/sys-kernel/cachyos-sources)
+
+Or simply run:
+
+```
+eselect repository enable ROKO__
+emaint sync -r ROKO__
+```
 
 ## We are providing a [repo](https://mirror.cachyos.org/) which includes all kernels in generic-v3 and generic and more optimized packages
 
@@ -87,10 +79,6 @@ cd cachyos-repo
 sudo ./cachyos-repo.sh
 ```
 
---------------------------------------------------------------------------------
-
---
-
 ## **manually**:
 
 ````
@@ -98,29 +86,22 @@ sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
 
 sudo pacman-key --lsign-key F3B607488DB35A47
 
-sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-13-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-13-1-any.pkg.tar.zst'
+sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-13-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-13-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-6.0.1-9-x86_64.pkg.tar.zst'
 
   **Checking x86_64_v3 cpu support:**
 
   /lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported, searched)"
 
-  if you get an output change at the /etc/pacman.conf following:
-  ```
-  #Architecture = auto
-  Architecture = x86_64 x86_64_v3
-  ```
   add following under the arch repos the "-v3" repos only if they are supported:
   ```
   # cachyos repos
+  ## Only add if your cpu does v3 architecture
   [cachyos-v3]
   Include = /etc/pacman.d/cachyos-v3-mirrorlist
   [cachyos]
   Include = /etc/pacman.d/cachyos-mirrorlist
-````
+  ````
 
---------------------------------------------------------------------------------
-
-```
 This script will also backup your old pacman.conf.
 
 This script will auto-detect you architecture, if your CPU have x86-64-v3 support, it will automatically use the repos which are optimized with this flag and some other flags.
@@ -134,8 +115,7 @@ Also all provided Kernels, Browsers, ... are optimized and compiled.
 - Then run following command to switch the packages to the default arch packages `sudo pacman -Suuy`
 
 
-More information's you will find here [CachyOS](https://github.com/cachyos) or [Discord](https://discord.gg/k39qfrxPNa)
-```
+More information's you will find here [CachyOS](https://github.com/cachyos) or [Discord](https://discord.gg/k39qfrxPNa) 
 
 ## How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS:
 
@@ -158,8 +138,6 @@ or at telegram:
 <https://www.patreon.com/CachyOS>
 
 ### Valueable Contributors
-
-[SirLucjan (Piotr Gorski)](https://github.com/sirlucjan)
 
 [Hamad Marri](https://github.com/hamadmarri) for the CacULE Scheduler
 
