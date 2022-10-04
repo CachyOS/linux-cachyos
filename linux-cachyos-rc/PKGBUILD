@@ -237,7 +237,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/openzfs/zfs.git#commit=979fd5a434ebc422c02dec5deddd485ce6127fc5")
+    source+=("git+https://github.com/openzfs/zfs.git#commit=6a6bd493988c75331deab06e5352a9bed035a87d")
 fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then
