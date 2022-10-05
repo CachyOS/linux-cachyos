@@ -29,11 +29,11 @@ pkgbase = linux-cachyos
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.0/sched/0001-bore.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.0/misc/0001-Add-latency-priority-for-CFS-class.patch
 	sha256sums = 5c2443a5538de52688efb55c27ab0539c1f5eb58c0cfd16a2b9fbb08fd81788e
-	sha256sums = 545f9592ac0bb2959de4799133c53d79c9e2bd3f226804e92693a2e2c20d724a
+	sha256sums = 61479bd23bafaad89512ef9cdd420b40797da40691503ee89ae188cb51bb4924
 	sha256sums = f0e02c04001b39a79344a114daceda589658f79035ad8d912c3d3528c13d35ca
 	sha256sums = e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e
 	sha256sums = 8513b07315568e8c8cdd0790778bda3a4eb5e2cf4f585662fdd8bccbe331a40f
-	sha256sums = b487eeabfe71624d89ba4efd5dcdf83f9eb5d0406af43310400035a7060cecd0
+	sha256sums = fbb8f5f7f90d1801a420b724411a2c7011c34653f841fd777340649aebf57ba8
 	sha256sums = d4b3fc8b159fd1445e34066c6a61bc73249b3733807cb63750e65561f6fa8bc0
 
 pkgname = linux-cachyos
