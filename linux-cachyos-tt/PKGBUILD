@@ -199,7 +199,7 @@ _stable=${_major}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -754,9 +754,7 @@ prepare() {
             --set-str ZRAM_DEF_COMP zstd \
             --disable ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
             --enable ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
-            --set-str ZSWAP_COMPRESSOR_DEFAULT zstd \
-            --enable ZRAM_ENTROPY \
-            --set-val ZRAM_ENTROPY_THRESHOLD 100000
+            --set-str ZSWAP_COMPRESSOR_DEFAULT zstd
     fi
 
     ### Selecting the ZSTD modules and kernel compression level
@@ -1026,5 +1024,5 @@ sha256sums=('5c2443a5538de52688efb55c27ab0539c1f5eb58c0cfd16a2b9fbb08fd81788e'
             '61479bd23bafaad89512ef9cdd420b40797da40691503ee89ae188cb51bb4924'
             'f0e02c04001b39a79344a114daceda589658f79035ad8d912c3d3528c13d35ca'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            '8513b07315568e8c8cdd0790778bda3a4eb5e2cf4f585662fdd8bccbe331a40f'
+            '8180568fa32a598c9643cb757daa4a8b59b4d888917aa086f82f4929dcaea3d5'
             '8a4e4565cb01d3717f9d1ef63ee2b27bfb9e0da6f41d81fb7d30997a2eb3783a')
