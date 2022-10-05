@@ -754,9 +754,7 @@ prepare() {
             --set-str ZRAM_DEF_COMP zstd \
             --disable ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
             --enable ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
-            --set-str ZSWAP_COMPRESSOR_DEFAULT zstd \
-            --enable ZRAM_ENTROPY \
-            --set-val ZRAM_ENTROPY_THRESHOLD 100000
+            --set-str ZSWAP_COMPRESSOR_DEFAULT zstd
     fi
 
     ### Selecting the ZSTD modules and kernel compression level
