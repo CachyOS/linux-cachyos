@@ -1,4 +1,5 @@
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto=/_use_llvm_lto=thin/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_lto_suffix=/_use_lto_suffix=y/" {}
 find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU=y/GENERIC_CPU3=y/' {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization=y/_use_auto_optimization=/" {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs=/_build_zfs=y/" {}
