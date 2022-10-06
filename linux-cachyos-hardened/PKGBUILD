@@ -138,6 +138,10 @@ _zstd_level_value=${_zstd_level_value-'normal'}
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 _use_llvm_lto=${_use_llvm_lto-}
 
+# Use suffix -lto only when requested by the user
+# https://github.com/CachyOS/linux-cachyos/issues/36
+_use_lto_suffix=${_use_lto_suffix-}
+
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
 # scheme used by CONFIG_CFI_CLANG. KCFI doesn't require LTO, doesn't
@@ -180,7 +184,7 @@ _nest=${_nest-}
 # https://gitlab.com/ananicy-cpp/ananicy-cpp/-/tree/feature/latency-nice
 _latency_nice=${_latency_nice-y}
 
-if [ -n "$_use_llvm_lto" ]; then
+if [[ -n "$_use_llvm_lto" && -n "$_use_lto_suffix" ]]; then
     pkgsuffix=cachyos-${_cpusched}-lto
     pkgbase=linux-$pkgsuffix
 
