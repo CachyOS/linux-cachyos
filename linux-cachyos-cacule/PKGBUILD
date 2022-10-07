@@ -139,8 +139,10 @@ _zstd_level_value=${_zstd_level_value-'normal'}
 _use_llvm_lto=${_use_llvm_lto-}
 
 # Use suffix -lto only when requested by the user
+# Enabled by default.
+# If you do not want the suffix -lto remove the "y" sign next to the flag.
 # https://github.com/CachyOS/linux-cachyos/issues/36
-_use_lto_suffix=${_use_lto_suffix-}
+_use_lto_suffix=${_use_lto_suffix-y}
 
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
