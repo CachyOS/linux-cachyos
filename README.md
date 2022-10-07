@@ -70,7 +70,7 @@ emaint sync -r ROKO__
 
 **Just run following command:**
 
-## **automatic march detection and changing the pacman.conf:**
+## **Automatic `march` detection and changing the pacman.conf:**
 
 ```
 wget https://mirror.cachyos.org/cachyos-repo.tar.xz
@@ -78,7 +78,7 @@ tar xvf cachyos-repo.tar.xz && cd cachyos-repo
 sudo ./cachyos-repo.sh
 ```
 
-## **manually**:
+## **Manually**:
 
 ````
 sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
