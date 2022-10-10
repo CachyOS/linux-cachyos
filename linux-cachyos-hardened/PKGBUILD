@@ -694,6 +694,7 @@ prepare() {
             --enable LRNG_DRNG_ATOMIC \
             --enable LRNG_SYSCTL \
             --enable LRNG_RANDOM_IF \
+            --enable LRNG_AIS2031_NTG1_SEEDING_STRATEGY \
             --module LRNG_KCAPI_IF \
             --module LRNG_HWRAND_IF \
             --enable LRNG_DEV_IF \
@@ -725,16 +726,16 @@ prepare() {
             --enable LRNG_SCHED \
             --set-val LRNG_SCHED_ENTROPY_RATE 4294967295 \
             --enable LRNG_DRNG_CHACHA20 \
-            --module LRNG_DRBG \
+            --enable LRNG_DRBG \
             --module LRNG_DRNG_KCAPI \
             --enable LRNG_SWITCH \
             --enable LRNG_SWITCH_HASH \
             --module LRNG_HASH_KCAPI \
             --enable LRNG_SWITCH_DRNG \
-            --module LRNG_SWITCH_DRBG \
+            --module LRNG_SWITCH_DRNG_CHACHA20 \
             --module LRNG_SWITCH_DRNG_KCAPI \
-            --enable LRNG_DFLT_DRNG_CHACHA20 \
-            --disable LRNG_DFLT_DRNG_DRBG \
+            --disable LRNG_DFLT_DRNG_CHACHA20 \
+            --enable LRNG_DFLT_DRNG_DRBG \
             --disable LRNG_DFLT_DRNG_KCAPI \
             --enable LRNG_TESTING_MENU \
             --disable LRNG_RAW_HIRES_ENTROPY \
@@ -1037,4 +1038,4 @@ sha256sums=('5c2443a5538de52688efb55c27ab0539c1f5eb58c0cfd16a2b9fbb08fd81788e'
             '8180568fa32a598c9643cb757daa4a8b59b4d888917aa086f82f4929dcaea3d5'
             'fbb8f5f7f90d1801a420b724411a2c7011c34653f841fd777340649aebf57ba8'
             'e568a7c2df42bc33666ae8961bc7b9933d8b90127d49a48092881479c511c4a1'
-            'd4b3fc8b159fd1445e34066c6a61bc73249b3733807cb63750e65561f6fa8bc0')
+            '3ecc208ccf8e1b879e8c9a14c652d5c478c4b1fb3e6c140dda6394376cf150ed')

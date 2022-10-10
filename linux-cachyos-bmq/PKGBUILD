@@ -690,6 +690,7 @@ prepare() {
             --enable LRNG_DRNG_ATOMIC \
             --enable LRNG_SYSCTL \
             --enable LRNG_RANDOM_IF \
+            --enable LRNG_AIS2031_NTG1_SEEDING_STRATEGY \
             --module LRNG_KCAPI_IF \
             --module LRNG_HWRAND_IF \
             --enable LRNG_DEV_IF \
@@ -721,16 +722,16 @@ prepare() {
             --enable LRNG_SCHED \
             --set-val LRNG_SCHED_ENTROPY_RATE 4294967295 \
             --enable LRNG_DRNG_CHACHA20 \
-            --module LRNG_DRBG \
+            --enable LRNG_DRBG \
             --module LRNG_DRNG_KCAPI \
             --enable LRNG_SWITCH \
             --enable LRNG_SWITCH_HASH \
             --module LRNG_HASH_KCAPI \
             --enable LRNG_SWITCH_DRNG \
-            --module LRNG_SWITCH_DRBG \
+            --module LRNG_SWITCH_DRNG_CHACHA20 \
             --module LRNG_SWITCH_DRNG_KCAPI \
-            --enable LRNG_DFLT_DRNG_CHACHA20 \
-            --disable LRNG_DFLT_DRNG_DRBG \
+            --disable LRNG_DFLT_DRNG_CHACHA20 \
+            --enable LRNG_DFLT_DRNG_DRBG \
             --disable LRNG_DFLT_DRNG_KCAPI \
             --enable LRNG_TESTING_MENU \
             --disable LRNG_RAW_HIRES_ENTROPY \
