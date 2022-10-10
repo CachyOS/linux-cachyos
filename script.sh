@@ -22,7 +22,6 @@ do
 done
 
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-/_use_llvm_lto-thin/" {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_lto_suffix-/_use_lto_suffix-y/" {}
 
 ## LLVM v3 Kernel
 
@@ -59,7 +58,6 @@ done
 ## Generic Kernel
 
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-thin/_use_llvm_lto-/" {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_lto_suffix-y/_use_lto_suffix-/" {}
 
 files=$(find . -name "PKGBUILD")
 
