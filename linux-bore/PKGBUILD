@@ -195,17 +195,17 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.0
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -1026,10 +1026,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('5c2443a5538de52688efb55c27ab0539c1f5eb58c0cfd16a2b9fbb08fd81788e'
+sha256sums=('8ede745a69351ea0f27fe0c48780d4efa37ff086135e129358ce09694957e8f9'
             '94579d96177a5eb8ef4227dd10f70d999e2f17acb182fe7cb3b659a5c50a9cc5'
             'fe22c8635aaa0d17742c3bcb943692782902c3eb8c213adfe47bb5dd517021e9'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            '8180568fa32a598c9643cb757daa4a8b59b4d888917aa086f82f4929dcaea3d5'
-            'fbb8f5f7f90d1801a420b724411a2c7011c34653f841fd777340649aebf57ba8'
+            'cd50ee7a7eb6dea2350db296f15143904f4a90e4c6c3b8a9a5c1883b399a4caf'
+            '5e4367ae9d8c1856a0aa4bacc8bddb2cbe33d3f4733b1822cea12f5c45009b0d'
             '3ecc208ccf8e1b879e8c9a14c652d5c478c4b1fb3e6c140dda6394376cf150ed')
