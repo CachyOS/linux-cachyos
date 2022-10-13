@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.0.0 Kernel Configuration
+# Linux/x86 6.0.1 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 12.2.0"
 CONFIG_CC_IS_GCC=y
@@ -10465,6 +10465,7 @@ CONFIG_LSM="landlock,lockdown,yama,integrity,bpf"
 # Memory initialization
 #
 CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN=y
+CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO_BARE=y
 CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y
 # CONFIG_INIT_STACK_NONE is not set
 # CONFIG_INIT_STACK_ALL_PATTERN is not set
