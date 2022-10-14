@@ -690,6 +690,7 @@ prepare() {
             --enable LRNG_DRNG_ATOMIC \
             --enable LRNG_SYSCTL \
             --enable LRNG_RANDOM_IF \
+            --enable LRNG_AIS2031_NTG1_SEEDING_STRATEGY \
             --module LRNG_KCAPI_IF \
             --module LRNG_HWRAND_IF \
             --enable LRNG_DEV_IF \
