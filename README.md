@@ -4,7 +4,7 @@
   <p align="center">CachyOS ships improved kernels that improve performance and other aspects.</p>
 </div>
 
-## :globe_with_meridians: General Information about kernels
+## 🌐 General Information about kernels
 
 The Schedulers listed below are supported:
 
@@ -19,7 +19,7 @@ The Schedulers listed below are supported:
 
 > All kernels are prebuilt in two different march versions (x86-64 and x86-64-v3) and also with the LTO-enabled kernels in the cachyos repositories.
 
-## :dart: Features
+## 🎯 Features
 - Very customizable PKGBUILD with many features and improvements
 - 5 Different scheduler are supported, CacULE-,CFS-,tt-,bmq-,bore-, and pds scheduler
 - GCC/CLANG Optimization with automatically found cpu arch or also selectable cpu arch
@@ -86,7 +86,7 @@ sudo ./cachyos-repo.sh
 
 > The script performs automatic `march` detection and changes the pacman.conf
 
-## :hand: Manually
+## ✋ Manually
 1. Add key
 ```
 sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
@@ -121,7 +121,7 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 > This script will auto-detect you architecture, if your CPU have x86-64-v3 support, it will automatically use the repos which are optimized with this flag > and some other flags.
 > Also all provided Kernels, Browsers, ... are optimized and compiled.
 
-## :arrow_backward: How to Backup the config and use the native Arch Packages
+## ◀️ How to Backup the config and use the native Arch Packages
 
 - Remove or Backup the config located at /etc/pacman.conf
 - then run `sudo mv /etc/pacman.conf.bak /etc/pacman.conf`
@@ -130,17 +130,17 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 
 More information's you will find here [CachyOS](https://github.com/cachyos) or [Discord](https://discord.gg/k39qfrxPNa) 
 
-## :wrench: How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS:
+## 🔧 How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS:
 > Not needed anymore, just install the latest dkms version (3.0.2).
 
-## :speaking_head: Support - get in touch with CachyOS community
+## 🗣️ Support - get in touch with CachyOS community
 ### Discord
 <https://discord.gg/qJqj94uFwE>
 
 ### Telegram:
 <https://t.me/+zCzPX4cAFjk1MTYy>
 
-## :seedling: Donations are welcome for the compile server for the repositories or a cup of coffee for maintain this repositories
+## 🌱 Donations are welcome for the compile server for the repositories or a cup of coffee for maintain this repositories
 
 <https://paypal.me/pttrr> <br />
 <https://www.patreon.com/CachyOS>
