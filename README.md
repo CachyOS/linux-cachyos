@@ -144,7 +144,10 @@ More information's you will find here [CachyOS](https://github.com/cachyos) or [
 ## 🌱 Donations are welcome for the compile server for the repositories or a cup of coffee for maintain this repositories
 
 <https://paypal.me/pttrr> <br />
-<https://www.patreon.com/CachyOS>
+<https://www.patreon.com/CachyOS> <br />
+
+bitcoin: bc1qmwglfchlc335du6pcu6w64cexu7cck0mzhyw42 <br />
+etherium: 0xc2dc77327F78A7B85Db3941Eb49e74F41E961649
 
 ### Valueable Contributors
 [Hamad Marri](https://github.com/hamadmarri) for the CacULE Scheduler <br />
