@@ -74,6 +74,7 @@ Run following commands:
 ```
 wget https://mirror.cachyos.org/cachyos-repo.tar.xz
 ```
+> If don't have `wget`, install them by `sudo pacman -S wget`
 
 2. Extract and jump into the archive
 ```
@@ -135,21 +136,18 @@ More information's you will find here [CachyOS](https://github.com/cachyos) or [
 > Not needed anymore, just install the latest dkms version (3.0.2).
 
 ## 🗣️ Support - get in touch with CachyOS community
-### Discord
-<https://discord.gg/qJqj94uFwE>
+**Discord:** <https://discord.gg/qJqj94uFwE> <br />
+**Telegram:** <https://t.me/+zCzPX4cAFjk1MTYy> <br />
 
-### Telegram:
-<https://t.me/+zCzPX4cAFjk1MTYy>
+## 🌱 Donations are welcome for the build server for the repositories or a cup of coffee for maintaining our repositories.
 
-## 🌱 Donations are welcome for the compile server for the repositories or a cup of coffee for maintain this repositories
+**PayPal:** <https://paypal.me/pttrr> <br />
+**Patreon:** <https://www.patreon.com/CachyOS> <br />
 
-<https://paypal.me/pttrr> <br />
-<https://www.patreon.com/CachyOS> <br />
-
-Bitcoin: bc1qmwglfchlc335du6pcu6w64cexu7cck0mzhyw42 <br />
-Ethereum: 0xc2dc77327F78A7B85Db3941Eb49e74F41E961649
+**BTC:** bc1qmwglfchlc335du6pcu6w64cexu7cck0mzhyw42 <br />
+**ETH:** 0xc2dc77327F78A7B85Db3941Eb49e74F41E961649
 
 ### Valueable Contributors
-[Hamad Marri](https://github.com/hamadmarri) for the CacULE Scheduler <br />
+[Hamad Marri](https://github.com/hamadmarri) for the CacULE and TT Scheduler <br />
 [Archlinux](https://archlinux.org) for the great linux operating system <br />
 [And all other Kernel Developers and Supporters](https://github.com/torvalds/linux) <br />
