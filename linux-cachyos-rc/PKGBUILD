@@ -68,7 +68,7 @@ _nr_cpus=${_nr_cpus-}
 _per_gov=${_per_gov-y}
 
 ### Enable TCP_CONG_BBR2
-_tcp_bbr2=${_tcp_bbr2=y}
+_tcp_bbr2=${_tcp_bbr2-y}
 
 ### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-750}
@@ -194,10 +194,10 @@ else
     pkgsuffix=cachyos-rc
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.0
+_major=6.1
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc7
+_rcver=rc1
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -205,7 +205,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=5
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -622,7 +622,7 @@ prepare() {
             --set-str DEFAULT_TCP_CONG bbr2
     fi
 
-    ### Select LRU config
+   ### Select LRU config
     if [ "$_lru_config" = "standard" ]; then
        echo "Enabling multigenerational LRU..."
        scripts/config --enable LRU_GEN \
@@ -841,7 +841,6 @@ prepare() {
     echo "Rewrite configuration..."
     make ${BUILD_FLAGS[*]} prepare
     yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
-    #make ${BUILD_FLAGS[*]} olddefconfig
     diff -u ../config .config || :
 
     ### Prepared version
@@ -1028,10 +1027,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('02a8c4ab25997be06d5aa21bd8661737b0deb9096b7ad3e72ec86f429261865d'
-            '8faf8b1a65476e3c92d102df9e5fa12742de4c45d790579369b3002cd26e0b6a'
+sha256sums=('c46a02fde1d8b373fccce418f7ca747a81575c31cddff87c32012c71cea13274'
+            'a98ce1919f586a9bfd01e5198bb77c80f80a98c00844e66425de9131742b0c1c'
             '06d408a1dad0a31aff812a81725acd1c5d8cb70b34eb2eb5b695c8d426d895da'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            'd4b3e623f735db3b8ae0f99137f9fc51f8e30bff3a0a0bf0cfca35e12148b4df'
-            '5e4367ae9d8c1856a0aa4bacc8bddb2cbe33d3f4733b1822cea12f5c45009b0d'
-            '3ecc208ccf8e1b879e8c9a14c652d5c478c4b1fb3e6c140dda6394376cf150ed')
+            'ce3fa93b00ad46c14b227db7e7d95d205add926bbf0bec18a1914729bf8ac34d'
+            'ce1fbbda7e83e5685124eea4993f810c7f5ee11a38bf55f3db81e720e8710392'
+            'aec1703d3e97df5727e4a9350a5d18dcdf117623a85802d220df7ed3ea7d58a3')
