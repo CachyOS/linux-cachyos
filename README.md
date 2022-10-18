@@ -6,54 +6,54 @@
 </div>
 
 ## 🌐 General Information about kernels
-
 The Schedulers listed below are supported:
 
-### linux-cachyos uses as default the BORE scheduler
-- BORE (Burst-Oriented Response Enhancer) CPU Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) - linux-cachyos-bore / linux-cachyos / linux-bore
-- Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - linux-cachyos-tt / linux-tt
-- BitMap Queue (BMQ) Alfred Chen Scheduler - linux-cachyos-bmq
-- Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » linux-cachyos-pds
-- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - linux-cachyos-cacule
-- Standard Scheduler Completely Fair Scheduler (CFS) - linux-cachyos-cfs
-
-
+### 🧬 linux-cachyos uses as default the BORE scheduler
+We provided all of these schedulers because each scheduler performs differently and depends on usage. Please test it and choose what suits your requirements.
+- BORE (Burst-Oriented Response Enhancer) CPU Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler)
+  - `linux-cachyos` - Default kernel and we decided to ship BORE by default, but the scheduler could be changed in the future.
+  - `linux-cachyos-bore` - If we decide to change the scheduler in the future, we still want to provide BORE.
+- Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
+- BitMap Queue (BMQ) Alfred Chen Scheduler - `linux-cachyos-bmq`
+- Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » `linux-cachyos-pds`
+- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - `linux-cachyos-cacule`
+- Standard Scheduler Completely Fair Scheduler (CFS) - `linux-cachyos-cfs`
 > All kernels are prebuilt in two different march versions (x86-64 and x86-64-v3) and also with the LTO-enabled kernels in the cachyos repositories.
 
 ## 🎯 Features
-- Very customizable PKGBUILD with many features and improvements
-- 5 Different scheduler are supported, CacULE-,CFS-,tt-,bmq-,bore-, and pds scheduler
-- GCC/CLANG Optimization with automatically found cpu arch or also selectable cpu arch
-- Choose between LLVM/LTO or GCC
-- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz # default 750 Hz
-- Improved BFQ Scheduler
-- Back-ported patches from linux-next
-- General improved sysctl settings and upstream scheduler fixes
-- Latest LRU (v15) Patch-set, default enabled
-- Maple Tree from linux-next
-- MM Demotion from linux-next
-- Latency Nice Patchset included usuage with ananicy-cpp [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
-- NEST Scheduler
-- rcu fixes and improvements
-- latest DAMON improvements and fixes
-- BBRv2 tcp_congestion_control
-- LLVM THIN-LTO Kernels prebuilt in x86-64-v3 and x86-64 in the CachyOS repositories
-- LRNG Framework (default enabled)
-- Latest & improved ZSTD patch-set
-- Latest BTRFS/XFS/EXT4 improvements & fixes
-- KSMBD Module for Samba3 Server
-- AMD PSTATE EPP Driver enabled by default and with enhancements patches/fixes
-- Clearlinux Patchset
-- Kernel Control Flow Integrity (kCFI) selectable when using LLVM(patched llvm can be found in the cachyos-repositories)
-- ZFS Filesystem Support and prebuilt in the repository
-- WINESYNC Fastsync
-- Use entropy optimization for zRAM
-- UserKSM daemon from pf
-- support for bcachefs
+- Very customizable PKGBUILD with many features and improvements.
+- 5 Different scheduler are supported, `CacULE-`,`CFS-`,`tt-`,`bmq-`,`bore-`, and `pds` scheduler
+- `GCC/CLANG` Optimization with automatically found CPU arch or also selectable CPU architecture.
+- Choose between `LLVM/LTO` or `GCC`.
+- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz # default 750 Hz.
+- Improved BFQ Scheduler.
+- Back-ported patches from `linux-next`.
+- General improved sysctl settings and upstream scheduler fixes.
+- Latest LRU (v15) Patch-set, default enabled.
+- Maple Tree from `linux-next`.
+- MM Demotion from `linux-next`.
+- Latency Nice Patchset included usuage with `ananicy-cpp` [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
+- NEST Scheduler.
+- rcu fixes and improvements.
+- latest DAMON improvements and fixes.
+- BBRv2 tcp_congestion_control.
+- LLVM THIN-LTO Kernels prebuilt in `x86-64-v3` and `x86-64` in the CachyOS repositories.
+- LRNG Framework. (default enabled)
+- Latest & improved ZSTD patch-set.
+- Latest BTRFS/XFS/EXT4 improvements & fixes.
+- KSMBD Module for Samba3 Server.
+- AMD PSTATE EPP Driver enabled by default and with enhancements patches/fixes.
+- Clearlinux Patchset.
+- Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`. (patched llvm can be found in the cachyos-repositories)
+- ZFS Filesystem Support and prebuilt in the repository.
+- WINESYNC Fastsync.
+- Use entropy optimization for zRAM.
+- UserKSM daemon from pf.
+- support for bcachefs.
 
 ## Other GNU/Linux distributions
 - Complete patch for simple patching on the kernel
-- It is planned to implement into our kernel builder from cachyos buildsystem, which works also on other distro
+- It is planned to implement into our kernel builder from cachyos buildsystem, which works also on other distributions.
 
 ### Gentoo
 Its a community maintained ebuild from a user, which can be used for a dynamic building right [here](https://github.com/sandikata/ROKO__/tree/master/sys-kernel/cachyos-sources)
