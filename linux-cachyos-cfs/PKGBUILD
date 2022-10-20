@@ -120,7 +120,7 @@ _processor_opt=${_processor_opt-}
 _use_auto_optimization=${_use_auto_optimization-y}
 
 # disable debug to lower the size of the kernel
-_disable_debug=${_disable_debug-y}
+_disable_debug=${_disable_debug-}
 
 ## Enable zram/zswap ZSTD compression
 _zstd_compression=${_zstd_compression-y}
