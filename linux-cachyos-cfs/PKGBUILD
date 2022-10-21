@@ -68,7 +68,7 @@ _nr_cpus=${_nr_cpus-}
 _per_gov=${_per_gov-y}
 
 ### Enable TCP_CONG_BBR2
-_tcp_bbr2=${_tcp_bbr2=y}
+_tcp_bbr2=${_tcp_bbr2-y}
 
 ### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-750}
@@ -195,7 +195,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.0
-_minor=2
+_minor=3
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -750,7 +750,8 @@ prepare() {
             --disable LRNG_RUNTIME_MAX_WO_RESEED_CONFIG \
             --disable LRNG_TEST_CPU_ES_COMPRESSION \
             --enable LRNG_SELFTEST \
-            --disable LRNG_SELFTEST_PANIC
+            --disable LRNG_SELFTEST_PANIC \
+            --disable LRNG_RUNTIME_FORCE_SEEDING_DISABLE
     fi
 
     ### Enable zram/zswap ZSTD compression
@@ -1027,9 +1028,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('a13c26388cacccb684cd9f51109596a280c8186b7e95174d31ee7c5718e95c9d'
-            '8faf8b1a65476e3c92d102df9e5fa12742de4c45d790579369b3002cd26e0b6a'
+sha256sums=('b0d522241805794d8af3a67d331ba063a16496c6fb6d365d48f7ed78ee1c3dcf'
+            '22428904a3c2a8bbebdcfb2d16c808612f998904f9d674bc3a1670e31da65c22'
             '06d408a1dad0a31aff812a81725acd1c5d8cb70b34eb2eb5b695c8d426d895da'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            'd4b3e623f735db3b8ae0f99137f9fc51f8e30bff3a0a0bf0cfca35e12148b4df'
+            'a19de15cdcb85955092fe3fe4fa90006985b507c3aabb2a3de2b9009b7579a1f'
             '3ecc208ccf8e1b879e8c9a14c652d5c478c4b1fb3e6c140dda6394376cf150ed')
