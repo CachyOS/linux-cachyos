@@ -133,7 +133,7 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 More information's you will find here [CachyOS](https://github.com/cachyos) or [Discord](https://discord.gg/k39qfrxPNa) 
 
 ## 🔧 How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS:
-> Not needed anymore, just install the latest dkms version (3.0.2).
+> Not needed anymore, just install the latest dkms version from our repo.
 
 ## 🗣️ Support - get in touch with CachyOS community
 **Discord:** <https://discord.gg/qJqj94uFwE> <br />
