@@ -195,7 +195,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.0
-_minor=3
+_minor=5
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -205,7 +205,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux cacULE-RDB scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -235,7 +235,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/openzfs/zfs.git#commit=6a6bd493988c75331deab06e5352a9bed035a87d")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=2eb7f7629a9b1507a8b06ae7efacabea7e394387")
 fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then
@@ -1028,9 +1028,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('b0d522241805794d8af3a67d331ba063a16496c6fb6d365d48f7ed78ee1c3dcf'
+sha256sums=('61332ef22b53c50c10faabfb965896a7d1ad4f3381f0f89643c820f28a60418e'
             '6c0d6bc4d2978b5ff6da3854c0938e5bbf9a9171202d87c6f43fb7f7ce1cc5bd'
             '06d408a1dad0a31aff812a81725acd1c5d8cb70b34eb2eb5b695c8d426d895da'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            '3d8899cdcabe4fcc35a908a4af1f3c253f4c20d6c2672d28c366db1ced384c63'
-            'e6146243342077c1c755ed377ebb866cd8f40cbfe7a1a86b7dfbd076151a0b3f')
+            '8cb3cd165819a2624bc7d4724e9a6a64b6e8a0938909acb7b10a5432c04d67d6'
+            '2b9f45f0cc8e7c4871cd75e0932b03f2a0c633db9a875af1f308d4f4976d0948')
