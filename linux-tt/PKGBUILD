@@ -237,6 +237,18 @@ source=(
 if [ -n "$_build_zfs" ]; then
     source+=("git+https://github.com/cachyos/zfs.git#commit=2eb7f7629a9b1507a8b06ae7efacabea7e394387")
 fi
+## Latency NICE Support
+if [ -n "$_latency_nice" ]; then
+    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
+         source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
+    fi
+fi
+## NEST Support
+if [ -n "$_nest" ]; then
+    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
+         source+=("${_patchsource}/sched/0001-NEST.patch")
+    fi
+fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then
     source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
@@ -247,7 +259,7 @@ if [ "$_cpusched" = "pds" ]; then
 fi
 ## BORE Scheduler
 if [ "$_cpusched" = "bore" ]; then
-    source+=("${_patchsource}/sched/0001-bore.patch")
+    source+=("${_patchsource}/sched/0001-bore-cachy.patch")
 fi
 ## CacULE Scheduler
 if [ "$_cpusched" = "cacule" ]; then
@@ -282,19 +294,7 @@ if [ -n "$_bcachefs" ]; then
 fi
 ## rt kernel
 if [ -n "$_rtkernel" ]; then
-    source+=("${_patchsource}/misc/0001-rt-rc.patch")
-fi
-## NEST Support
-if [ -n "$_nest" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/sched/0001-NEST.patch")
-    fi
-fi
-## Latency NICE Support
-if [ -n "$_latency_nice" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
-    fi
+    source+=("${_patchsource}/misc/0001-rt.patch")
 fi
 
 export KBUILD_BUILD_HOST=cachyos

@@ -237,6 +237,18 @@ source=(
 if [ -n "$_build_zfs" ]; then
     source+=("git+https://github.com/cachyos/zfs.git#commit=2eb7f7629a9b1507a8b06ae7efacabea7e394387")
 fi
+## Latency NICE Support
+if [ -n "$_latency_nice" ]; then
+    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
+         source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
+    fi
+fi
+## NEST Support
+if [ -n "$_nest" ]; then
+    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
+         source+=("${_patchsource}/sched/0001-NEST.patch")
+    fi
+fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then
     source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
@@ -247,7 +259,7 @@ if [ "$_cpusched" = "pds" ]; then
 fi
 ## BORE Scheduler
 if [ "$_cpusched" = "bore" ]; then
-    source+=("${_patchsource}/sched/0001-bore-dev.patch")
+    source+=("${_patchsource}/sched/0001-bore-cachy.patch")
 fi
 ## CacULE Scheduler
 if [ "$_cpusched" = "cacule" ]; then
@@ -282,19 +294,7 @@ if [ -n "$_bcachefs" ]; then
 fi
 ## rt kernel
 if [ -n "$_rtkernel" ]; then
-    source+=("${_patchsource}/misc/0001-rt-rc.patch")
-fi
-## NEST Support
-if [ -n "$_nest" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/sched/0001-NEST.patch")
-    fi
-fi
-## Latency NICE Support
-if [ -n "$_latency_nice" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
-    fi
+    source+=("${_patchsource}/misc/0001-rt.patch")
 fi
 
 export KBUILD_BUILD_HOST=cachyos
@@ -1032,6 +1032,6 @@ sha256sums=('745fff5529fe45b6590598541edf54423c7726ccde9b84e48ab44a5f62ce8708'
             'a98ce1919f586a9bfd01e5198bb77c80f80a98c00844e66425de9131742b0c1c'
             '06d408a1dad0a31aff812a81725acd1c5d8cb70b34eb2eb5b695c8d426d895da'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            '6212ddf14c0821332a5d162922f624317c10b12623552c0ba8575c467d353ee0'
-            'f46bc9f87818318d6274b5760dd82f9714939b79faec52b162e6e0ad957e6fe3'
-            'aec1703d3e97df5727e4a9350a5d18dcdf117623a85802d220df7ed3ea7d58a3')
+            '0e8c086c1d74e4a20eb786eb227264d97326c8efebb812402df87bb0f7a26f35'
+            'fbc20655a52eb7183d4b3c7c93d8affa774eddeb5796a215c6843f1a4690e3be'
+            'b312c8920e9f627a2d9772261525c7ca4e8e8c373ae8537f1c07c18e8704a266')

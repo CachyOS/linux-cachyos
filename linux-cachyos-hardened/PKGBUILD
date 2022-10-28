@@ -241,6 +241,18 @@ source=(
 if [ -n "$_build_zfs" ]; then
     source+=("git+https://github.com/cachyos/zfs.git#commit=2eb7f7629a9b1507a8b06ae7efacabea7e394387")
 fi
+## Latency NICE Support
+if [ -n "$_latency_nice" ]; then
+    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
+         source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
+    fi
+fi
+## NEST Support
+if [ -n "$_nest" ]; then
+    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
+         source+=("${_patchsource}/sched/0001-NEST.patch")
+    fi
+fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then
     source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
@@ -251,7 +263,7 @@ if [ "$_cpusched" = "pds" ]; then
 fi
 ## BORE Scheduler
 if [ "$_cpusched" = "bore" ]; then
-    source+=("${_patchsource}/sched/0001-bore.patch")
+    source+=("${_patchsource}/sched/0001-bore-cachy.patch")
 fi
 ## CacULE Scheduler
 if [ "$_cpusched" = "cacule" ]; then
@@ -286,19 +298,7 @@ if [ -n "$_bcachefs" ]; then
 fi
 ## rt kernel
 if [ -n "$_rtkernel" ]; then
-    source+=("${_patchsource}/misc/0001-rt-rc.patch")
-fi
-## NEST Support
-if [ -n "$_nest" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/sched/0001-NEST.patch")
-    fi
-fi
-## Latency NICE Support
-if [ -n "$_latency_nice" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
-    fi
+    source+=("${_patchsource}/misc/0001-rt.patch")
 fi
 
 export KBUILD_BUILD_HOST=cachyos
@@ -1037,6 +1037,6 @@ sha256sums=('61332ef22b53c50c10faabfb965896a7d1ad4f3381f0f89643c820f28a60418e'
             '06d408a1dad0a31aff812a81725acd1c5d8cb70b34eb2eb5b695c8d426d895da'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
             '8cb3cd165819a2624bc7d4724e9a6a64b6e8a0938909acb7b10a5432c04d67d6'
+            '306b5e7de9b644a8249a5eec1c5376be8848d9ff7dd33fcb93dddf7c50ee4595'
             '4300c9a28206f0cf8f84a248859e65e25107677de35ca0202ea9d3d8dd5586b3'
-            'f171eece25cfa8b9429c648c0bb8ccf15647f149d1237cd646f6d4e394ea03eb'
-            '827599a03f551c6c940efd4cfa3a02451f1fdcda5771f95a659f3bfeb8221604')
+            'f171eece25cfa8b9429c648c0bb8ccf15647f149d1237cd646f6d4e394ea03eb')
