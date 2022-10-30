@@ -243,12 +243,6 @@ if [ -n "$_latency_nice" ]; then
          source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
     fi
 fi
-## NEST Support
-if [ -n "$_nest" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/sched/0001-NEST.patch")
-    fi
-fi
 ## BMQ Scheduler
 if [ "$_cpusched" = "bmq" ]; then
     source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
@@ -287,6 +281,12 @@ if [ -n "$_use_kcfi" ]; then
         LD=ld.lld
         LLVM=1
     )
+fi
+## NEST Support
+if [ -n "$_nest" ]; then
+    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
+         source+=("${_patchsource}/sched/0001-NEST.patch")
+    fi
 fi
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
