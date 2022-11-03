@@ -33,7 +33,6 @@ We provided all of these schedulers because each scheduler performs differently 
 - Maple Tree from `linux-next`.
 - MM Demotion from `linux-next`.
 - Latency Nice Patchset included usuage with `ananicy-cpp` [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
-- NEST Scheduler.
 - rcu fixes and improvements.
 - latest DAMON improvements and fixes.
 - BBRv2 tcp_congestion_control.
