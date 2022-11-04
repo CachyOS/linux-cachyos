@@ -16,7 +16,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e BUILDCACHE=1 -e CHECKSUMS=1 -v /home/ptr1337/docker-makepkg/new/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-v3:/home/notroot/.buildcache pttrr/docker-makepkg-v3
+    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v /home/ptr1337/docker-makepkg/new/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-v3:/home/notroot/.buildcache pttrr/docker-makepkg-v3
     docker rm kernelbuild
     cd ..
 done
@@ -31,7 +31,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e BUILDCACHE=1 -e CHECKSUMS=1 -e LLVM_BOLT=1 -v /home/ptr1337/docker-makepkg/new/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-llvm-v3:/home/notroot/.buildcache pttrr/docker-makepkg-v3
+    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -e LLVM_BOLT=1 -v /home/ptr1337/docker-makepkg/new/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-llvm-v3:/home/notroot/.buildcache pttrr/docker-makepkg-v3
     docker rm kernelbuild
     cd ..
 done
@@ -50,7 +50,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e BUILDCACHE=1 -e CHECKSUMS=1 -v /home/ptr1337/docker-makepkg/new/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-llvm:/home/notroot/.buildcache pttrr/docker-makepkg
+    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v /home/ptr1337/docker-makepkg/new/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel-llvm:/home/notroot/.buildcache pttrr/docker-makepkg
     docker rm kernelbuild
     cd ..
 done
@@ -65,7 +65,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e BUILDCACHE=1 -e CHECKSUMS=1 -v /home/ptr1337/docker-makepkg/new/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel:/home/notroot/.buildcache pttrr/docker-makepkg
+    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v /home/ptr1337/docker-makepkg/new/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg -v /home/ptr1337/kernelbuild/ccache-kernel:/home/notroot/.buildcache pttrr/docker-makepkg
     docker rm kernelbuild
     cd ..
 done
