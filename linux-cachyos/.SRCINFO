@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux BORE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.0.7
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -34,7 +34,7 @@ pkgbase = linux-cachyos
 	sha256sums = e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e
 	sha256sums = dee8ed716d713f27c8d75a1cef6eabf4ddcb63fe4e37d5b9cf47b25d791e5ea0
 	sha256sums = d50d641d9b692d0a289d56e45d031d53e4f1a7ce2a5176beebf1d31d6ddd0742
-	sha256sums = 486efa426c0fe01e4697ed744d4c1fbf7a6433bad4818da3762c07ba0861ce2d
+	sha256sums = f6c2e9deaf33760d93097d4dbb2586a163a34b20395fa27969fbf27bc246b3e5
 
 pkgname = linux-cachyos
 	pkgdesc = The Linux BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules

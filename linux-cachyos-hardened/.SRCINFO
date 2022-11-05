@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-hardened
 	pkgdesc = Linux hardenened BORE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.0.7
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -34,7 +34,7 @@ pkgbase = linux-cachyos-hardened
 	sha256sums = e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e
 	sha256sums = dee8ed716d713f27c8d75a1cef6eabf4ddcb63fe4e37d5b9cf47b25d791e5ea0
 	sha256sums = d50d641d9b692d0a289d56e45d031d53e4f1a7ce2a5176beebf1d31d6ddd0742
-	sha256sums = 60dfcffc1e705e34eaea23bd83d345907132a480fa5712ba6fb565d50f39a8d1
+	sha256sums = 1a986748cac94692316fe38ad6d3e877adf66519f99c5597067d91df094609b1
 	sha256sums = f171eece25cfa8b9429c648c0bb8ccf15647f149d1237cd646f6d4e394ea03eb
 
 pkgname = linux-cachyos-hardened
