@@ -235,7 +235,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/cachyos/zfs.git#commit=b27c7a1457e202435914403ddf6708cb6b53bfa0")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=0f4ee295ba94803e5833f57481cfdbee5d1160d4")
 fi
 ## Latency NICE Support
 if [ -n "$_latency_nice" ]; then
@@ -1033,5 +1033,5 @@ sha256sums=('ccfb6c1395c62d5928be4ce45aaa000cc406e72d81e152e9b9b87c9996e8fbae'
             '34e2cad286f32d8c1c26e4ff18726c9e0aee151e82088bb78c3ae4fb536bf962'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
             '37370226c55437fe7a3a42ae2d47c600b524cf9a01f56031f77cee9c767ebb60'
-            'fbc20655a52eb7183d4b3c7c93d8affa774eddeb5796a215c6843f1a4690e3be'
-            'f6c2e9deaf33760d93097d4dbb2586a163a34b20395fa27969fbf27bc246b3e5')
+            'af8bf7dc2cd0b6f7a651d0d5367a994ba6bce3343f40805b046fd3672d5a2d48'
+            'f4b11fd31b43696ba0ade12e14cc19fd913d78b407c0b3e31ea866322856adf0')
