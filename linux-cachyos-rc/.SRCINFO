@@ -29,12 +29,12 @@ pkgbase = linux-cachyos-rc
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/misc/0001-Add-latency-priority-for-CFS-class.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/sched/0001-bore-cachy.patch
 	sha256sums = 51307576df4a1651dcad4e361e6e411cfe9ed7841783c198a72ed7d89e3057c3
-	sha256sums = 6a78ba1cabbbac20ca5c53f8ce179053d859374342611801c232f779d6483bec
+	sha256sums = 775c599894bc0b59190975835146da68dbf0c9241de7b0e3e5962e24ced42b94
 	sha256sums = 34e2cad286f32d8c1c26e4ff18726c9e0aee151e82088bb78c3ae4fb536bf962
 	sha256sums = e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e
 	sha256sums = d1400a8f486ffc2362ca5ba791f7ff71f8219461c18014fb2f90bb615c41a9c5
-	sha256sums = ce5a95bdf23cd8d86f0494ebc813a1733eac51910b30092c4ee20542d1c21848
-	sha256sums = 90d3bc76d3efae6b15002cbcc0b5e812beea721b17bfab2f6781d338e02db93b
+	sha256sums = 5c379c9cd2c74bca8ff92db7fedc46aab7c54289b39fba2d79b91ead89aa0a99
+	sha256sums = 70874e69a9383cbdf3c033193a7d6706783fe06e3b0205208f9491ac53bb25b6
 
 pkgname = linux-cachyos-rc
 	pkgdesc = The Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements kernel and modules
