@@ -21,6 +21,10 @@ _cachy_config=${_cachy_config-'yes'}
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 _cpusched=${_cpusched-'bore'}
 
+## Apply some suggested sysctl values from the bore developer
+## These are adjusted to BORE
+_tune_bore=${_tune_bore-}
+
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null to enable them
 
@@ -251,9 +255,13 @@ fi
 if [ "$_cpusched" = "pds" ]; then
     source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
 fi
-## BORE Scheduler
+## BORE Scheduler with latency_nice
 if [ "$_cpusched" = "bore" ]; then
     source+=("${_patchsource}/sched/0001-bore-cachy.patch")
+## BORE SYSCTL TUNING
+   if [ -n "$_tune_bore" ]; then
+		source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
+   fi
 fi
 ## CacULE Scheduler
 if [ "$_cpusched" = "cacule" ]; then
@@ -1033,5 +1041,5 @@ sha256sums=('0de4f83996951c6faf9b2225db4f645882c47b1a09198190f97bd46e5f5fa257'
             '34e2cad286f32d8c1c26e4ff18726c9e0aee151e82088bb78c3ae4fb536bf962'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
             '10dac695fc3cd2bf576fe442ab7a4daf0152ca998955ddd6ec0268d1773cc19d'
-            '941ecb1d26937ef2b69f834cb9a98c2f7cb347f311fd2ecbad668f29ab1571a3'
-            '8ffd753510273686ee8944ae2c43c96650e3fead435228625d8264ba0227b06a')
+            '1ce957095ac2c99d2843f77b3c48b1d818ba71bfbcfb3672e6364306dc1f593b'
+            '14fd5588b7bb3d0b00391923c1d46e03b9993837d5348615d006267528dff10c')

@@ -21,6 +21,10 @@ _cachy_config=${_cachy_config-'yes'}
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 _cpusched=${_cpusched-'cacule-rdb'}
 
+## Apply some suggested sysctl values from the bore developer
+## These are adjusted to BORE
+_tune_bore=${_tune_bore-}
+
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null to enable them
 
@@ -251,9 +255,13 @@ fi
 if [ "$_cpusched" = "pds" ]; then
     source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
 fi
-## BORE Scheduler
+## BORE Scheduler with latency_nice
 if [ "$_cpusched" = "bore" ]; then
     source+=("${_patchsource}/sched/0001-bore-cachy.patch")
+## BORE SYSCTL TUNING
+   if [ -n "$_tune_bore" ]; then
+		source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
+   fi
 fi
 ## CacULE Scheduler
 if [ "$_cpusched" = "cacule" ]; then
