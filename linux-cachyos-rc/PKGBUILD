@@ -97,13 +97,6 @@ _kyber_disable=${_kyber_disable-y}
 # 'none' - disable multigenerational LRU
 _lru_config=${_lru_config-'standard'}
 
-### Enable per-VMA locking
-# ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable per-VMA locking
-# 'stats' - enable per-VMA locking with stats
-# 'none' - disable per-VMA locking
-_vma_config=${_vma_config-'standard'}
-
 ## Enable DAMON
 _damon=${_damon-}
 
@@ -678,28 +671,6 @@ prepare() {
          exit
     fi
 
-    ### Select VMA config
-    if [ "$_vma_config" = "standard" ]; then
-       echo "Enabling per-VMA locking..."
-       scripts/config --enable PER_VMA_LOCK \
-           --disable PER_VMA_LOCK_STATS
-    elif [ "$_vma_config" = "stats" ]; then
-       echo "Enabling per-VMA locking with stats..."
-       scripts/config --enable PER_VMA_LOCK \
-           --enable PER_VMA_LOCK_STATS
-    elif [ "$_vma_config" = "none" ]; then
-       echo "Disabling per-VMA locking..."
-       scripts/config --disable PER_VMA_LOCK
-    else
-        if [ -n "$_vma_config" ]; then
-           error "The value $_vma_config is invalid. Choose the correct one again."
-        else
-           error "The value is empty. Choose the correct one again."
-        fi
-         error "Enabling per-VMA locking failed!"
-         exit
-    fi
-
     ### Enable DAMON
     if [ -n "$_damon" ]; then
         echo "Enabling DAMON..."
@@ -1066,4 +1037,4 @@ sha256sums=('51307576df4a1651dcad4e361e6e411cfe9ed7841783c198a72ed7d89e3057c3'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
             'd1400a8f486ffc2362ca5ba791f7ff71f8219461c18014fb2f90bb615c41a9c5'
             '74fae98dc00959e37d42537ff6ea9a758ec4962c98c8c582b4c4e430fd85d837'
-            '2b99e464f56a7e8653dae32d8a4e39ff1e4f9a2d2e8b553c16d6d2c3c4a970c5')
+            'ac8a1fabb5993bcf67799426a4a163a24e929a91c9edb552ab0f791a42aa8ef2')

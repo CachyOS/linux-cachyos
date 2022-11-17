@@ -97,13 +97,6 @@ _kyber_disable=${_kyber_disable-y}
 # 'none' - disable multigenerational LRU
 _lru_config=${_lru_config-'standard'}
 
-### Enable per-VMA locking
-# ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable per-VMA locking
-# 'stats' - enable per-VMA locking with stats
-# 'none' - disable per-VMA locking
-_vma_config=${_vma_config-'standard'}
-
 ## Enable DAMON
 _damon=${_damon-}
 
@@ -655,28 +648,6 @@ prepare() {
            error "The value is empty. Choose the correct one again."
         fi
          error "Enabling multigenerational LRU failed!"
-         exit
-    fi
-
-    ### Select VMA config
-    if [ "$_vma_config" = "standard" ]; then
-       echo "Enabling per-VMA locking..."
-       scripts/config --enable PER_VMA_LOCK \
-           --disable PER_VMA_LOCK_STATS
-    elif [ "$_vma_config" = "stats" ]; then
-       echo "Enabling per-VMA locking with stats..."
-       scripts/config --enable PER_VMA_LOCK \
-           --enable PER_VMA_LOCK_STATS
-    elif [ "$_vma_config" = "none" ]; then
-       echo "Disabling per-VMA locking..."
-       scripts/config --disable PER_VMA_LOCK
-    else
-        if [ -n "$_vma_config" ]; then
-           error "The value $_vma_config is invalid. Choose the correct one again."
-        else
-           error "The value is empty. Choose the correct one again."
-        fi
-         error "Enabling per-VMA locking failed!"
          exit
     fi
 
