@@ -203,7 +203,7 @@ fi
 _major=6.1
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc7
+_rcver=rc8
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -1031,10 +1031,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('e52f5263b061488bb1f1a591124644f776f0886dec0d2201f1bc4c1bd78d1497'
+sha256sums=('61063135667b1e6177cf933cf12f08f2d8ce6a094d61616d0869466c3b6dc7ae'
             '7b2916c5fcfd08b1db8c6012901d962ae6e14ead806e36bd243c504e6297bef0'
             '8e3332029a7e6574b8c5d1f98e5391a20871b889e0a65fc351584c26b9e2b0ef'
             'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            'baabe482e8327bc1d2a86ad697905933699b61ef61a7d1617e2f978901161c31'
-            '98cc8d1868636a66ce760a23b4ecda825082706fb89364fe821713dec940a815'
-            'd6f8fab01fb18aba72c5f0fffcc60ee90f5921afb71794c3d386553b2a275e28')
+            'e3363257555b5cf0f33198b309451cb01afef802dfdc0a009e90c52391f67858'
+            'a5761a5073d73c98a273134f487359af5e9cd8b2ab7614bd4d0c3aca0bf1533a'
+            '57b1d588a7a55a1676089609b25130283fbd7bb5e4c6416367d9f2c957514f0d')
