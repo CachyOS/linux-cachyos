@@ -229,7 +229,7 @@ if [ -n "$_build_zfs" ]; then
 fi
 ## Latency NICE Support
 if [ -n "$_latency_nice" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" || "$_cpusched" = "bmq" || "$_cpusched" = "pds" ]]; then
+    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
          source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
     fi
 fi
