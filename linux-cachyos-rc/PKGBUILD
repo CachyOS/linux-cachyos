@@ -171,16 +171,6 @@ _bcachefs=${_bcachefs-}
 # Only works for CFS Scheduler and BORE Scheduler
 _rtkernel=${_rtkernel-}
 
-# Enable NEST
-# NEST is a experimental cfs scheduler you can find more about here:
-# https://www.phoronix.com/news/Nest-Linux-Scheduling-Warm-Core
-# https://gitlab.inria.fr/nest-public/nest-artifact/-/tree/main
-# ATTENTION!:NEST is only active if you start applications with
-# taskset -c $THREADS application
-# example: taskset -c 0-23 application
-# ATTENTION!:Just works together with the BORE Scheduler and CFS Scheduler
-_nest=${_nest-}
-
 # Enable LATENCY NICE
 # Latency nice is a approach to sets latency-nice as a per-task attribute
 # It can improve the latency of applications similar to sched_nice, but focused on the latency
@@ -291,12 +281,6 @@ if [ -n "$_use_kcfi" ]; then
         LD=ld.lld
         LLVM=1
     )
-fi
-## NEST Support
-if [ -n "$_nest" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/sched/0001-NEST.patch")
-    fi
 fi
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
