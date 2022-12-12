@@ -16,7 +16,7 @@ We provided all of these schedulers because each scheduler performs differently 
 - Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
 - BitMap Queue (BMQ) Alfred Chen Scheduler - `linux-cachyos-bmq`
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » `linux-cachyos-pds`
-- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - `linux-cachyos-cacule`
+- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - `linux-cachyos-cacule` ATTENTION: Not supported after 6.1
 - Standard Scheduler Completely Fair Scheduler (CFS) - `linux-cachyos-cfs`
 > All kernels are prebuilt in two different march versions (x86-64 and x86-64-v3) and also with the LTO-enabled kernels in the cachyos repositories.
 
@@ -24,21 +24,20 @@ We provided all of these schedulers because each scheduler performs differently 
 - Very customizable PKGBUILD with many features and improvements.
 - 5 Different scheduler are supported, `CacULE-`,`CFS-`,`tt-`,`bmq-`,`bore-`, and `pds` scheduler
 - `GCC/CLANG` Optimization with automatically found CPU arch or also selectable CPU architecture.
-- Choose between `LLVM/LTO` or `GCC`.
-- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz # default 750 Hz.
+- Choose between `LLVM/LTO` or `GCC`. Experimental GCC LTO support is available.
+- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 750 Hz.
 - Improved BFQ Scheduler.
 - Back-ported patches from `linux-next`.
 - General improved sysctl settings and upstream scheduler fixes.
-- Latest LRU (v15) Patch-set, default enabled.
-- Maple Tree from `linux-next`.
-- MM Demotion from `linux-next`.
+- MEMCG MG LRU Patchset
 - Latency Nice Patchset included usuage with `ananicy-cpp` [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
-- NEST Scheduler.
+- Scheduler patches from linux-next/tip
 - rcu fixes and improvements.
-- latest DAMON improvements and fixes.
+- printk patches
 - BBRv2 tcp_congestion_control.
 - LLVM THIN-LTO Kernels prebuilt in `x86-64-v3` and `x86-64` in the CachyOS repositories.
 - LRNG Framework. (default enabled)
+- THP Shrinker
 - Latest & improved ZSTD patch-set.
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
 - KSMBD Module for Samba3 Server.
@@ -46,10 +45,11 @@ We provided all of these schedulers because each scheduler performs differently 
 - Clearlinux Patchset.
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`. (patched llvm can be found in the cachyos-repositories)
 - ZFS Filesystem Support and prebuilt in the repository.
-- WINESYNC Fastsync.
-- Use entropy optimization for zRAM.
+- Futex fixes and winesync is available
 - UserKSM daemon from pf.
 - support for bcachefs.
+- RTW88 Patches included
+- OpenRGB and ACS Override support
 
 ## Other GNU/Linux distributions
 - Complete patch for simple patching on the kernel
@@ -138,6 +138,7 @@ More information's you will find here [CachyOS](https://github.com/cachyos) or [
 ## 🗣️ Support - get in touch with CachyOS community
 **Discord:** <https://discord.gg/qJqj94uFwE> <br />
 **Telegram:** <https://t.me/+zCzPX4cAFjk1MTYy> <br />
+**Matrix:** <https://matrix.cachyos.org> <br />
 
 ## 🌱 Donations are welcome for the build server for the repositories or a cup of coffee for maintaining our repositories.
 
