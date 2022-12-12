@@ -141,36 +141,29 @@ _use_llvm_lto=${_use_llvm_lto-}
 # https://github.com/CachyOS/linux-cachyos/issues/36
 _use_lto_suffix=${_use_lto_suffix-y}
 
+# ATTENTION!: Really experimental LTO implementation for GCC
+# This can improve the performance of the kernel
+# The performance difference is currently negligible
+# DEBUG and BTF needs to be disabled, otherwise the compilation is failing
+# The Kernel is bigger with GCC LTO due to more inlining
+# More informations:
+# https://lore.kernel.org/lkml/20221114114344.18650-1-jirislaby@kernel.org/T/#md8014ad799b02221b67f33584002d98ede6234eb
+_use_gcc_lto=${_use_gcc_lto-}
+
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
-# scheme used by CONFIG_CFI_CLANG. KCFI doesn't require LTO, doesn't
+# scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-# ATTENTION!: you do need a patched llvm for the usage of kcfi,
-# you can find a patched llvm-git in the cachyos-repo's.
-# The packagename is called "llvm-kcfi"
-# ATTENTION!: This is very experimental and could fail and the compilation or have other bugs in the kernel
+# ATTENTION!: You need llvm-git or a patched llvm 15
+# ATTENTION!: This is experimental, could fail to boot with nvidia
 _use_kcfi=${_use_kcfi-}
 
-# Build the zfs module builtin in to the kernel
+# Build the zfs module in to the kernel
 _build_zfs=${_build_zfs-}
 
 # Enable bcachefs
 _bcachefs=${_bcachefs-}
-
-# Enable RT kernel
-# Only works for CFS Scheduler and BORE Scheduler
-_rtkernel=${_rtkernel-}
-
-# Enable NEST
-# NEST is a experimental cfs scheduler you can find more about here:
-# https://www.phoronix.com/news/Nest-Linux-Scheduling-Warm-Core
-# https://gitlab.inria.fr/nest-public/nest-artifact/-/tree/main
-# ATTENTION!:NEST is only active if you start applications with
-# taskset -c $THREADS application
-# example: taskset -c 0-23 application
-# ATTENTION!:Just works together with the BORE Scheduler and CFS Scheduler
-_nest=${_nest-}
 
 # Enable LATENCY NICE
 # Latency nice is a approach to sets latency-nice as a per-task attribute
@@ -191,13 +184,13 @@ else
     pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.0
-_minor=12
+_major=6.1
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -227,7 +220,7 @@ fi
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
-    "config" "config-rt"
+    "config"
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
@@ -283,19 +276,15 @@ if [ -n "$_use_kcfi" ]; then
         LLVM=1
     )
 fi
-## NEST Support
-if [ -n "$_nest" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/sched/0001-NEST.patch")
-    fi
-fi
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
     source+=("${_patchsource}/misc/0001-bcachefs-after-lru.patch")
 fi
-## rt kernel
-if [ -n "$_rtkernel" ]; then
-    source+=("${_patchsource}/misc/0001-rt.patch")
+if [ -n "$_use_gcc_lto" ]; then
+## GCC-LTO Patch
+## Fix for current gcc --enable-default-pie option
+    source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
+             "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
 fi
 
 export KBUILD_BUILD_HOST=cachyos
@@ -321,11 +310,7 @@ prepare() {
     done
 
     echo "Setting config..."
-    if [ -n "$_rtkernel" ]; then
-        cp ../config-rt .config
-    else
-        cp ../config .config
-    fi
+    cp ../config .config
 
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
@@ -356,17 +341,6 @@ prepare() {
        error "Selecting CachyOS config failed!"
        exit
     fi
-
-    ### Selecting proper RT config
-    if [ -n "$_rtkernel" ]; then
-        echo "Setting proper RT config"
-        scripts/config --enable RCU_NOCB_CPU_CB_BOOST \
-            --disable RCU_NOCB_CPU_DEFAULT_ALL \
-            --enable HZ_1000 \
-            --set-val HZ 1000 \
-            --enable PREEMPT_RT \
-            --enable PREEMPT_LAZY
-     fi
 
     ### Selecting the CPU scheduler
     if [ "$_cpusched" = "bmq" ]; then
@@ -441,6 +415,15 @@ prepare() {
             --enable HAVE_GCC_PLUGINS
     else
         scripts/config --enable LTO_NONE
+    fi
+
+    ### Enable GCC FULL LTO
+    ### Disable LTO_CP_CLONE, its experimental
+    if [ -n "$_use_gcc_lto" ]; then
+         scripts/config --enable LTO_GCC \
+            --disable LTO_CP_CLONE
+    ### Disable DEBUG, pahole is currently broken with GCC LTO
+            _disable_debug=y
     fi
 
     ### Select tick rate
@@ -1007,10 +990,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('89b730edf8942b49e02f9894244205886c9a214d629b35b88c4ff06ee9304f01'
-            '5ef4000fa382d718bc88a2c898534c94349bc38125fb0a5e6f90987c64338bc2'
-            '8e3332029a7e6574b8c5d1f98e5391a20871b889e0a65fc351584c26b9e2b0ef'
-            'e1d45b5842079a5f0f53d7ea2d66ffa3f1497766f3ccffcf13ed00f1ac67f95e'
-            'e56d2483f4abf9a6c935d3bd37d9b5892024daff957f58bc96eec23bfb181d8a'
-            '8a29fd18c2deb36cf0bbfb16a84819d86fa476ef4792d07dd627c945c0b55f4b'
-            '4b135afcb13e2a852048e99ee96f74eb4ba785039a447b43d3e87e03494e29d7')
+sha256sums=('2ca1f17051a430f6fed1196e4952717507171acfd97d96577212502703b25deb'
+            '10205fdb7f16016658808d09e927b106f8286df17d511cf6374e2a6fcb265f26'
+            '32e77b3b71225c9f04df2d44c25f982773a8fff9927d26788366baab5e242e74'
+            'dcb4652be945fd8de658b271e17a74e5d5c275b934bd852b766cb28c3f97d17d'
+            '7b3c12a19efe84f023bd64f0c984c73b0ec7a73c78cba96b5f92c5263ed2a46f'
+            'e5c062656b1e3d65b5b10bf933aa6b0bd3f187b90336a067b1dd7d5ff635f002')
