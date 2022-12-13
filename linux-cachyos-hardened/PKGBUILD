@@ -101,7 +101,7 @@ _lru_config=${_lru_config-'standard'}
 _damon=${_damon-}
 
 ## Enable Linux Random Number Generator
-_lrng_enable=${_lrng_enable-y}
+_lrng_enable=${_lrng_enable-}
 
 # CPU compiler optimizations - Defaults to prompt at kernel config if left empty
 # AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3"
@@ -195,7 +195,7 @@ _stable=${_major}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux hardenened BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -995,9 +995,9 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('2ca1f17051a430f6fed1196e4952717507171acfd97d96577212502703b25deb'
-            '10205fdb7f16016658808d09e927b106f8286df17d511cf6374e2a6fcb265f26'
+            '28832ea41f4429260f4b1a355f89a2bda1332d3893b42b349897d4661ffc3d96'
             '32e77b3b71225c9f04df2d44c25f982773a8fff9927d26788366baab5e242e74'
-            'dcb4652be945fd8de658b271e17a74e5d5c275b934bd852b766cb28c3f97d17d'
+            '1638f816f56bb0989e71848b906c229aa0db2f08d482a5d52ad05761677d6dc5'
             '7b3c12a19efe84f023bd64f0c984c73b0ec7a73c78cba96b5f92c5263ed2a46f'
-            'e5c062656b1e3d65b5b10bf933aa6b0bd3f187b90336a067b1dd7d5ff635f002'
+            'e74a2454da0b83435a95fa3c5d13b104e87c5003abcb1291fe055aa4d340e0ae'
             '578b2f7b7926a4a75a63869c7808858f75e7bd570ffcefb1d788040185602c6c')

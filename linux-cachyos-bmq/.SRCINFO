@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-bmq
 	pkgdesc = Linux BMQ scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.1.0
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -27,10 +27,10 @@ pkgbase = linux-cachyos-bmq
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/sched/0001-prjc-cachy.patch
 	sha256sums = 2ca1f17051a430f6fed1196e4952717507171acfd97d96577212502703b25deb
-	sha256sums = 10205fdb7f16016658808d09e927b106f8286df17d511cf6374e2a6fcb265f26
+	sha256sums = 28832ea41f4429260f4b1a355f89a2bda1332d3893b42b349897d4661ffc3d96
 	sha256sums = 32e77b3b71225c9f04df2d44c25f982773a8fff9927d26788366baab5e242e74
-	sha256sums = dcb4652be945fd8de658b271e17a74e5d5c275b934bd852b766cb28c3f97d17d
-	sha256sums = e597dd7e1a18505e5b84e4e79096001a902b71c6af9aa9ea3d0f8280368619f1
+	sha256sums = 1638f816f56bb0989e71848b906c229aa0db2f08d482a5d52ad05761677d6dc5
+	sha256sums = ad87bbf82acb59d5af7eb1cd075d6984337675bd2fa8f43dc4f92634bffb213a
 
 pkgname = linux-cachyos-bmq
 	pkgdesc = The Linux BMQ scheduler Kernel by CachyOS with other patches and improvements kernel and modules
