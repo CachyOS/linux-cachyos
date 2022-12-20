@@ -75,7 +75,7 @@ _per_gov=${_per_gov-y}
 _tcp_bbr2=${_tcp_bbr2-y}
 
 ### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
-_HZ_ticks=${_HZ_ticks-750}
+_HZ_ticks=${_HZ_ticks-500}
 
 ## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
