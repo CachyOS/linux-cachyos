@@ -272,8 +272,6 @@ if [ "$_cpusched" = "hardened" ]; then
 fi
 ## Kernel CFI Patch
 if [ -n "$_use_kcfi" ]; then
-    source+=("${_patchsource}/misc/0001-kcfi.patch")
-    depends+=(llvm-git llvm-libs-git python)
     BUILD_FLAGS=(
         CC=clang
         LD=ld.lld
