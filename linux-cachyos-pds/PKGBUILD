@@ -195,7 +195,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux PDS scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -992,4 +992,4 @@ sha256sums=('a3e61377cf4435a9e2966b409a37a1056f6aaa59e561add9125a88e3c0971dfb'
             'c9c662d6adbf5a4bfeee3cabab6eafe7b9a2d2d51532df2bd53df1c61b6d5260'
             '32e77b3b71225c9f04df2d44c25f982773a8fff9927d26788366baab5e242e74'
             '4f0aac3acf834b5fbe933ae0e133d27db23063c4ae4317c8d21e64fa624a47b5'
-            'e597dd7e1a18505e5b84e4e79096001a902b71c6af9aa9ea3d0f8280368619f1')
+            '9aeff735bbd9ae3d730f5ac0bc13a82760dade6c27cd83f0ce56cfd08f8c94ff')

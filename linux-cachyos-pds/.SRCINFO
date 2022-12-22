@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-pds
 	pkgdesc = Linux PDS scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.1.1
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -30,7 +30,7 @@ pkgbase = linux-cachyos-pds
 	sha256sums = c9c662d6adbf5a4bfeee3cabab6eafe7b9a2d2d51532df2bd53df1c61b6d5260
 	sha256sums = 32e77b3b71225c9f04df2d44c25f982773a8fff9927d26788366baab5e242e74
 	sha256sums = 4f0aac3acf834b5fbe933ae0e133d27db23063c4ae4317c8d21e64fa624a47b5
-	sha256sums = e597dd7e1a18505e5b84e4e79096001a902b71c6af9aa9ea3d0f8280368619f1
+	sha256sums = 9aeff735bbd9ae3d730f5ac0bc13a82760dade6c27cd83f0ce56cfd08f8c94ff
 
 pkgname = linux-cachyos-pds
 	pkgdesc = The Linux PDS scheduler Kernel by CachyOS with other patches and improvements kernel and modules
