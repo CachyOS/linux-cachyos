@@ -280,7 +280,7 @@ if [ -n "$_use_kcfi" ]; then
 fi
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
-    source+=("${_patchsource}/misc/0001-bcachefs-after-lru.patch")
+    source+=("${_patchsource}/misc/0001-bcachefs.patch")
 fi
 if [ -n "$_use_gcc_lto" ]; then
 ## GCC-LTO Patch
