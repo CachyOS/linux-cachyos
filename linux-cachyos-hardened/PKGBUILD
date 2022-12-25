@@ -644,7 +644,7 @@ prepare() {
     if [ "$_hugepage" = "always" ]; then
        echo "Enable THP always..."
        scripts/config --disable TRANSPARENT_HUGEPAGE_MADVISE \
-           --enable TRANSPARENT_HUGEPAGE_ALWAYS \
+           --enable TRANSPARENT_HUGEPAGE_ALWAYS
     elif [ "$_hugepage" = "madvise" ]; then
        echo "Enable THP madvise..."
        scripts/config --disable TRANSPARENT_HUGEPAGE_ALWAYS \
