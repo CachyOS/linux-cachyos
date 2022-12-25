@@ -97,6 +97,14 @@ _kyber_disable=${_kyber_disable-y}
 # 'none' - disable multigenerational LRU
 _lru_config=${_lru_config-'standard'}
 
+### Transparent Hugepages
+# ATTENTION - one of two predefined values should be selected!
+# 'always' - always enable THP
+# 'madivse' - madivse, prevent applications from allocating more memory resources than necessary
+# More infos here:
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
+_hugepage=${_hugepage-'full'}
+
 ## Enable DAMON
 _damon=${_damon-}
 
@@ -625,6 +633,25 @@ prepare() {
            error "The value is empty. Choose the correct one again."
         fi
          error "Enabling multigenerational LRU failed!"
+         exit
+    fi
+
+   ### Select THP
+    if [ "$_hugepage" = "always" ]; then
+       echo "Enable THP always..."
+       scripts/config --disable TRANSPARENT_HUGEPAGE_MADVISE \
+           --enable TRANSPARENT_HUGEPAGE_ALWAYS \
+    elif [ "$_hugepage" = "madivse" ]; then
+       echo "Enable THP madivse..."
+       scripts/config --disable TRANSPARENT_HUGEPAGE_ALWAYS \
+           --enable TRANSPARENT_HUGEPAGE_MADVISE
+    else
+        if [ -n "$_hugepage" ]; then
+           error "The value $_hugepage is invalid. Choose the correct one again."
+        else
+           error "The value is empty. Choose the correct one again."
+        fi
+         error "Setting THP has failed!"
          exit
     fi
 
