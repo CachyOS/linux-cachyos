@@ -100,10 +100,10 @@ _lru_config=${_lru_config-'standard'}
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
 # 'always' - always enable THP
-# 'madivse' - madivse, prevent applications from allocating more memory resources than necessary
+# 'madvise' - madvise, prevent applications from allocating more memory resources than necessary
 # More infos here:
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
-_hugepage=${_hugepage-'full'}
+_hugepage=${_hugepage-'always'}
 
 ## Enable DAMON
 _damon=${_damon-}
@@ -645,8 +645,8 @@ prepare() {
        echo "Enable THP always..."
        scripts/config --disable TRANSPARENT_HUGEPAGE_MADVISE \
            --enable TRANSPARENT_HUGEPAGE_ALWAYS \
-    elif [ "$_hugepage" = "madivse" ]; then
-       echo "Enable THP madivse..."
+    elif [ "$_hugepage" = "madvise" ]; then
+       echo "Enable THP madvise..."
        scripts/config --disable TRANSPARENT_HUGEPAGE_ALWAYS \
            --enable TRANSPARENT_HUGEPAGE_MADVISE
     else
