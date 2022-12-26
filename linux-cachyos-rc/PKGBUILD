@@ -192,10 +192,10 @@ else
     pkgsuffix=cachyos-rc
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.1
+_major=6.2
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc8
+_rcver=rc1
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -233,7 +233,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/cachyos/zfs.git#commit=21bd7661334cd865d17934bebbcaf8d3356279ee")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=f28c7302cb77a8cb6112690d0eed0bf4adeeae15")
 fi
 ## Latency NICE Support
 if [ -n "$_latency_nice" ]; then
@@ -1015,9 +1015,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('61063135667b1e6177cf933cf12f08f2d8ce6a094d61616d0869466c3b6dc7ae'
-            'c9c662d6adbf5a4bfeee3cabab6eafe7b9a2d2d51532df2bd53df1c61b6d5260'
+sha256sums=('cb8079f8ccd77328bf340805bae0ce45c437107c51001986f55b64b66277280e'
+            '2a4737179d7a45c59a71c7dd5454a6142ddc0fa08b2ae433b9780e7e0cb7de8b'
             '32e77b3b71225c9f04df2d44c25f982773a8fff9927d26788366baab5e242e74'
-            '4f0aac3acf834b5fbe933ae0e133d27db23063c4ae4317c8d21e64fa624a47b5'
-            '7b3c12a19efe84f023bd64f0c984c73b0ec7a73c78cba96b5f92c5263ed2a46f'
-            '26b1cc77c882132aebaa09c4da11280f85bc85f74fd989975064090bb680aa86')
+            'd4cad38aa216fc671b9fc7552c2fa3043c229143e66a548b51d0f729364b1f55'
+            '7aa2d13e3aa8ddba51f338552d016e5f37fedc54537bad9080e12cecedf46673'
+            'b29d35fd272cc59856c2276d40d1e387d6fb30fb43af26d48be60b3efe012837')
