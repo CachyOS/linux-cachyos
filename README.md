@@ -18,7 +18,7 @@ We provided all of these schedulers because each scheduler performs differently 
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » `linux-cachyos-pds`
 - CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - `linux-cachyos-cacule` ATTENTION: Not supported after 6.1
 - Standard Scheduler Completely Fair Scheduler (CFS) - `linux-cachyos-cfs`
-> All kernels are prebuilt in two different march versions (x86-64 and x86-64-v3) and also with the LTO-enabled kernels in the cachyos repositories.
+> All kernels are prebuilt in two different march versions (x86-64, x86-64-v3 and x86-64-v4) and also with the LTO-enabled kernels in the cachyos repositories.
 
 ## 🎯 Features
 - Very customizable PKGBUILD with many features and improvements.
@@ -35,7 +35,7 @@ We provided all of these schedulers because each scheduler performs differently 
 - rcu fixes and improvements.
 - printk patches
 - BBRv2 tcp_congestion_control.
-- LLVM THIN-LTO Kernels prebuilt in `x86-64-v3` and `x86-64` in the CachyOS repositories.
+- LLVM THIN-LTO Kernels prebuilt in `x86-64-v4`, `x86-64-v3` and `x86-64` in the CachyOS repositories.
 - LRNG Framework. (default enabled)
 - THP Shrinker
 - Latest & improved ZSTD patch-set.
@@ -64,7 +64,7 @@ eselect repository enable ROKO__
 emaint sync -r ROKO__
 ```
 
-## We are providing a [repositories](https://mirror.cachyos.org/) which includes all kernels in x86-64-v3 and x86-64 and more performance-optimized packages
+## We are providing a [repositories](https://mirror.cachyos.org/) which includes all kernels in x86-64-v4,x86-64-v3 and x86-64 and more performance-optimized packages
 How to add our repositories automatically with compatibility detection (if x86-64-v3 is supported) is described below:
 
 ## 🦾 Automatic adding of our repositories
@@ -101,12 +101,12 @@ sudo pacman-key --lsign-key F3B607488DB35A47
 
 3. You can download first initial packages
 ```
-sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-13-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-13-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-6.0.2-10-x86_64.pkg.tar.zst'
+sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-13-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-1-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-13-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-6.0.2-10-x86_64.pkg.tar.zst'
 ```
-## Checking x86-64-v3 cpu support
+## Checking for the cpu support
 1. Check support by the following the command
 ```
-/lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported, searched)"
+/lib/ld-linux-x86-64.so.2 --help | grep "x86-64 (supported, searched)"
 ```
 
 add following under the arch repos the "-v3" repos only if they are supported:
@@ -119,8 +119,21 @@ Include = /etc/pacman.d/cachyos-v3-mirrorlist
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
+If you have a x86-64-v4 supprted CPU add the following:
+
+```
+# cachyos repos
+## Only add if your CPU does support x86-64-v4 architecture
+[cachyos-v4]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos]
+Include = /etc/pacman.d/cachyos-mirrorlist
+```
+
 > This script will also backup your old pacman.conf.
-> This script will auto-detect you architecture, if your CPU have x86-64-v3 support, it will automatically use the repos which are optimized with this flag > and some other flags.
+> This script will auto-detect you architecture, if your CPU have x86-64-v4 or x86-64-v3 support, it will automatically use the repos which are optimized with this flag > and some other flags.
 > Also all provided Kernels, Browsers, ... are optimized and compiled.
 
 ## ◀️ How to Backup the config and use the native Arch Packages
