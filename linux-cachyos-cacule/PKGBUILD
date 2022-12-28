@@ -507,7 +507,7 @@ prepare() {
         scripts/config --set-val NR_CPUS "$_nr_cpus"
     else
         echo "Setting default NR_CPUS..."
-        scripts/config --set-val NR_CPUS 128
+        scripts/config --set-val NR_CPUS 320
     fi
 
     ### Disable MQ Deadline I/O scheduler
