@@ -102,7 +102,7 @@ _lru_config=${_lru_config-'standard'}
 # 'standard' - enable per-VMA locking
 # 'stats' - enable per-VMA locking with stats
 # 'none' - disable per-VMA locking
-_vma_config=${_vma_config-'standard'}
+_vma_config=${_vma_config-'none'}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -210,7 +210,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux cacULE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -298,6 +298,10 @@ if [ -n "$_use_gcc_lto" ]; then
 ## Fix for current gcc --enable-default-pie option
     source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
              "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
+fi
+## Use vma lock as an extra patch since it has some issues right now
+if [[ "$_vma_config" = "standard"  || "$_vma_config" = "stats" ]]; then
+    source+=("${_patchsource}/misc/0001-Introduce-per-VMA-lock.patch")
 fi
 
 export KBUILD_BUILD_HOST=cachyos
@@ -1047,5 +1051,5 @@ done
 sha256sums=('ee41f3c4f599b2f46f08aae428c9243db403e7292eb2c9f04ee34909b038d1ae'
             'd4f3fc2581e338835a33983cca18bfb3225450a07c456c48c9b051c03236955a'
             '32e77b3b71225c9f04df2d44c25f982773a8fff9927d26788366baab5e242e74'
-            '1ec422b623d99bcac518075d498e2a32f91151a532edb4ba51b993667b6c32a5'
+            '57a5807c8848b095d8cfb3736f9472263c2b1ab98a37a63aef85fd2646720dab'
             '48afb08df95035b315bb882c03d7b66d320bccf54977822050a5c3cd7acd2709')
