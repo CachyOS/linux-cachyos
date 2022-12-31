@@ -125,7 +125,7 @@ If you have a x86-64-v4 supprted CPU add the following:
 # cachyos repos
 ## Only add if your CPU does support x86-64-v4 architecture
 [cachyos-v4]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
+Include = /etc/pacman.d/cachyos-v4-mirrorlist
 [cachyos-v3]
 Include = /etc/pacman.d/cachyos-v3-mirrorlist
 [cachyos]
