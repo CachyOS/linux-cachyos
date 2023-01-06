@@ -135,7 +135,7 @@ _use_auto_optimization=${_use_auto_optimization-y}
 _disable_debug=${_disable_debug-}
 
 ## Enable zram/zswap ZSTD compression
-_zstd_compression=${_zstd_compression-y}
+_zstd_compression=${_zstd_compression-}
 
 ### Selecting the ZSTD kernel and modules compression level
 # ATTENTION - one of two predefined values should be selected!
