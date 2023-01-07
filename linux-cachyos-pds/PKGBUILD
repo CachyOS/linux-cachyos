@@ -303,6 +303,10 @@ fi
 if [[ "$_vma_config" = "standard"  || "$_vma_config" = "stats" ]]; then
     source+=("${_patchsource}/misc/0001-Introduce-per-VMA-lock.patch")
 fi
+## lrng patchset
+if [ -n "$_lrng_enable" ]; then
+    source+=("${_patchsource}/misc/0001-lrng.patch")
+fi
 
 export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER=$pkgbase
@@ -1051,5 +1055,5 @@ done
 sha256sums=('8aa8f64fa60bb13381a9608d1fefbdd0555e2a70c40b2c7d0671b0d64aa4559e'
             'd4f3fc2581e338835a33983cca18bfb3225450a07c456c48c9b051c03236955a'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            '6e7088fcbcda85fb0ebe48ca3426879e510b0a23a97d0c15c6bfa91204c279b4'
+            '6abd2a37ab801a2466f275ad11f3123305b160e6aae46705544bf1366b356963'
             '9aeff735bbd9ae3d730f5ac0bc13a82760dade6c27cd83f0ce56cfd08f8c94ff')

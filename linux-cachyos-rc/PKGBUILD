@@ -299,6 +299,10 @@ if [ -n "$_use_gcc_lto" ]; then
     source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
              "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
 fi
+## lrng patchset
+if [ -n "$_lrng_enable" ]; then
+    source+=("${_patchsource}/misc/0001-lrng.patch")
+fi
 
 export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER=$pkgbase
