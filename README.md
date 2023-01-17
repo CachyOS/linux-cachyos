@@ -36,7 +36,7 @@ We provided all of these schedulers because each scheduler performs differently 
 - printk patches
 - BBRv2 tcp_congestion_control.
 - LLVM THIN-LTO Kernels prebuilt in `x86-64-v4`, `x86-64-v3` and `x86-64` in the CachyOS repositories.
-- LRNG Framework. (default enabled)
+- LRNG Framework. (default disabled)
 - THP Shrinker
 - Latest & improved ZSTD patch-set.
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
@@ -48,7 +48,7 @@ We provided all of these schedulers because each scheduler performs differently 
 - Futex fixes and winesync is available
 - UserKSM daemon from pf.
 - support for bcachefs.
-- RTW88 Patches included
+- per VMA lock - https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab
 - OpenRGB and ACS Override support
 
 ## Other GNU/Linux distributions
@@ -115,6 +115,8 @@ add following under the arch repos the "-v3" repos only if they are supported:
 ## Only add if your CPU does v3 architecture
 [cachyos-v3]
 Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos-community-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
 [cachyos]
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
@@ -127,6 +129,8 @@ If you have a x86-64-v4 supprted CPU add the following:
 [cachyos-v4]
 Include = /etc/pacman.d/cachyos-v4-mirrorlist
 [cachyos-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos-community-v3]
 Include = /etc/pacman.d/cachyos-v3-mirrorlist
 [cachyos]
 Include = /etc/pacman.d/cachyos-mirrorlist
