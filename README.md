@@ -106,7 +106,7 @@ sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2
 ## Checking for the cpu support
 1. Check support by the following the command
 ```
-/lib/ld-linux-x86-64.so.2 --help | grep "x86-64 (supported, searched)"
+/lib/ld-linux-x86-64.so.2 --help | grep "(supported, searched)"
 ```
 
 add following under the arch repos the "-v3" repos only if they are supported:
