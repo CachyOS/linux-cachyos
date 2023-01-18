@@ -81,7 +81,7 @@ wget https://mirror.cachyos.org/cachyos-repo.tar.xz
 tar xvf cachyos-repo.tar.xz && cd cachyos-repo
 ```
 
-3. Run script under sudo
+3. Run script with sudo
 ```
 sudo ./cachyos-repo.sh
 ```
@@ -109,7 +109,7 @@ sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2
 /lib/ld-linux-x86-64.so.2 --help | grep "(supported, searched)"
 ```
 
-add following under the arch repos the "-v3" repos only if they are supported:
+add following over the arch repos the "-v3" repos only if they are supported:
 ```
 # cachyos repos
 ## Only add if your CPU does v3 architecture
@@ -121,7 +121,7 @@ Include = /etc/pacman.d/cachyos-v3-mirrorlist
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-If you have a x86-64-v4 supprted CPU add the following:
+If you have a x86-64-v4 supprted CPU add the following over the arch repos:
 
 ```
 # cachyos repos
