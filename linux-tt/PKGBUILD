@@ -448,49 +448,22 @@ prepare() {
     fi
 
     ### Select tick rate
-    if [ "$_HZ_ticks" = "1000" ]; then
-        echo "Setting tick rate to 1k Hz..."
-        scripts/config -d HZ_300 \
-            -e HZ_1000 \
-            --set-val HZ 1000
-    elif [ "$_HZ_ticks" = "750" ]; then
-        echo "Setting tick rate to 750Hz..."
-        scripts/config -d HZ_300 \
-            -e HZ_750 \
-            --set-val HZ 750
-    elif [ "$_HZ_ticks" = "600" ]; then
-        echo "Setting tick rate to 600Hz..."
-        scripts/config -d HZ_300 \
-            -e HZ_600 \
-            --set-val HZ 600
-    elif [ "$_HZ_ticks" = "500" ]; then
-        echo "Setting tick rate to 500Hz..."
-        scripts/config -d HZ_300 \
-            -e HZ_500 \
-            --set-val HZ 500
-    elif [ "$_HZ_ticks" = "300" ]; then
-        echo "Setting tick rate to 300Hz..."
-        scripts/config -e HZ_300 \
-            --set-val HZ 300
-    elif [ "$_HZ_ticks" = "250" ]; then
-        echo "Setting tick rate to 250Hz..."
-        scripts/config -d HZ_300 \
-            -e HZ_250 \
-            --set-val HZ 250
-    elif [ "$_HZ_ticks" = "100" ]; then
-        echo "Setting tick rate to 100Hz..."
-        scripts/config -d HZ_300 \
-            -e HZ_100 \
-            --set-val HZ 100
-    else
-       if [ -n "$_HZ_ticks" ]; then
-           error "The value $_HZ_ticks is invalid. Choose the correct one again."
-       else
-           error "The value is empty. Choose the correct one again."
-       fi
-       error "Selecting Setting tick rate failed!"
-       exit
+    if [[ -z $_HZ_ticks ]]; then
+        error "The value is empty. Choose the correct one again."
+        exit
     fi
+
+    case "$_HZ_ticks" in
+        100|250|300|500|600|750|1000)
+            scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ $_HZ_ticks;;
+        300)
+            scripts/config -e HZ_300 --set-val HZ 300;;
+        *)
+           error "The value $_HZ_ticks is invalid. Choose the correct one again."
+           exit;;
+    esac
+
+    echo "Setting tick rate to ${_HZ_ticks}Hz..."
 
     ### Disable NUMA
     if [ -n "$_NUMAdisable" ]; then
