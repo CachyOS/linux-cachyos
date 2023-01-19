@@ -616,7 +616,7 @@ prepare() {
     ### Enable bbr2
     if [ -n "$_tcp_bbr2" ]; then
         echo "Disabling TCP_CONG_CUBIC..."
-        scripts/config --module TCP_CONG_CUBIC \
+        scripts/config -m TCP_CONG_CUBIC \
             -d DEFAULT_CUBIC \
             -e TCP_CONG_BBR2 \
             -e DEFAULT_BBR2 \
@@ -711,8 +711,8 @@ prepare() {
             -e LRNG_SYSCTL \
             -e LRNG_RANDOM_IF \
             -e LRNG_AIS2031_NTG1_SEEDING_STRATEGY \
-            --module LRNG_KCAPI_IF \
-            --module LRNG_HWRAND_IF \
+            -m LRNG_KCAPI_IF \
+            -m LRNG_HWRAND_IF \
             -e LRNG_DEV_IF \
             -e LRNG_RUNTIME_ES_CONFIG \
             -e LRNG_IRQ_DFLT_TIMER_ES \
@@ -742,14 +742,14 @@ prepare() {
             -e LRNG_SCHED \
             --set-val LRNG_SCHED_ENTROPY_RATE 4294967295 \
             -e LRNG_DRNG_CHACHA20 \
-            --module LRNG_DRBG \
-            --module LRNG_DRNG_KCAPI \
+            -m LRNG_DRBG \
+            -m LRNG_DRNG_KCAPI \
             -e LRNG_SWITCH \
             -e LRNG_SWITCH_HASH \
-            --module LRNG_HASH_KCAPI \
+            -m LRNG_HASH_KCAPI \
             -e LRNG_SWITCH_DRNG \
-            --module LRNG_SWITCH_DRBG \
-            --module LRNG_SWITCH_DRNG_KCAPI \
+            -m LRNG_SWITCH_DRBG \
+            -m LRNG_SWITCH_DRNG_KCAPI \
             -e LRNG_DFLT_DRNG_CHACHA20 \
             -d LRNG_DFLT_DRNG_DRBG \
             -d LRNG_DFLT_DRNG_KCAPI \
