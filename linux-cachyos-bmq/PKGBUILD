@@ -505,7 +505,7 @@ prepare() {
             -d ACPI_NUMA \
             -d ARCH_SUPPORTS_NUMA_BALANCING \
             -d NODES_SHIFT \
-            --undefine NODES_SHIFT \
+            -u NODES_SHIFT \
             -d NEED_MULTIPLE_NODES
     fi
 
