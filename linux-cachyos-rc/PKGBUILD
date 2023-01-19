@@ -450,7 +450,7 @@ prepare() {
     fi
 
     case "$_HZ_ticks" in
-        100|250|300|500|600|750|1000)
+        100|250|500|600|750|1000)
             scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ $_HZ_ticks;;
         300)
             scripts/config -e HZ_300 --set-val HZ 300;;
