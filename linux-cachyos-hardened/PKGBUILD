@@ -244,7 +244,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 ## ZFS Support
 if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/cachyos/zfs.git#commit=0b8e7ba7fb84953690e43b2aea238210d7368aa4")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=04b02785b67f9b976c43643dd52ce6cdbc22e11e")
 fi
 ## Latency NICE Support
 if [ -n "$_latency_nice" ]; then
