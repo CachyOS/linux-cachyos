@@ -48,7 +48,7 @@ We provided all of these schedulers because each scheduler performs differently 
 - Futex fixes and winesync is available
 - UserKSM daemon from pf.
 - support for bcachefs.
-- per VMA lock - https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab
+- per VMA lock - https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab (default disabled)
 - OpenRGB and ACS Override support
 
 ## Other GNU/Linux distributions
