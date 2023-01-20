@@ -37,7 +37,6 @@ We provided all of these schedulers because each scheduler performs differently 
 - BBRv2 tcp_congestion_control.
 - LLVM THIN-LTO Kernels prebuilt in `x86-64-v4`, `x86-64-v3` and `x86-64` in the CachyOS repositories.
 - LRNG Framework. (default disabled)
-- THP Shrinker
 - Latest & improved ZSTD patch-set.
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
 - KSMBD Module for Samba3 Server.
