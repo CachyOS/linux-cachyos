@@ -25,7 +25,7 @@ We provided all of these schedulers because each scheduler performs differently 
 - 5 Different scheduler are supported, `CacULE-`,`CFS-`,`tt-`,`bmq-`,`bore-`, and `pds` scheduler
 - `GCC/CLANG` Optimization with automatically found CPU arch or also selectable CPU architecture.
 - Choose between `LLVM/LTO` or `GCC`. Experimental GCC LTO support is available.
-- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 750 Hz.
+- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 500Hz for BORE/CFS and 1000Hz for other schedulers.
 - Improved BFQ Scheduler.
 - Back-ported patches from `linux-next`.
 - General improved sysctl settings and upstream scheduler fixes.
