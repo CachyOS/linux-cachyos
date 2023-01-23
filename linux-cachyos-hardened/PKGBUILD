@@ -299,7 +299,7 @@ if [ -n "$_bcachefs" ]; then
 fi
 if [ -n "$_use_gcc_lto" ]; then
 ## GCC-LTO Patch
-## Fix for current gcc -e-default-pie option
+## Fix for current gcc --enable-default-pie option
     source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
              "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
 fi
