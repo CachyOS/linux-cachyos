@@ -62,6 +62,38 @@ Or simply run:
 eselect repository enable ROKO__
 emaint sync -r ROKO__
 ```
+### Fedora
+Port of kernel linux-cachyos-bore and linux-cachyos-bore-lto by [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
+
+Only x86_64_v3 versions are available. Check support by the following the command
+```
+/lib64/ld-linux-x86-64.so.2 --help | grep "(supported, searched)"
+
+```
+If it does not detect x86_64_v3 support do not install the kernel. Otherwise you will end up with a non-functioning operating system!
+
+##### Installation Instructions: 
+
+```
+sudo dnf copr enable bieszczaders/kernel-cachyos
+```
+
+and next
+
+```
+sudo dnf install kernel-cachyos-bore
+```
+
+OR
+```
+sudo dnf install kernel-cachyos-bore-lto
+```
+
+##### Install drivers for lto kernel
+If you build external modules (e.g. for Nvidia graphics card drivers) and use the -lto kernel, you need to install the following dependencies:
+```
+sudo dnf install clang clang-devel llvm lld
+```
 
 ## We are providing a [repositories](https://mirror.cachyos.org/) which includes all kernels in x86-64-v4,x86-64-v3 and x86-64 and more performance-optimized packages
 How to add our repositories automatically with compatibility detection (if x86-64-v3 is supported) is described below:
