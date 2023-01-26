@@ -63,7 +63,7 @@ eselect repository enable ROKO__
 emaint sync -r ROKO__
 ```
 ### Fedora
-Port of kernel linux-cachyos-bore and linux-cachyos-bore-lto by [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
+[Port](https://github.com/sirlucjan/copr-linux-cachyos) of kernel linux-cachyos-bore and linux-cachyos-bore-lto by [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
 
 Only x86_64_v3 versions are available. Check support by the following the command
 ```
