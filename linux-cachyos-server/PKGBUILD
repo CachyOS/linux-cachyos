@@ -192,11 +192,11 @@ _bcachefs=${_bcachefs-}
 _latency_nice=${_latency_nice-}
 
 if [[ -n "$_use_llvm_lto" && -n "$_use_lto_suffix" ]]; then
-    pkgsuffix=cachyos-lto
+    pkgsuffix=cachyos-server-lto
     pkgbase=linux-$pkgsuffix
 
 else
-    pkgsuffix=cachyos
+    pkgsuffix=cachyos-server
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.1
