@@ -5,7 +5,7 @@ find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs-/_build_zfs-y/" {}
 ## Enable Generic v3 
 find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU=y/GENERIC_CPU3=y/' {}
 ## Dont compile linux-cacule linux-cacule-rdb linux-cachyos-cacule into the repo
-rm -rf linux-cacule linux-cacule-rdb linux-cachyos-cacule linux-cachyos-rc linux-cachyos-hardened linux-tt linux-bore
+rm -rf linux-cachyos-rc linux-cachyos-hardened linux-tt linux-bore
 
 ## GCC v3 Kernel
 
