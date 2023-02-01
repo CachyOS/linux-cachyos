@@ -311,9 +311,6 @@ prepare() {
     echo "Setting config..."
     cp ../config .config
 
-    echo "Setting config..."
-    cp ../config .config
-
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
         MARCH=$(echo $_processor_opt|tr '[:lower:]' '[:upper:]'&&echo)
