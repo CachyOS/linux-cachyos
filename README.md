@@ -16,6 +16,9 @@ We provided all of these schedulers because each scheduler performs differently 
 - Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
 - BitMap Queue (BMQ) Alfred Chen Scheduler - `linux-cachyos-bmq`
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » `linux-cachyos-pds`
+- CacULE and CacULE-RDB created by Hamad Marri, supported by CachyOS in the past as - `linux-cachyos-cacule`
+
+  **ATTENTION:** Not supported after version 6.1. If you still want to use it, you can get it from the archive repository - https://github.com/ptr1337/linux-cacule. 
 - Standard Scheduler Completely Fair Scheduler (CFS) - `linux-cachyos-cfs`
 > All kernels are prebuilt in two different march versions (x86-64, x86-64-v3 and x86-64-v4) and also with the LTO-enabled kernels in the cachyos repositories.
 
