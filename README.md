@@ -16,13 +16,12 @@ We provided all of these schedulers because each scheduler performs differently 
 - Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
 - BitMap Queue (BMQ) Alfred Chen Scheduler - `linux-cachyos-bmq`
 - Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » `linux-cachyos-pds`
-- CacULE and CacULE-RDB created from Hamad Marri, maintained by CachyOS - `linux-cachyos-cacule` ATTENTION: Not supported after 6.1
 - Standard Scheduler Completely Fair Scheduler (CFS) - `linux-cachyos-cfs`
 > All kernels are prebuilt in two different march versions (x86-64, x86-64-v3 and x86-64-v4) and also with the LTO-enabled kernels in the cachyos repositories.
 
 ## 🎯 Features
 - Very customizable PKGBUILD with many features and improvements.
-- 5 Different scheduler are supported, `CacULE-`,`CFS-`,`tt-`,`bmq-`,`bore-`, and `pds` scheduler
+- 5 Different scheduler are supported,`CFS-`,`tt-`,`bmq-`,`bore-`, and `pds` scheduler
 - `GCC/CLANG` Optimization with automatically found CPU arch or also selectable CPU architecture.
 - Choose between `LLVM/LTO` or `GCC`. Experimental GCC LTO support is available.
 - Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 500Hz for BORE/CFS and 1000Hz for other schedulers.
@@ -197,6 +196,6 @@ More information's you will find here [CachyOS](https://github.com/cachyos) or [
 **ETH:** 0xc2dc77327F78A7B85Db3941Eb49e74F41E961649
 
 ### Valueable Contributors
-[Hamad Marri](https://github.com/hamadmarri) for the CacULE and TT Scheduler <br />
+[Hamad Marri](https://github.com/hamadmarri) for the TT Scheduler <br />
 [Archlinux](https://archlinux.org) for the great linux operating system <br />
 [And all other Kernel Developers and Supporters](https://github.com/torvalds/linux) <br />
