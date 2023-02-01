@@ -4,10 +4,7 @@
 # Contributor: Thomas Baechler <thomas@archlinux.org>
 
 ### Selecting CachyOS config
-# ATTENTION - one of two predefined values should be selected!
-# 'yes' - enable CachyOS config
-# 'no' - disable CachyOS config
-_cachy_config=${_cachy_config-'yes'}
+_cachy_config=${_cachy_config-y}
 
 ### Selecting the CPU scheduler
 # ATTENTION - one of seven predefined values should be selected!
@@ -328,19 +325,9 @@ prepare() {
     fi
 
     ### Selecting CachyOS config
-    if [ "$_cachy_config" = "yes" ]; then
+    if [ -n "$_cachy_config" ]; then
         echo "Enabling CachyOS config..."
         scripts/config -e CACHY
-    elif [ "$_cachy_config" = "no" ]; then
-       echo "Disabling CachyOS config..."
-       scripts/config -d CACHY
-    else
-       if [ -n "$_cachy_config" ]; then
-           error "The value $_cachy_config is invalid. Choose the correct one again."
-       else
-           error "The value is empty. Choose the correct one again."
-       fi
-       _die "Selecting CachyOS config failed!"
     fi
 
     ### Selecting the CPU scheduler
