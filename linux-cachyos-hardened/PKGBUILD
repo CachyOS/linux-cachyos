@@ -13,12 +13,10 @@ _cachy_config=${_cachy_config-'yes'}
 # ATTENTION - one of seven predefined values should be selected!
 # 'bmq' - select 'BitMap Queue CPU scheduler'
 # 'pds' - select 'Priority and Deadline based Skip list multiple queue CPU scheduler'
-# 'cacule' - select 'CacULE scheduler'
-# 'cacule-rdb' - select 'CacULE-RDB scheduler'
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
-# 'bore-hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
+# 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 _cpusched=${_cpusched-'bore-hardened'}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -258,12 +256,10 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
     tt) ## TT Scheduler
         source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
-    cacule|cacule-rdb) ## CacULE(-RDB) Scheduler
-        source+=("${_patchsource}/sched/0001-cacULE-cachy.patch");;
     bore) ## BORE Scheduler with latency_nice
         [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    bore-hardened) ## Hardened Patches with BORE Scheduler
+    hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
 esac
@@ -358,9 +354,7 @@ prepare() {
         pds) scripts/config -e SCHED_ALT -d SCHED_BMQ -e SCHED_PDS;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS;;
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
-        bore|bore-hardened) scripts/config -e SCHED_BORE;;
-        cacule) scripts/config -e CACULE_SCHED -d CACULE_RDB;;
-        cacule-rdb) scripts/config -e CACULE_SCHED -e CACULE_RDB --set-val RDB_INTERVAL 19;;
+        bore|hardened) scripts/config -e SCHED_BORE;;
         cfs) ;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
