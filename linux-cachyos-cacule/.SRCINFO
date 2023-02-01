@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-cacule
 	pkgdesc = Linux cacULE scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.1.8
+	pkgver = 6.1.9
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,15 +21,15 @@ pkgbase = linux-cachyos-cacule
 	makedepends = make
 	makedepends = patch
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.1.8.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.1.9.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/sched/0001-cacULE-cachy.patch
-	sha256sums = b60bb53ab8ba370a270454b11e93d41af29126fc72bd6ede517673e2e57b816d
+	sha256sums = d60cf185693c386e7acd9f3eb3a94ae30ffbfee0a9447a20e83711e0bdf5922b
 	sha256sums = fab53ac59d4da6fb0433f6fd15877871f4124a89021237f90835d1ff3755ba9c
 	sha256sums = 41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106
-	sha256sums = 775fd31535e3f025bd7597105fbc34def0265671f2c6000f253d4eb2f3883988
+	sha256sums = f267d4c4368f5ab8392a753811e8d2be276a2b7c2138102d1cb8bc64cdcbdefd
 	sha256sums = 48afb08df95035b315bb882c03d7b66d320bccf54977822050a5c3cd7acd2709
 
 pkgname = linux-cachyos-cacule
