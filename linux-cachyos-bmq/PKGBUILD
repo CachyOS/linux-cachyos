@@ -555,8 +555,7 @@ prepare() {
         else
            error "The value is empty. Choose the correct one again."
         fi
-         error "Enabling multigenerational LRU failed!"
-         exit
+        _die "Enabling multigenerational LRU failed!"
     fi
 
     ### Select VMA config
