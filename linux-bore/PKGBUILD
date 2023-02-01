@@ -18,7 +18,7 @@ _cachy_config=${_cachy_config-'yes'}
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
-# 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
+# 'bore-hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 _cpusched=${_cpusched-'bore'}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -248,39 +248,22 @@ if [ -n "$_latency_nice" ]; then
          source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
     fi
 fi
-## BMQ Scheduler
-if [ "$_cpusched" = "bmq" ]; then
-    source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
-fi
-## PDS Scheduler
-if [ "$_cpusched" = "pds" ]; then
-    source+=("${_patchsource}/sched/0001-prjc-cachy.patch")
-fi
-## BORE Scheduler with latency_nice
-if [ "$_cpusched" = "bore" ]; then
-    source+=("${_patchsource}/sched/0001-bore-cachy.patch")
-## BORE SYSCTL TUNING
-   if [ -n "$_tune_bore" ]; then
-		source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
-   fi
-fi
-## CacULE Scheduler
-if [ "$_cpusched" = "cacule" ]; then
-    source+=("${_patchsource}/sched/0001-cacULE-cachy.patch")
-fi
-## CacULE-RDB Scheduler
-if [ "$_cpusched" = "cacule-rdb" ]; then
-    source+=("${_patchsource}/sched/0001-cacULE-cachy.patch")
-fi
-## TT Scheduler
-if [ "$_cpusched" = "tt" ]; then
-    source+=("${_patchsource}/sched/0001-tt-cachy.patch")
-fi
-## Hardened Patches with BORE Scheduler
-if [ "$_cpusched" = "hardened" ]; then
-    source+=("${_patchsource}/sched/0001-bore-cachy.patch"
-         "${_patchsource}/misc/0001-hardened.patch")
-fi
+
+case "$_cpusched" in
+    pds|bmq) # BMQ/PDS scheduler
+        source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
+    tt) ## TT Scheduler
+        source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
+    cacule|cacule-rdb) ## CacULE(-RDB) Scheduler
+        source+=("${_patchsource}/sched/0001-cacULE-cachy.patch");;
+    bore) ## BORE Scheduler with latency_nice
+        [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+    bore-hardened) ## Hardened Patches with BORE Scheduler
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch"
+                 "${_patchsource}/misc/0001-hardened.patch");;
+esac
+
 ## Kernel CFI Patch
 if [ -n "$_use_kcfi" ]; then
     BUILD_FLAGS=(
@@ -311,6 +294,8 @@ fi
 export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER=$pkgbase
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
+
+_die() { error "$@" ; exit; }
 
 prepare() {
 
@@ -359,50 +344,25 @@ prepare() {
        else
            error "The value is empty. Choose the correct one again."
        fi
-       error "Selecting CachyOS config failed!"
-       exit
+       _die "Selecting CachyOS config failed!"
     fi
 
     ### Selecting the CPU scheduler
-    if [ "$_cpusched" = "bmq" ]; then
-        echo "Selecting BMQ CPU scheduler..."
-        scripts/config -e SCHED_ALT \
-            -e SCHED_BMQ \
-            -d SCHED_PDS
-    elif [ "$_cpusched" = "pds" ]; then
-        echo "Selecting PDS CPU scheduler..."
-        scripts/config -e SCHED_ALT \
-            -d SCHED_BMQ \
-            -e SCHED_PDS
-    elif [ "$_cpusched" = "cacule" ]; then
-        echo "Selecting CacULE scheduler..."
-        scripts/config -e CACULE_SCHED \
-            -d CACULE_RDB
-    elif [ "$_cpusched" = "cacule-rdb" ]; then
-        echo "Selecting CacULE-RDB scheduler..."
-        scripts/config -e CACULE_SCHED \
-            -e CACULE_RDB \
-            --set-val RDB_INTERVAL 19
-    elif [ "$_cpusched" = "bore" ]; then
-        echo "Selecting BORE Scheduler..."
-        scripts/config -e SCHED_BORE
-    elif [ "$_cpusched" = "tt" ]; then
-        echo "Selecting TT Scheduler..."
-        scripts/config -e TT_SCHED \
-            -e TT_ACCOUNTING_STATS
-    elif [ "$_cpusched" = "cfs" ]; then
-        echo "Selecting Completely Fair Scheduler..."
-    elif [ "$_cpusched" = "hardened" ]; then
-        echo "Selecting hardened patches with the BORE Scheduler..."
-    else
-        if [ -n "$_cpusched" ]; then
-            error "The value $_cpusched is invalid. Choose the correct one again."
-        else
-            error "The value is empty. Choose the correct one again."
-        fi
-        error "Selecting the CPU scheduler failed!"
-        exit
-    fi
+    [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
+
+    case "$_cpusched" in
+        pds) scripts/config -e SCHED_ALT -d SCHED_BMQ -e SCHED_PDS;;
+        bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS;;
+        tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
+        bore|bore-hardened) scripts/config -e SCHED_BORE;;
+        cacule) scripts/config -e CACULE_SCHED -d CACULE_RDB;;
+        cacule-rdb) scripts/config -e CACULE_SCHED -e CACULE_RDB --set-val RDB_INTERVAL 19;;
+        cfs) ;;
+        *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
+    esac
+
+    local sched_name="$(echo $_cpusched|tr '[:lower:]' '[:upper:]')"
+    echo "Selecting ${sched_name} CPU scheduler..."
 
     ### Enable KCFI
     if [ -n "$_use_kcfi" ]; then
@@ -448,19 +408,15 @@ prepare() {
     fi
 
     ### Select tick rate
-    if [[ -z $_HZ_ticks ]]; then
-        error "The value is empty. Choose the correct one again."
-        exit
-    fi
+    [ -z $_HZ_ticks ] && _die "The value is empty. Choose the correct one again."
 
     case "$_HZ_ticks" in
         100|250|500|600|750|1000)
-            scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ $_HZ_ticks;;
+            scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ "${_HZ_ticks}";;
         300)
             scripts/config -e HZ_300 --set-val HZ 300;;
         *)
-           error "The value $_HZ_ticks is invalid. Choose the correct one again."
-           exit;;
+            _die "The value $_HZ_ticks is invalid. Choose the correct one again."
     esac
 
     echo "Setting tick rate to ${_HZ_ticks}Hz..."
@@ -541,8 +497,7 @@ prepare() {
         else
             error "The value is empty. Choose the correct one again."
         fi
-        error "Selecting the tick rate failed!"
-        exit
+        _die "Selecting the tick rate failed!"
     fi
 
     ### Select preempt type
@@ -579,8 +534,7 @@ prepare() {
         else
             error "The value is empty. Choose the correct one again."
         fi
-        error "Selecting PREEMPT failed!"
-        exit
+        _die "Selecting PREEMPT failed!"
     fi
 
     ### Enable O3
@@ -642,8 +596,7 @@ prepare() {
         else
            error "The value is empty. Choose the correct one again."
         fi
-         error "Enabling per-VMA locking failed!"
-         exit
+        _die "Enabling per-VMA locking failed!"
     fi
 
    ### Select THP
@@ -661,8 +614,7 @@ prepare() {
         else
            error "The value is empty. Choose the correct one again."
         fi
-         error "Setting THP has failed!"
-         exit
+        _die "Setting THP has failed!"
     fi
 
     ### Enable DAMON
@@ -780,8 +732,7 @@ prepare() {
         else
             error "The value is empty. Choose the correct one again."
         fi
-        error "Selecting the ZSTD modules and kernel compression level failed!"
-        exit
+        _die "Selecting the ZSTD modules and kernel compression level failed!"
     fi
 
     ### Disable DEBUG
