@@ -25,7 +25,7 @@ mv */*-x86_64_v3.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64_
 repoctl update -P cachyos-v3
 
 ## LLVM v3 Kernel
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-/_use_llvm_lto-thin/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-thin/" {}
 
 files=$(find . -name "PKGBUILD")
 
@@ -45,7 +45,7 @@ repoctl update -P cachyos-v3
 
 ## GCC Generic Kernel
 find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU3=y/GENERIC_CPU=y/' {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-thin/_use_llvm_lto-/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-thin/_use_llvm_lto-none/" {}
 
 files=$(find . -name "PKGBUILD")
 

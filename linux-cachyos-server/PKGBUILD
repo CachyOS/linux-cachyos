@@ -143,7 +143,8 @@ _zstd_level_value=${_zstd_level_value-'normal'}
 # Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
-_use_llvm_lto=${_use_llvm_lto-}
+# "none: disable LTO
+_use_llvm_lto=${_use_llvm_lto-none}
 
 # Use suffix -lto only when requested by the user
 # Enabled by default.
@@ -186,7 +187,7 @@ _bcachefs=${_bcachefs-}
 # https://gitlab.com/ananicy-cpp/ananicy-cpp/-/tree/feature/latency-nice
 _latency_nice=${_latency_nice-}
 
-if [[ -n "$_use_llvm_lto" && -n "$_use_lto_suffix" ]]; then
+if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" && -n "$_use_lto_suffix" ]]; then
     pkgsuffix=cachyos-server-lto
     pkgbase=linux-$pkgsuffix
 
@@ -213,7 +214,7 @@ license=('GPL2')
 options=('!strip')
 makedepends=('bc' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch')
 # LLVM makedepends
-if [ -n "$_use_llvm_lto" ]; then
+if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]]; then
     makedepends+=(clang llvm lld python)
     BUILD_FLAGS=(
         CC=clang
@@ -353,31 +354,16 @@ prepare() {
     fi
 
     ### Select LLVM level
-    if [ "$_use_llvm_lto" = "thin" ]; then
-        echo "Enabling LLVM THIN LTO..."
-        scripts/config -e LTO \
-            -e LTO_CLANG \
-            -e ARCH_SUPPORTS_LTO_CLANG \
-            -e ARCH_SUPPORTS_LTO_CLANG_THIN \
-            -d LTO_NONE \
-            -e HAS_LTO_CLANG \
-            -d LTO_CLANG_FULL \
-            -e LTO_CLANG_THIN \
-            -e HAVE_GCC_PLUGINS
-    elif [ "$_use_llvm_lto" = "full" ]; then
-        echo "Enabling LLVM FULL LTO..."
-        scripts/config -e LTO \
-            -e LTO_CLANG \
-            -e ARCH_SUPPORTS_LTO_CLANG \
-            -e ARCH_SUPPORTS_LTO_CLANG_THIN \
-            -d LTO_NONE \
-            -e HAS_LTO_CLANG \
-            -e LTO_CLANG_FULL \
-            -d LTO_CLANG_THIN \
-            -e HAVE_GCC_PLUGINS
-    else
-        scripts/config -e LTO_NONE
-    fi
+    [ -z "$_use_llvm_lto" ] && _die "The value is empty. Choose the correct one again."
+
+    case "$_use_llvm_lto" in
+        thin) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -d LTO_CLANG_FULL -e LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
+        full) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -e LTO_CLANG_FULL -d LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
+        none)  scripts/config -e LTO_NONE;;
+        *) _die "The value $_use_llvm_lto is invalid. Choose the correct one again.";;
+    esac
+
+    echo "You choose to $_use_llvm_lto LLVM level..."
 
     ### Enable GCC FULL LTO
     ### Disable LTO_CP_CLONE, its experimental
