@@ -361,10 +361,10 @@ prepare() {
         thin) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -d LTO_CLANG_FULL -e LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
         full) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -e LTO_CLANG_FULL -d LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
         none) scripts/config -e LTO_NONE;;
-        *) _die "The value $_use_llvm_lto is invalid. Choose the correct one again.";;
+        *) _die "The value '$_use_llvm_lto' is invalid. Choose the correct one again.";;
     esac
 
-    echo "Selecting $_use_llvm_lto LLVM level..."
+    echo "Selecting '$_use_llvm_lto' LLVM level..."
 
     ### Enable GCC FULL LTO
     ### Disable LTO_CP_CLONE, its experimental
@@ -441,10 +441,10 @@ prepare() {
         perodic) scripts/config -d NO_HZ_IDLE -d NO_HZ_FULL -d NO_HZ -d NO_HZ_COMMON -e HZ_PERIODIC;;
         idle) scripts/config -d HZ_PERIODIC -d NO_HZ_FULL -e NO_HZ_IDLE  -e NO_HZ -e NO_HZ_COMMON;;
         full) scripts/config -d HZ_PERIODIC -d NO_HZ_IDLE -d CONTEXT_TRACKING_FORCE -e NO_HZ_FULL_NODEF -e NO_HZ_FULL -e NO_HZ -e NO_HZ_COMMON -e CONTEXT_TRACKING;;
-        *) _die "The value $_tickrate is invalid. Choose the correct one again.";;
+        *) _die "The value '$_tickrate' is invalid. Choose the correct one again.";;
     esac
 
-    echo "Selecting $_tickrate tick type..."
+    echo "Selecting '$_tickrate' tick type..."
 
     ### Select preempt type
     [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
@@ -453,10 +453,10 @@ prepare() {
         full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
         voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
         server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
-        *) _die "The value $_preempt is invalid. Choose the correct one again.";;
+        *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
     esac
 
-    echo "Selecting $_preempt preempt type..."
+    echo "Selecting '$_preempt' preempt type..."
 
     ### Enable O3
     if [ -n "$_cc_harder" ]; then
@@ -482,10 +482,10 @@ prepare() {
         standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
         stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
         none) scripts/config -d LRU_GEN;;
-        *) _die "The value $_lru_config is invalid. Choose the correct one again.";;
+        *) _die "The value '$_lru_config' is invalid. Choose the correct one again.";;
     esac
 
-    echo "Selecting $_lru_config LRU_GEN config..."
+    echo "Selecting '$_lru_config' LRU_GEN config..."
 
     ### Select VMA config
     [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
@@ -494,10 +494,10 @@ prepare() {
         standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
         stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
         none) scripts/config -d PER_VMA_LOCK;;
-        *) _die "The value $_vma_config is invalid. Choose the correct one again.";;
+        *) _die "The value '$_vma_config' is invalid. Choose the correct one again.";;
     esac
 
-    echo "Selecting $_vma_config PER_VMA_LOCK config..."
+    echo "Selecting '$_vma_config' PER_VMA_LOCK config..."
 
     ### Select THP
     [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
@@ -505,10 +505,10 @@ prepare() {
     case "$_hugepage" in
         always) scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE -e TRANSPARENT_HUGEPAGE_ALWAYS;;
         madvise) scripts/config -d TRANSPARENT_HUGEPAGE_ALWAYS -e TRANSPARENT_HUGEPAGE_MADVISE;;
-        *) _die "The value $_hugepage is invalid. Choose the correct one again.";;
+        *) _die "The value '$_hugepage' is invalid. Choose the correct one again.";;
     esac
 
-    echo "Selecting $_hugepage TRANSPARENT_HUGEPAGE config..."
+    echo "Selecting '$_hugepage' TRANSPARENT_HUGEPAGE config..."
 
     ### Enable DAMON
     if [ -n "$_damon" ]; then
@@ -613,10 +613,10 @@ prepare() {
     case "$_zstd_level_value" in
         ultra) scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 19 -e MODULE_COMPRESS_ZSTD_ULTRA --set-val MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22 --set-val ZSTD_COMP_VAL 22;;
         normal) scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 9 -d MODULE_COMPRESS_ZSTD_ULTRA --set-val ZSTD_COMP_VAL 19;;
-        *) _die "The value $_zstd_level_value is invalid. Choose the correct one again.";;
+        *) _die "The value '$_zstd_level_value' is invalid. Choose the correct one again.";;
     esac
 
-    echo "Selecting $_zstd_level_value ZSTD modules and kernel compression level..."
+    echo "Selecting '$_zstd_level_value' ZSTD modules and kernel compression level..."
 
     ### Disable DEBUG
     if [ -n "$_disable_debug" ]; then
