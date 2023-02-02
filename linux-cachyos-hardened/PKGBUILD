@@ -368,7 +368,7 @@ prepare() {
         *) _die "The value $_use_llvm_lto is invalid. Choose the correct one again.";;
     esac
 
-    echo "You choose to $_use_llvm_lto LLVM level..."
+    echo "Selecting $_use_llvm_lto LLVM level..."
 
     ### Enable GCC FULL LTO
     ### Disable LTO_CP_CLONE, its experimental
@@ -448,7 +448,7 @@ prepare() {
         *) _die "The value $_tickrate is invalid. Choose the correct one again.";;
     esac
 
-    echo "You choose to $_tickrate tick type..."
+    echo "Selecting $_tickrate tick type..."
 
     ### Select preempt type
     [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
@@ -460,7 +460,7 @@ prepare() {
         *) _die "The value $_preempt is invalid. Choose the correct one again.";;
     esac
 
-    echo "You choose to $_preempt preempt type..."
+    echo "Selecting $_preempt preempt type..."
 
     ### Enable O3
     if [ -n "$_cc_harder" ]; then
@@ -489,7 +489,7 @@ prepare() {
         *) _die "The value $_lru_config is invalid. Choose the correct one again.";;
     esac
 
-    echo "You choose to $_lru_config LRU_GEN config..."
+    echo "Selecting $_lru_config LRU_GEN config..."
 
     ### Select VMA config
     [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
@@ -501,7 +501,7 @@ prepare() {
         *) _die "The value $_vma_config is invalid. Choose the correct one again.";;
     esac
 
-    echo "You choose to $_vma_config PER_VMA_LOCK config..."
+    echo "Selecting $_vma_config PER_VMA_LOCK config..."
 
     ### Select THP
     [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
@@ -512,7 +512,7 @@ prepare() {
         *) _die "The value $_hugepage is invalid. Choose the correct one again.";;
     esac
 
-    echo "You choose to $_hugepage TRANSPARENT_HUGEPAGE config..."
+    echo "Selecting $_hugepage TRANSPARENT_HUGEPAGE config..."
 
     ### Enable DAMON
     if [ -n "$_damon" ]; then
@@ -620,7 +620,7 @@ prepare() {
         *) _die "The value $_zstd_level_value is invalid. Choose the correct one again.";;
     esac
 
-    echo "You choose to $_zstd_level_value ZSTD modules and kernel compression level..."
+    echo "Selecting $_zstd_level_value ZSTD modules and kernel compression level..."
 
     ### Disable DEBUG
     if [ -n "$_disable_debug" ]; then
