@@ -642,8 +642,6 @@ prepare() {
 
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config -e USER_NS
-    echo "Enable WINE FASTSYNC"
-    scripts/config -e WINESYNC
 
     ### Optionally use running kernel's config
     # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
