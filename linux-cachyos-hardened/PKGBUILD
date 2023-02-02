@@ -492,17 +492,17 @@ prepare() {
             --set-str DEFAULT_TCP_CONG bbr2
     fi
 
-   ### Select LRU config
-   [ -z "$_lru_config" ] && _die "The value is empty. Choose the correct one again."
+    ### Select LRU config
+    [ -z "$_lru_config" ] && _die "The value is empty. Choose the correct one again."
 
-   case "$_lru_config" in
-       standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
-       stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
-       none)  scripts/config -d LRU_GEN;;
-       *) _die "The value $_lru_config is invalid. Choose the correct one again.";;
-   esac
+    case "$_lru_config" in
+        standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
+        stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
+        none)  scripts/config -d LRU_GEN;;
+        *) _die "The value $_lru_config is invalid. Choose the correct one again.";;
+    esac
 
-   echo "You choose to $_lru_config LRU_GEN config..."
+    echo "You choose to $_lru_config LRU_GEN config..."
 
     ### Select VMA config
     [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
@@ -516,14 +516,14 @@ prepare() {
 
     echo "You choose to $_vma_config PER_VMA_LOCK config..."
 
-   ### Select THP
-   [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
+    ### Select THP
+    [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
 
-   case "$_hugepage" in
-       always) scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE -e TRANSPARENT_HUGEPAGE_ALWAYS;;
-       madvise) scripts/config -d TRANSPARENT_HUGEPAGE_ALWAYS -e TRANSPARENT_HUGEPAGE_MADVISE;;
-       *) _die "The value $_hugepage is invalid. Choose the correct one again.";;
-   esac
+    case "$_hugepage" in
+        always) scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE -e TRANSPARENT_HUGEPAGE_ALWAYS;;
+        madvise) scripts/config -d TRANSPARENT_HUGEPAGE_ALWAYS -e TRANSPARENT_HUGEPAGE_MADVISE;;
+        *) _die "The value $_hugepage is invalid. Choose the correct one again.";;
+    esac
 
     echo "You choose to $_hugepage TRANSPARENT_HUGEPAGE config..."
 
