@@ -3,25 +3,25 @@
 # Contributor: Tobias Powalowski <tpowa@archlinux.org>
 # Contributor: Thomas Baechler <thomas@archlinux.org>
 
+### BUILD OPTIONS
+# Set these variables to ANYTHING that is not null or choose proper variable to enable them
+
 ### Selecting CachyOS config
 _cachy_config=${_cachy_config-y}
 
 ### Selecting the CPU scheduler
-# ATTENTION - one of seven predefined values should be selected!
+# ATTENTION - one of six predefined values should be selected!
 # 'bmq' - select 'BitMap Queue CPU scheduler'
 # 'pds' - select 'Priority and Deadline based Skip list multiple queue CPU scheduler'
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-_cpusched=${_cpusched-'bmq'}
+_cpusched=${_cpusched-bmq}
 
 ## Apply some suggested sysctl values from the bore developer
 ## These are adjusted to BORE
 _tune_bore=${_tune_bore-}
-
-### BUILD OPTIONS
-# Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
@@ -90,14 +90,14 @@ _kyber_disable=${_kyber_disable-y}
 # 'standard' - enable multigenerational LRU
 # 'stats' - enable multigenerational LRU with stats
 # 'none' - disable multigenerational LRU
-_lru_config=${_lru_config-'standard'}
+_lru_config=${_lru_config-standard}
 
 ### Enable per-VMA locking
 # ATTENTION - one of three predefined values should be selected!
 # 'standard' - enable per-VMA locking
 # 'stats' - enable per-VMA locking with stats
 # 'none' - disable per-VMA locking
-_vma_config=${_vma_config-'none'}
+_vma_config=${_vma_config-none}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -105,7 +105,7 @@ _vma_config=${_vma_config-'none'}
 # 'madvise' - madvise, prevent applications from allocating more memory resources than necessary
 # More infos here:
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
-_hugepage=${_hugepage-'always'}
+_hugepage=${_hugepage-always}
 
 ## Enable DAMON
 _damon=${_damon-}
@@ -138,9 +138,10 @@ _zstd_compression=${_zstd_compression-}
 # 'normal' - standard compression ratio
 # WARNING: the ultra settings can sometimes
 # be counterproductive in both size and speed.
-_zstd_level_value=${_zstd_level_value-'normal'}
+_zstd_level_value=${_zstd_level_value-normal}
 
-# Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
+# Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
+# ATTENTION - one of three predefined values should be selected!
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 # "none: disable LTO
