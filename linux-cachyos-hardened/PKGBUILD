@@ -363,7 +363,7 @@ prepare() {
     case "$_use_llvm_lto" in
         thin) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -d LTO_CLANG_FULL -e LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
         full) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -e LTO_CLANG_FULL -d LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
-        none)  scripts/config -e LTO_NONE;;
+        none) scripts/config -e LTO_NONE;;
         *) _die "The value $_use_llvm_lto is invalid. Choose the correct one again.";;
     esac
 
@@ -443,7 +443,7 @@ prepare() {
     case "$_tickrate" in
         perodic) scripts/config -d NO_HZ_IDLE -d NO_HZ_FULL -d NO_HZ -d NO_HZ_COMMON -e HZ_PERIODIC;;
         idle) scripts/config -d HZ_PERIODIC -d NO_HZ_FULL -e NO_HZ_IDLE  -e NO_HZ -e NO_HZ_COMMON;;
-        full)  scripts/config -d HZ_PERIODIC -d NO_HZ_IDLE -d CONTEXT_TRACKING_FORCE -e NO_HZ_FULL_NODEF -e NO_HZ_FULL -e NO_HZ -e NO_HZ_COMMON -e CONTEXT_TRACKING;;
+        full) scripts/config -d HZ_PERIODIC -d NO_HZ_IDLE -d CONTEXT_TRACKING_FORCE -e NO_HZ_FULL_NODEF -e NO_HZ_FULL -e NO_HZ -e NO_HZ_COMMON -e CONTEXT_TRACKING;;
         *) _die "The value $_tickrate is invalid. Choose the correct one again.";;
     esac
 
@@ -455,7 +455,7 @@ prepare() {
     case "$_preempt" in
         full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
         voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-        server)  scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+        server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
         *) _die "The value $_preempt is invalid. Choose the correct one again.";;
     esac
 
@@ -484,7 +484,7 @@ prepare() {
     case "$_lru_config" in
         standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
         stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
-        none)  scripts/config -d LRU_GEN;;
+        none) scripts/config -d LRU_GEN;;
         *) _die "The value $_lru_config is invalid. Choose the correct one again.";;
     esac
 
@@ -496,7 +496,7 @@ prepare() {
     case "$_vma_config" in
         standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
         stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
-        none)  scripts/config -d PER_VMA_LOCK;;
+        none) scripts/config -d PER_VMA_LOCK;;
         *) _die "The value $_vma_config is invalid. Choose the correct one again.";;
     esac
 
