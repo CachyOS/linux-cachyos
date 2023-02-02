@@ -9,18 +9,19 @@
 The Schedulers listed below are supported:
 
 ### 🧬 linux-cachyos uses as default the BORE scheduler
-We provided all of these schedulers because each scheduler performs differently and depends on usage. Please test it and choose what suits your requirements.
-- BORE (Burst-Oriented Response Enhancer) CPU Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler)
+We provided all of these CPU schedulers because each scheduler performs differently and depends on usage. Please test it and choose what suits your requirements.
+- **(BORE) - Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler)
   - `linux-cachyos` - Default kernel and we decided to ship BORE by default, but the scheduler could be changed in the future.
   - `linux-cachyos-bore` - If we decide to change the scheduler in the future, we still want to provide BORE.
-- Task Type Scheduler by [Hamad Marri (TT)](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
-- BitMap Queue (BMQ) Alfred Chen Scheduler - `linux-cachyos-bmq`
-- Priority and Deadline based Skiplist multiple queue scheduler (PDS) - Alfred Chen Scheduler » `linux-cachyos-pds`
-- CacULE and CacULE-RDB created by Hamad Marri, supported by CachyOS in the past as - `linux-cachyos-cacule`
+- **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
+- **(BMQ) - BitMap Queue** by Alfred Chen - `linux-cachyos-bmq`
+- **(PDS) - Priority and Deadline based Skiplist multiple queue** by Alfred Chen - `linux-cachyos-pds`
+- **(CFS) - Standard Scheduler Completely Fair Scheduler** - `linux-cachyos-cfs`
 
-  **ATTENTION:** Not supported after version 6.1. If you still want to use it, you can get it from the archive repository - https://github.com/ptr1337/linux-cacule. 
-- Standard Scheduler Completely Fair Scheduler (CFS) - `linux-cachyos-cfs`
-> All kernels are prebuilt in two different march versions (x86-64, x86-64-v3 and x86-64-v4) and also with the LTO-enabled kernels in the cachyos repositories.
+### :books: Archived schedulers
+- **CacULE and CacULE-RDB** by Hamad Marri, supported by CachyOS in the past as - `linux-cachyos-cacule`  
+  ***ATTENTION:** Not supported after version 6.1. If you still want to use it, you can get it from the archive repository - [linux-cacule](https://github.com/ptr1337/linux-cacule)*
+> All kernels are prebuilt in two different march versions **(x86-64, x86-64-v3 and x86-64-v4)** and also with the **LTO-enabled** kernels in the cachyos repositories.
 
 ## 🎯 Features
 - Very customizable PKGBUILD with many features and improvements.
