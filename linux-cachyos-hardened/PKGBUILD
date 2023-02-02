@@ -452,75 +452,28 @@ prepare() {
     fi
 
     ### Select tick type
-    if [ "$_tickrate" = "periodic" ]; then
-        echo "Enabling periodic ticks..."
-        scripts/config -d NO_HZ_IDLE \
-            -d NO_HZ_FULL \
-            -d NO_HZ \
-            -d NO_HZ_COMMON \
-            -e HZ_PERIODIC
-    elif [ "$_tickrate" = "idle" ]; then
-        echo "Enabling idle ticks.."
-        scripts/config -d HZ_PERIODIC \
-            -d NO_HZ_FULL \
-            -e NO_HZ_IDLE \
-            -e NO_HZ \
-            -e NO_HZ_COMMON
-    elif [ "$_tickrate" = "full" ]; then
-        echo "Enabling full ticks..."
-        scripts/config -d HZ_PERIODIC \
-            -d NO_HZ_IDLE \
-            -d CONTEXT_TRACKING_FORCE \
-            -e NO_HZ_FULL_NODEF \
-            -e NO_HZ_FULL \
-            -e NO_HZ \
-            -e NO_HZ_COMMON \
-            -e CONTEXT_TRACKING
-    else
-        if [ -n "$_tickrate" ]; then
-            error "The value $_tickrate is invalid. Choose the correct one again."
-        else
-            error "The value is empty. Choose the correct one again."
-        fi
-        _die "Selecting the tick rate failed!"
-    fi
+    [ -z "$_tickrate" ] && _die "The value is empty. Choose the correct one again."
+
+    case "$_tickrate" in
+        perodic) scripts/config -d NO_HZ_IDLE -d NO_HZ_FULL -d NO_HZ -d NO_HZ_COMMON -e HZ_PERIODIC;;
+        idle) scripts/config -d HZ_PERIODIC -d NO_HZ_FULL -e NO_HZ_IDLE  -e NO_HZ -e NO_HZ_COMMON;;
+        full)  scripts/config -d HZ_PERIODIC -d NO_HZ_IDLE -d CONTEXT_TRACKING_FORCE -e NO_HZ_FULL_NODEF -e NO_HZ_FULL -e NO_HZ -e NO_HZ_COMMON -e CONTEXT_TRACKING;;
+        *) _die "The value $_tickrate is invalid. Choose the correct one again.";;
+    esac
+
+    echo "You choose to $_tickrate tick type..."
 
     ### Select preempt type
-    if [ "$_preempt" = "full" ]; then
-        echo "Enabling low latency preempt..."
-        scripts/config -e PREEMPT_BUILD \
-            -d PREEMPT_NONE \
-            -d PREEMPT_VOLUNTARY \
-            -e PREEMPT \
-            -e PREEMPT_COUNT \
-            -e PREEMPTION \
-            -e PREEMPT_DYNAMIC
-    elif [ "$_preempt" = "voluntary" ]; then
-        echo "Enabling voluntary preempt..."
-        scripts/config -e PREEMPT_BUILD \
-            -d PREEMPT_NONE \
-            -e PREEMPT_VOLUNTARY \
-            -d PREEMPT \
-            -e PREEMPT_COUNT \
-            -e PREEMPTION \
-            -d PREEMPT_DYNAMIC
-    elif [ "$_preempt" = "server" ]; then
-        echo "Enabling server preempt..."
-        scripts/config -e PREEMPT_NONE_BUILD \
-            -e PREEMPT_NONE \
-            -d PREEMPT_VOLUNTARY \
-            -d PREEMPT \
-            -d PREEMPT_COUNT \
-            -d PREEMPTION \
-            -d PREEMPT_DYNAMIC
-    else
-        if [ -n "$_preempt" ]; then
-            error "The value $_preempt is invalid. Choose the correct one again."
-        else
-            error "The value is empty. Choose the correct one again."
-        fi
-        _die "Selecting PREEMPT failed!"
-    fi
+    [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
+
+    case "$_preempt" in
+        full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
+        voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
+        server)  scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+        *) _die "The value $_preempt is invalid. Choose the correct one again.";;
+    esac
+
+    echo "You choose to $_preempt preempt type..."
 
     ### Enable O3
     if [ -n "$_cc_harder" ]; then
@@ -540,66 +493,39 @@ prepare() {
     fi
 
    ### Select LRU config
-    if [ "$_lru_config" = "standard" ]; then
-       echo "Enabling multigenerational LRU..."
-       scripts/config -e LRU_GEN \
-           -e LRU_GEN_ENABLED \
-           -d LRU_GEN_STATS
-    elif [ "$_lru_config" = "stats" ]; then
-       echo "Enabling multigenerational LRU with stats..."
-       scripts/config -e LRU_GEN \
-           -e LRU_GEN_ENABLED \
-           -e LRU_GEN_STATS
-    elif [ "$_lru_config" = "none" ]; then
-       echo "Disabling multigenerational LRU..."
-       scripts/config -d LRU_GEN
-    else
-        if [ -n "$_lru_config" ]; then
-           error "The value $_lru_config is invalid. Choose the correct one again."
-        else
-           error "The value is empty. Choose the correct one again."
-        fi
-        _die "Enabling multigenerational LRU failed!"
-    fi
+   [ -z "$_lru_config" ] && _die "The value is empty. Choose the correct one again."
+
+   case "$_lru_config" in
+       standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
+       stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
+       none)  scripts/config -d LRU_GEN;;
+       *) _die "The value $_lru_config is invalid. Choose the correct one again.";;
+   esac
+
+   echo "You choose to $_lru_config LRU_GEN config..."
 
     ### Select VMA config
-    if [ "$_vma_config" = "standard" ]; then
-       echo "Enabling per-VMA locking..."
-       scripts/config -e PER_VMA_LOCK \
-           -d PER_VMA_LOCK_STATS
-    elif [ "$_vma_config" = "stats" ]; then
-       echo "Enabling per-VMA locking with stats..."
-       scripts/config -e PER_VMA_LOCK \
-           -e PER_VMA_LOCK_STATS
-    elif [ "$_vma_config" = "none" ]; then
-       echo "Disabling per-VMA locking..."
-       scripts/config -d PER_VMA_LOCK
-    else
-        if [ -n "$_vma_config" ]; then
-           error "The value $_vma_config is invalid. Choose the correct one again."
-        else
-           error "The value is empty. Choose the correct one again."
-        fi
-        _die "Enabling per-VMA locking failed!"
-    fi
+    [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
+
+    case "$_vma_config" in
+        standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
+        stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
+        none)  scripts/config -d PER_VMA_LOCK;;
+        *) _die "The value $_vma_config is invalid. Choose the correct one again.";;
+    esac
+
+    echo "You choose to $_vma_config PER_VMA_LOCK config..."
 
    ### Select THP
-    if [ "$_hugepage" = "always" ]; then
-       echo "Enable THP always..."
-       scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE \
-           -e TRANSPARENT_HUGEPAGE_ALWAYS
-    elif [ "$_hugepage" = "madvise" ]; then
-       echo "Enable THP madvise..."
-       scripts/config -d TRANSPARENT_HUGEPAGE_ALWAYS \
-           -e TRANSPARENT_HUGEPAGE_MADVISE
-    else
-        if [ -n "$_hugepage" ]; then
-           error "The value $_hugepage is invalid. Choose the correct one again."
-        else
-           error "The value is empty. Choose the correct one again."
-        fi
-        _die "Setting THP has failed!"
-    fi
+   [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
+
+   case "$_hugepage" in
+       always) scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE -e TRANSPARENT_HUGEPAGE_ALWAYS;;
+       madvise) scripts/config -d TRANSPARENT_HUGEPAGE_ALWAYS -e TRANSPARENT_HUGEPAGE_MADVISE;;
+       *) _die "The value $_hugepage is invalid. Choose the correct one again.";;
+   esac
+
+    echo "You choose to $_hugepage TRANSPARENT_HUGEPAGE config..."
 
     ### Enable DAMON
     if [ -n "$_damon" ]; then
@@ -699,25 +625,15 @@ prepare() {
     fi
 
     ### Selecting the ZSTD modules and kernel compression level
-    if [ "$_zstd_level_value" = "ultra" ]; then
-        echo "Enabling highest ZSTD modules and kernel compression ratio..."
-        scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 19 \
-            -e MODULE_COMPRESS_ZSTD_ULTRA \
-            --set-val MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22 \
-            --set-val ZSTD_COMP_VAL 22
-    elif [ "$_zstd_level_value" = "normal" ]; then
-        echo "Enabling standard ZSTD modules and kernel compression ratio..."
-        scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 9 \
-            -d MODULE_COMPRESS_ZSTD_ULTRA \
-            --set-val ZSTD_COMP_VAL 19
-    else
-        if [ -n "$_zstd_level_value" ]; then
-            error "The value $_zstd_level_value is invalid. Choose the correct one again."
-        else
-            error "The value is empty. Choose the correct one again."
-        fi
-        _die "Selecting the ZSTD modules and kernel compression level failed!"
-    fi
+    [ -z "$_zstd_level_value" ] && _die "The value is empty. Choose the correct one again."
+
+    case "$_zstd_level_value" in
+        ultra) scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 19 -e MODULE_COMPRESS_ZSTD_ULTRA --set-val MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22 --set-val ZSTD_COMP_VAL 22;;
+        normal) scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 9 -d MODULE_COMPRESS_ZSTD_ULTRA --set-val ZSTD_COMP_VAL 19;;
+        *) _die "The value $_zstd_level_value is invalid. Choose the correct one again.";;
+    esac
+
+    echo "You choose to $_zstd_level_value ZSTD modules and kernel compression level..."
 
     ### Disable DEBUG
     if [ -n "$_disable_debug" ]; then
