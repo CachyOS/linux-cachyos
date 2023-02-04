@@ -24,34 +24,43 @@ We provided all of these CPU schedulers because each scheduler performs differen
 > All kernels are prebuilt in two different march versions **(x86-64, x86-64-v3 and x86-64-v4)** and also with the **LTO-enabled** kernels in the cachyos repositories.
 
 ## 🎯 Features
+Here is a list of features of linux kernels prebuilt in `x86-64-v4`, `x86-64-v3` and `x86-64` in the CachyOS repositories.
+
+#### :hammer_and_wrench: Advanced building & compiling
 - Very customizable PKGBUILD with many features and improvements.
-- 5 Different scheduler are supported,`CFS-`,`tt-`,`bmq-`,`bore-`, and `pds` scheduler
-- `GCC/CLANG` Optimization with automatically found CPU arch or also selectable CPU architecture.
-- Choose between `LLVM/LTO` or `GCC`. Experimental GCC LTO support is available.
+- `GCC/CLANG` Optimization with automatically found CPU architecture or also selectable CPU architecture.
+- Choose between `LLVM/LTO & Thin-LTO` or `GCC` - *experimental GCC LTO support is available.*
 - Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 500Hz for BORE/CFS and 1000Hz for other schedulers.
-- Improved BFQ Scheduler.
-- Back-ported patches from `linux-next`.
-- General improved sysctl settings and upstream scheduler fixes.
-- MEMCG MG LRU Patchset
-- Latency Nice Patchset included usuage with `ananicy-cpp` [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
-- Scheduler patches from linux-next/tip
-- rcu fixes and improvements.
-- printk patches
-- BBRv2 tcp_congestion_control.
-- LLVM THIN-LTO Kernels prebuilt in `x86-64-v4`, `x86-64-v3` and `x86-64` in the CachyOS repositories.
-- LRNG Framework. (default disabled)
-- Latest & improved ZSTD patch-set.
-- Latest BTRFS/XFS/EXT4 improvements & fixes.
-- KSMBD Module for Samba3 Server.
+- Kernel Control Flow Integrity (kCFI) selectable when using `LLVM` - *patched llvm can be found in the cachyos-repositories.*
+
+#### :abacus: CPU enhancements
+- 5 Different scheduler are supported,`CFS`,`tt`,`bmq`,`bore`, and `pds` scheduler.
 - AMD PSTATE EPP Driver enabled by default and with enhancements patches/fixes.
-- Clearlinux Patchset.
-- Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`. (patched llvm can be found in the cachyos-repositories)
+- Latency Nice Patchset included usuage with `ananicy-cpp` [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
+- RCU fixes and improvements.
+
+#### :bookmark_tabs: Filesystem & memory
+- Latest BTRFS/XFS/EXT4 improvements & fixes.
 - ZFS Filesystem Support and prebuilt in the repository.
-- Futex fixes and winesync is available
+- Latest & improved ZSTD patch-set.
 - UserKSM daemon from pf.
+- Improved BFQ Scheduler.
 - support for bcachefs.
-- per VMA lock - https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab (default disabled)
-- OpenRGB and ACS Override support
+- [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab) - *default disabled*
+
+#### &#128423; Network 
+- BBRv2 tcp_congestion_control.
+- KSMBD Module for Samba3 Server.
+
+#### :arrow_heading_down: Other features
+- Clearlinux Patchset.
+- Back-ported patches from `linux-next`.
+- Scheduler patches from linux-next/tip.
+- General improved sysctl settings and upstream scheduler fixes.
+- Printk patches.
+- LRNG Framework - *default disabled*
+- Futex fixes and winesync is available.
+- OpenRGB and ACS Override support.
 
 ## Other GNU/Linux distributions
 - Complete patch for simple patching on the kernel
