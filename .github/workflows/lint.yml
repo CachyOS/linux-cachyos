@@ -10,11 +10,9 @@ jobs:
       uses: actions/checkout@v3
     - name: Build (GCC)
       id: makepkg
-      uses: edlanglois/pkgbuild-action@v1.1.8
-      env:
-        _build_zfs: y
-        _use_llvm_lto: "thin"
+      uses: ventureoo/pkgbuild-action@master
       with:
+        envvars: "_build_zfs=y"
         pkgdir: "linux-cachyos"
         namcapDisable: 1
         makepkgArgs: "--skippgpcheck --noconfirm -s"
@@ -25,11 +23,9 @@ jobs:
       uses: actions/checkout@v3
     - name: Build (LLVM)
       id: makepkg
-      uses: edlanglois/pkgbuild-action@v1.1.8
-      env:
-        _build_zfs: y
-        _use_llvm_lto: "thin"
+      uses: ventureoo/pkgbuild-action@master
       with:
+        envvars: "_build_zfs=y _use_llvm_lto=thin"
         pkgdir: "linux-cachyos"
         namcapDisable: 1
         makepkgArgs: "--skippgpcheck --noconfirm -s"
