@@ -62,6 +62,121 @@ Here is a list of features of linux kernels prebuilt in `x86-64-v4`, `x86-64-v3`
 - Futex fixes and winesync is available.
 - OpenRGB and ACS Override support.
 
+## We are providing a [repositories](https://mirror.cachyos.org/) which includes all kernels in x86-64-v4,x86-64-v3 and x86-64 and more performance-optimized packages
+How to add cachyos repositories automatically with compatibility detection is described below.
+
+## 🦾 Automatic adding of cachyos repositories
+Run following commands:
+1. Get archive with script
+```
+wget https://mirror.cachyos.org/cachyos-repo.tar.xz
+```
+> If don't have `wget`, install them by `sudo pacman -S wget`
+
+2. Extract and enter into the archive
+```
+tar xvf cachyos-repo.tar.xz && cd cachyos-repo
+```
+
+3. Run script with sudo
+```
+sudo ./cachyos-repo.sh
+```
+
+#### Behaviour of script  
+1. Script will auto-detect CPU architecture, if CPU have `x86-64-v4` or `x86-64-v3` support, script will automatically use the repositories which are optimized with this flag > and some other flags.
+2. Script will backup your old `pacman.conf`.
+
+## ✋ Manually
+1. Add both keys
+```
+sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
+```
+```
+sudo pacman-key --lsign-key F3B607488DB35A47
+```
+
+2. You can download first initial packages
+```
+sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-15-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-15-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-3-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-6.0.2-10-x86_64.pkg.tar.zst'
+```
+
+## Check CPU compatibility
+If you want to add our repositories manually, you must check the compatibility of the CPU with cachyos repositories.
+> If you use script above for adding cachyos repositories, you can skip checking.
+
+### 1. Check support by the following the command
+```
+/lib/ld-linux-x86-64.so.2 --help | grep supported
+```
+
+### 2. Understanding of command output
+Pay attention to the following text with brackets. **(supported, searched)**
+- If you see `x86-64-v4 (supported, searched)`, that means the **CPU is compatible** and can use **x86-64-v4** instruction set.
+- If you see `x86-64-v4`, that means the **CPU is incompatible** and can't use **x86-64-v4** instruction set.
+
+#### Example of CPU compatible with x86-64-v4 instruction set
+```
+> /lib/ld-linux-x86-64.so.2 --help | grep supported
+  x86-64-v4 (supported, searched)
+  x86-64-v3 (supported, searched)
+  x86-64-v2 (supported, searched)
+  haswell (AT_PLATFORM; supported, searched)
+  tls (supported, searched)
+  avx512_1 (supported, searched)
+  x86_64 (supported, searched)
+```
+
+#### Example of CPU incompatible with x86-64-v4 instruction set
+```
+  > /lib/ld-linux-x86-64.so.2 --help | grep supported
+     STDIN
+  40 Subdirectories of glibc-hwcaps directories, in priority order:
+  41   x86-64-v4
+  42   x86-64-v3 (supported, searched)                                          
+  43   x86-64-v2 (supported, searched)       
+```
+
+### 3. Adding cachyos repositories
+You need edit `pacman.conf` and add repositories.
+```
+sudo nano /etc/pacman.conf
+```
+
+#### if CPU support `x86-64`, then add only `[cachyos]` repositories
+```
+# cachyos repos
+## Only add if your CPU does v3 architecture
+[cachyos]
+Include = /etc/pacman.d/cachyos-mirrorlist
+```
+
+#### if CPU support `x86-64-v3`, then add `[cachyos-v3]`,`[cachyos-community-v3]` and `[cachyos]`
+```
+# cachyos repos
+## Only add if your CPU does v3 architecture
+[cachyos-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos-community-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos]
+Include = /etc/pacman.d/cachyos-mirrorlist
+```
+
+#### if CPU support `x86-64-v4`, then add `[cachyos-v4]`, `[cachyos-v3]`, `[cachyos-community-v3]` and `[cachyos]`
+```
+# cachyos repos
+## Only add if your CPU does support x86-64-v4 architecture
+[cachyos-v4]
+Include = /etc/pacman.d/cachyos-v4-mirrorlist
+[cachyos-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos-community-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos]
+Include = /etc/pacman.d/cachyos-mirrorlist
+```
+
 ## Other GNU/Linux distributions
 - Complete patch for simple patching on the kernel
 - It is planned to implement into our kernel builder from cachyos buildsystem, which works also on other distributions.
@@ -101,98 +216,18 @@ OR
 sudo dnf install kernel-cachyos-bore-lto
 ```
 
-##### Install drivers for lto kernel
+##### Install drivers for LTO kernel
 If you build external modules (e.g. for Nvidia graphics card drivers) and use the -lto kernel, you need to install the following dependencies:
 ```
 sudo dnf install clang clang-devel llvm lld
 ```
 
-## We are providing a [repositories](https://mirror.cachyos.org/) which includes all kernels in x86-64-v4,x86-64-v3 and x86-64 and more performance-optimized packages
-How to add our repositories automatically with compatibility detection (if x86-64-v3 is supported) is described below:
-
-## 🦾 Automatic adding of our repositories
-
-Run following commands:
-1. Get archive with script
-```
-wget https://mirror.cachyos.org/cachyos-repo.tar.xz
-```
-> If don't have `wget`, install them by `sudo pacman -S wget`
-
-2. Extract and jump into the archive
-```
-tar xvf cachyos-repo.tar.xz && cd cachyos-repo
-```
-
-3. Run script with sudo
-```
-sudo ./cachyos-repo.sh
-```
-
-> The script performs automatic `march` detection and changes the pacman.conf
-
-## ✋ Manually
-1. Add key
-```
-sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
-```
-
-2. Add key
-```
-sudo pacman-key --lsign-key F3B607488DB35A47
-```
-
-3. You can download first initial packages
-```
-sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-15-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-15-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-3-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-6.0.2-10-x86_64.pkg.tar.zst'
-```
-## Checking for the cpu support
-1. Check support by the following the command
-```
-/lib/ld-linux-x86-64.so.2 --help | grep "(supported, searched)"
-```
-
-add following over the arch repos the "-v3" repos only if they are supported:
-```
-# cachyos repos
-## Only add if your CPU does v3 architecture
-[cachyos-v3]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
-[cachyos-community-v3]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
-[cachyos]
-Include = /etc/pacman.d/cachyos-mirrorlist
-```
-
-If you have a x86-64-v4 supprted CPU add the following over the arch repos:
-
-```
-# cachyos repos
-## Only add if your CPU does support x86-64-v4 architecture
-[cachyos-v4]
-Include = /etc/pacman.d/cachyos-v4-mirrorlist
-[cachyos-v3]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
-[cachyos-community-v3]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
-[cachyos]
-Include = /etc/pacman.d/cachyos-mirrorlist
-```
-
-> This script will also backup your old pacman.conf.
-> This script will auto-detect you architecture, if your CPU have x86-64-v4 or x86-64-v3 support, it will automatically use the repos which are optimized with this flag > and some other flags.
-> Also all provided Kernels, Browsers, ... are optimized and compiled.
-
 ## ◀️ How to Backup the config and use the native Arch Packages
-
 - Remove or Backup the config located at /etc/pacman.conf
 - then run `sudo mv /etc/pacman.conf.bak /etc/pacman.conf`
 - Then run following command to switch the packages to the default arch packages `sudo pacman -Suuy`
 
-
-More information's you will find here [CachyOS](https://github.com/cachyos) or [Discord](https://discord.gg/k39qfrxPNa) 
-
-## 🔧 How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS:
+## 🔧 How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS
 > Not needed anymore, just install the latest dkms version from our repo.
 
 ## 🗣️ Support - get in touch with CachyOS community
@@ -201,14 +236,12 @@ More information's you will find here [CachyOS](https://github.com/cachyos) or [
 **Matrix:** <https://matrix.cachyos.org> <br />
 
 ## 🌱 Donations are welcome for the build server for the repositories or a cup of coffee for maintaining our repositories.
-
 **PayPal:** <https://paypal.me/pttrr> <br />
 **Patreon:** <https://www.patreon.com/CachyOS> <br />
-
 **BTC:** bc1qmwglfchlc335du6pcu6w64cexu7cck0mzhyw42 <br />
 **ETH:** 0xc2dc77327F78A7B85Db3941Eb49e74F41E961649
 
-### Valueable Contributors
+## Valueable Contributors
 [Hamad Marri](https://github.com/hamadmarri) for the TT Scheduler <br />
 [Archlinux](https://archlinux.org) for the great linux operating system <br />
 [And all other Kernel Developers and Supporters](https://github.com/torvalds/linux) <br />
