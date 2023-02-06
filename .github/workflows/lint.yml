@@ -15,7 +15,7 @@ jobs:
         envvars: "_build_zfs=y"
         pkgdir: "linux-cachyos"
         namcapDisable: 1
-        makepkgArgs: "--skippgpcheck --noconfirm -s"
+        makepkgArgs: "--skipchecksums --skippgpcheck --noconfirm -s"
   linux-cachyos-zfs-llvm:
     runs-on: ubuntu-latest
     steps:
@@ -28,4 +28,4 @@ jobs:
         envvars: "_build_zfs=y _use_llvm_lto=thin"
         pkgdir: "linux-cachyos"
         namcapDisable: 1
-        makepkgArgs: "--skippgpcheck --noconfirm -s"
+        makepkgArgs: "--skipchecksums --skippgpcheck --noconfirm -s"
