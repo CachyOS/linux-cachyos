@@ -199,7 +199,7 @@ fi
 _major=6.2
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc6
+_rcver=rc7
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -858,9 +858,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('ac4a49630e4ee8e1d2c0d63c2f1942b30d29f7ebbd0548d343c16c07af9f2db7'
-            '37e69e135ad48962817fc44ff826b2a4387fc885e17e15310dd7f406da1e66c5'
+sha256sums=('ea49401b0f89d2eb32639e5d4cc6ffade51b0286c9761786ffa62f346cfb4b03'
+            '225dc583c8006a49498c81354a7dcc7acbaf550463d8e7c04d0bc58285cbccaa'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            'b3efc82c702978e47f1a7c6c675a32305347a34806246dda7542c50a5bdcb77e'
+            '36e45fea2f5f5510534a977e0b6f10a53c15efb08f282ffe25df40ac74269233'
             '9b8da83a416041b7dfec2a83066022bba9a1b24b05c68713546ab199a3c4888b'
             'b78828363b80104e8905966f35f32f6a90d5ab7fe544a04e44ef5d13a8404346')
