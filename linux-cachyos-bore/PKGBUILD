@@ -3,25 +3,28 @@
 # Contributor: Tobias Powalowski <tpowa@archlinux.org>
 # Contributor: Thomas Baechler <thomas@archlinux.org>
 
-### BUILD OPTIONS
-# Set these variables to ANYTHING that is not null or choose proper variable to enable them
-
 ### Selecting CachyOS config
-_cachy_config=${_cachy_config-y}
+# ATTENTION - one of two predefined values should be selected!
+# 'yes' - enable CachyOS config
+# 'no' - disable CachyOS config
+_cachy_config=${_cachy_config-'yes'}
 
 ### Selecting the CPU scheduler
-# ATTENTION - one of six predefined values should be selected!
+# ATTENTION - one of seven predefined values should be selected!
 # 'bmq' - select 'BitMap Queue CPU scheduler'
 # 'pds' - select 'Priority and Deadline based Skip list multiple queue CPU scheduler'
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-_cpusched=${_cpusched-bore}
+_cpusched=${_cpusched-'bore'}
 
 ## Apply some suggested sysctl values from the bore developer
 ## These are adjusted to BORE
 _tune_bore=${_tune_bore-}
+
+### BUILD OPTIONS
+# Set these variables to ANYTHING that is not null to enable them
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
@@ -90,14 +93,14 @@ _kyber_disable=${_kyber_disable-y}
 # 'standard' - enable multigenerational LRU
 # 'stats' - enable multigenerational LRU with stats
 # 'none' - disable multigenerational LRU
-_lru_config=${_lru_config-standard}
+_lru_config=${_lru_config-'standard'}
 
 ### Enable per-VMA locking
 # ATTENTION - one of three predefined values should be selected!
 # 'standard' - enable per-VMA locking
 # 'stats' - enable per-VMA locking with stats
 # 'none' - disable per-VMA locking
-_vma_config=${_vma_config-none}
+_vma_config=${_vma_config-'none'}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -105,7 +108,7 @@ _vma_config=${_vma_config-none}
 # 'madvise' - madvise, prevent applications from allocating more memory resources than necessary
 # More infos here:
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
-_hugepage=${_hugepage-always}
+_hugepage=${_hugepage-'always'}
 
 ## Enable DAMON
 _damon=${_damon-}
@@ -138,14 +141,12 @@ _zstd_compression=${_zstd_compression-}
 # 'normal' - standard compression ratio
 # WARNING: the ultra settings can sometimes
 # be counterproductive in both size and speed.
-_zstd_level_value=${_zstd_level_value-normal}
+_zstd_level_value=${_zstd_level_value-'normal'}
 
-# Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
-# ATTENTION - one of three predefined values should be selected!
+# Clang LTO mode, only available with the "llvm" compiler - options are "no", "full" or "thin".
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
-# "none: disable LTO
-_use_llvm_lto=${_use_llvm_lto-none}
+_use_llvm_lto=${_use_llvm_lto-}
 
 # Use suffix -lto only when requested by the user
 # Enabled by default.
@@ -188,7 +189,7 @@ _bcachefs=${_bcachefs-}
 # https://gitlab.com/ananicy-cpp/ananicy-cpp/-/tree/feature/latency-nice
 _latency_nice=${_latency_nice-y}
 
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" && -n "$_use_lto_suffix" ]]; then
+if [[ -n "$_use_llvm_lto" && -n "$_use_lto_suffix" ]]; then
     pkgsuffix=cachyos-${_cpusched}-lto
     pkgbase=linux-$pkgsuffix
 
@@ -207,7 +208,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -215,7 +216,7 @@ license=('GPL2')
 options=('!strip')
 makedepends=('bc' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch')
 # LLVM makedepends
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]]; then
+if [ -n "$_use_llvm_lto" ]; then
     makedepends+=(clang llvm lld python)
     BUILD_FLAGS=(
         CC=clang
@@ -327,9 +328,19 @@ prepare() {
     fi
 
     ### Selecting CachyOS config
-    if [ -n "$_cachy_config" ]; then
+    if [ "$_cachy_config" = "yes" ]; then
         echo "Enabling CachyOS config..."
         scripts/config -e CACHY
+    elif [ "$_cachy_config" = "no" ]; then
+       echo "Disabling CachyOS config..."
+       scripts/config -d CACHY
+    else
+       if [ -n "$_cachy_config" ]; then
+           error "The value $_cachy_config is invalid. Choose the correct one again."
+       else
+           error "The value is empty. Choose the correct one again."
+       fi
+       _die "Selecting CachyOS config failed!"
     fi
 
     ### Selecting the CPU scheduler
@@ -355,16 +366,31 @@ prepare() {
     fi
 
     ### Select LLVM level
-    [ -z "$_use_llvm_lto" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_use_llvm_lto" in
-        thin) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -d LTO_CLANG_FULL -e LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
-        full) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -e LTO_CLANG_FULL -d LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
-        none) scripts/config -e LTO_NONE;;
-        *) _die "The value '$_use_llvm_lto' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_use_llvm_lto' LLVM level..."
+    if [ "$_use_llvm_lto" = "thin" ]; then
+        echo "Enabling LLVM THIN LTO..."
+        scripts/config -e LTO \
+            -e LTO_CLANG \
+            -e ARCH_SUPPORTS_LTO_CLANG \
+            -e ARCH_SUPPORTS_LTO_CLANG_THIN \
+            -d LTO_NONE \
+            -e HAS_LTO_CLANG \
+            -d LTO_CLANG_FULL \
+            -e LTO_CLANG_THIN \
+            -e HAVE_GCC_PLUGINS
+    elif [ "$_use_llvm_lto" = "full" ]; then
+        echo "Enabling LLVM FULL LTO..."
+        scripts/config -e LTO \
+            -e LTO_CLANG \
+            -e ARCH_SUPPORTS_LTO_CLANG \
+            -e ARCH_SUPPORTS_LTO_CLANG_THIN \
+            -d LTO_NONE \
+            -e HAS_LTO_CLANG \
+            -e LTO_CLANG_FULL \
+            -d LTO_CLANG_THIN \
+            -e HAVE_GCC_PLUGINS
+    else
+        scripts/config -e LTO_NONE
+    fi
 
     ### Enable GCC FULL LTO
     ### Disable LTO_CP_CLONE, its experimental
@@ -435,28 +461,75 @@ prepare() {
     fi
 
     ### Select tick type
-    [ -z "$_tickrate" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_tickrate" in
-        perodic) scripts/config -d NO_HZ_IDLE -d NO_HZ_FULL -d NO_HZ -d NO_HZ_COMMON -e HZ_PERIODIC;;
-        idle) scripts/config -d HZ_PERIODIC -d NO_HZ_FULL -e NO_HZ_IDLE  -e NO_HZ -e NO_HZ_COMMON;;
-        full) scripts/config -d HZ_PERIODIC -d NO_HZ_IDLE -d CONTEXT_TRACKING_FORCE -e NO_HZ_FULL_NODEF -e NO_HZ_FULL -e NO_HZ -e NO_HZ_COMMON -e CONTEXT_TRACKING;;
-        *) _die "The value '$_tickrate' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_tickrate' tick type..."
+    if [ "$_tickrate" = "periodic" ]; then
+        echo "Enabling periodic ticks..."
+        scripts/config -d NO_HZ_IDLE \
+            -d NO_HZ_FULL \
+            -d NO_HZ \
+            -d NO_HZ_COMMON \
+            -e HZ_PERIODIC
+    elif [ "$_tickrate" = "idle" ]; then
+        echo "Enabling idle ticks.."
+        scripts/config -d HZ_PERIODIC \
+            -d NO_HZ_FULL \
+            -e NO_HZ_IDLE \
+            -e NO_HZ \
+            -e NO_HZ_COMMON
+    elif [ "$_tickrate" = "full" ]; then
+        echo "Enabling full ticks..."
+        scripts/config -d HZ_PERIODIC \
+            -d NO_HZ_IDLE \
+            -d CONTEXT_TRACKING_FORCE \
+            -e NO_HZ_FULL_NODEF \
+            -e NO_HZ_FULL \
+            -e NO_HZ \
+            -e NO_HZ_COMMON \
+            -e CONTEXT_TRACKING
+    else
+        if [ -n "$_tickrate" ]; then
+            error "The value $_tickrate is invalid. Choose the correct one again."
+        else
+            error "The value is empty. Choose the correct one again."
+        fi
+        _die "Selecting the tick rate failed!"
+    fi
 
     ### Select preempt type
-    [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_preempt" in
-        full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
-        voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-        server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
-        *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_preempt' preempt type..."
+    if [ "$_preempt" = "full" ]; then
+        echo "Enabling low latency preempt..."
+        scripts/config -e PREEMPT_BUILD \
+            -d PREEMPT_NONE \
+            -d PREEMPT_VOLUNTARY \
+            -e PREEMPT \
+            -e PREEMPT_COUNT \
+            -e PREEMPTION \
+            -e PREEMPT_DYNAMIC
+    elif [ "$_preempt" = "voluntary" ]; then
+        echo "Enabling voluntary preempt..."
+        scripts/config -e PREEMPT_BUILD \
+            -d PREEMPT_NONE \
+            -e PREEMPT_VOLUNTARY \
+            -d PREEMPT \
+            -e PREEMPT_COUNT \
+            -e PREEMPTION \
+            -d PREEMPT_DYNAMIC
+    elif [ "$_preempt" = "server" ]; then
+        echo "Enabling server preempt..."
+        scripts/config -e PREEMPT_NONE_BUILD \
+            -e PREEMPT_NONE \
+            -d PREEMPT_VOLUNTARY \
+            -d PREEMPT \
+            -d PREEMPT_COUNT \
+            -d PREEMPTION \
+            -d PREEMPT_DYNAMIC
+    else
+        if [ -n "$_preempt" ]; then
+            error "The value $_preempt is invalid. Choose the correct one again."
+        else
+            error "The value is empty. Choose the correct one again."
+        fi
+        _die "Selecting PREEMPT failed!"
+    fi
 
     ### Enable O3
     if [ -n "$_cc_harder" ]; then
@@ -475,40 +548,68 @@ prepare() {
             --set-str DEFAULT_TCP_CONG bbr2
     fi
 
-    ### Select LRU config
-    [ -z "$_lru_config" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_lru_config" in
-        standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
-        stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
-        none) scripts/config -d LRU_GEN;;
-        *) _die "The value '$_lru_config' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_lru_config' LRU_GEN config..."
+   ### Select LRU config
+    if [ "$_lru_config" = "standard" ]; then
+       echo "Enabling multigenerational LRU..."
+       scripts/config -e LRU_GEN \
+           -e LRU_GEN_ENABLED \
+           -d LRU_GEN_STATS
+    elif [ "$_lru_config" = "stats" ]; then
+       echo "Enabling multigenerational LRU with stats..."
+       scripts/config -e LRU_GEN \
+           -e LRU_GEN_ENABLED \
+           -e LRU_GEN_STATS
+    elif [ "$_lru_config" = "none" ]; then
+       echo "Disabling multigenerational LRU..."
+       scripts/config -d LRU_GEN
+    else
+        if [ -n "$_lru_config" ]; then
+           error "The value $_lru_config is invalid. Choose the correct one again."
+        else
+           error "The value is empty. Choose the correct one again."
+        fi
+         error "Enabling multigenerational LRU failed!"
+         exit
+    fi
 
     ### Select VMA config
-    [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
+    if [ "$_vma_config" = "standard" ]; then
+       echo "Enabling per-VMA locking..."
+       scripts/config -e PER_VMA_LOCK \
+           -d PER_VMA_LOCK_STATS
+    elif [ "$_vma_config" = "stats" ]; then
+       echo "Enabling per-VMA locking with stats..."
+       scripts/config -e PER_VMA_LOCK \
+           -e PER_VMA_LOCK_STATS
+    elif [ "$_vma_config" = "none" ]; then
+       echo "Disabling per-VMA locking..."
+       scripts/config -d PER_VMA_LOCK
+    else
+        if [ -n "$_vma_config" ]; then
+           error "The value $_vma_config is invalid. Choose the correct one again."
+        else
+           error "The value is empty. Choose the correct one again."
+        fi
+        _die "Enabling per-VMA locking failed!"
+    fi
 
-    case "$_vma_config" in
-        standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
-        stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
-        none) scripts/config -d PER_VMA_LOCK;;
-        *) _die "The value '$_vma_config' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_vma_config' PER_VMA_LOCK config..."
-
-    ### Select THP
-    [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_hugepage" in
-        always) scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE -e TRANSPARENT_HUGEPAGE_ALWAYS;;
-        madvise) scripts/config -d TRANSPARENT_HUGEPAGE_ALWAYS -e TRANSPARENT_HUGEPAGE_MADVISE;;
-        *) _die "The value '$_hugepage' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_hugepage' TRANSPARENT_HUGEPAGE config..."
+   ### Select THP
+    if [ "$_hugepage" = "always" ]; then
+       echo "Enable THP always..."
+       scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE \
+           -e TRANSPARENT_HUGEPAGE_ALWAYS
+    elif [ "$_hugepage" = "madvise" ]; then
+       echo "Enable THP madvise..."
+       scripts/config -d TRANSPARENT_HUGEPAGE_ALWAYS \
+           -e TRANSPARENT_HUGEPAGE_MADVISE
+    else
+        if [ -n "$_hugepage" ]; then
+           error "The value $_hugepage is invalid. Choose the correct one again."
+        else
+           error "The value is empty. Choose the correct one again."
+        fi
+        _die "Setting THP has failed!"
+    fi
 
     ### Enable DAMON
     if [ -n "$_damon" ]; then
@@ -608,15 +709,25 @@ prepare() {
     fi
 
     ### Selecting the ZSTD modules and kernel compression level
-    [ -z "$_zstd_level_value" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_zstd_level_value" in
-        ultra) scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 19 -e MODULE_COMPRESS_ZSTD_ULTRA --set-val MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22 --set-val ZSTD_COMP_VAL 22;;
-        normal) scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 9 -d MODULE_COMPRESS_ZSTD_ULTRA --set-val ZSTD_COMP_VAL 19;;
-        *) _die "The value '$_zstd_level_value' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_zstd_level_value' ZSTD modules and kernel compression level..."
+    if [ "$_zstd_level_value" = "ultra" ]; then
+        echo "Enabling highest ZSTD modules and kernel compression ratio..."
+        scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 19 \
+            -e MODULE_COMPRESS_ZSTD_ULTRA \
+            --set-val MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22 \
+            --set-val ZSTD_COMP_VAL 22
+    elif [ "$_zstd_level_value" = "normal" ]; then
+        echo "Enabling standard ZSTD modules and kernel compression ratio..."
+        scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 9 \
+            -d MODULE_COMPRESS_ZSTD_ULTRA \
+            --set-val ZSTD_COMP_VAL 19
+    else
+        if [ -n "$_zstd_level_value" ]; then
+            error "The value $_zstd_level_value is invalid. Choose the correct one again."
+        else
+            error "The value is empty. Choose the correct one again."
+        fi
+        _die "Selecting the ZSTD modules and kernel compression level failed!"
+    fi
 
     ### Disable DEBUG
     if [ -n "$_disable_debug" ]; then
@@ -859,7 +970,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('0be2919ba91cf5873a4cb4d429de78aad0469120d624e333a43b4b011d74d19d'
-            '111246473833b7576d33e284becf55dbb3533b657391fa2a3846b0da6d6039c6'
+            'a9673e76b766f3a71472e39fb6a3e03e5c1e6d91680cb50b0b54af610039a847'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
             '87929b669f1081d34e27768ee9426da8c97038619d4deee38487f93ca9c9a629'
             '479019c7ea52de10b6cadac468eb61215bafef596da3d751571bb6dc4fcd8787'

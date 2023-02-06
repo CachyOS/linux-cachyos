@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-hardened
 	pkgdesc = Linux hardenened BORE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.1.10
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -28,12 +28,12 @@ pkgbase = linux-cachyos-hardened
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/sched/0001-bore-cachy.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/misc/0001-hardened.patch
 	sha256sums = 0be2919ba91cf5873a4cb4d429de78aad0469120d624e333a43b4b011d74d19d
-	sha256sums = aba3016994b0f06c516efb7494d295676315510c2ef3a6c9140827f36841ad23
+	sha256sums = 5a499b0c113fba464a9edab9898d8b229c523e1a5472675b9f2f1771188a0c83
 	sha256sums = 41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106
 	sha256sums = 87929b669f1081d34e27768ee9426da8c97038619d4deee38487f93ca9c9a629
 	sha256sums = 479019c7ea52de10b6cadac468eb61215bafef596da3d751571bb6dc4fcd8787
 	sha256sums = 80f8c92d504c1152adc85d1f832308e8bab7211613bd6c9a3a0c6752f0810b14
-	sha256sums = 4c67bd19fcd045747a22ac1080b4b1acc5576dee23ba24f2643455b084bc4378
+	sha256sums = 0851bb448a717cd8711534cb06962983a92302687656eec902194b28dfb15060
 
 pkgname = linux-cachyos-hardened
 	pkgdesc = The Linux hardenened BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules
