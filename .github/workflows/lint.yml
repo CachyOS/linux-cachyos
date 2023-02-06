@@ -1,0 +1,35 @@
+name: Build and lint
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  linux-cachyos-zfs-gcc:
+    runs-on: ubuntu-latest
+    env:
+      _build_zfs: y
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Build (GCC)
+      id: makepkg
+      uses: edlanglois/pkgbuild-action@v1.1.8
+      with:
+        pkgdir: "linux-cachyos"
+        namcapDisable: 1
+        makepkgArgs: "--skippgpcheck --noconfirm -s"
+  linux-cachyos-zfs-llvm:
+    runs-on: ubuntu-latest
+    env:
+      _build_zfs: y
+      _use_llvm_lto: thin
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Build (LLVM)
+      id: makepkg
+      uses: edlanglois/pkgbuild-action@v1.1.8
+      with:
+        _build_zfs: y
+        pkgdir: "linux-cachyos"
+        namcapDisable: 1
+        makepkgArgs: "--skippgpcheck --noconfirm -s"
