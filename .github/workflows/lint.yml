@@ -8,13 +8,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Setup
-      run: |
-        touch .env
-        echo "_build_zfs=y" >> .env
     - name: Build (GCC)
       id: makepkg
       uses: edlanglois/pkgbuild-action@v1.1.8
+      env:
+        _build_zfs: y
+        _use_llvm_lto: "thin"
       with:
         pkgdir: "linux-cachyos"
         namcapDisable: 1
@@ -24,14 +23,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Setup
-      run: |
-        touch .env
-        echo "_build_zfs=y" >> .env
-        echo "_use_llvm_lto=thin" >> .env
     - name: Build (LLVM)
       id: makepkg
       uses: edlanglois/pkgbuild-action@v1.1.8
+      env:
+        _build_zfs: y
+        _use_llvm_lto: "thin"
       with:
         pkgdir: "linux-cachyos"
         namcapDisable: 1
