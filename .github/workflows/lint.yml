@@ -2,7 +2,8 @@ name: Build and lint
 on:
   push:
     paths:
-      - linux-cachyos/PKGBUILD
+      - 'linux-cachyos/PKGBUILD'
+      - '.github/workflows/lint.yml'
   workflow_dispatch:
 jobs:
   linux-cachyos-zfs-gcc:
