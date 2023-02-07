@@ -188,7 +188,7 @@ _bcachefs=${_bcachefs-}
 # https://gitlab.com/ananicy-cpp/ananicy-cpp/-/tree/feature/latency-nice
 _latency_nice=${_latency_nice-y}
 
-if [[ "$_use_llvm_lto" != "none" && -n "$_use_lto_suffix" ]]; then
+if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
     pkgsuffix=cachyos-rc-lto
     pkgbase=linux-$pkgsuffix
 
