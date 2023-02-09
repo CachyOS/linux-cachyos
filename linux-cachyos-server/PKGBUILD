@@ -197,7 +197,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.1
-_minor=10
+_minor=11
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -207,7 +207,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux CFS scheduler Kernel by CachyOS targeted for Servers'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -859,7 +859,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('0be2919ba91cf5873a4cb4d429de78aad0469120d624e333a43b4b011d74d19d'
+sha256sums=('581b0560077863c5116512c0b5fd93b97814092c80e6ebebabe88101949af7a1'
             '509bde973c87ce534f047ef4bdcd8b07dce606ea8e2fd91af1af0641db21eb37'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            '87929b669f1081d34e27768ee9426da8c97038619d4deee38487f93ca9c9a629')
+            'b432d83476b893c2f46b5284bacdf0d760f3708c87dc57905740ad21dc8fc540')
