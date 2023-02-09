@@ -213,11 +213,7 @@ arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL2')
 options=('!strip')
-makedepends=(
-  bc libelf pahole cpio perl tar xz
-  xmlto python-sphinx python-sphinx_rtd_theme graphviz imagemagick
-  git
-)
+makedepends=('bc' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch')
 # LLVM makedepends
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]]; then
     makedepends+=(clang llvm lld python)
