@@ -224,10 +224,10 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]]; then
         LLVM_IAS=1
     )
 fi
-# ZFS makedepends
+# ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-
+    source+=("git+https://github.com/cachyos/zfs.git#commit=92e0d9d183ce6752cd52f7277c8321d81df9ffee")
 fi
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 source=(
@@ -235,10 +235,7 @@ source=(
     "config"
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
-## ZFS Support
-if [ -n "$_build_zfs" ]; then
-    source+=("git+https://github.com/cachyos/zfs.git#commit=92e0d9d183ce6752cd52f7277c8321d81df9ffee")
-fi
+
 ## Latency NICE Support
 if [ -n "$_latency_nice" ]; then
     if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
