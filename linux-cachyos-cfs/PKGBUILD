@@ -694,7 +694,7 @@ build() {
         cd ${srcdir}/"zfs"
 
         local CONFIGURE_FLAGS=()
-        [ -n "$_use_llvm_lto" ] && CONFIGURE_FLAGS+=("KERNEL_LLVM=1")
+        [ "$_use_llvm_lto" != "none" ] && CONFIGURE_FLAGS+=("KERNEL_LLVM=1")
 
         ./autogen.sh
         sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
