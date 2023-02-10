@@ -693,21 +693,15 @@ build() {
     if [ -n "$_build_zfs" ]; then
         cd ${srcdir}/"zfs"
 
-        if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]]; then
-            ./autogen.sh
-            sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
-            ./configure KERNEL_LLVM=1 --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin --libdir=/usr/lib \
-                --datadir=/usr/share --includedir=/usr/include --with-udevdir=/lib/udev \
-                --libexecdir=/usr/lib/zfs --with-config=kernel \
-                --with-linux=${srcdir}/$_srcname
-        else
-            ./autogen.sh
-            sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
-            ./configure --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin --libdir=/usr/lib \
-                --datadir=/usr/share --includedir=/usr/include --with-udevdir=/lib/udev \
-                --libexecdir=/usr/lib/zfs --with-config=kernel \
-                --with-linux=${srcdir}/$_srcname
-        fi
+        local CONFIGURE_FLAGS=()
+        [ -n "$_use_llvm_lto" ] && CONFIGURE_FLAGS+=("KERNEL_LLVM=1")
+
+        ./autogen.sh
+        sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
+        ./configure ${CONFIGURE_FLAGS[*]} --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin \
+            --libdir=/usr/lib --datadir=/usr/share --includedir=/usr/include \
+            --with-udevdir=/lib/udev --libexecdir=/usr/lib/zfs --with-config=kernel \
+            --with-linux=${srcdir}/$_srcname
         make ${BUILD_FLAGS[*]}
     fi
 }
