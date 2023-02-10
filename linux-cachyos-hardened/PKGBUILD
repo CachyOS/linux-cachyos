@@ -398,12 +398,14 @@ prepare() {
     fi
 
     ### Setting NR_CPUS
-    if [ -n "$_nr_cpus" ]; then
+    if [[ "$_nr_cpus" -ge 2 && "$_nr_cpus" -le 512 ]]; then
         echo "Setting custom NR_CPUS..."
         scripts/config --set-val NR_CPUS "$_nr_cpus"
-    else
+    elif [ -z "$_nr_cpus" ]; then
         echo "Setting default NR_CPUS..."
         scripts/config --set-val NR_CPUS 320
+    else
+        _die "The value '$_nr_cpus' is invalid. Please select a numerical value from 2 to 512..."
     fi
 
     ### Disable MQ Deadline I/O scheduler
