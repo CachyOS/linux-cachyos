@@ -215,7 +215,7 @@ license=('GPL2')
 options=('!strip')
 makedepends=('bc' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch')
 # LLVM makedepends
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]]; then
+if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
     makedepends+=(clang llvm lld python)
     BUILD_FLAGS=(
         CC=clang
@@ -256,14 +256,6 @@ case "$_cpusched" in
                  "${_patchsource}/misc/0001-hardened.patch");;
 esac
 
-## Kernel CFI Patch
-if [ -n "$_use_kcfi" ]; then
-    BUILD_FLAGS=(
-        CC=clang
-        LD=ld.lld
-        LLVM=1
-    )
-fi
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
     source+=("${_patchsource}/misc/0001-bcachefs.patch")
