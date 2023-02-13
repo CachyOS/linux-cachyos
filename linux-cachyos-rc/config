@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.2.0-rc7 Kernel Configuration
+# Linux/x86 6.2.0-rc8 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 12.2.1 20230201"
 CONFIG_CC_IS_GCC=y
@@ -10582,7 +10582,6 @@ CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y
 # CONFIG_ZERO_CALL_USED_REGS is not set
 # end of Memory initialization
 
-CONFIG_CC_HAS_RANDSTRUCT=y
 CONFIG_RANDSTRUCT_NONE=y
 # CONFIG_RANDSTRUCT_FULL is not set
 # CONFIG_RANDSTRUCT_PERFORMANCE is not set
