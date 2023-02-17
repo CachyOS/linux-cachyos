@@ -196,13 +196,13 @@ else
     pkgsuffix=cachyos-server
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.1
-_minor=12
+_major=6.2
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
