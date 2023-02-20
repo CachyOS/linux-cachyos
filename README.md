@@ -35,32 +35,35 @@ Here is a list of features of linux kernels prebuilt in `x86-64-v4`, `x86-64-v3`
 
 #### :abacus: CPU enhancements
 - 5 Different scheduler are supported,`CFS`,`tt`,`bmq`,`bore`, and `pds` scheduler.
-- AMD PSTATE EPP Driver enabled by default and with enhancements patches/fixes.
+- AMD PSTATE EPP and AMD PSTATE Guided Driver enabled by default and with enhancements patches/fixes.
 - Latency Nice Patchset included usuage with `ananicy-cpp` [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
 - RCU fixes and improvements.
 
 #### :bookmark_tabs: Filesystem & memory
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
 - ZFS Filesystem Support and prebuilt in the repository.
-- Latest & improved ZSTD patch-set.
+- Latest & improved ZSTD 1.5.4 patch-set.
 - UserKSM daemon from pf.
 - Improved BFQ Scheduler.
 - support for bcachefs.
 - [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab) - *default disabled*
+- zram patches from upstream
 
 #### &#128423; Network 
 - BBRv2 tcp_congestion_control.
 - KSMBD Module for Samba3 Server.
 
 #### :arrow_heading_down: Other features
-- Clearlinux Patchset.
+- Selected patches from ClearLinux
 - Back-ported patches from `linux-next`.
 - Scheduler patches from linux-next/tip.
 - General improved sysctl settings and upstream scheduler fixes.
-- Printk patches.
 - LRNG Framework - *default disabled*
-- Futex fixes and winesync is available.
 - OpenRGB and ACS Override support.
+- HDR Patches for AMD GPU's and gamescope
+- KVM Performance Improvement from Yu Zhao
+- Objtool Patches to reduce the memory usage
+- maple-tree and MG-LRU fixes from upstream
 
 ## We are providing a [repositories](https://mirror.cachyos.org/) which includes all kernels in x86-64-v4,x86-64-v3 and x86-64 and more performance-optimized packages
 How to add cachyos repositories automatically with compatibility detection is described below.

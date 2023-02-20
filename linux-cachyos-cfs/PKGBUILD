@@ -167,8 +167,7 @@ _use_gcc_lto=${_use_gcc_lto-}
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-# ATTENTION!: You need llvm-git or a patched llvm 15
-# ATTENTION!: This is experimental, could fail to boot with nvidia
+# ATTENTION!: kCFI is only available in llvm 16
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
@@ -181,11 +180,8 @@ _bcachefs=${_bcachefs-}
 # Latency nice is a approach to sets latency-nice as a per-task attribute
 # It can improve the latency of applications similar to sched_nice, but focused on the latency
 # You need to set the values per task
-# Ananicy-cpp has a experimental implementation for this
-# It converts sched_nice to latency_nice and set this per task
+# Ananicy-cpp has a implementation for this
 # You need to configure ananicy-cpp for this or use existing settings
-# If you want to test it, use the following branch
-# https://gitlab.com/ananicy-cpp/ananicy-cpp/-/tree/feature/latency-nice
 _latency_nice=${_latency_nice-y}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
@@ -196,13 +192,13 @@ else
     pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.1
-_minor=12
+_major=6.2
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -845,8 +841,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('d47aa675170904dcc93eeaa7c96db54d476a11c5d3e8cf3d3b96e364e2a0edea'
-            '509bde973c87ce534f047ef4bdcd8b07dce606ea8e2fd91af1af0641db21eb37'
+sha256sums=('74862fa8ab40edae85bb3385c0b71fe103288bce518526d63197800b3cbdecb1'
+            '7f0b634e7b02a7a7dafd5fcb9c2be4f4bcacfa972c2be2ff1505ecaaf7c2c71a'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            '750aafca9b47da4a30fe55b5ffbbe6bbba7129bb7c9fd46621cce80a7ac66401'
-            'a9566828cf8b62edfd961d4f5309dd1c414697122835e75c5141fe467ca8c7c0')
+            'dc8304688ffd4b4887360818becaef6fc8637f157840d8c00bf9111a222cdead'
+            '91fd56593928155841b161e608d249af725bbde65d19415fd98d55efc322ef89')
