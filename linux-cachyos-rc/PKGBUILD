@@ -167,8 +167,7 @@ _use_gcc_lto=${_use_gcc_lto-}
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-# ATTENTION!: You need llvm-git or a patched llvm 15
-# ATTENTION!: This is experimental, could fail to boot with nvidia
+# ATTENTION!: kCFI is only available in llvm 16
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
@@ -181,11 +180,8 @@ _bcachefs=${_bcachefs-}
 # Latency nice is a approach to sets latency-nice as a per-task attribute
 # It can improve the latency of applications similar to sched_nice, but focused on the latency
 # You need to set the values per task
-# Ananicy-cpp has a experimental implementation for this
-# It converts sched_nice to latency_nice and set this per task
+# Ananicy-cpp has a implementation for this
 # You need to configure ananicy-cpp for this or use existing settings
-# If you want to test it, use the following branch
-# https://gitlab.com/ananicy-cpp/ananicy-cpp/-/tree/feature/latency-nice
 _latency_nice=${_latency_nice-y}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
@@ -846,8 +842,8 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('747d729e089bfe37d0c0713338d09c48fe155681acc485949bb001026397a732'
-            '44e53082f7f88b62c0b4402a00db0797850de1d90adc2a803b1432fc7efe51bb'
+            '7f0b634e7b02a7a7dafd5fcb9c2be4f4bcacfa972c2be2ff1505ecaaf7c2c71a'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            'e9fb91e6333ac8293f81b83e22a77b6eb0d752ec6749a1f46067955636206a8f'
-            '9b8da83a416041b7dfec2a83066022bba9a1b24b05c68713546ab199a3c4888b'
-            'b78828363b80104e8905966f35f32f6a90d5ab7fe544a04e44ef5d13a8404346')
+            'dc8304688ffd4b4887360818becaef6fc8637f157840d8c00bf9111a222cdead'
+            '91fd56593928155841b161e608d249af725bbde65d19415fd98d55efc322ef89'
+            '200b0b5469fc26e7c77857a13b2e79e85d87e9c8c5461a25ffd58be402a20631')

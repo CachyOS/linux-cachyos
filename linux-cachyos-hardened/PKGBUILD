@@ -167,8 +167,7 @@ _use_gcc_lto=${_use_gcc_lto-}
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-# ATTENTION!: You need llvm-git or a patched llvm 15
-# ATTENTION!: This is experimental, could fail to boot with nvidia
+# ATTENTION!: kCFI is only available in llvm 16
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
@@ -181,11 +180,8 @@ _bcachefs=${_bcachefs-}
 # Latency nice is a approach to sets latency-nice as a per-task attribute
 # It can improve the latency of applications similar to sched_nice, but focused on the latency
 # You need to set the values per task
-# Ananicy-cpp has a experimental implementation for this
-# It converts sched_nice to latency_nice and set this per task
+# Ananicy-cpp has a implementation for this
 # You need to configure ananicy-cpp for this or use existing settings
-# If you want to test it, use the following branch
-# https://gitlab.com/ananicy-cpp/ananicy-cpp/-/tree/feature/latency-nice
 _latency_nice=${_latency_nice-y}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
@@ -196,13 +192,13 @@ else
     pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.1
-_minor=12
+_major=6.2
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
