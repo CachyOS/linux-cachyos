@@ -1,8 +1,8 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.2.0-rc8 Kernel Configuration
+# Linux/x86 6.2.0 Kernel Configuration
 #
-CONFIG_CC_VERSION_TEXT="gcc (GCC) 12.2.1 20230201"
+CONFIG_CC_VERSION_TEXT="gcc (GCC) 12.2.1 20230216"
 CONFIG_CC_IS_GCC=y
 CONFIG_GCC_VERSION=120201
 CONFIG_CLANG_VERSION=0
