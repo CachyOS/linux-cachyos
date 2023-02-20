@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-tt
 	pkgdesc = Linux TT scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.2.0
-	pkgrel = 1
+	pkgrel = 3
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -29,7 +29,7 @@ pkgbase = linux-cachyos-tt
 	sha256sums = 74862fa8ab40edae85bb3385c0b71fe103288bce518526d63197800b3cbdecb1
 	sha256sums = 7f0b634e7b02a7a7dafd5fcb9c2be4f4bcacfa972c2be2ff1505ecaaf7c2c71a
 	sha256sums = 41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106
-	sha256sums = dc8304688ffd4b4887360818becaef6fc8637f157840d8c00bf9111a222cdead
+	sha256sums = 23765d8d40c42fbfcd65f587021927dd4ad6d872807b5e719f4fb79631b9d1a0
 	sha256sums = c5c48b3e6b08c54b7d057f32da5d11478cf25ba87c903727a77a7b5a8d3f78a8
 
 pkgname = linux-cachyos-tt

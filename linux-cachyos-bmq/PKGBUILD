@@ -203,7 +203,7 @@ _stable=${_major}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BMQ scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=3
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -844,5 +844,5 @@ done
 sha256sums=('74862fa8ab40edae85bb3385c0b71fe103288bce518526d63197800b3cbdecb1'
             '7f0b634e7b02a7a7dafd5fcb9c2be4f4bcacfa972c2be2ff1505ecaaf7c2c71a'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            'dc8304688ffd4b4887360818becaef6fc8637f157840d8c00bf9111a222cdead'
+            '23765d8d40c42fbfcd65f587021927dd4ad6d872807b5e719f4fb79631b9d1a0'
             '4dd5aa6f0d16e6e5e12a8a8408a3ac071a505767b5fda80b9a88b935282f6c0d')
