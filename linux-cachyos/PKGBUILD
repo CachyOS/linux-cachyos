@@ -842,7 +842,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('74862fa8ab40edae85bb3385c0b71fe103288bce518526d63197800b3cbdecb1'
-            '7f0b634e7b02a7a7dafd5fcb9c2be4f4bcacfa972c2be2ff1505ecaaf7c2c71a'
+            'ad062c121d2757353dcf7f44baa4f1b8b36f31c2b4d1a4840ecbb8f73cf0a4e4'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
             'a1c60f813230da4ee5beb6c2dbab12c9fd9a7e84a4021dd3ccb08d9c32ee6543'
             '91fd56593928155841b161e608d249af725bbde65d19415fd98d55efc322ef89'
