@@ -53,7 +53,7 @@ CONFIG_KERNEL_ZSTD=y
 #
 # ZSTD compression options
 #
-CONFIG_ZSTD_COMP_VAL=19
+CONFIG_ZSTD_COMPRESSION_LEVEL=19
 # end of ZSTD compression options
 
 CONFIG_DEFAULT_INIT=""
