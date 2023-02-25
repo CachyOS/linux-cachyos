@@ -193,17 +193,17 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.2
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=4
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -322,8 +322,8 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        pds) scripts/config -e SCHED_ALT -d SCHED_BMQ -e SCHED_PDS;;
-        bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS;;
+        pds) scripts/config -e SCHED_ALT -d SCHED_BMQ -e SCHED_PDS -e PSI_DEFAULT_DISABLED;;
+        bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS -e PSI_DEFAULT_DISABLED;;
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened) scripts/config -e SCHED_BORE;;
         cfs) ;;
@@ -841,10 +841,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('74862fa8ab40edae85bb3385c0b71fe103288bce518526d63197800b3cbdecb1'
-            'b33cf9e4f29262a9992ad71d1aa87ed2655d3430048ad81f5e4a2a32966a7571'
+sha256sums=('2fcc07e1c90ea4ce148f50f9beeb0dca0b6e4b379a768de8abc7a4a26f252534'
+            '25d4dd45636b0b2bfb6157578b5ee94b963c4560993a7dc1f7fe642d373e354a'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            '7bb11fde3c16933b84059ae69333232426ff8e5280a3e13ec354156f06cc5b2f'
-            '91fd56593928155841b161e608d249af725bbde65d19415fd98d55efc322ef89'
+            'c3677d1d56e2f12b0ea471ac19fcba070ecba265c6c37503371bec06df020f72'
+            'a744e56a322e87c3ab9d4ce5b9ffb42e197b66eb45bc1abf1a1a90dafa9aa06a'
             'c0fc7745ad98cfd0dfc517f80c1d800221bbe088d27ac286bd8c06c676302d7a'
             '200b0b5469fc26e7c77857a13b2e79e85d87e9c8c5461a25ffd58be402a20631')

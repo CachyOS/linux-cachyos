@@ -193,7 +193,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.1
-_minor=12
+_minor=14
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -322,8 +322,8 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        pds) scripts/config -e SCHED_ALT -d SCHED_BMQ -e SCHED_PDS;;
-        bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS;;
+        pds) scripts/config -e SCHED_ALT -d SCHED_BMQ -e SCHED_PDS -e PSI_DEFAULT_DISABLED;;
+        bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS -e PSI_DEFAULT_DISABLED;;
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened) scripts/config -e SCHED_BORE;;
         cfs) ;;
@@ -841,10 +841,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('d47aa675170904dcc93eeaa7c96db54d476a11c5d3e8cf3d3b96e364e2a0edea'
+sha256sums=('a27076011efec7ad11e9ed0644f512c34cab4c5ed5ba42cfe71c83fabebe810d'
             '4c756bc4cc45c4cbea8e59398612f8582b68b3276fc9c78f0f34a1c903a99e81'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
             '907fb084dde7634e1bfbcbef21b90b9bf4d98ee8553ab15234021b17c9c80c4d'
-            'a9566828cf8b62edfd961d4f5309dd1c414697122835e75c5141fe467ca8c7c0'
+            '142ffdd165a83643e9e5d85f613c6c65621f68394a8014dfb90fadd9d33c6462'
             '07dd83252dba452113f2a1f7650117edb725ca92a149ec4fec03fd389abbc81c'
             '944b736d518210b5a433e1a300ecccbdb450e79904d72e9f98fadfdafca2f3d8')
