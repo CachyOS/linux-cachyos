@@ -21,7 +21,7 @@ _cpusched=${_cpusched-bore}
 
 ## Apply some suggested sysctl values from the bore developer
 ## These are adjusted to BORE
-_tune_bore=${_tune_bore-}
+_tune_bore=${_tune_bore-y}
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
@@ -203,7 +203,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -846,4 +846,5 @@ sha256sums=('2fcc07e1c90ea4ce148f50f9beeb0dca0b6e4b379a768de8abc7a4a26f252534'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
             'c3677d1d56e2f12b0ea471ac19fcba070ecba265c6c37503371bec06df020f72'
             'a744e56a322e87c3ab9d4ce5b9ffb42e197b66eb45bc1abf1a1a90dafa9aa06a'
+            'c0fc7745ad98cfd0dfc517f80c1d800221bbe088d27ac286bd8c06c676302d7a'
             '200b0b5469fc26e7c77857a13b2e79e85d87e9c8c5461a25ffd58be402a20631')
