@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-pds
 	pkgdesc = Linux PDS scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.2.1
+	pkgver = 6.2.2
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,15 +21,15 @@ pkgbase = linux-cachyos-pds
 	makedepends = make
 	makedepends = patch
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.2.1.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.2.2.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.2/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.2/sched/0001-prjc-cachy.patch
-	sha256sums = 2fcc07e1c90ea4ce148f50f9beeb0dca0b6e4b379a768de8abc7a4a26f252534
+	sha256sums = c12755a2bb0e19e83457727e949ee1020cc268f44222488256223da8eeecbfb0
 	sha256sums = 25d4dd45636b0b2bfb6157578b5ee94b963c4560993a7dc1f7fe642d373e354a
 	sha256sums = 41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106
-	sha256sums = c3677d1d56e2f12b0ea471ac19fcba070ecba265c6c37503371bec06df020f72
+	sha256sums = 2996582fd78eb03506bed903711382818252626b2e1ba5d1b498e8be9947e9c2
 	sha256sums = 6aa26b667733feed80b9bba11297310d4cb15f41535dbad6a55f9e21ca24992d
 
 pkgname = linux-cachyos-pds
