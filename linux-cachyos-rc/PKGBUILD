@@ -97,7 +97,7 @@ _lru_config=${_lru_config-standard}
 # 'standard' - enable per-VMA locking
 # 'stats' - enable per-VMA locking with stats
 # 'none' - disable per-VMA locking
-_vma_config=${_vma_config-none}
+_vma_config=${_vma_config-standard}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -192,10 +192,10 @@ else
     pkgsuffix=cachyos-rc
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.2
+_major=6.3
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc8
+_rcver=rc1
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -263,10 +263,6 @@ if [ -n "$_use_gcc_lto" ]; then
     source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
              "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
 fi
-## per VMA lock
-if [[ "$_vma_config" = "standard"  || "$_vma_config" = "stats" ]]; then
-    source+=("${_patchsource}/misc/0001-Per-VMA-locks.patch")
-fi
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
     source+=("${_patchsource}/misc/0001-lrng.patch")
@@ -282,8 +278,8 @@ prepare() {
 
     cd ${srcdir}/$_srcname
 
-    echo "Setting version..."
-    scripts/setlocalversion --save-scmversion
+#    echo "Setting version..."
+#    scripts/setlocalversion --save-scmversion
     echo "-$pkgrel" > localversion.10-pkgrel
     echo "${pkgbase#linux}" > localversion.20-pkgname
 
@@ -841,9 +837,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('747d729e089bfe37d0c0713338d09c48fe155681acc485949bb001026397a732'
-            '3f6ce6fa1f4febb00346529e2392ce43e8cff4900bd5f3283c7c1cde0a3913f7'
+sha256sums=('a19846f5d62546d853e136d136e27efcac3f991b864c8bb613d0f0e607bec42a'
+            '2e232b42b431185593bf5520d17654ae3e4af69336e453d863c1dd9b086b4641'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            '2996582fd78eb03506bed903711382818252626b2e1ba5d1b498e8be9947e9c2'
-            'a744e56a322e87c3ab9d4ce5b9ffb42e197b66eb45bc1abf1a1a90dafa9aa06a'
-            '200b0b5469fc26e7c77857a13b2e79e85d87e9c8c5461a25ffd58be402a20631')
+            'e5f110c70d12590ddb8ea7c02f2cec3497cf41698c53b1fdb9f0dd73120e597a'
+            '51174a0fdd8bf76f2d1a8e931c695ca462bb0a6aa9b9169241e87b6f2139eaee'
+            '6f6316f0e6c3dc0e4b0fa7c819f7477055a2f76cc6e02ac11753eaa284a5f7d0')
