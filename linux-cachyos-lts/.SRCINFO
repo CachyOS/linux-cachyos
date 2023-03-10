@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-lts
 	pkgdesc = Linux BORE scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.1.15
+	pkgver = 6.1.16
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,16 +21,16 @@ pkgbase = linux-cachyos-lts
 	makedepends = make
 	makedepends = patch
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.1.15.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.1.16.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/misc/0001-Add-latency-priority-for-CFS-class.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.1/sched/0001-bore-cachy.patch
-	sha256sums = 2c16dfe2168a2e64ac0d55a12d625ebfb963818bb48b60c1868c7c460644c4fd
+	sha256sums = a6849c55580b5515a07b6ad21861c450fa20345c66624eecb89e8873816da3c5
 	sha256sums = b00fb5dc7c5079c3efa1d0ee3b419376cf053c4b90ed623405096ce880e3dc8c
 	sha256sums = 41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106
-	sha256sums = f1577def1657e3380a8eb665b9a68b4663727268bc9b6b4e970855bb1d2cde15
+	sha256sums = 008827dcb6f8052ec6bd1d50275e7ecf2646f2b929c78bea0d3ee5997cfdaaba
 	sha256sums = 142ffdd165a83643e9e5d85f613c6c65621f68394a8014dfb90fadd9d33c6462
 	sha256sums = 07dd83252dba452113f2a1f7650117edb725ca92a149ec4fec03fd389abbc81c
 

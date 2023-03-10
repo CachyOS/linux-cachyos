@@ -26,9 +26,9 @@ pkgbase = linux-cachyos-server
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.2/all/0001-cachyos-base-all.patch
 	sha256sums = b36d0b54fc13770802aff37d8f8d6fec7b950e4f099884e30445ad2265063924
-	sha256sums = 108935146768fd788b9444bc708fa0f85ae5d8bc05d457ad85ea252bc1002078
+	sha256sums = 0a5944e9e1f9e99939550f5cabb68518721ed01aeb46082cb7a135d4e3c9f736
 	sha256sums = 41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106
-	sha256sums = f2e7c125e7b93bd4dd278b95a2aa8fc7ece3301669d54aff12b90c124ea9e76d
+	sha256sums = 7ea50eb9cceae74c2b4417ad3409396ed3e3bcd68b89513801024063be952051
 
 pkgname = linux-cachyos-server
 	pkgdesc = The Linux CFS scheduler Kernel by CachyOS targeted for Servers kernel and modules
