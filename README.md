@@ -51,7 +51,7 @@ Here is a list of features of linux kernels prebuilt in `x86-64-v4`, `x86-64-v3`
 - AMD PSTATE EPP and AMD PSTATE Guided Driver enabled by default and with enhancements patches/fixes.
 - Latency Nice Patchset included usuage with `ananicy-cpp` [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
 - RCU fixes and improvements.
-
+- EEVDF Scheduler used in linux-cachyos # https://lore.kernel.org/lkml/20230306132521.968182689@infradead.org/
 ### :bookmark_tabs: Filesystem & memory
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
 - ZFS Filesystem Support and prebuilt in the repository.
