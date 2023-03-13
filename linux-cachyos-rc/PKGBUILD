@@ -17,7 +17,8 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-_cpusched=${_cpusched-bore}
+# 'cachyos' - select BORE Scheduler with the EEVDF Algorithm; Latency Nice as default enabled (slightly modified then upstream)
+_cpusched=${_cpusched-cachyos}
 
 ## Apply some suggested sysctl values from the bore developer
 ## These are adjusted to BORE
@@ -195,7 +196,7 @@ fi
 _major=6.3
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc1
+_rcver=rc2
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -241,6 +242,9 @@ if [ -n "$_latency_nice" ]; then
 fi
 
 case "$_cpusched" in
+    cachyos) # CachyOS Scheduler (EEVDF with BORE)
+        source+=("${_patchsource}/sched/0001-EEVDF.patch"
+                 "${_patchsource}/sched/0001-bore-eevdf.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
     tt) ## TT Scheduler
@@ -278,8 +282,6 @@ prepare() {
 
     cd ${srcdir}/$_srcname
 
-#    echo "Setting version..."
-#    scripts/setlocalversion --save-scmversion
     echo "-$pkgrel" > localversion.10-pkgrel
     echo "${pkgbase#linux}" > localversion.20-pkgname
 
@@ -321,7 +323,7 @@ prepare() {
         pds) scripts/config -e SCHED_ALT -d SCHED_BMQ -e SCHED_PDS -e PSI_DEFAULT_DISABLED;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS -e PSI_DEFAULT_DISABLED;;
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
-        bore|hardened) scripts/config -e SCHED_BORE;;
+        bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         cfs) ;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
@@ -837,9 +839,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('a19846f5d62546d853e136d136e27efcac3f991b864c8bb613d0f0e607bec42a'
+sha256sums=('9fb1fa648c615089a97c02a526aaff3821b1ff92a918229b4d01d5a8760be1e8'
             '2482f5b8d8019018b003b1dddadd77a63ca6d097baa879862820eddc55b09beb'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            'e5f110c70d12590ddb8ea7c02f2cec3497cf41698c53b1fdb9f0dd73120e597a'
-            '51174a0fdd8bf76f2d1a8e931c695ca462bb0a6aa9b9169241e87b6f2139eaee'
-            '6f6316f0e6c3dc0e4b0fa7c819f7477055a2f76cc6e02ac11753eaa284a5f7d0')
+            'd906e01fd54b4429ab5d70b21ae8022caa7b025b5110ca944ded3035e07af732'
+            'd18f2f3d4483afb8b99520f5b313f57b95ea2f6533c54180d5fcc2dcf2133588'
+            '4cc8bbbe198c6e84adf758593811ec00babbaa619c969ff494a38323e0a6bf11')
