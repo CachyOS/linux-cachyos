@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-tt
 	pkgdesc = Linux TT scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.2.6
+	pkgver = 6.2.7
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,15 +21,15 @@ pkgbase = linux-cachyos-tt
 	makedepends = make
 	makedepends = patch
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.2.6.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.2.7.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.2/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.2/sched/0001-tt-cachy.patch
-	sha256sums = 1fe2f1d7ceb7129c111159d8efd361971dbf212206f81e7078b98df8b00b3d9d
+	sha256sums = 4303105201fb0c0b17155fff87df0a022a32a41eb1ce94a264ae648c64bd0d8d
 	sha256sums = 0a5944e9e1f9e99939550f5cabb68518721ed01aeb46082cb7a135d4e3c9f736
 	sha256sums = 41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106
-	sha256sums = faa6956e2e43fc6dd6b9ea32793cf45957babd48ebfae878dac445a4234c60ca
+	sha256sums = abd297adbb5024487d5fcb38cd01d1394c642026eb34a55af4c55d5e3008fa91
 	sha256sums = c5c48b3e6b08c54b7d057f32da5d11478cf25ba87c903727a77a7b5a8d3f78a8
 
 pkgname = linux-cachyos-tt
