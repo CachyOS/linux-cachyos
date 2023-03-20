@@ -196,7 +196,7 @@ fi
 _major=6.3
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc2
+_rcver=rc3
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -242,9 +242,8 @@ if [ -n "$_latency_nice" ]; then
 fi
 
 case "$_cpusched" in
-    cachyos) # CachyOS Scheduler (EEVDF with BORE)
-        source+=("${_patchsource}/sched/0001-EEVDF.patch"
-                 "${_patchsource}/sched/0001-bore-eevdf.patch");;
+    cachyos) # CachyOS Scheduler (EEVDF)
+        source+=("${_patchsource}/sched/0001-EEVDF-tuning.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
     tt) ## TT Scheduler
@@ -839,9 +838,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('9fb1fa648c615089a97c02a526aaff3821b1ff92a918229b4d01d5a8760be1e8'
+sha256sums=('c60dbfc2561fdfccc05fbf8db3db23e520db677833160bab6abdc78de2f5555b'
             '2482f5b8d8019018b003b1dddadd77a63ca6d097baa879862820eddc55b09beb'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            'd906e01fd54b4429ab5d70b21ae8022caa7b025b5110ca944ded3035e07af732'
-            'd18f2f3d4483afb8b99520f5b313f57b95ea2f6533c54180d5fcc2dcf2133588'
-            '4cc8bbbe198c6e84adf758593811ec00babbaa619c969ff494a38323e0a6bf11')
+            '84f2037f0fe9caf528f9771e3849528624cc4fe01fd46858bf0cb0e6fcf09971'
+            '94afa041abc3f4cb4c3dfd667206008da8bbf37e24e1b89e946296b65035eb29')
