@@ -204,7 +204,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -243,7 +243,8 @@ fi
 
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF)
-        source+=("${_patchsource}/sched/0001-EEVDF-tuning.patch");;
+        source+=("${_patchsource}/sched/0001-EEVDF.patch"
+        		 "${_patchsource}/sched/0001-bore-eevdf.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
     tt) ## TT Scheduler
@@ -842,4 +843,5 @@ sha256sums=('c60dbfc2561fdfccc05fbf8db3db23e520db677833160bab6abdc78de2f5555b'
             '2482f5b8d8019018b003b1dddadd77a63ca6d097baa879862820eddc55b09beb'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
             '84f2037f0fe9caf528f9771e3849528624cc4fe01fd46858bf0cb0e6fcf09971'
-            '94afa041abc3f4cb4c3dfd667206008da8bbf37e24e1b89e946296b65035eb29')
+            'e1686c59012c2c7e938f22ed3ae2a0f5dcc9aef7fdcfa67793b1f072b1553d03'
+            '2f527be1b885a4bb911cacdfb6c8eee6c380bf717248a6322533f95c122e34bf')
