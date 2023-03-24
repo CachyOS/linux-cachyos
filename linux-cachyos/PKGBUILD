@@ -232,7 +232,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=92e0d9d183ce6752cd52f7277c8321d81df9ffee")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=00e580bca282bf30913fcf5832fc58191cf0ff32")
 fi
 
 ## Latency NICE Support
