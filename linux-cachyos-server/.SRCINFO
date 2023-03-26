@@ -26,7 +26,7 @@ pkgbase = linux-cachyos-server
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.2/all/0001-cachyos-base-all.patch
 	sha256sums = fed0ad87d42f83a70ce019ff2800bc30a855e672e72bf6d54a014d98d344f665
-	sha256sums = 0a5944e9e1f9e99939550f5cabb68518721ed01aeb46082cb7a135d4e3c9f736
+	sha256sums = c37cd629b9044fe1e1ebf86dd1bc5f99aa472d8c4ccad314c36c247a2b97daac
 	sha256sums = 41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106
 	sha256sums = 16b2c66eec48fd51b97a25513fa5a6ebc403e5a257ec43b05e62242b6399c46c
 
