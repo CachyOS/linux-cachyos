@@ -196,7 +196,7 @@ fi
 _major=6.3
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc3
+_rcver=rc4
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -204,7 +204,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -243,8 +243,7 @@ fi
 
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF)
-        source+=("${_patchsource}/sched/0001-EEVDF.patch"
-        		 "${_patchsource}/sched/0001-bore-eevdf.patch");;
+        source+=("${_patchsource}/sched/0001-EEVDF.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
     tt) ## TT Scheduler
@@ -839,9 +838,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('c60dbfc2561fdfccc05fbf8db3db23e520db677833160bab6abdc78de2f5555b'
-            '2482f5b8d8019018b003b1dddadd77a63ca6d097baa879862820eddc55b09beb'
+sha256sums=('63a60207c67069caeb8fec194e53f0145eeb00c0fe102e8c6c1191da77248534'
+            '11fdec8757621edcbd2c8d083595a4bcb965d22be4687a5ad1a1e21d081e604e'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            '84f2037f0fe9caf528f9771e3849528624cc4fe01fd46858bf0cb0e6fcf09971'
-            'e1686c59012c2c7e938f22ed3ae2a0f5dcc9aef7fdcfa67793b1f072b1553d03'
-            '2f527be1b885a4bb911cacdfb6c8eee6c380bf717248a6322533f95c122e34bf')
+            '04a4c1addfa962b5fce15fca04db31b69b2a53bbc7a478aee5ffd0a7a145fff2'
+            'c78a11018751b506097935af2da9706958261fa16d6511a27ca00680f3d92ed3')
