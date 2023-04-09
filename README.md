@@ -2,7 +2,7 @@
   <img src="https://github.com/CachyOS/calamares-config/blob/grub-3.2/etc/calamares/branding/cachyos/logo.png" width="64" alt="CachyOS logo"></img>
   <br/>
   <h1 align="center">CachyOS</h1>
-  <p align="center">CachyOS ships improved kernels that improve performance and other aspects.</p>
+  <p align="center">CachyOS provides enhanced kernels that offer improved performance and other benefits.</p>
 </div>
 
 
@@ -22,7 +22,7 @@
 The Schedulers listed below are supported
 
 ## linux-cachyos
-We provided all of these CPU schedulers because each scheduler performs differently and depends on usage. Please test it and choose what suits your requirements.
+We have provided all of these CPU schedulers because each scheduler performs differently depending on usage. We recommend testing each one to determine which best suits your specific requirements.
 - **(BORE) - Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-bore` / `linux-cachyos-bore`
 - **(EEVDF) - Earliest Eligiable Virtual Deadline First** [EEVDF](https://lwn.net/Articles/927530/) is a replacement for the CFS Scheduler from Peter Zijlstra `linux-cachyos`
 - **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
@@ -33,11 +33,10 @@ We provided all of these CPU schedulers because each scheduler performs differen
 ### :books: Archived schedulers
 - **CacULE and CacULE-RDB** by Hamad Marri, supported by CachyOS in the past as - `linux-cachyos-cacule`  
   ***ATTENTION:** Not supported after version 6.1. If you still want to use it, you can get it from the archive repository - [linux-cacule](https://github.com/ptr1337/linux-cacule)*
-> All kernels are prebuilt in two different march versions **(x86-64, x86-64-v3 and x86-64-v4)** and also with the **LTO-enabled** kernels in the cachyos repositories.
+> The CachyOS repositories provide prebuilt kernels in three different march versions: `x86-64`, `x86-64-v3`, and `x86-64-v4`. In addition, the repositories also offer LTO-enabled kernels.
 
 ## Features
-Here is a list of features of linux kernels prebuilt in `x86-64-v4`, `x86-64-v3` and `x86-64` in the CachyOS repositories.
-
+Here is a list of features of Linux kernels prebuilt in the CachyOS repositories for `x86-64-v4`, `x86-64-v3, and `x86-64`.
 ### :hammer_and_wrench: Advanced building & compiling
 - Very customizable PKGBUILD with many features and improvements.
 - `GCC/CLANG` Optimization with automatically found CPU architecture or also selectable CPU architecture.
@@ -78,7 +77,7 @@ Here is a list of features of linux kernels prebuilt in `x86-64-v4`, `x86-64-v3`
 - maple-tree and MG-LRU fixes from upstream
 
 # [CachyOS repositories](https://mirror.cachyos.org/)
-Repositories contain Arch Linux and CachyOS unique packages, but re-build with flags focused on performance, stability and security.
+The repositories contain both Arch Linux and CachyOS packages, which have been re-built with flags optimized for performance, stability, and security.
 - `x86-64-v4` - currently only kernel packages + LTO.
 - `x86-64-v3` - all Arch Linux packages + LTO.
 - `x86-64` - all Arch Linux packages + LTO.
@@ -103,8 +102,8 @@ sudo ./cachyos-repo.sh
 ```
 
 #### Behaviour of script  
-1. Script will auto-detect CPU architecture, if CPU have `x86-64-v4` or `x86-64-v3` support, script will automatically use the repositories which are optimized with this flag > and some other flags.
-2. Script will backup your old `pacman.conf`.
+1. The script automatically detects the CPU architecture. If the CPU supports `x86-64-v4` or `x86-64-v3`, the script uses the repositories optimized with this flag and other flags.
+2. The script will create a backup of your previous `pacman.conf` file.
 
 ### Manually
 1. Add both keys
@@ -236,26 +235,26 @@ sudo dnf install kernel-cachyos-bore-lto
 ```
 
 ##### Install drivers for LTO kernel
-If you build external modules (e.g. for Nvidia graphics card drivers) and use the -lto kernel, you need to install the following dependencies:
+For those who build external modules such as Nvidia graphics card drivers and use the -lto kernel, make sure to install the required dependencies.
 ```
 sudo dnf install clang clang-devel llvm lld
 ```
 
 ## Revert changes
- How to Backup the config and use the native Arch Packages
+How to backup and use Arch packages?
 - Remove or Backup the config located at /etc/pacman.conf
 - then run `sudo mv /etc/pacman.conf.bak /etc/pacman.conf`
 - Then run following command to switch the packages to the default arch packages `sudo pacman -Suuy`
 
 ## How to use CLANG/LLVM/LTO compiled Kernels on Nvidia driver with DKMS
-> Not needed anymore, just install the latest dkms version from our repo.
+> This is no longer necessary, as you can simply install the latest DKMS version from our repository.
 
 ## Support
 **Discord:** <https://discord.gg/qJqj94uFwE> <br />
 **Telegram:** <https://t.me/+zCzPX4cAFjk1MTYy> <br />
 **Matrix:** <https://matrix.cachyos.org> <br />
 
-## Donations are welcome for the build server for the repositories or a cup of coffee for maintaining our repositories.
+## Donations appreciated for maintaining repositories and build server. Thank you for your support!
 **PayPal:** <https://paypal.me/pttrr> <br />
 **Patreon:** <https://www.patreon.com/CachyOS> <br />
 **BTC:** bc1qmwglfchlc335du6pcu6w64cexu7cck0mzhyw42 <br />
