@@ -17,7 +17,7 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select BORE Scheduler with the EEVDF Algorithm; Latency Nice as default enabled (slightly modified then upstream)
+# 'cachyos' - select 'EEVDF' Scheduler which is a replacement for the CFS Scheduler and introduces a more latency aware algorithm including latency nice
 _cpusched=${_cpusched-cachyos}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -196,7 +196,7 @@ fi
 _major=6.3
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc5
+_rcver=rc6
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -838,8 +838,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('3636c390ae838fc6aaddb83d4dc2b7899d75069fe83f99738457a4f05bc662a4'
+sha256sums=('0a8455f972389233ea05e944048177c817c12204438dfe8c4c8afca01bfee05b'
             '11fdec8757621edcbd2c8d083595a4bcb965d22be4687a5ad1a1e21d081e604e'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            'ee9e83b0bca25dd41a06f6b39bd1489a3f9e8aa6d9c56d4a81f1d2cecab9da84'
-            'f1c6d5b9b006ce32a0b947c961d76f8a77b3d688df23d7d56726f20f396af4f1')
+            'db2aa42a0d32ad7e109d800c14a39d138cac3fe88556ae52225ac705034a2305'
+            '37f2d2bbe5cf87d0af001e4159bb4a3d608cf01de533389bd57c51e3d64d4d83')
