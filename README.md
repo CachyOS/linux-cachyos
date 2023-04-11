@@ -101,37 +101,22 @@ tar xvf cachyos-repo.tar.xz && cd cachyos-repo
 sudo ./cachyos-repo.sh
 ```
 
-#### Behaviour of script  
-1. The script automatically detects the CPU architecture. If the CPU supports `x86-64-v4` or `x86-64-v3`, the script uses the repositories optimized with this flag and other flags.
-2. The script will create a backup of your previous `pacman.conf` file.
+> #### Script behaviour
+> 1. The script automatically detects the CPU architecture.
+> 2. It determines whether your CPU supports x86-64-v4 or x86-64-v3.
+> 3. The script creates a backup of your previous `/etc/pacman.conf` file.
+> 4. It adds supported cachyos optimized repositories.
 
-### Manually
-1. Add both keys
-```
-sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
-```
-```
-sudo pacman-key --lsign-key F3B607488DB35A47
-```
-
-2. You can download first initial packages
-```
-sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-2-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-17-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-17-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-5-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-6.0.2-10-x86_64.pkg.tar.zst'
-```
-
-## Check CPU compatibility
-If you want to add our repositories manually, you must check the compatibility of the CPU with cachyos repositories.
-> If you use script above for adding cachyos repositories, you can skip checking.
-
-### 1. Check support by the following the command
+### 1. Check CPU architecture
+You may be wondering if your CPU is compatible with our repository before running the script. To check compatibility, simply run the following command:
 ```
 /lib/ld-linux-x86-64.so.2 --help | grep supported
 ```
 
-### 2. Understanding of command output
-Pay attention to the following text with brackets. **(supported, searched)**
-- If you see `x86-64-v4 (supported, searched)`, that means the **CPU is compatible** and can use **x86-64-v4** instruction set.
-- If you see `x86-64-v4`, that means the **CPU is incompatible** and can't use **x86-64-v4** instruction set.
+### 2. Understanding the command output
+Pay attention to the text enclosed in brackets. (supported, searched)
+- If you see **x86-64-v4 (supported, searched)**, it means that your **CPU is compatible** and can use the x86-64-v4 instruction set.
+- If you see **x86-64-v4 alone**, it means that your **CPU is incompatible** and cannot use the x86-64-v4 instruction set.
 
 #### Example of CPU compatible with x86-64-v4 instruction set
 ```
@@ -155,13 +140,7 @@ Pay attention to the following text with brackets. **(supported, searched)**
   43   x86-64-v2 (supported, searched)       
 ```
 
-### 3. Adding cachyos repositories
-You need edit `pacman.conf` and add repositories.
-```
-sudo nano /etc/pacman.conf
-```
-
-#### if CPU support `x86-64`, then add only `[cachyos]` repositories
+#### if CPU support `x86-64`, then the script add only `[cachyos]` repositories
 ```
 # cachyos repos
 ## Only add if your CPU does v3 architecture
@@ -169,7 +148,7 @@ sudo nano /etc/pacman.conf
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-#### if CPU support `x86-64-v3`, then add `[cachyos-v3]`,`[cachyos-community-v3]` and `[cachyos]`
+#### if CPU support `x86-64-v3`, then the script add `[cachyos-v3]`,`[cachyos-community-v3]` and `[cachyos]`
 ```
 # cachyos repos
 ## Only add if your CPU does v3 architecture
@@ -181,7 +160,7 @@ Include = /etc/pacman.d/cachyos-v3-mirrorlist
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-#### if CPU support `x86-64-v4`, then add `[cachyos-v4]`, `[cachyos-v3]`, `[cachyos-community-v3]` and `[cachyos]`
+#### if CPU support `x86-64-v4`, then script add `[cachyos-v4]`, `[cachyos-v3]`, `[cachyos-community-v3]` and `[cachyos]`
 ```
 # cachyos repos
 ## Only add if your CPU does support x86-64-v4 architecture
