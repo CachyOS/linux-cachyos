@@ -17,7 +17,7 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select EEVDF Scheduler
+# 'cachyos' - select EEVDF Scheduler with some CachyOS Optimizations. EEVDF does bring latency-nice as default
 _cpusched=${_cpusched-cachyos}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -98,7 +98,8 @@ _lru_config=${_lru_config-standard}
 # 'standard' - enable per-VMA locking
 # 'stats' - enable per-VMA locking with stats
 # 'none' - disable per-VMA locking
-_vma_config=${_vma_config-none}
+# Broken since 6.2.11 due the maple tree RCU patches. Will be as default enabled in 6.3
+# _vma_config=${_vma_config-none}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -195,7 +196,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.2
-_minor=10
+_minor=11
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -481,16 +482,16 @@ prepare() {
     echo "Selecting '$_lru_config' LRU_GEN config..."
 
     ### Select VMA config
-    [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_vma_config" in
-        standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
-        stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
-        none) scripts/config -d PER_VMA_LOCK;;
-        *) _die "The value '$_vma_config' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_vma_config' PER_VMA_LOCK config..."
+#     [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
+#
+#    case "$_vma_config" in
+#        standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
+#        stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
+#        none) scripts/config -d PER_VMA_LOCK;;
+#        *) _die "The value '$_vma_config' is invalid. Choose the correct one again.";;
+#    esac
+#
+#    echo "Selecting '$_vma_config' PER_VMA_LOCK config..."
 
     ### Select THP
     [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
@@ -845,8 +846,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('57c562c3cd2753f232549cab05c8ad770ed848ae86401619c7581bdffaeea4fe'
-            'c37cd629b9044fe1e1ebf86dd1bc5f99aa472d8c4ccad314c36c247a2b97daac'
+sha256sums=('0d236784e60b87c7953535aeb148dd9e773b26495dfa9c6d69615f54fe00dd47'
+            '816508270cc1062a9089548a7320922c028431450db4231fc5786d81beedd9ed'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            '367a6d70bd990a142ef9541d75166b1fca06953dbfff0c9846ce3ebd77abe7d2'
+            'cef5b2e45c376a0d7a78ba48f9c3c86b883cb50226faf9313958f4c30ef5604b'
             '4fe54a5017a0eb76a0db74cea9388ea73c1dab73126f7ba084076ef02a047b26')
