@@ -243,7 +243,7 @@ fi
 case "$_cpusched" in
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
-                 linux-cachyos-pds.install);;
+                 linux-cachyos-prjc.install);;
     tt) ## TT Scheduler
         source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
     bore) ## BORE Scheduler with latency_nice
