@@ -245,7 +245,8 @@ case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF)
         source+=("${_patchsource}/sched/0001-EEVDF.patch");;
     pds|bmq) # BMQ/PDS scheduler
-        source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
+        source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
+                 linux-cachyos-prjc.install);;
     tt) ## TT Scheduler
         source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
     bore) ## BORE Scheduler with latency_nice
