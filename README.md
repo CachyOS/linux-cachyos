@@ -15,6 +15,7 @@
 - [Other GNU/Linux distributions](#other-gnulinux-distributions)
   - [Gentoo](#gentoo)
   - [Fedora](#fedora)
+  - [NixOS](#NixOS)
  - [Revert changes](#revert-changes)
  - [Support](#support)
 
@@ -239,6 +240,11 @@ For those who build external modules such as Nvidia graphics card drivers and us
 ```
 sudo dnf install clang clang-devel llvm lld
 ```
+
+### NixOS
+
+Nyx does provide a precompiled CachyOS Kernel and a bunch of other interesting packages. This repository is maintained by [chaotic-aur](https://github.com/chaotic-cx)
+Just follow this [README](https://github.com/chaotic-cx/nyx#how-to-use-it)
 
 ## Revert changes
 How to backup and use Arch packages?
