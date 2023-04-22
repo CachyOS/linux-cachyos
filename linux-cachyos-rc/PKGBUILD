@@ -17,7 +17,7 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select 'EEVDF' Scheduler which is a replacement for the CFS Scheduler and introduces a more latency aware algorithm including latency nice
+# 'cachyos' - select EEVDF Scheduler with some CachyOS Optimizations. EEVDF does bring latency-nice as default
 _cpusched=${_cpusched-cachyos}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -183,6 +183,7 @@ _bcachefs=${_bcachefs-}
 # You need to set the values per task
 # Ananicy-cpp has a implementation for this
 # You need to configure ananicy-cpp for this or use existing settings
+# Its default enabled at the "cachyos" scheduler option
 _latency_nice=${_latency_nice-}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
@@ -203,7 +204,7 @@ pkgver=${_major}.${_rcver}
 _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
+pkgdesc='Linux EEVDF scheduler Kernel by CachyOS and with some other patches and other improvements'
 pkgrel=3
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
