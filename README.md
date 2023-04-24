@@ -46,8 +46,8 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM` - *patched llvm can be found in the cachyos-repositories.*
 
 ### :abacus: CPU enhancements
-- 5 Different scheduler are supported,`CFS`,`tt`,`bmq`,`bore`, and `pds` scheduler.
-- AMD PSTATE EPP and AMD PSTATE Guided Driver enabled by default and with enhancements patches/fixes.
+- 6 Different scheduler are supported,`CFS`,`tt`,`bmq`,`bore`,`pds` and `EEVDF` scheduler.
+- AMD PSTATE Guided scaling driver
 - Latency Nice Patchset included usuage with `ananicy-cpp` [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
 - RCU fixes and improvements.
 - EEVDF Scheduler used in linux-cachyos # https://lwn.net/Articles/927530/
@@ -58,12 +58,11 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - UserKSM daemon from pf.
 - Improved BFQ Scheduler.
 - support for bcachefs.
-- [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab) - *default disabled*
+- [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab)
 - zram patches from upstream
 
 ### &#128423; Network 
 - BBRv2 tcp_congestion_control.
-- KSMBD Module for Samba3 Server.
 
 ### :arrow_heading_down: Other features
 - Clearlinux Patchset.
@@ -71,11 +70,10 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Scheduler patches from linux-next/tip.
 - General improved sysctl settings and upstream scheduler fixes.
 - LRNG Framework - *default disabled*
-- OpenRGB and ACS Override support.
-- HDR Patches for AMD GPU's and gamescope
-- KVM Performance Improvement from Yu Zhao
-- Objtool Patches to reduce the memory usage
+- OpenRGB and ACS Override support
 - maple-tree and MG-LRU fixes from upstream
+- Lenovo Legion [Patchset](https://github.com/johnfanv2/LenovoLegionLinux)
+- Surface [Patches](https://github.com/linux-surface/linux-surface)
 
 # [CachyOS repositories](https://mirror.cachyos.org/)
 The repositories contain both Arch Linux and CachyOS packages, which have been re-built with flags optimized for performance, stability, and security.

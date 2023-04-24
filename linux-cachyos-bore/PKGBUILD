@@ -98,8 +98,7 @@ _lru_config=${_lru_config-standard}
 # 'standard' - enable per-VMA locking
 # 'stats' - enable per-VMA locking with stats
 # 'none' - disable per-VMA locking
-# Broken since 6.2.11 due the maple tree RCU patches. Will be as default enabled in 6.3
-# _vma_config=${_vma_config-none}
+_vma_config=${_vma_config-standard}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -185,7 +184,8 @@ _bcachefs=${_bcachefs-}
 # Ananicy-cpp has a implementation for this
 # You need to configure ananicy-cpp for this or use existing settings
 # Its default enabled at the "cachyos" scheduler option
-_latency_nice=${_latency_nice-y}
+# _latency_nice=${_latency_nice-}
+# Disabled till rebased
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
     pkgsuffix=cachyos-${_cpusched}-lto
@@ -195,13 +195,13 @@ else
     pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.2
-_minor=12
+_major=6.3
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -233,7 +233,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=e25f9131d679692704c11dc0c1df6d4585b70c35")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=ac18dc77f3703940682aecb442f4e58aa2c14f1a")
 fi
 
 ## Latency NICE Support
@@ -269,10 +269,6 @@ if [ -n "$_use_gcc_lto" ]; then
     source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
              "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
 fi
-## Use vma lock as an extra patch since it has some issues right now
-if [[ "$_vma_config" = "standard"  || "$_vma_config" = "stats" ]]; then
-    source+=("${_patchsource}/misc/0001-Introduce-per-VMA-lock.patch")
-fi
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
     source+=("${_patchsource}/misc/0001-lrng.patch")
@@ -288,8 +284,6 @@ prepare() {
 
     cd ${srcdir}/$_srcname
 
-    echo "Setting version..."
-    scripts/setlocalversion --save-scmversion
     echo "-$pkgrel" > localversion.10-pkgrel
     echo "${pkgbase#linux}" > localversion.20-pkgname
 
@@ -483,16 +477,16 @@ prepare() {
     echo "Selecting '$_lru_config' LRU_GEN config..."
 
     ### Select VMA config
-#     [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
-#
-#    case "$_vma_config" in
-#        standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
-#        stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
-#        none) scripts/config -d PER_VMA_LOCK;;
-#        *) _die "The value '$_vma_config' is invalid. Choose the correct one again.";;
-#    esac
-#
-#    echo "Selecting '$_vma_config' PER_VMA_LOCK config..."
+    [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
+
+    case "$_vma_config" in
+        standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
+        stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
+        none) scripts/config -d PER_VMA_LOCK;;
+        *) _die "The value '$_vma_config' is invalid. Choose the correct one again.";;
+    esac
+
+    echo "Selecting '$_vma_config' PER_VMA_LOCK config..."
 
     ### Select THP
     [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
@@ -831,7 +825,7 @@ _package-zfs(){
 
     cd ${srcdir}/"zfs"
     install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -m644 module/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
@@ -847,10 +841,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('c7e146b52737adfa4c724bfa41bf4721c5ee3cf220c074fbc60eb3ea62b0ccc8'
-            '816508270cc1062a9089548a7320922c028431450db4231fc5786d81beedd9ed'
+sha256sums=('ba3491f5ed6bd270a370c440434e3d69085fcdd528922fa01e73d7657db73b1e'
+            '54d0470901596286036c20b1537754ba71885cad51452bcb9bf42b92b2175cbe'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            'df9ad8d111f94c6705de28c692de217e39d76b509309f38a3e4a510a5d36d187'
-            'de53f7d4b08ac4e3e6699f407ac29d333fde329cb18b2b46c8c642af284b60c2'
+            '2aad3a138b4fa550fd2de35b5c91f46f3f4bd1e9a9ab0d09b737da2c030da55b'
             'a69eb9f091742802f907d51378ba301a0c395cb5191402b7577216542983d2ed'
-            'ab1c745afad3cc1ca9c241d76ea94c7a414409fee964316f066e0f81b4afb182')
+            '18094c82bc1c971f91babeb7d20f70c9cbf879e12ec49cfad6077d324ad7a2f2')
