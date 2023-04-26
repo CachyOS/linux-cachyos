@@ -74,7 +74,8 @@ _tcp_bbr2=${_tcp_bbr2-y}
 _HZ_ticks=${_HZ_ticks-1000}
 
 ## Choose between perodic, idle or full
-### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
+### Full tickless can give higher performances in case you use isolation of CPUs for tasks
+### and it works only when using the nohz_full kernel parameter, otherwise behaves like idle.
 _tickrate=${_tickrate-full}
 
 ## Choose between full(low-latency), voluntary or server
