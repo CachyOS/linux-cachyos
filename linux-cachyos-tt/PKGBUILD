@@ -98,7 +98,7 @@ _lru_config=${_lru_config-standard}
 # 'standard' - enable per-VMA locking
 # 'stats' - enable per-VMA locking with stats
 # 'none' - disable per-VMA locking
-_vma_config=${_vma_config-standard}
+_vma_config=${_vma_config-none}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -206,7 +206,7 @@ _stable=${_major}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux TT scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=3
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
