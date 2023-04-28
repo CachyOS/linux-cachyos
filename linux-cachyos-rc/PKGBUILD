@@ -205,7 +205,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=4
+pkgrel=5
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -843,5 +843,5 @@ done
 sha256sums=('65fc1202601a82a96bad2f2f76973898186025f1d104bb5da0316e032926acf3'
             '54d0470901596286036c20b1537754ba71885cad51452bcb9bf42b92b2175cbe'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            '33214a11db0cbf9b5ba809b4a8e9afc779cc2329ceb0ee5cba0dd773c853fcde'
+            'a81babd189054ed217e58688612ad274ffc06f9912094b29be7f1442aa067d42'
             '600fe991fde111d028a22dae797367c481f8296c84f8bb0df8e19f78c819d99d')
