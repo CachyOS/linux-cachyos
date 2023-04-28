@@ -98,7 +98,7 @@ _lru_config=${_lru_config-standard}
 # 'standard' - enable per-VMA locking
 # 'stats' - enable per-VMA locking with stats
 # 'none' - disable per-VMA locking
-_vma_config=${_vma_config-none}
+_vma_config=${_vma_config-standard}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
