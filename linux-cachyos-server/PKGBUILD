@@ -206,7 +206,7 @@ _stable=${_major}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux CFS scheduler Kernel by CachyOS targeted for Servers'
-pkgrel=2
+pkgrel=5
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -280,12 +280,21 @@ export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EP
 
 _die() { error "$@" ; exit; }
 
+_make() {
+  test -s version
+  make KERNELRELEASE="$(<version)" "$@"
+}
+
 prepare() {
 
     cd ${srcdir}/$_srcname
 
+    echo "Setting version..."
     echo "-$pkgrel" > localversion.10-pkgrel
     echo "${pkgbase#linux}" > localversion.20-pkgname
+    make ${BUILD_FLAGS[*]} defconfig
+    make ${BUILD_FLAGS[*]} -s kernelrelease > version
+    make ${BUILD_FLAGS[*]} mrproper
 
     local src
     for src in "${source[@]}"; do
@@ -658,12 +667,11 @@ prepare() {
 
     ### Rewrite configuration
     echo "Rewrite configuration..."
-    make ${BUILD_FLAGS[*]} prepare
-    yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
+    _make ${BUILD_FLAGS[*]} prepare
+    yes "" | _make ${BUILD_FLAGS[*]} config >/dev/null
     diff -u ../config .config || :
 
     ### Prepared version
-    make ${BUILD_FLAGS[*]} -s kernelrelease > version
     echo "Prepared $pkgbase version $(<version)"
 
     ### Running make nconfig
@@ -715,19 +723,18 @@ _package() {
 
     cd ${srcdir}/$_srcname
 
-    local kernver="$(<version)"
-    local modulesdir="$pkgdir/usr/lib/modules/$kernver"
+    local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
 
     echo "Installing boot image..."
     # systemd expects to find the kernel here to allow hibernation
     # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-    install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
+    install -Dm644 "$(_make -s image_name)" "$modulesdir/vmlinuz"
 
     # Used by mkinitcpio to name the kernel
     echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
     echo "Installing modules..."
-    make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+    _make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
     # remove build and source links
@@ -841,7 +848,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('ba3491f5ed6bd270a370c440434e3d69085fcdd528922fa01e73d7657db73b1e'
-            '66f885851fdcc455178bb77328abf4ad030ab21b9d6fa62e494355f78a978f32'
-            '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            'a81babd189054ed217e58688612ad274ffc06f9912094b29be7f1442aa067d42')
+b2sums=('f1887c8924efa8d0cb14c4e604affd0b0168bcf20f56a37c027405c7bc11aba822a43fcb38ccb55a81a26f747d00e1ab5a6554818affbf1e1c7ef5220150fc69'
+        '59b0697d3dce7b3bc75f9a096ada379a71cfd472775d9ebbb54c658a5aae756a631ec4b238b4b3dd9e503bda07b31ce5716643b8c57b21f45959f5f57eac7c1b'
+        '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
+        '79f305797932bfd93f4482ae7d135ebeba440f3cfc09bff2ec33f83efa1fe16fb6df5042e54e7b3034c60b1a715d0f82135b69aeee3f0889703c034e20c601bc')

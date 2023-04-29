@@ -185,6 +185,7 @@ _bcachefs=${_bcachefs-}
 # You need to configure ananicy-cpp for this or use existing settings
 # Its default enabled at the "cachyos" scheduler option
 # _latency_nice=${_latency_nice-}
+# Disabled till rebased
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
     pkgsuffix=cachyos-rc-lto
@@ -252,7 +253,7 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
     bore) ## BORE Scheduler with latency_nice
         [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
-        source+=("${_patchsource}/sched/0001-bore.patch");;
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
@@ -279,12 +280,21 @@ export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EP
 
 _die() { error "$@" ; exit; }
 
+_make() {
+  test -s version
+  make KERNELRELEASE="$(<version)" "$@"
+}
+
 prepare() {
 
     cd ${srcdir}/$_srcname
 
+    echo "Setting version..."
     echo "-$pkgrel" > localversion.10-pkgrel
     echo "${pkgbase#linux}" > localversion.20-pkgname
+    make ${BUILD_FLAGS[*]} defconfig
+    make ${BUILD_FLAGS[*]} -s kernelrelease > version
+    make ${BUILD_FLAGS[*]} mrproper
 
     local src
     for src in "${source[@]}"; do
@@ -657,12 +667,11 @@ prepare() {
 
     ### Rewrite configuration
     echo "Rewrite configuration..."
-    make ${BUILD_FLAGS[*]} prepare
-    yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
+    _make ${BUILD_FLAGS[*]} prepare
+    yes "" | _make ${BUILD_FLAGS[*]} config >/dev/null
     diff -u ../config .config || :
 
     ### Prepared version
-    make ${BUILD_FLAGS[*]} -s kernelrelease > version
     echo "Prepared $pkgbase version $(<version)"
 
     ### Running make nconfig
@@ -714,19 +723,18 @@ _package() {
 
     cd ${srcdir}/$_srcname
 
-    local kernver="$(<version)"
-    local modulesdir="$pkgdir/usr/lib/modules/$kernver"
+    local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
 
     echo "Installing boot image..."
     # systemd expects to find the kernel here to allow hibernation
     # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-    install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
+    install -Dm644 "$(_make -s image_name)" "$modulesdir/vmlinuz"
 
     # Used by mkinitcpio to name the kernel
     echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
     echo "Installing modules..."
-    make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+    _make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
     # remove build and source links
@@ -823,8 +831,8 @@ _package-zfs(){
     provides=('ZFS-MODULE')
 
     cd ${srcdir}/"zfs"
-	install -dm755 "$pkgdir/usr/lib/modules/${_major}.${_minor}-${_rcver}-${pkgrel}-${pkgsuffix}"
-	install -m644 module/*.ko "$pkgdir/usr/lib/modules/${_major}.${_minor}-${_rcver}-${pkgrel}-${pkgsuffix}"
+    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -m644 module/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
@@ -840,8 +848,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('65fc1202601a82a96bad2f2f76973898186025f1d104bb5da0316e032926acf3'
-            '54d0470901596286036c20b1537754ba71885cad51452bcb9bf42b92b2175cbe'
-            '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            'a81babd189054ed217e58688612ad274ffc06f9912094b29be7f1442aa067d42'
-            '600fe991fde111d028a22dae797367c481f8296c84f8bb0df8e19f78c819d99d')
+b2sums=('782298ed87fb4882686f9675d0d8cf74a59d48001a7af606b829d63fc7943fff1078a8d6619e4903ac300c5f39657cec3178c53f2b83464100311a9432bf4553'
+        '2f5f0a1fa028bd9f73b659d1326ffdc83eac509c0188debb605941605a5bf7b5d8a5d76a87a0562210760d124e33b74b140574db63df09ed8f567c85b314976a'
+        '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
+        '79f305797932bfd93f4482ae7d135ebeba440f3cfc09bff2ec33f83efa1fe16fb6df5042e54e7b3034c60b1a715d0f82135b69aeee3f0889703c034e20c601bc'
+        'ea28e2fe0eba3e1936c14d9eb476f4f68d9a71c4fad2c60b98023afaaedd1bd3efaf3f03968e599c84209714a1b8bd0c8124d2328516c7bdf3d405fefd2590b6')
