@@ -130,9 +130,6 @@ _use_auto_optimization=${_use_auto_optimization-y}
 # disable debug to lower the size of the kernel
 _disable_debug=${_disable_debug-}
 
-## Enable zram/zswap ZSTD compression
-_zstd_compression=${_zstd_compression-}
-
 ### Selecting the ZSTD kernel and modules compression level
 # ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
@@ -592,17 +589,6 @@ prepare() {
             -e LRNG_SELFTEST \
             -d LRNG_SELFTEST_PANIC \
             -d LRNG_RUNTIME_FORCE_SEEDING_DISABLE
-    fi
-
-    ### Enable zram/zswap ZSTD compression
-    if [ -n "$_zstd_compression" ]; then
-        echo "Enabling zram/swap ZSTD compression..."
-        scripts/config -d ZRAM_DEF_COMP_LZORLE \
-            -e ZRAM_DEF_COMP_ZSTD \
-            --set-str ZRAM_DEF_COMP zstd \
-            -d ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
-            -e ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
-            --set-str ZSWAP_COMPRESSOR_DEFAULT zstd
     fi
 
     ### Selecting the ZSTD modules and kernel compression level
