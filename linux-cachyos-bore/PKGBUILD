@@ -242,7 +242,8 @@ fi
 
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF)
-        source+=("${_patchsource}/sched/0001-EEVDF.patch");;
+        source+=("${_patchsource}/sched/0001-EEVDF.patch"
+                 "${_patchsource}/sched/0001-bore-eevdf.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
