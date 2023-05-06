@@ -25,7 +25,7 @@ The Schedulers listed below are supported
 ## linux-cachyos
 We have provided all of these CPU schedulers because each scheduler performs differently depending on usage. We recommend testing each one to determine which best suits your specific requirements.
 - **(BORE) - Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-bore` / `linux-cachyos-bore`
-- **(EEVDF) - Earliest Eligiable Virtual Deadline First** [EEVDF](https://lwn.net/Articles/927530/) is a replacement for the CFS Scheduler from Peter Zijlstra `linux-cachyos`
+- **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** & **([BORE](https://github.com/firelzrd/bore-scheduler))** **Burst-Oriented Response Enhancer** - have been combined in the `linux-cachyos`
 - **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
 - **(BMQ) - BitMap Queue** by Alfred Chen - `linux-cachyos-bmq`
 - **(PDS) - Priority and Deadline based Skiplist multiple queue** by Alfred Chen - `linux-cachyos-pds`
