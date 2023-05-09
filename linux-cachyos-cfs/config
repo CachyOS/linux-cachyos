@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.3.0 Kernel Configuration
+# Linux/x86 6.3.1 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 12.2.1 20230311"
 CONFIG_CC_IS_GCC=y
@@ -10049,7 +10049,10 @@ CONFIG_USB4=m
 #
 # Android
 #
-# CONFIG_ANDROID_BINDER_IPC is not set
+CONFIG_ANDROID_BINDER_IPC=y
+CONFIG_ANDROID_BINDERFS=y
+CONFIG_ANDROID_BINDER_DEVICES=""
+# CONFIG_ANDROID_BINDER_IPC_SELFTEST is not set
 # end of Android
 
 CONFIG_LIBNVDIMM=y
