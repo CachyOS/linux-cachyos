@@ -168,19 +168,21 @@ sudo nano /etc/pacman.conf
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-#### if CPU support `x86-64-v3`, then add `[cachyos-v3]`,`[cachyos-community-v3]` and `[cachyos]`
+#### if CPU support `x86-64-v3`, then add `[cachyos-v3]`,`[cachyos-core-v3]`, `[cachyos-extra-v3]` and `[cachyos]`
 ```
 # cachyos repos
 ## Only add if your CPU does v3 architecture
 [cachyos-v3]
 Include = /etc/pacman.d/cachyos-v3-mirrorlist
-[cachyos-community-v3]
+[cachyos-core-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos-extra-v3]
 Include = /etc/pacman.d/cachyos-v3-mirrorlist
 [cachyos]
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-#### if CPU support `x86-64-v4`, then add `[cachyos-v4]`, `[cachyos-v3]`, `[cachyos-community-v3]` and `[cachyos]`
+#### if CPU support `x86-64-v4`, then add `[cachyos-v4]`, `[cachyos-v3]`, `[cachyos-core-v3]`, `[cachyos-extra-v3]` and `[cachyos]`
 ```
 # cachyos repos
 ## Only add if your CPU does support x86-64-v4 architecture
@@ -188,7 +190,9 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 Include = /etc/pacman.d/cachyos-v4-mirrorlist
 [cachyos-v3]
 Include = /etc/pacman.d/cachyos-v3-mirrorlist
-[cachyos-community-v3]
+[cachyos-core-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos-extra-v3]
 Include = /etc/pacman.d/cachyos-v3-mirrorlist
 [cachyos]
 Include = /etc/pacman.d/cachyos-mirrorlist
