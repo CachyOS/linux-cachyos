@@ -467,6 +467,13 @@ prepare() {
             -e TCP_CONG_BBR2 \
             -e DEFAULT_BBR2 \
             --set-str DEFAULT_TCP_CONG bbr2
+
+        # BBR2 doesn't work properly with FQ_CODEL
+        echo "Disabling fq_codel by default..."
+        scripts/config -m CONFIG_NET_SCH_FQ_CODEL \
+            -d CONFIG_DEFAULT_FQ_CODEL \
+            -e CONFIG_DEFAULT_FQ \
+            --set-str CONFIG_DEFAULT_NET_SCH fq
     fi
 
     ### Select LRU config
