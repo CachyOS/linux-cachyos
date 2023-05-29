@@ -467,6 +467,7 @@ prepare() {
         # BBR2 doesn't work properly with FQ_CODEL
         echo "Disabling fq_codel by default..."
         scripts/config -m NET_SCH_FQ_CODEL \
+            -e NET_SCH_FQ \
             -d DEFAULT_FQ_CODEL \
             -e DEFAULT_FQ \
             --set-str DEFAULT_NET_SCH fq
