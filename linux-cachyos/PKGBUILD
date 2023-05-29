@@ -308,7 +308,7 @@ prepare() {
 
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
-        MARCH=$(echo $_processor_opt|tr '[:lower:]' '[:upper:]'&&echo)
+        MARCH="${_processor_opt^^}"
         MARCH2=M${MARCH}
         scripts/config -k -d CONFIG_GENERIC_CPU
         scripts/config -k -e CONFIG_${MARCH2}
@@ -337,8 +337,7 @@ prepare() {
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
-    local sched_name="$(echo $_cpusched|tr '[:lower:]' '[:upper:]')"
-    echo "Selecting ${sched_name} CPU scheduler..."
+    echo "Selecting ${_cpusched^^} CPU scheduler..."
 
     ### Enable KCFI
     if [ -n "$_use_kcfi" ]; then
