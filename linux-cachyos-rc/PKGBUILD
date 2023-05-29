@@ -177,16 +177,6 @@ _build_zfs=${_build_zfs-}
 # Enable bcachefs
 _bcachefs=${_bcachefs-}
 
-# Enable LATENCY NICE
-# Latency nice is a approach to sets latency-nice as a per-task attribute
-# It can improve the latency of applications similar to sched_nice, but focused on the latency
-# You need to set the values per task
-# Ananicy-cpp has a implementation for this
-# You need to configure ananicy-cpp for this or use existing settings
-# Its default enabled at the "cachyos" scheduler option
-# _latency_nice=${_latency_nice-}
-# Disabled till rebased
-
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
     pkgsuffix=cachyos-rc-lto
     pkgbase=linux-$pkgsuffix
@@ -236,15 +226,8 @@ if [ -n "$_build_zfs" ]; then
     source+=("git+https://github.com/cachyos/zfs.git#commit=ac18dc77f3703940682aecb442f4e58aa2c14f1a")
 fi
 
-## Latency NICE Support
-if [ -n "$_latency_nice" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
-    fi
-fi
-
 case "$_cpusched" in
-    cachyos) # CachyOS Scheduler (EEVDF)
+    cachyos) # CachyOS Scheduler (EEVDF + BORE)
         source+=("${_patchsource}/sched/0001-EEVDF.patch"
                  "${_patchsource}/sched/0001-bore-eevdf.patch");;
     pds|bmq) # BMQ/PDS scheduler
