@@ -470,10 +470,10 @@ prepare() {
 
         # BBR2 doesn't work properly with FQ_CODEL
         echo "Disabling fq_codel by default..."
-        scripts/config -m CONFIG_NET_SCH_FQ_CODEL \
-            -d CONFIG_DEFAULT_FQ_CODEL \
-            -e CONFIG_DEFAULT_FQ \
-            --set-str CONFIG_DEFAULT_NET_SCH fq
+        scripts/config -m NET_SCH_FQ_CODEL \
+            -d DEFAULT_FQ_CODEL \
+            -e DEFAULT_FQ \
+            --set-str DEFAULT_NET_SCH fq
     fi
 
     ### Select LRU config
