@@ -2,7 +2,7 @@
 # Mon May 29 13:21:33 UTC 2023
 pkgbase = linux-cachyos
 	pkgdesc = Linux EEVDF scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.3.4
+	pkgver = 6.3.5
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -24,17 +24,17 @@ pkgbase = linux-cachyos
 	makedepends = patch
 	makedepends = python
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.3.4.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.3.5.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.3/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.3/sched/0001-EEVDF.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.3/sched/0001-bore-eevdf.patch
-	b2sums = 7e287378e007ce83092c2630d87d5e2b77e1615386a275013f04a190c6cab129e5ddc3abf8213ae521c8722d41cb8d203bb5cc5ae84d9bcd20aebbbc2db1d8a3
-	b2sums = cf6c29902e46bcfefdb2bc61376be00fa4682b7a6c1383b3eaa53b7952aa34f13cc62bee45582bec208012866cd4c790979506076be310bb2c5849044fec2473
+	b2sums = 646a94591eae93db9301a11e5300579c8cce7d2a544727cb88efed86d05ba070a247498d9c83d7b7cdbead4e7d46537134c877813aa7f188dd36b403c58d0c11
+	b2sums = aee22f3c48214c29b551540b63cbbdbb160588a4a31b8fd6881ecffbea01a339526091565749c9c7562dc1cae4f3a1c23567fc3f15de3c4fa1f9eaac65fa5731
 	b2sums = 11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0
-	b2sums = 8b73d1e2416e9019d66a84ae1e288a8d5f70a736b96a329752a4bb706ae4631be79f175a350007f9aa7ea734dc5d0331487779556fdf5f8c609003d32dc7e1df
-	b2sums = c7f6266b10b67db1311766b15616e3d3c9ba3b18745837b587fd235be9a6f2dacad1913b934d276574d9be7534b4e8ac49c4a2495c79fe807c27ae08c42b73bb
+	b2sums = 0008b4bfc896a1212abae61dd2b0f1ce68220f48a064a97aa1988e8c46058f8c23c4db85f99cb9fb5ecf311b2aefe78a081cd064e6ac5d5830dab2449ba7a40b
+	b2sums = 7740148bce24e4e51ef260405def1c9afd1eabffeca1c1db8e5e57437c0e63b0504bddb6519df77fdc9cc702a1613f183032b76e88cae2a8012bc504026560bf
 	b2sums = 55d452686eecbba6cbdfa65d0c1892b48370ca42d14c442e99df1457a415c7573f80272bee97081de0924b75730c5c209ea38974f8adf966e1227116cda0da02
 
 pkgname = linux-cachyos
