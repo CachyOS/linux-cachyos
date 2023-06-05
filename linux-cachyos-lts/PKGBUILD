@@ -85,12 +85,8 @@ _mq_deadline_disable=${_mq_deadline_disable-y}
 ### Disable Kyber I/O scheduler
 _kyber_disable=${_kyber_disable-y}
 
-### Enable multigenerational LRU
-# ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable multigenerational LRU
-# 'stats' - enable multigenerational LRU with stats
-# 'none' - disable multigenerational LRU
-_lru_config=${_lru_config-standard}
+### Enable stats for multigenerational LRU
+_lru_stats=${_lru_stats-}
 
 ### Enable per-VMA locking
 # ATTENTION - one of three predefined values should be selected!
@@ -477,16 +473,9 @@ prepare() {
     fi
 
     ### Select LRU config
-    [ -z "$_lru_config" ] && _die "The value is empty. Choose the correct one again."
+    [ -n "$_lru_stats" ] && scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS
 
-    case "$_lru_config" in
-        standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
-        stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
-        none) scripts/config -d LRU_GEN;;
-        *) _die "The value '$_lru_config' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_lru_config' LRU_GEN config..."
+    echo "Enable statistics for MGLRU..."
 
     ### Select VMA config
     [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
@@ -854,7 +843,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('1e736cc9bd6036379a1d915e518abd4c2c94ad0fd1ea0da961c3489308b8fcfb'
-            'b00fb5dc7c5079c3efa1d0ee3b419376cf053c4b90ed623405096ce880e3dc8c'
+            '7dc7094a6188e0522cbe820963cadad83125abdd3c888d9a43704079ccf442b3'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
             '0e0407321ff805d253a2d81a47e0df0a8087869d3c5902af03b7d12ee6981147'
             'f3978876414beee18d6e80995b01b3d3dca1bb6bca9beacf8ac28e2ec6b08ede'
