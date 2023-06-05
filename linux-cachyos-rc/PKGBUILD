@@ -86,8 +86,12 @@ _mq_deadline_disable=${_mq_deadline_disable-y}
 ### Disable Kyber I/O scheduler
 _kyber_disable=${_kyber_disable-y}
 
-### Enable stats for multigenerational LRU
-_lru_stats=${_lru_stats-}
+### Enable multigenerational LRU
+# ATTENTION - one of three predefined values should be selected!
+# 'standard' - enable multigenerational LRU
+# 'stats' - enable multigenerational LRU with stats
+# 'none' - disable multigenerational LRU
+_lru_config=${_lru_config-standard}
 
 ### Enable per-VMA locking
 # ATTENTION - one of three predefined values should be selected!
@@ -461,9 +465,16 @@ prepare() {
     fi
 
     ### Select LRU config
-    [ -n "$_lru_stats" ] && scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS
+    [ -z "$_lru_config" ] && _die "The value is empty. Choose the correct one again."
 
-    echo "Enable statistics for MGLRU..."
+    case "$_lru_config" in
+        standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
+        stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
+        none) scripts/config -d LRU_GEN;;
+        *) _die "The value '$_lru_config' is invalid. Choose the correct one again.";;
+    esac
+
+    echo "Selecting '$_lru_config' LRU_GEN config..."
 
     ### Select VMA config
     [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
