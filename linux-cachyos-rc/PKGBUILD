@@ -223,7 +223,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=2582dbec90ac8639dcecaf5ffc95040e759a67d1")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=893549d6259a6904b7c1ee58080eb72acc4ff7aa")
 fi
 
 case "$_cpusched" in
