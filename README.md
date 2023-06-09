@@ -72,8 +72,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - LRNG Framework - *default disabled*
 - OpenRGB and ACS Override support
 - maple-tree and MG-LRU fixes from upstream
-- Lenovo Legion [Patchset](https://github.com/johnfanv2/LenovoLegionLinux)
-- Surface [Patches](https://github.com/linux-surface/linux-surface)
+- kvm-lru patches from upstream
 
 # [CachyOS repositories](https://mirror.cachyos.org/)
 The repositories contain both Arch Linux and CachyOS packages, which have been re-built with flags optimized for performance, stability, and security.
