@@ -41,16 +41,16 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 ### :hammer_and_wrench: Advanced building & compiling
 - Very customizable PKGBUILD with many features and improvements.
 - `GCC/CLANG` Optimization with automatically found CPU architecture or also selectable CPU architecture.
-- Choose between `LLVM/LTO & Thin-LTO` or `GCC` - *experimental GCC LTO support is available.*
+- Choose between `LLVM/LTO & Thin-LTO` or `GCC`.
 - Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 500Hz for BORE/CFS/EEVDF and 1000Hz for other schedulers.
-- Kernel Control Flow Integrity (kCFI) selectable when using `LLVM` - *patched llvm can be found in the cachyos-repositories.*
+- Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 
 ### :abacus: CPU enhancements
 - 6 Different scheduler are supported,`CFS`,`tt`,`bmq`,`bore`,`pds` and `EEVDF` scheduler.
-- AMD PSTATE Guided scaling driver
-- Latency Nice Patchset included usuage with `ananicy-cpp` [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
+- Latency Nice included with EEVDF
 - RCU fixes and improvements.
-- EEVDF Scheduler used in linux-cachyos # https://lwn.net/Articles/927530/
+- EEVDF Scheduler # https://lwn.net/Articles/927530/
+- EEVDF-BORE Scheduler Variant used in linux-cachyos
 ### :bookmark_tabs: Filesystem & memory
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
 - ZFS Filesystem Support and prebuilt in the repository.
@@ -58,7 +58,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - UserKSM daemon from pf.
 - Improved BFQ Scheduler.
 - support for bcachefs.
-- [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab)
+- [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab) - *default disabled*
 - zram patches from upstream
 
 ### &#128423; Network 
@@ -71,7 +71,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - General improved sysctl settings and upstream scheduler fixes.
 - LRNG Framework - *default disabled*
 - OpenRGB and ACS Override support
-- maple-tree and MG-LRU fixes from upstream
+- maple-tree, MG-LRU and per-VMA-locks fixes from upstream
 - kvm-lru patches from upstream
 
 # [CachyOS repositories](https://mirror.cachyos.org/)
