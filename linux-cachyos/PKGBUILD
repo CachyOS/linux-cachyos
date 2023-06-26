@@ -17,7 +17,7 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select EEVDF and BORE Scheduler with some CachyOS Optimizations. EEVDF does bring latency-nice as default
+# 'cachyos' - select 'EEVDF-BORE Variant Scheduler' EEVDF includes latency nice
 _cpusched=${_cpusched-cachyos}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -147,22 +147,13 @@ _zstd_level_value=${_zstd_level_value-normal}
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 # "none: disable LTO
-_use_llvm_lto=${_use_llvm_lto-none}
+_use_llvm_lto=${_use_llvm_lto-}
 
 # Use suffix -lto only when requested by the user
 # Enabled by default.
 # If you do not want the suffix -lto remove the "y" sign next to the flag.
 # https://github.com/CachyOS/linux-cachyos/issues/36
 _use_lto_suffix=${_use_lto_suffix-y}
-
-# ATTENTION!: Really experimental LTO implementation for GCC
-# This can improve the performance of the kernel
-# The performance difference is currently negligible
-# DEBUG and BTF needs to be disabled, otherwise the compilation is failing
-# The Kernel is bigger with GCC LTO due to more inlining
-# More informations:
-# https://lore.kernel.org/lkml/20221114114344.18650-1-jirislaby@kernel.org/T/#md8014ad799b02221b67f33584002d98ede6234eb
-_use_gcc_lto=${_use_gcc_lto-}
 
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
@@ -186,17 +177,17 @@ else
     pkgsuffix=cachyos
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.3
-_minor=9
+_major=6.4
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux EEVDF scheduler Kernel by CachyOS with other patches and improvements'
+pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
 pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
@@ -224,7 +215,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=893549d6259a6904b7c1ee58080eb72acc4ff7aa")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=f9a2d94c957d0660ad1f4cfbb0a909eb8e6086df")
 fi
 
 case "$_cpusched" in
@@ -247,12 +238,6 @@ esac
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
     source+=("${_patchsource}/misc/0001-bcachefs.patch")
-fi
-if [ -n "$_use_gcc_lto" ]; then
-## GCC-LTO Patch
-## Fix for current gcc --enable-default-pie option
-    source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
-             "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
 fi
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
@@ -344,15 +329,6 @@ prepare() {
     esac
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
-
-    ### Enable GCC FULL LTO
-    ### Disable LTO_CP_CLONE, its experimental
-    if [ -n "$_use_gcc_lto" ]; then
-         scripts/config -e LTO_GCC \
-            -d LTO_CP_CLONE
-    ### Disable DEBUG, pahole is currently broken with GCC LTO
-            _disable_debug=y
-    fi
 
     ### Select tick rate
     [ -z $_HZ_ticks ] && _die "The value is empty. Choose the correct one again."
@@ -836,9 +812,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('8f2f75272d5d2a23c6694dffa2a20260310b5b958dbaf27c5bf74ce679cd929493116ff01e94444c3f891147869d09e9dee111cb52a04a8957ae5c8d94b4ee71'
-        'ef911bd8cae1803e7c23f481e14870c02ede699659ae09ae7af26dcb5a9e6919f28e13e2f5775af008383a1771f64812f601f910679ee0388385f7442184bc54'
+b2sums=('b59eb04a8715af9f686978812e6d4a466172bb859f80657076de14cd0828b4fac15b688ff8959f5c65485f7f6bef26590412c66821e720de843cb8666f226c90'
+        '133085b75ef7a5234a6090a375134ba7d5970d8e136530d66085f013ea0f9e50c16c475cb74a18bbad9a82f1b43306b4db754ecdaa1c17e5c8acdbf981ccbfb6'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '0f0b918d92b59841ff0d667c18200353f2e516a714bde369afc50fab199e3ae7c4a31b390fb2676abb5610db3d1c8a0c1ef2ae515f0e94c282b82f2585cbc6cc'
-        '7740148bce24e4e51ef260405def1c9afd1eabffeca1c1db8e5e57437c0e63b0504bddb6519df77fdc9cc702a1613f183032b76e88cae2a8012bc504026560bf'
-        '7fa9f7e9466faa72b56312947585bfff0f660f8de48f8d0de4ade94230f6d4183ccde70fe484e930af9fcef2ac93fbad945edf4a0dbcd3c06759ace29f861621')
+        'aec8d5a9716fb5139303d6deeae6fe0cc1fef731de9be7da3448859dea0c1fb71c8be74e43d9af48e517fb8bac89209d5ea2fcfc9338196c72524509b0cbb8c0'
+        '1d9844923224c45dbf1c428592dfa607997284c9421dd6906166caeb37d6cc109cfc445a0f544578ccd77803ec5a616a106eb89cd5f95eba15273a6af72c1680'
+        'ce9cf211bf76c09bbea0f824fbbba37c4dcd19d3679220286e5d03a080b2ef255dccfb5158206985586cb95303b15b3014c4a4b7bde95b1e8b08f38f6e861491')

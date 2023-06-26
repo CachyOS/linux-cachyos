@@ -17,7 +17,7 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select EEVDF and BORE Scheduler with some CachyOS Optimizations. EEVDF does bring latency-nice as default
+# 'cachyos' - select 'EEVDF-BORE Variant Scheduler' EEVDF includes latency nice
 _cpusched=${_cpusched-tt}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -155,15 +155,6 @@ _use_llvm_lto=${_use_llvm_lto-none}
 # https://github.com/CachyOS/linux-cachyos/issues/36
 _use_lto_suffix=${_use_lto_suffix-y}
 
-# ATTENTION!: Really experimental LTO implementation for GCC
-# This can improve the performance of the kernel
-# The performance difference is currently negligible
-# DEBUG and BTF needs to be disabled, otherwise the compilation is failing
-# The Kernel is bigger with GCC LTO due to more inlining
-# More informations:
-# https://lore.kernel.org/lkml/20221114114344.18650-1-jirislaby@kernel.org/T/#md8014ad799b02221b67f33584002d98ede6234eb
-_use_gcc_lto=${_use_gcc_lto-}
-
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
@@ -186,13 +177,13 @@ else
     pkgsuffix=${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.3
-_minor=9
+_major=6.4
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -224,7 +215,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=893549d6259a6904b7c1ee58080eb72acc4ff7aa")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=f9a2d94c957d0660ad1f4cfbb0a909eb8e6086df")
 fi
 
 case "$_cpusched" in
@@ -247,12 +238,6 @@ esac
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
     source+=("${_patchsource}/misc/0001-bcachefs.patch")
-fi
-if [ -n "$_use_gcc_lto" ]; then
-## GCC-LTO Patch
-## Fix for current gcc --enable-default-pie option
-    source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
-             "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
 fi
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
@@ -344,15 +329,6 @@ prepare() {
     esac
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
-
-    ### Enable GCC FULL LTO
-    ### Disable LTO_CP_CLONE, its experimental
-    if [ -n "$_use_gcc_lto" ]; then
-         scripts/config -e LTO_GCC \
-            -d LTO_CP_CLONE
-    ### Disable DEBUG, pahole is currently broken with GCC LTO
-            _disable_debug=y
-    fi
 
     ### Select tick rate
     [ -z $_HZ_ticks ] && _die "The value is empty. Choose the correct one again."
@@ -836,8 +812,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('8f2f75272d5d2a23c6694dffa2a20260310b5b958dbaf27c5bf74ce679cd929493116ff01e94444c3f891147869d09e9dee111cb52a04a8957ae5c8d94b4ee71'
-        'ef911bd8cae1803e7c23f481e14870c02ede699659ae09ae7af26dcb5a9e6919f28e13e2f5775af008383a1771f64812f601f910679ee0388385f7442184bc54'
+b2sums=('5e721f545119dd0ccb5ff97c68210f14b4c7e3b662e886af8226240755618a575c976fd3c8ced427a219730241c2ec7eafdc77942bb99db217da9c8f8f499caa'
+        '133085b75ef7a5234a6090a375134ba7d5970d8e136530d66085f013ea0f9e50c16c475cb74a18bbad9a82f1b43306b4db754ecdaa1c17e5c8acdbf981ccbfb6'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '0f0b918d92b59841ff0d667c18200353f2e516a714bde369afc50fab199e3ae7c4a31b390fb2676abb5610db3d1c8a0c1ef2ae515f0e94c282b82f2585cbc6cc'
-        '35462a8688c7775d1c4e96e77b1af08c511bbc48f14b7b26f2841124afa4d65147c7d2c3c68faabab21f6700da3d06ab26ae3277c59f472cf17834c4600f3d7c')
+        'aec8d5a9716fb5139303d6deeae6fe0cc1fef731de9be7da3448859dea0c1fb71c8be74e43d9af48e517fb8bac89209d5ea2fcfc9338196c72524509b0cbb8c0'
+        'bf474ebc49632279d6af0f054c2a350660aabf1584a59842f6f39cbd0d79cb2763d3328565142637a7792ed2fdcf2eab68f2f68c33296c06445abde4ed1b73c5')

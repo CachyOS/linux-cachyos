@@ -17,7 +17,7 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select EEVDF and BORE Scheduler with some CachyOS Optimizations. EEVDF does bring latency-nice as default
+# 'cachyos' - select 'EEVDF-BORE Variant Scheduler' EEVDF includes latency nice
 _cpusched=${_cpusched-cachyos}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -134,9 +134,6 @@ _use_auto_optimization=${_use_auto_optimization-y}
 # disable debug to lower the size of the kernel
 _disable_debug=${_disable_debug-}
 
-## Enable zram/zswap ZSTD compression
-_zstd_compression=${_zstd_compression-}
-
 ### Selecting the ZSTD kernel and modules compression level
 # ATTENTION - one of two predefined values should be selected!
 # 'ultra' - highest compression ratio
@@ -157,15 +154,6 @@ _use_llvm_lto=${_use_llvm_lto-none}
 # If you do not want the suffix -lto remove the "y" sign next to the flag.
 # https://github.com/CachyOS/linux-cachyos/issues/36
 _use_lto_suffix=${_use_lto_suffix-y}
-
-# ATTENTION!: Really experimental LTO implementation for GCC
-# This can improve the performance of the kernel
-# The performance difference is currently negligible
-# DEBUG and BTF needs to be disabled, otherwise the compilation is failing
-# The Kernel is bigger with GCC LTO due to more inlining
-# More informations:
-# https://lore.kernel.org/lkml/20221114114344.18650-1-jirislaby@kernel.org/T/#md8014ad799b02221b67f33584002d98ede6234eb
-_use_gcc_lto=${_use_gcc_lto-}
 
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
@@ -227,7 +215,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=893549d6259a6904b7c1ee58080eb72acc4ff7aa")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=f9a2d94c957d0660ad1f4cfbb0a909eb8e6086df")
 fi
 
 case "$_cpusched" in
@@ -239,7 +227,7 @@ case "$_cpusched" in
                  linux-cachyos-prjc.install);;
     tt) ## TT Scheduler
         source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
-    bore) ## BORE Scheduler with latency_nice
+    bore) ## BORE Scheduler
         [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     hardened) ## Hardened Patches with BORE Scheduler
@@ -250,12 +238,6 @@ esac
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
     source+=("${_patchsource}/misc/0001-bcachefs.patch")
-fi
-if [ -n "$_use_gcc_lto" ]; then
-## GCC-LTO Patch
-## Fix for current gcc --enable-default-pie option
-    source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
-             "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
 fi
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
@@ -347,15 +329,6 @@ prepare() {
     esac
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
-
-    ### Enable GCC FULL LTO
-    ### Disable LTO_CP_CLONE, its experimental
-    if [ -n "$_use_gcc_lto" ]; then
-         scripts/config -e LTO_GCC \
-            -d LTO_CP_CLONE
-    ### Disable DEBUG, pahole is currently broken with GCC LTO
-            _disable_debug=y
-    fi
 
     ### Select tick rate
     [ -z $_HZ_ticks ] && _die "The value is empty. Choose the correct one again."
@@ -594,17 +567,6 @@ prepare() {
             -e LRNG_SELFTEST \
             -d LRNG_SELFTEST_PANIC \
             -d LRNG_RUNTIME_FORCE_SEEDING_DISABLE
-    fi
-
-    ### Enable zram/zswap ZSTD compression
-    if [ -n "$_zstd_compression" ]; then
-        echo "Enabling zram/swap ZSTD compression..."
-        scripts/config -d ZRAM_DEF_COMP_LZORLE \
-            -e ZRAM_DEF_COMP_ZSTD \
-            --set-str ZRAM_DEF_COMP zstd \
-            -d ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
-            -e ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
-            --set-str ZSWAP_COMPRESSOR_DEFAULT zstd
     fi
 
     ### Selecting the ZSTD modules and kernel compression level
@@ -853,8 +815,8 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('a576bc0ecee89b1db1070eb9013eacd02b8fc94fa4a2c08aca5354c1f21db1b191542e5866dc4c4ad259dfc7305b65d4c4eac79522450c6f859be32cfb577643'
-        'd45ec733fd7f6e71725d6a71eb0cf616b125ccab84df2aad425bcd9f1a2fe7979e1757b825883940118e33948e9236072e8fc9c0e435ffcb396d1d584048f87a'
+        '133085b75ef7a5234a6090a375134ba7d5970d8e136530d66085f013ea0f9e50c16c475cb74a18bbad9a82f1b43306b4db754ecdaa1c17e5c8acdbf981ccbfb6'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '41e4c95d447fc896878d3a73b4d481f6f99e108c07c2303127de3733f3dc0ff6dc129dc787e61267ff4a3dc7b1d531857fa79c48e75765ea3cdc26c1ca6935cb'
+        'aec8d5a9716fb5139303d6deeae6fe0cc1fef731de9be7da3448859dea0c1fb71c8be74e43d9af48e517fb8bac89209d5ea2fcfc9338196c72524509b0cbb8c0'
         '1d9844923224c45dbf1c428592dfa607997284c9421dd6906166caeb37d6cc109cfc445a0f544578ccd77803ec5a616a106eb89cd5f95eba15273a6af72c1680'
         'ce9cf211bf76c09bbea0f824fbbba37c4dcd19d3679220286e5d03a080b2ef255dccfb5158206985586cb95303b15b3014c4a4b7bde95b1e8b08f38f6e861491')
