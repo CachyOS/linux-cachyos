@@ -17,6 +17,7 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
+# 'rt' - select CFS, but includes a series of realtime patches
 _cpusched=${_cpusched-hardened}
 
 ## Apply some suggested sysctl values from the bore developer
