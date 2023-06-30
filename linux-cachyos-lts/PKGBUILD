@@ -239,7 +239,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # ZFS support
-if [ -n "$_build_zfs" ] && [ "$_cpusched" != "rt" ]; then
+if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
     source+=("git+https://github.com/cachyos/zfs.git#commit=e25f9131d679692704c11dc0c1df6d4585b70c35")
 fi
@@ -722,7 +722,7 @@ build() {
     cd ${srcdir}/${_srcname}
     make ${BUILD_FLAGS[*]} -j$(nproc) all
 
-    if [ -n "$_build_zfs" ] && [ "$_cpusched" != "rt"]; then
+    if [ -n "$_build_zfs" ]; then
         cd ${srcdir}/"zfs"
 
         local CONFIGURE_FLAGS=()
