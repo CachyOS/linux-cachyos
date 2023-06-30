@@ -158,6 +158,8 @@ _use_lto_suffix=${_use_lto_suffix-y}
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
+# WARNING: The ZFS module doesn't build with selected RT sched due to licensing issues.
+# If you use ZFS, refrain from building the RT kernel
 _build_zfs=${_build_zfs-}
 
 # Enable bcachefs
@@ -207,7 +209,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # ZFS support
-if [ -n "$_build_zfs" ]; then
+if [ -n "$_build_zfs" ] && [ "$_cpusched" != "rt" ]; then
     makedepends+=(git)
     source+=("git+https://github.com/cachyos/zfs.git#commit=f9a2d94c957d0660ad1f4cfbb0a909eb8e6086df")
 fi
@@ -227,7 +229,8 @@ case "$_cpusched" in
         [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     rt) ## CFS with RT patches
-        source+=("${_patchsource}/misc/0001-rt.patch");;
+        source+=("${_patchsource}/misc/0001-rt.patch"
+                 linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
@@ -652,7 +655,7 @@ build() {
     cd ${srcdir}/${_srcname}
     make ${BUILD_FLAGS[*]} -j$(nproc) all
 
-    if [ -n "$_build_zfs" ]; then
+    if [ -n "$_build_zfs" ] && [ "$_cpusched" != "rt"]; then
         cd ${srcdir}/"zfs"
 
         local CONFIGURE_FLAGS=()
@@ -808,4 +811,5 @@ b2sums=('b59eb04a8715af9f686978812e6d4a466172bb859f80657076de14cd0828b4fac15b688
         '133085b75ef7a5234a6090a375134ba7d5970d8e136530d66085f013ea0f9e50c16c475cb74a18bbad9a82f1b43306b4db754ecdaa1c17e5c8acdbf981ccbfb6'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         'aec8d5a9716fb5139303d6deeae6fe0cc1fef731de9be7da3448859dea0c1fb71c8be74e43d9af48e517fb8bac89209d5ea2fcfc9338196c72524509b0cbb8c0'
-        '8c6a7005248a06c80ac2adb4818cc3fabfa20973c8f56e1793263b45ad745d48c7e1eaf78862852ed11181c5d93c1b63b65c73bddae0bcfcbcc6dbb9acd5608e')
+        '8c6a7005248a06c80ac2adb4818cc3fabfa20973c8f56e1793263b45ad745d48c7e1eaf78862852ed11181c5d93c1b63b65c73bddae0bcfcbcc6dbb9acd5608e'
+        'e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b')

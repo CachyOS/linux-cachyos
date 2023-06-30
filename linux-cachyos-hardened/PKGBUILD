@@ -176,6 +176,8 @@ _use_gcc_lto=${_use_gcc_lto-}
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
+# WARNING: The ZFS module doesn't build with selected RT sched due to licensing issues.
+# If you use ZFS, refrain from building the RT kernel
 _build_zfs=${_build_zfs-}
 
 # Enable bcachefs
@@ -233,7 +235,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # ZFS support
-if [ -n "$_build_zfs" ]; then
+if [ -n "$_build_zfs" ] && [ "$_cpusched" != "rt" ]; then
     makedepends+=(git)
     source+=("git+https://github.com/cachyos/zfs.git#commit=e25f9131d679692704c11dc0c1df6d4585b70c35")
 fi
@@ -255,7 +257,8 @@ case "$_cpusched" in
         [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     rt) ## CFS with RT patches
-        source+=("${_patchsource}/misc/0001-rt.patch");;
+        source+=("${_patchsource}/misc/0001-rt.patch"
+                 linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
@@ -715,7 +718,7 @@ build() {
     cd ${srcdir}/${_srcname}
     make ${BUILD_FLAGS[*]} -j$(nproc) all
 
-    if [ -n "$_build_zfs" ]; then
+    if [ -n "$_build_zfs" ] && [ "$_cpusched" != "rt"]; then
         cd ${srcdir}/"zfs"
 
         local CONFIGURE_FLAGS=()
