@@ -17,6 +17,7 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
+# 'rt' - select CFS, but includes a series of realtime patches
 _cpusched=${_cpusched-bore}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -176,6 +177,8 @@ _use_gcc_lto=${_use_gcc_lto-}
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
+# WARNING: The ZFS module doesn't build with selected RT sched due to licensing issues.
+# If you use ZFS, refrain from building the RT kernel
 _build_zfs=${_build_zfs-}
 
 # Enable bcachefs
@@ -257,6 +260,9 @@ case "$_cpusched" in
     bore) ## BORE Scheduler with latency_nice
         [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+    rt) ## CFS with RT patches
+        source+=("${_patchsource}/misc/0001-rt.patch"
+                 linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
@@ -335,6 +341,7 @@ prepare() {
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS;;
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened) scripts/config -e SCHED_BORE;;
+        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_LAZY -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_LAZY -d PREEMPT_BUILD;;
         cfs) ;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
@@ -444,16 +451,20 @@ prepare() {
     echo "Selecting '$_tickrate' tick type..."
 
     ### Select preempt type
-    [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
-    case "$_preempt" in
-        full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
-        voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-        server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
-        *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
-    esac
+    # We should not set up the PREEMPT for RT kernels
+    if [ "$_cpusched" != "rt" ]; then
+        [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
-    echo "Selecting '$_preempt' preempt type..."
+        case "$_preempt" in
+            full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
+            voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
+            server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+            *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
+        esac
+
+        echo "Selecting '$_preempt' preempt type..."
+    fi
 
     ### Enable O3
     if [ -n "$_cc_harder" ] && [ -z "$_cc_size" ]; then
