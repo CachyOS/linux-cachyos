@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.4.0 Kernel Configuration
+# Linux/x86 6.4.1 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 13.1.1 20230525"
 CONFIG_CC_IS_GCC=y
@@ -1240,6 +1240,7 @@ CONFIG_LRU_GEN_ENABLED=y
 # CONFIG_LRU_GEN_STATS is not set
 CONFIG_ARCH_SUPPORTS_PER_VMA_LOCK=y
 CONFIG_PER_VMA_LOCK=y
+CONFIG_LOCK_MM_AND_FIND_VMA=y
 
 #
 # Data Access Monitoring
