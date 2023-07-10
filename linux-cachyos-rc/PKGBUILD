@@ -173,18 +173,18 @@ else
     pkgsuffix=cachyos-rc
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.4
+_major=6.5
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc7
+_rcver=rc1
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
 _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux EEVDF scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=2
+pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -216,10 +216,10 @@ fi
 
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
-        source+=("${_patchsource}/sched/0001-EEVDF.patch"
+        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
                  "${_patchsource}/sched/0001-bore-eevdf.patch");;
     eevdf) # EEVDF Scheduler
-        source+=("${_patchsource}/sched/0001-EEVDF.patch");;
+        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
@@ -809,9 +809,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('a576bc0ecee89b1db1070eb9013eacd02b8fc94fa4a2c08aca5354c1f21db1b191542e5866dc4c4ad259dfc7305b65d4c4eac79522450c6f859be32cfb577643'
-        'c92a900bf397dc05cc4dcd1669f8736a15aa500be9d0ee93aac5c66d2055f7493f09a1d85a523a8183a06c7a962c7721d13960157a35a4cb2f9b4df507bc67c9'
+b2sums=('f97e884f0e34c53d78de6b9c734b14d38a0d51dcbdfdb47ed8fa11ff333e84338b937c4bc24b074a07d91ef654e6d7cac3fdfc85469b2652dca17481868b60ef'
+        '6630b807e406ca597e12b4b318dd3ffbc9ca286e82eadbe1033d22573b045d6f34683d3bf778ae4d7df805c56a0fb14816f8c0060f48203a1268f685a0efc51c'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '80877d71ac9cc5c2b8a9b871c8c70ed496cc478516a36cdc23e84424f3d6059abdc2e23dcab8a4afb4d8cc66bf1964d739ecd584c5dc88d22cdb5ee3902b4f1d'
-        '1d9844923224c45dbf1c428592dfa607997284c9421dd6906166caeb37d6cc109cfc445a0f544578ccd77803ec5a616a106eb89cd5f95eba15273a6af72c1680'
-        'ce9cf211bf76c09bbea0f824fbbba37c4dcd19d3679220286e5d03a080b2ef255dccfb5158206985586cb95303b15b3014c4a4b7bde95b1e8b08f38f6e861491')
+        'ec39c1a9a1ab81fffb4f63ddede720aa7fb1b72bacecc132d117f34e33d4d6fa0656424c8023b79ecadfe992474d0adb1a8fc5e6542d3a55a14ebafe98bc2ff9'
+        '02d7365976b6882eaa6e0f52043806d54346778b434801a945b067f4db022abd1cb4fd6b416378160bd4aa8c0757056202ff9257ced6272b38217a529140c70b'
+        '78ca73287674aaa0a2fb86969e6a2885ae10fefb7b7eedd0c4f8db6a3320e6617d370e5cd37cf96d68c14e22b06ceef86f07bb44c44dcb7e009c7422ce149b4d')
