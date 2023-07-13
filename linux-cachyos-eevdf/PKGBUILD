@@ -24,7 +24,7 @@ _cpusched=${_cpusched-eevdf}
 
 ## Apply some suggested sysctl values from the bore developer
 ## These are adjusted to BORE
-_tune_bore=${_tune_bore-y}
+_tune_bore=${_tune_bore-}
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
