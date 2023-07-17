@@ -90,7 +90,7 @@ _preempt=${_preempt-server}
 _mq_deadline_disable=${_mq_deadline_disable-}
 
 ### Disable Kyber I/O scheduler
-_kyber_disable=${_kyber_disable-y}
+_kyber_disable=${_kyber_disable-}
 
 ### Enable multigenerational LRU
 # ATTENTION - one of three predefined values should be selected!
