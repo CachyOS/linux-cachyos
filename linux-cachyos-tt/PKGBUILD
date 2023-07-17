@@ -17,7 +17,9 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select EEVDF and BORE Scheduler with some CachyOS Optimizations. EEVDF does bring latency-nice as default
+# 'cachyos' - select 'EEVDF-BORE Variant Scheduler' EEVDF includes latency nice
+# 'eevdf' - select 'EEVDF Scheduler' EEVDF includes latency nice
+# 'rt' - select CFS, but includes a series of realtime patches
 _cpusched=${_cpusched-tt}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -60,6 +62,10 @@ _use_current=${_use_current-}
 
 ### Enable KBUILD_CFLAGS -O3
 _cc_harder=${_cc_harder-y}
+
+### Enable KBUILD_CFLAGS -Os
+## DO NOT SET, THIS IS FOR INTERNAL CI USE ONLY.
+_cc_size=${_cc_size-}
 
 ### Set this to your number of threads you have in your machine otherwise it will default to 128
 _nr_cpus=${_nr_cpus-}
@@ -130,14 +136,6 @@ _use_auto_optimization=${_use_auto_optimization-y}
 # disable debug to lower the size of the kernel
 _disable_debug=${_disable_debug-}
 
-### Selecting the ZSTD kernel and modules compression level
-# ATTENTION - one of two predefined values should be selected!
-# 'ultra' - highest compression ratio
-# 'normal' - standard compression ratio
-# WARNING: the ultra settings can sometimes
-# be counterproductive in both size and speed.
-_zstd_level_value=${_zstd_level_value-normal}
-
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
@@ -151,15 +149,6 @@ _use_llvm_lto=${_use_llvm_lto-none}
 # https://github.com/CachyOS/linux-cachyos/issues/36
 _use_lto_suffix=${_use_lto_suffix-y}
 
-# ATTENTION!: Really experimental LTO implementation for GCC
-# This can improve the performance of the kernel
-# The performance difference is currently negligible
-# DEBUG and BTF needs to be disabled, otherwise the compilation is failing
-# The Kernel is bigger with GCC LTO due to more inlining
-# More informations:
-# https://lore.kernel.org/lkml/20221114114344.18650-1-jirislaby@kernel.org/T/#md8014ad799b02221b67f33584002d98ede6234eb
-_use_gcc_lto=${_use_gcc_lto-}
-
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
@@ -169,20 +158,12 @@ _use_gcc_lto=${_use_gcc_lto-}
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
+# WARNING: The ZFS module doesn't build with selected RT sched due to licensing issues.
+# If you use ZFS, refrain from building the RT kernel
 _build_zfs=${_build_zfs-}
 
 # Enable bcachefs
 _bcachefs=${_bcachefs-}
-
-# Enable LATENCY NICE
-# Latency nice is a approach to sets latency-nice as a per-task attribute
-# It can improve the latency of applications similar to sched_nice, but focused on the latency
-# You need to set the values per task
-# Ananicy-cpp has a implementation for this
-# You need to configure ananicy-cpp for this or use existing settings
-# Its default enabled at the "cachyos" scheduler option
-# _latency_nice=${_latency_nice-}
-# Disabled till rebased
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
     pkgsuffix=cachyos-${_cpusched}-lto
@@ -192,8 +173,8 @@ else
     pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.3
-_minor=4
+_major=6.4
+_minor=3
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -230,28 +211,26 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=ac18dc77f3703940682aecb442f4e58aa2c14f1a")
-fi
-
-## Latency NICE Support
-if [ -n "$_latency_nice" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
-    fi
+    source+=("git+https://github.com/cachyos/zfs.git#commit=f9a2d94c957d0660ad1f4cfbb0a909eb8e6086df")
 fi
 
 case "$_cpusched" in
-    cachyos) # CachyOS Scheduler (EEVDF)
+    cachyos) # CachyOS Scheduler (EEVDF + BORE)
         source+=("${_patchsource}/sched/0001-EEVDF.patch"
                  "${_patchsource}/sched/0001-bore-eevdf.patch");;
+    eevdf) # EEVDF Scheduler
+        source+=("${_patchsource}/sched/0001-EEVDF.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
     tt) ## TT Scheduler
         source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
-    bore) ## BORE Scheduler with latency_nice
+    bore) ## BORE Scheduler
         [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+    rt) ## CFS with RT patches
+        source+=("${_patchsource}/misc/0001-rt.patch"
+                 linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
@@ -260,12 +239,6 @@ esac
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
     source+=("${_patchsource}/misc/0001-bcachefs.patch")
-fi
-if [ -n "$_use_gcc_lto" ]; then
-## GCC-LTO Patch
-## Fix for current gcc --enable-default-pie option
-    source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
-             "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
 fi
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
@@ -308,7 +281,7 @@ prepare() {
 
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
-        MARCH=$(echo $_processor_opt|tr '[:lower:]' '[:upper:]'&&echo)
+        MARCH="${_processor_opt^^}"
         MARCH2=M${MARCH}
         scripts/config -k -d CONFIG_GENERIC_CPU
         scripts/config -k -e CONFIG_${MARCH2}
@@ -333,12 +306,12 @@ prepare() {
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS -e PSI_DEFAULT_DISABLED;;
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
-        cfs) ;;
+        cfs|eevdf) ;;
+        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_LAZY -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_LAZY -d PREEMPT_BUILD;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
-    local sched_name="$(echo $_cpusched|tr '[:lower:]' '[:upper:]')"
-    echo "Selecting ${sched_name} CPU scheduler..."
+    echo "Selecting ${_cpusched^^} CPU scheduler..."
 
     ### Enable KCFI
     if [ -n "$_use_kcfi" ]; then
@@ -358,15 +331,6 @@ prepare() {
     esac
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
-
-    ### Enable GCC FULL LTO
-    ### Disable LTO_CP_CLONE, its experimental
-    if [ -n "$_use_gcc_lto" ]; then
-         scripts/config -e LTO_GCC \
-            -d LTO_CP_CLONE
-    ### Disable DEBUG, pahole is currently broken with GCC LTO
-            _disable_debug=y
-    fi
 
     ### Select tick rate
     [ -z $_HZ_ticks ] && _die "The value is empty. Choose the correct one again."
@@ -443,22 +407,33 @@ prepare() {
     echo "Selecting '$_tickrate' tick type..."
 
     ### Select preempt type
-    [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
-    case "$_preempt" in
-        full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
-        voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-        server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
-        *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
-    esac
+    # We should not set up the PREEMPT for RT kernels
+    if [ "$_cpusched" != "rt" ]; then
+        [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
-    echo "Selecting '$_preempt' preempt type..."
+        case "$_preempt" in
+            full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
+            voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
+            server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+            *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
+        esac
+
+        echo "Selecting '$_preempt' preempt type..."
+    fi
 
     ### Enable O3
-    if [ -n "$_cc_harder" ]; then
+    if [ -n "$_cc_harder" ] && [ -z "$_cc_size" ]; then
         echo "Enabling KBUILD_CFLAGS -O3..."
         scripts/config -d CC_OPTIMIZE_FOR_PERFORMANCE \
             -e CC_OPTIMIZE_FOR_PERFORMANCE_O3
+    fi
+
+    ### Enable Os
+    if [ -n "$_cc_size" ] && [ -z "$_cc_harder" ]; then
+        echo "Enabling KBUILD_CFLAGS -Os..."
+        scripts/config -d CC_OPTIMIZE_FOR_PERFORMANCE \
+            -e CONFIG_CC_OPTIMIZE_FOR_SIZE
     fi
 
     ### Enable bbr2
@@ -469,6 +444,14 @@ prepare() {
             -e TCP_CONG_BBR2 \
             -e DEFAULT_BBR2 \
             --set-str DEFAULT_TCP_CONG bbr2
+
+        # BBR2 doesn't work properly with FQ_CODEL
+        echo "Disabling fq_codel by default..."
+        scripts/config -m NET_SCH_FQ_CODEL \
+            -e NET_SCH_FQ \
+            -d DEFAULT_FQ_CODEL \
+            -e DEFAULT_FQ \
+            --set-str DEFAULT_NET_SCH fq
     fi
 
     ### Select LRU config
@@ -592,17 +575,6 @@ prepare() {
             -d LRNG_RUNTIME_FORCE_SEEDING_DISABLE
     fi
 
-    ### Selecting the ZSTD modules and kernel compression level
-    [ -z "$_zstd_level_value" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_zstd_level_value" in
-        ultra) scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 19 -e MODULE_COMPRESS_ZSTD_ULTRA --set-val MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22 --set-val ZSTD_COMPRESSION_LEVEL 22;;
-        normal) scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 9 -d MODULE_COMPRESS_ZSTD_ULTRA --set-val ZSTD_COMPRESSION_LEVEL 19;;
-        *) _die "The value '$_zstd_level_value' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_zstd_level_value' ZSTD modules and kernel compression level..."
-
     ### Disable DEBUG
     if [ -n "$_disable_debug" ]; then
         scripts/config -d DEBUG_INFO \
@@ -721,7 +693,7 @@ _package() {
     echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
     echo "Installing modules..."
-    _make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+    ZSTD_CLEVEL=19 _make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
     # remove build and source links
@@ -819,7 +791,7 @@ _package-zfs(){
 
     cd ${srcdir}/"zfs"
     install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 module/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
@@ -835,8 +807,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('7e287378e007ce83092c2630d87d5e2b77e1615386a275013f04a190c6cab129e5ddc3abf8213ae521c8722d41cb8d203bb5cc5ae84d9bcd20aebbbc2db1d8a3'
-        'cf6c29902e46bcfefdb2bc61376be00fa4682b7a6c1383b3eaa53b7952aa34f13cc62bee45582bec208012866cd4c790979506076be310bb2c5849044fec2473'
+b2sums=('d38cae9706127fa28cc55b50ceeba7601de3d1db648b934b9d33e0b439324790074b755b1de204586fa098a326f5c88f81550cff76489b2ea6505987fc243c56'
+        '40ea8f1e376c0e838b087009588515c7a6958e75fb79473eba29e5a05e4962c124ce83e6d1d450474dbfcdd6cc9f9a3305fc2a2a04881570a345cef3b62fd9e7'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '8b73d1e2416e9019d66a84ae1e288a8d5f70a736b96a329752a4bb706ae4631be79f175a350007f9aa7ea734dc5d0331487779556fdf5f8c609003d32dc7e1df'
-        '35462a8688c7775d1c4e96e77b1af08c511bbc48f14b7b26f2841124afa4d65147c7d2c3c68faabab21f6700da3d06ab26ae3277c59f472cf17834c4600f3d7c')
+        '8ee179d3da413f1a2f08db80587388f1742dfd427a7ff7f1e3e146fdd94dbd3abdc929b64a5c3773b28d5cea4da42791661bc0c8f738b0fe1ccc5b3c66d9dbe4'
+        'bf474ebc49632279d6af0f054c2a350660aabf1584a59842f6f39cbd0d79cb2763d3328565142637a7792ed2fdcf2eab68f2f68c33296c06445abde4ed1b73c5')

@@ -13,6 +13,7 @@
   - [How to add CachyOS repositories](#how-to-add-cachyos-repositories)
   - [Check CPU compatibility](#check-cpu-compatibility)
 - [Other GNU/Linux distributions](#other-gnulinux-distributions)
+  - [Gentoo](#gentoo)
   - [Fedora](#fedora)
   - [NixOS](#NixOS)
  - [Revert changes](#revert-changes)
@@ -24,6 +25,7 @@ The Schedulers listed below are supported
 ## linux-cachyos
 We have provided all of these CPU schedulers because each scheduler performs differently depending on usage. We recommend testing each one to determine which best suits your specific requirements.
 - **(BORE) - Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-bore` / `linux-cachyos-bore`
+- **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** - `linux-cachyos-eevdf`
 - **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** & **([BORE](https://github.com/firelzrd/bore-scheduler))** **Burst-Oriented Response Enhancer** - have been combined in the `linux-cachyos`
 - **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
 - **(BMQ) - BitMap Queue** by Alfred Chen - `linux-cachyos-bmq`
@@ -40,16 +42,16 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 ### :hammer_and_wrench: Advanced building & compiling
 - Very customizable PKGBUILD with many features and improvements.
 - `GCC/CLANG` Optimization with automatically found CPU architecture or also selectable CPU architecture.
-- Choose between `LLVM/LTO & Thin-LTO` or `GCC` - *experimental GCC LTO support is available.*
+- Choose between `LLVM/LTO & Thin-LTO` or `GCC`.
 - Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 500Hz for BORE/CFS/EEVDF and 1000Hz for other schedulers.
-- Kernel Control Flow Integrity (kCFI) selectable when using `LLVM` - *patched llvm can be found in the cachyos-repositories.*
+- Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 
 ### :abacus: CPU enhancements
 - 6 Different scheduler are supported,`CFS`,`tt`,`bmq`,`bore`,`pds` and `EEVDF` scheduler.
-- AMD PSTATE Guided scaling driver
-- Latency Nice Patchset included usuage with `ananicy-cpp` [feature branch](https://lore.kernel.org/lkml/20220925143908.10846-1-vincent.guittot@linaro.org/T/#t).
+- Latency Nice included with EEVDF
 - RCU fixes and improvements.
-- EEVDF Scheduler used in linux-cachyos # https://lwn.net/Articles/927530/
+- EEVDF Scheduler # https://lwn.net/Articles/927530/
+- EEVDF-BORE Scheduler Variant used in linux-cachyos
 ### :bookmark_tabs: Filesystem & memory
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
 - ZFS Filesystem Support and prebuilt in the repository.
@@ -57,7 +59,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - UserKSM daemon from pf.
 - Improved BFQ Scheduler.
 - support for bcachefs.
-- [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab)
+- [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab) - *default disabled*
 - zram patches from upstream
 
 ### &#128423; Network 
@@ -70,9 +72,8 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - General improved sysctl settings and upstream scheduler fixes.
 - LRNG Framework - *default disabled*
 - OpenRGB and ACS Override support
-- maple-tree and MG-LRU fixes from upstream
-- Lenovo Legion [Patchset](https://github.com/johnfanv2/LenovoLegionLinux)
-- Surface [Patches](https://github.com/linux-surface/linux-surface)
+- maple-tree, MG-LRU and per-VMA-locks fixes from upstream
+- kvm-lru patches from upstream
 
 # [CachyOS repositories](https://mirror.cachyos.org/)
 The repositories contain both Arch Linux and CachyOS packages, which have been re-built with flags optimized for performance, stability, and security.
@@ -201,6 +202,14 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 - Complete patch for simple patching on the kernel
 - It is planned to implement into our kernel builder from cachyos buildsystem, which works also on other distributions.
 
+### Gentoo
+Its a community maintained ebuild from a user, which can be used for a dynamic building right [here](https://github.com/Szowisz/CachyOS-kernels)
+
+Or simply run:
+```
+eselect repository add CachyOS-kernels git https://github.com/Szowisz/CachyOS-kernels
+emaint sync -r CachyOS-kernels
+```
 ### Fedora
 [Port](https://github.com/sirlucjan/copr-linux-cachyos) of kernel linux-cachyos-bore and linux-cachyos-bore-lto by [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
 

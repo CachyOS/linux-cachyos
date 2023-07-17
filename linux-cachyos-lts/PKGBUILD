@@ -17,6 +17,7 @@ _cachy_config=${_cachy_config-y}
 # 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
+# 'rt' - select CFS, but includes a series of realtime patches
 _cpusched=${_cpusched-bore}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -59,6 +60,10 @@ _use_current=${_use_current-}
 
 ### Enable KBUILD_CFLAGS -O3
 _cc_harder=${_cc_harder-y}
+
+### Enable KBUILD_CFLAGS -Os
+## DO NOT SET, THIS IS FOR INTERNAL CI USE ONLY.
+_cc_size=${_cc_size-}
 
 ### Set this to your number of threads you have in your machine otherwise it will default to 128
 _nr_cpus=${_nr_cpus-}
@@ -129,17 +134,6 @@ _use_auto_optimization=${_use_auto_optimization-y}
 # disable debug to lower the size of the kernel
 _disable_debug=${_disable_debug-}
 
-## Enable zram/zswap ZSTD compression
-_zstd_compression=${_zstd_compression-}
-
-### Selecting the ZSTD kernel and modules compression level
-# ATTENTION - one of two predefined values should be selected!
-# 'ultra' - highest compression ratio
-# 'normal' - standard compression ratio
-# WARNING: the ultra settings can sometimes
-# be counterproductive in both size and speed.
-_zstd_level_value=${_zstd_level_value-normal}
-
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
@@ -172,6 +166,8 @@ _use_gcc_lto=${_use_gcc_lto-}
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
+# WARNING: The ZFS module doesn't build with selected RT sched due to licensing issues.
+# If you use ZFS, refrain from building the RT kernel
 _build_zfs=${_build_zfs-}
 
 # Enable bcachefs
@@ -197,7 +193,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.1
-_minor=29
+_minor=37
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -253,6 +249,9 @@ case "$_cpusched" in
     bore) ## BORE Scheduler with latency_nice
         [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+    rt) ## CFS with RT patches
+        source+=("${_patchsource}/misc/0001-rt.patch"
+                 linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
@@ -306,7 +305,7 @@ prepare() {
 
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
-        MARCH=$(echo $_processor_opt|tr '[:lower:]' '[:upper:]'&&echo)
+        MARCH="${_processor_opt^^}"
         MARCH2=M${MARCH}
         scripts/config -k -d CONFIG_GENERIC_CPU
         scripts/config -k -e CONFIG_${MARCH2}
@@ -331,12 +330,12 @@ prepare() {
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS;;
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened) scripts/config -e SCHED_BORE;;
+        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_LAZY -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_LAZY -d PREEMPT_BUILD;;
         cfs) ;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
-    local sched_name="$(echo $_cpusched|tr '[:lower:]' '[:upper:]')"
-    echo "Selecting ${sched_name} CPU scheduler..."
+    echo "Selecting ${_cpusched^^} CPU scheduler..."
 
     ### Enable KCFI
     if [ -n "$_use_kcfi" ]; then
@@ -441,22 +440,33 @@ prepare() {
     echo "Selecting '$_tickrate' tick type..."
 
     ### Select preempt type
-    [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
-    case "$_preempt" in
-        full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
-        voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-        server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
-        *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
-    esac
+    # We should not set up the PREEMPT for RT kernels
+    if [ "$_cpusched" != "rt" ]; then
+        [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
-    echo "Selecting '$_preempt' preempt type..."
+        case "$_preempt" in
+            full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
+            voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
+            server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+            *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
+        esac
+
+        echo "Selecting '$_preempt' preempt type..."
+    fi
 
     ### Enable O3
-    if [ -n "$_cc_harder" ]; then
+    if [ -n "$_cc_harder" ] && [ -z "$_cc_size" ]; then
         echo "Enabling KBUILD_CFLAGS -O3..."
         scripts/config -d CC_OPTIMIZE_FOR_PERFORMANCE \
             -e CC_OPTIMIZE_FOR_PERFORMANCE_O3
+    fi
+
+    ### Enable Os
+    if [ -n "$_cc_size" ] && [ -z "$_cc_harder" ]; then
+        echo "Enabling KBUILD_CFLAGS -Os..."
+        scripts/config -d CC_OPTIMIZE_FOR_PERFORMANCE \
+            -e CONFIG_CC_OPTIMIZE_FOR_SIZE
     fi
 
     ### Enable bbr2
@@ -467,6 +477,14 @@ prepare() {
             -e TCP_CONG_BBR2 \
             -e DEFAULT_BBR2 \
             --set-str DEFAULT_TCP_CONG bbr2
+
+        # BBR2 doesn't work properly with FQ_CODEL
+        echo "Disabling fq_codel by default..."
+        scripts/config -m NET_SCH_FQ_CODEL \
+            -e NET_SCH_FQ \
+            -d DEFAULT_FQ_CODEL \
+            -e DEFAULT_FQ \
+            --set-str DEFAULT_NET_SCH fq
     fi
 
     ### Select LRU config
@@ -590,28 +608,6 @@ prepare() {
             -d LRNG_RUNTIME_FORCE_SEEDING_DISABLE
     fi
 
-    ### Enable zram/zswap ZSTD compression
-    if [ -n "$_zstd_compression" ]; then
-        echo "Enabling zram/swap ZSTD compression..."
-        scripts/config -d ZRAM_DEF_COMP_LZORLE \
-            -e ZRAM_DEF_COMP_ZSTD \
-            --set-str ZRAM_DEF_COMP zstd \
-            -d ZSWAP_COMPRESSOR_DEFAULT_LZ4 \
-            -e ZSWAP_COMPRESSOR_DEFAULT_ZSTD \
-            --set-str ZSWAP_COMPRESSOR_DEFAULT zstd
-    fi
-
-    ### Selecting the ZSTD modules and kernel compression level
-    [ -z "$_zstd_level_value" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_zstd_level_value" in
-        ultra) scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 19 -e MODULE_COMPRESS_ZSTD_ULTRA --set-val MODULE_COMPRESS_ZSTD_LEVEL_ULTRA 22 --set-val ZSTD_COMPRESSION_LEVEL 22;;
-        normal) scripts/config --set-val MODULE_COMPRESS_ZSTD_LEVEL 9 -d MODULE_COMPRESS_ZSTD_ULTRA --set-val ZSTD_COMPRESSION_LEVEL 19;;
-        *) _die "The value '$_zstd_level_value' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_zstd_level_value' ZSTD modules and kernel compression level..."
-
     ### Disable DEBUG
     if [ -n "$_disable_debug" ]; then
         scripts/config -d DEBUG_INFO \
@@ -732,7 +728,7 @@ _package() {
     echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
     echo "Installing modules..."
-    make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+    ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
     # remove build and source links
@@ -846,9 +842,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('1e736cc9bd6036379a1d915e518abd4c2c94ad0fd1ea0da961c3489308b8fcfb'
-            'b00fb5dc7c5079c3efa1d0ee3b419376cf053c4b90ed623405096ce880e3dc8c'
+sha256sums=('46cad712d261a23c8e483a3b79b6a84b9a5f731a8921c9127df35ae35cef1e80'
+            'f7fa8deef26d10143b4af8f075c2c2397176a4e3323f9558b07cc5a5f939bb17'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            '0e0407321ff805d253a2d81a47e0df0a8087869d3c5902af03b7d12ee6981147'
-            'f3978876414beee18d6e80995b01b3d3dca1bb6bca9beacf8ac28e2ec6b08ede'
-            '69f88ce35468d190badf5e781120f16f44b416c580d22d79194d52ee29e6ce6f')
+            '9669e0c18786d5b07a38a7da14bc653c1cf43e2765a047f1d33ecb5c0ee5369d'
+            '8811cdc9215a0dfff3a922a2f9eadefb6760bfb78fb756adc88d5894403148f0'
+            '73a93dcd983e31dab8f1e5cbf3241759779d0b9591e9df330eabd16fda491d8b')
