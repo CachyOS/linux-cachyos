@@ -86,12 +86,6 @@ _tickrate=${_tickrate-idle}
 ## Choose between full(low-latency), voluntary or server
 _preempt=${_preempt-full}
 
-### Disable MQ-Deadline I/O scheduler
-_mq_deadline_disable=${_mq_deadline_disable-}
-
-### Disable Kyber I/O scheduler
-_kyber_disable=${_kyber_disable-}
-
 ### Enable multigenerational LRU
 # ATTENTION - one of three predefined values should be selected!
 # 'standard' - enable multigenerational LRU
@@ -373,18 +367,6 @@ prepare() {
         scripts/config --set-val NR_CPUS 320
     else
         _die "The value '$_nr_cpus' is invalid. Please select a numerical value from 2 to 512..."
-    fi
-
-    ### Disable MQ Deadline I/O scheduler
-    if [ -n "$_mq_deadline_disable" ]; then
-        echo "Disabling MQ-Deadline I/O scheduler..."
-        scripts/config -d MQ_IOSCHED_DEADLINE
-    fi
-
-    ### Disable Kyber I/O scheduler
-    if [ -n "$_kyber_disable" ]; then
-        echo "Disabling Kyber I/O scheduler..."
-        scripts/config -d MQ_IOSCHED_KYBER
     fi
 
     ### Select performance governor
