@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-rt
 	pkgdesc = Linux kernel with RT patches by CachyOS with other patches and improvements
 	pkgver = 6.4.4
-	pkgrel = 2
+	pkgrel = 3
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -32,7 +32,7 @@ pkgbase = linux-cachyos-rt
 	b2sums = 40ea8f1e376c0e838b087009588515c7a6958e75fb79473eba29e5a05e4962c124ce83e6d1d450474dbfcdd6cc9f9a3305fc2a2a04881570a345cef3b62fd9e7
 	b2sums = 11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0
 	b2sums = 50c52fc549392c73bc78151df1ed211ed2257ccc31f5296486f6c4ddd45bef2fa6c0680a4283440418dcf7b980057065944c2a89b1772ae0d86f20362ce8a93a
-	b2sums = 5cba978d178b4ee4590155e5476b00b1f80ca9e551da2b5a4e9bdb16085992932d6b8673a653430fac5c076f46fcd8877e5bd41868264fd8fdd6a6cf69f2cc56
+	b2sums = c59a5ea915c58b0a89035da3886b553a8224a2618d991cd619133c73ebb93edde4484251ed8859a36131197d7e4a7164de0d8ea27953a78a9af996110bd77410
 	b2sums = e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b
 
 pkgname = linux-cachyos-rt
