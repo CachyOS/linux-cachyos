@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-tt
 	pkgdesc = Linux TT scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.4.4
+	pkgver = 6.4.5
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -22,15 +22,15 @@ pkgbase = linux-cachyos-tt
 	makedepends = patch
 	makedepends = python
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.4.4.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.4.5.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.4/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.4/sched/0001-tt-cachy.patch
-	b2sums = 1ab6c93da986dac6a07a5e3bc764f9d2a5bb9b8989321244455d894690634ac04364e6a3f960e8674f47ae22fc4ed09b18aa60cbf279636083e61aa6524f8a59
+	b2sums = 2254e10d0780707591d25d5877dc946ba07b2f5a4f43063de55efea6724e267b1ab8f63329bec14431f4a4355fb4d474161c1d2c0c860d968630a3bb39e1a6e2
 	b2sums = 40ea8f1e376c0e838b087009588515c7a6958e75fb79473eba29e5a05e4962c124ce83e6d1d450474dbfcdd6cc9f9a3305fc2a2a04881570a345cef3b62fd9e7
 	b2sums = 11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0
-	b2sums = 50c52fc549392c73bc78151df1ed211ed2257ccc31f5296486f6c4ddd45bef2fa6c0680a4283440418dcf7b980057065944c2a89b1772ae0d86f20362ce8a93a
+	b2sums = d55de9c256671d398897fec9c212c2109f39cb1bca2a12535e6cd58ab18fd91bf238ff0bc305abb14cad5ff1144fcb42fcc31e632ab7daf7e610bd4a82b7304c
 	b2sums = bf474ebc49632279d6af0f054c2a350660aabf1584a59842f6f39cbd0d79cb2763d3328565142637a7792ed2fdcf2eab68f2f68c33296c06445abde4ed1b73c5
 
 pkgname = linux-cachyos-tt
