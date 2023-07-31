@@ -423,9 +423,9 @@ prepare() {
         echo "Disabling TCP_CONG_CUBIC..."
         scripts/config -m TCP_CONG_CUBIC \
             -d DEFAULT_CUBIC \
-            -e TCP_CONG_BBR3 \
-            -e DEFAULT_BBR3 \
-            --set-str DEFAULT_TCP_CONG bbr3
+            -e TCP_CONG_BBR \
+            -e DEFAULT_BBR \
+            --set-str DEFAULT_TCP_CONG bbr
 
         # BBR3 doesn't work properly with FQ_CODEL
         echo "Disabling fq_codel by default..."
