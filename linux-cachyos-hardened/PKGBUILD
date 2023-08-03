@@ -73,8 +73,8 @@ _nr_cpus=${_nr_cpus-}
 ### Set performance governor as default
 _per_gov=${_per_gov-y}
 
-### Enable TCP_CONG_BBR2
-_tcp_bbr2=${_tcp_bbr2-y}
+### Enable TCP_CONG_BBR3
+_tcp_bbr3=${_tcp_bbr3-y}
 
 ### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-500}
@@ -168,7 +168,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.4
-_minor=7
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -418,16 +418,16 @@ prepare() {
             -e CONFIG_CC_OPTIMIZE_FOR_SIZE
     fi
 
-    ### Enable bbr2
-    if [ -n "$_tcp_bbr2" ]; then
+    ### Enable bbr3
+    if [ -n "$_tcp_bbr3" ]; then
         echo "Disabling TCP_CONG_CUBIC..."
         scripts/config -m TCP_CONG_CUBIC \
             -d DEFAULT_CUBIC \
-            -e TCP_CONG_BBR2 \
-            -e DEFAULT_BBR2 \
-            --set-str DEFAULT_TCP_CONG bbr2
+            -e TCP_CONG_BBR \
+            -e DEFAULT_BBR \
+            --set-str DEFAULT_TCP_CONG bbr
 
-        # BBR2 doesn't work properly with FQ_CODEL
+        # BBR3 doesn't work properly with FQ_CODEL
         echo "Disabling fq_codel by default..."
         scripts/config -m NET_SCH_FQ_CODEL \
             -e NET_SCH_FQ \
@@ -789,9 +789,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('2ec02cd9c178c3cd46c01019dd36c9a5244e540ca4793d2715f14fdd3dd9fccde2cf129295cfe200206671f8db97169642177719ad2277513a9de65234cf9942'
+b2sums=('d8e776a1ebc58f5f236ed3bf231336d1b1b4724f14dfafe2eeda789e022fcfc08bc6ff28c975ed94ede2145fab8aed551589873daefbd159a6fd7d8acc01e2f1'
         '02844f209da98137b11e68ca3b45cfa9e26703d91521c8a0116e53ab7537655f9a66399c560fa7102136d9d9318bf52f5bc04152dc46375ff93e9ae199c67a76'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        'c1728c540b38eb023f6db6dce3b4235a6448f7f0df3952b9957873b4f6df6d2889f56e7d7a47196cd832efa100306ce07053bf6d95d2f86fb32541d706ad208e'
-        'dc819944bed4025bc149231d417d9bf3c3e3d0b4ab3e463851bc9815bed1500c4aa8c64ff2714c0200107fd5317b6ad573cce8ab36deeeecf805cf1ed7f6cb04'
+        '9961361f254d189f3b3bffa1276d19e4a1ba8f10454c247582469ee60ca3591f16f709ad1c51d60dafb799c5370f5d6818a5978264903e6517499cf3527aa04b'
+        'f737e92f3861341248781d1e7c40229ac0e905d20d4ea1c02de8ec0fff625955dbac7c63b6774bcec4dfba6e843fc466a7995c0788a27421147808c8797a0da7'
         '33d124fc1e5fd42db19ff0ca826af70cd1deeab78948a3ab693f32ac3dab57105476bf6cec1d32a172d9352b1fe653991d0f952aded38e0dd74c56d3258e2593')
