@@ -1,7 +1,7 @@
 pkgbase = linux-bore
 	pkgdesc = Linux BORE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.4.8
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -33,7 +33,7 @@ pkgbase = linux-bore
 	b2sums = 11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0
 	b2sums = 9961361f254d189f3b3bffa1276d19e4a1ba8f10454c247582469ee60ca3591f16f709ad1c51d60dafb799c5370f5d6818a5978264903e6517499cf3527aa04b
 	b2sums = d3a9449a407f04f3e0759642ad474958ebb4d1283d826987156f6421b94ca46b872c6f4bb43014e8bd5b9cbe61e7b3a07e65f84557f4ae4bd47244d2ba5495ab
-	b2sums = f737e92f3861341248781d1e7c40229ac0e905d20d4ea1c02de8ec0fff625955dbac7c63b6774bcec4dfba6e843fc466a7995c0788a27421147808c8797a0da7
+	b2sums = debb3a8c7f7e5cd94f55c006adda9f270586e7ac38ddb5fea038f9f2c8c631f2f5456a5b028f1efbedd924d51b13dc38ed649188aca8ab590d4bd0f0fc10e38e
 
 pkgname = linux-bore
 	pkgdesc = The Linux BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules
