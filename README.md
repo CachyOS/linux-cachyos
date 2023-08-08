@@ -47,7 +47,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 
 ### :abacus: CPU enhancements
-- 6 Different scheduler are supported,`CFS`,`tt`,`bmq`,`bore`,`pds` and `EEVDF` scheduler.
+- 6 Different scheduler are supported,`CFS`,`TT`,`BMQ`,`BORE`,`PDS` and `EEVDF` scheduler.
 - Latency Nice included with EEVDF
 - RCU fixes and improvements.
 - EEVDF Scheduler # https://lwn.net/Articles/927530/
