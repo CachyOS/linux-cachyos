@@ -59,11 +59,11 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - UserKSM daemon from pf.
 - Improved BFQ Scheduler.
 - support for bcachefs.
-- [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab) - *default disabled*
+- [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab)
 - zram patches from upstream
 
 ### &#128423; Network 
-- BBRv2 tcp_congestion_control.
+- BBRv3 tcp_congestion_control.
 
 ### :arrow_heading_down: Other features
 - Clearlinux Patchset.
