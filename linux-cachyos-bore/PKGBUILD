@@ -286,10 +286,10 @@ prepare() {
         "${srcdir}"/auto-cpu-optimization.sh
     fi
 
-    ### Disabling CONFIG_CPU_SRSO
+    ### Disabling CONFIG_CPU_SRSO for LTO kernel
     # More infos here: https://github.com/CachyOS/linux-cachyos/issues/150
     if [ "$_use_llvm_lto" != "none" ]; then
-        echo "Disabling CONFIG_CPU_SRSO..."
+        echo "Disabling CONFIG_CPU_SRSO for LTO kernel..."
         scripts/config -d CPU_SRSO
     fi
 
