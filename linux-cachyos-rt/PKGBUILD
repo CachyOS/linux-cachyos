@@ -286,6 +286,13 @@ prepare() {
         "${srcdir}"/auto-cpu-optimization.sh
     fi
 
+    ### Disabling CONFIG_CPU_SRSO
+    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/150
+    if [ "$_use_llvm_lto" != "none" ]; then
+        echo "Disabling CONFIG_CPU_SRSO..."
+        scripts/config -d CPU_SRSO
+    fi
+
     ### Selecting CachyOS config
     if [ -n "$_cachy_config" ]; then
         echo "Enabling CachyOS config..."
