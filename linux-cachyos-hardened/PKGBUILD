@@ -168,7 +168,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.4
-_minor=9
+_minor=10
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -284,13 +284,6 @@ prepare() {
     ### Use autooptimization
     if [ -n "$_use_auto_optimization" ]; then
         "${srcdir}"/auto-cpu-optimization.sh
-    fi
-
-    ### Disabling CONFIG_CPU_SRSO for LTO kernel
-    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/150
-    if [ "$_use_llvm_lto" != "none" ]; then
-        echo "Disabling CONFIG_CPU_SRSO for LTO kernel..."
-        scripts/config -d CPU_SRSO
     fi
 
     ### Selecting CachyOS config
@@ -796,9 +789,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('87a05cae7d5dca89921801f69467ec01a871941f5dd1bd956bc9f13c4786b35a141811808b36e45471ee3bbe15d669d7114257759f3e5893d17ca38e40ebdc4b'
+b2sums=('700017448073f63880739efed3f60baba18116500737419e305b2b5e0d2532e2d40a41368c773772cba437236bc1edda85c8f16ca23a945c754e283a30184a6d'
         'c626827c74526f5762e8919981b1bbc6d49f4d617327cfe4f199d42c3de088bf683ba1488058879e5be6c0e46383477843f7ec669b49547542483f3a1213b77a'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '9961361f254d189f3b3bffa1276d19e4a1ba8f10454c247582469ee60ca3591f16f709ad1c51d60dafb799c5370f5d6818a5978264903e6517499cf3527aa04b'
+        '3ec64cda731868642c3e502e09991d2b30779e1fb6194e00b2a3fbfc9516c8cf3f86c1c3475c5fa11a2e71e208748d4c693b688c7fd20690486ad28a61111f0e'
         'debb3a8c7f7e5cd94f55c006adda9f270586e7ac38ddb5fea038f9f2c8c631f2f5456a5b028f1efbedd924d51b13dc38ed649188aca8ab590d4bd0f0fc10e38e'
         '6c80c0e0aa31bb308e3b8e16fa8a8440ae12d0beff45dcbc85aea7960484509252680f2479aca4794713a587d71e1c21c0f6ba3d979469626ebae8bba39a10f1')

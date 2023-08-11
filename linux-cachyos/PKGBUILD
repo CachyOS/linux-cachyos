@@ -168,7 +168,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.4
-_minor=9
+_minor=10
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -178,7 +178,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -200,7 +200,7 @@ source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
     "auto-cpu-optimization.sh"
-    "${_patchsource}/all/0001-cachyos-base-all-dev.patch")
+    "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # ZFS support
 if [ -n "$_build_zfs" ]; then
@@ -284,13 +284,6 @@ prepare() {
     ### Use autooptimization
     if [ -n "$_use_auto_optimization" ]; then
         "${srcdir}"/auto-cpu-optimization.sh
-    fi
-
-    ### Disabling CONFIG_CPU_SRSO for LTO kernel
-    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/150
-    if [ "$_use_llvm_lto" != "none" ]; then
-        echo "Disabling CONFIG_CPU_SRSO for LTO kernel..."
-        scripts/config -d CPU_SRSO
     fi
 
     ### Selecting CachyOS config
@@ -796,9 +789,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('87a05cae7d5dca89921801f69467ec01a871941f5dd1bd956bc9f13c4786b35a141811808b36e45471ee3bbe15d669d7114257759f3e5893d17ca38e40ebdc4b'
-        'f86d5bc428a0a3213b186fc16e05779256f243b097b37e69af10b4cce29a9fbcd5b4458b057a86a9aaf12659da7c44df711844cb3beda3f995aa2c2fe7435f17'
+b2sums=('700017448073f63880739efed3f60baba18116500737419e305b2b5e0d2532e2d40a41368c773772cba437236bc1edda85c8f16ca23a945c754e283a30184a6d'
+        'cd383af01fcba36732f3be5bce46b8a809bf29390025418bb37bd188f7a97845185f6e84b313244147ad9c006c2edaf4b108866224b77221d28086cf3f9009cf'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '1efda7a89a298b3c4a697fab1c21ab306c1e1f6d173c2726d294b3e9bf6d3c431a45f0e8308484d96aed8364756b71e3da6dc4506b40f32a6c92538a3f675481'
+        '3ec64cda731868642c3e502e09991d2b30779e1fb6194e00b2a3fbfc9516c8cf3f86c1c3475c5fa11a2e71e208748d4c693b688c7fd20690486ad28a61111f0e'
         '11d5923512051c46477aab7ceddaa1fef962c8d503975e34e660acb1a9c7040b147a935ca3f6f5f7e5cadb37e32a1cd25ddd8fda00c403d6364f9612ceebdc1f'
         '893d96b3f582a753cd9821ee78028ef923fbf1c46f45c1c26f76ec02715ae89cdd536c1ebf95d54fb4d4ef4da4f1560f6e6136fd528489f703e41950c03a6dc3')
