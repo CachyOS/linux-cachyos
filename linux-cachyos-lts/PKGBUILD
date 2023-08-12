@@ -310,6 +310,12 @@ prepare() {
         "${srcdir}"/auto-cpu-optimization.sh
     fi
 
+    ### Prevent ZFS and bcachefs building at the same time
+    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/152
+    if [[ -n "$_bcachefs" && -n "$_build_zfs"  ]]; then
+        _die "ZFS and bcachefs support cannot be built at the same time. "
+    fi
+
     ### Selecting CachyOS config
     if [ -n "$_cachy_config" ]; then
         echo "Enabling CachyOS config..."
