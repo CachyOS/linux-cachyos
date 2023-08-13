@@ -178,7 +178,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -787,7 +787,7 @@ _package-zfs(){
 
     cd ${srcdir}/"zfs"
     install -dm755 "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
-    install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
+    install -m644 module/*.ko "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
