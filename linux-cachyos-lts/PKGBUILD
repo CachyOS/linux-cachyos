@@ -206,7 +206,7 @@ options=('!strip')
 makedepends=('bc' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch' 'python')
 # LLVM makedepends
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
-    makedepends+=(clang llvm lld python)
+    makedepends+=(clang llvm lld)
     BUILD_FLAGS=(
         CC=clang
         LD=ld.lld
