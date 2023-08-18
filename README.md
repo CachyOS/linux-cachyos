@@ -222,7 +222,9 @@ Only x86_64_v3 versions are available. Check support by the following the comman
 ```
 If it does not detect x86_64_v3 support do not install the kernel. Otherwise you will end up with a non-functioning operating system!
 
-##### Installation Instructions: 
+##### Installation Instructions:
+
+###### Fedora Workstation
 
 ```
 sudo dnf copr enable bieszczaders/kernel-cachyos
@@ -236,13 +238,30 @@ sudo dnf install kernel-cachyos-bore
 
 OR
 ```
-sudo dnf install kernel-cachyos-bore-lto
+sudo dnf install kernel-cachyos-bore-eevdf
 ```
 
-##### Install drivers for LTO kernel
-For those who build external modules such as Nvidia graphics card drivers and use the -lto kernel, make sure to install the required dependencies.
+###### Fedora Silverblue
+
 ```
-sudo dnf install clang clang-devel llvm lld
+cd /etc/yum.repos.d/
+
+sudo wget https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/repo/fedora-$(rpm -E %fedora)/bieszczaders-kernel-cachyos-fedora-$(rpm -E %fedora).repo
+```
+
+and next
+
+```
+sudo rpm-ostree override remove kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra --install kernel-cachyos-bore
+
+sudo systemctl reboot
+```
+
+OR
+```
+sudo rpm-ostree override remove kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra --install kernel-cachyos-bore-eevdf
+
+sudo systemctl reboot
 ```
 
 ### NixOS
