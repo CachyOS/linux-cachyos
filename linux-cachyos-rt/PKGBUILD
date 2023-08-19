@@ -178,7 +178,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux kernel with RT patches by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=3
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -805,5 +805,5 @@ b2sums=('dfb97f2c9905a150c0890b9c3d464bc13986bec7bcd038c333f4dce443e0a1988a90755
         'f86d5bc428a0a3213b186fc16e05779256f243b097b37e69af10b4cce29a9fbcd5b4458b057a86a9aaf12659da7c44df711844cb3beda3f995aa2c2fe7435f17'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         '401aa32edc84b10a89cc4dcba0c8b352ce59b7bdd968932b2a56c8d6ce6f4693dd12f14e0af8ade42352e16e7a712d708022f4fe373f7b4e6fa1ab7978d14af0'
-        '4c0197e06b2dee4b0ffd3a5923eba8a5f8438bb0b5224d612c8f2ef57647aa1e0c67c4a6df4c7e52277308466a90558ae81049da679ac22b53066bc2c664ab1d'
+        'bcfe6aef036ca2ad6fb0b50fdd0828c28c7c0be4990ab5ba5c586391bd5314223b86b538f814dbd4af3ad421080ad931c6a6588e420b7ef53b0d99d924aeb438'
         'e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b')
