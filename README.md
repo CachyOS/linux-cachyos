@@ -266,7 +266,7 @@ sudo systemctl reboot
 
 ### NixOS
 
-Nyx does provide a precompiled CachyOS Kernel and a bunch of other interesting packages. This repository is maintained by [chaotic-aur](https://github.com/chaotic-cx)
+Nix does provide a precompiled CachyOS Kernel and a bunch of other interesting packages. This repository is maintained by [chaotic-aur](https://github.com/chaotic-cx)
 Just follow this [README](https://github.com/chaotic-cx/nyx#how-to-use-it)
 
 ## Revert changes
