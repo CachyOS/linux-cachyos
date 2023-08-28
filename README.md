@@ -51,6 +51,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 ### :abacus: CPU enhancements
 - 6 Different scheduler are supported,`CFS`,`TT`,`BMQ`,`BORE`,`PDS` and `EEVDF` scheduler.
 - Latency Nice included with EEVDF
+- AMD P-State Preferred Core and enabled as default
 - RCU fixes and improvements.
 - EEVDF Scheduler # https://lwn.net/Articles/927530/
 - EEVDF-BORE Scheduler Variant used in linux-cachyos
@@ -61,14 +62,12 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - UserKSM daemon from pf.
 - Improved BFQ Scheduler.
 - support for bcachefs.
-- [per VMA lock](https://lore.kernel.org/lkml/20230109205336.3665937-1-surenb@google.com/T/#ma04517b963591298a9eb76d96d2c453256a4d9ab)
-- zram patches from upstream
 
 ### &#128423; Network 
 - BBRv3 tcp_congestion_control.
 
 ### :arrow_heading_down: Other features
-- Clearlinux Patchset.
+- partial Clearlinux Patchset.
 - Back-ported patches from `linux-next`.
 - Scheduler patches from linux-next/tip.
 - General improved sysctl settings and upstream scheduler fixes.

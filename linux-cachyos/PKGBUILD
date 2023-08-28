@@ -167,13 +167,13 @@ else
     pkgsuffix=cachyos
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.4
-_minor=12
+_major=6.5
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -205,15 +205,15 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=f9a2d94c957d0660ad1f4cfbb0a909eb8e6086df")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=8ce2eba9e6a384feef93d77c397f37d17dc588ce")
 fi
 
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
-        source+=("${_patchsource}/sched/0001-EEVDF.patch"
+        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
                  "${_patchsource}/sched/0001-bore-eevdf.patch");;
     eevdf) # EEVDF Scheduler
-        source+=("${_patchsource}/sched/0001-EEVDF.patch");;
+        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
@@ -785,7 +785,7 @@ _package-zfs(){
 
     cd ${srcdir}/"zfs"
     install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 module/*/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -m644 module/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
@@ -801,9 +801,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('0d8b6e447a7fe390b44967ab8dc2e116de29b6fac15a91fe8398d091f5803984495dea595d53938e75f0213b5268bbdb63a86284463552c8e59ffb02cb98ce17'
-        'f86d5bc428a0a3213b186fc16e05779256f243b097b37e69af10b4cce29a9fbcd5b4458b057a86a9aaf12659da7c44df711844cb3beda3f995aa2c2fe7435f17'
+b2sums=('2e641b79a080e8f4ce283bcf6b74e2c6f15a374367f1c4c875c663868dbe801317340824fb3adb46b3a51d3b7e1f67cc4e8144d367621ec43ffba5c4eb8abb39'
+        '89c1f1d8a700a71d38ee0bf8b2635abfa884b82abd88c5ded96683cd151bde4a5e4c8f13f4e34f26cb1582335303ab33c9d0095a80b17e8a68e845bac7abade8'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '7c5a7b0c6a8a81c9e995db034067c81e5815d110ac9be8629017dd893c64ab312b3ea52509b3cede79acb6de3c119be1abae6705ec773e8119927c8249297c27'
-        '5123ed89b7355e7a491717002853e23f7f28bc9c3c30c91f50b53d17c963bff47ccdcb1659a34bded887c4cf3b4dbcb7f152ab979ff3fa7210e9b969c70cdf50'
-        '4de1c6b029e3147dedd5ea0c02946c2f7559b02bc31ffdbaf065e742bb54597d51b08c92c1c2f8225fd984399e058fc11b9ff16494d58b50a74bab4ef392f2d4')
+        '276bf7623ce37cc29c8831db6036d28892d5822f9a0a384aa180dbc166c12846db533c9e88295aa2710a16796abc51cdbc287bc879e772ad888ddee2d133f507'
+        'db78ba180ea95c77f04d3d3dc99d07c35c0e9efcfd2baf997e485b721adefb5684bf62185436353f7faceba1d2271b5c1c430fcad9a441657bfabdf74d36917b'
+        'eb919edb6a3a82c14264baa6a9347bdd89f864a648b57d1d9652694bbc43dab62922c36170ee07cfb7b44df08a0235ceec8e32e39d393ffc686e346ddfef7fbd')

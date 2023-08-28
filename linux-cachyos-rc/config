@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.5.0-rc7 Kernel Configuration
+# Linux/x86 6.5.0 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 13.2.1 20230730"
 CONFIG_CC_IS_GCC=y
@@ -2894,7 +2894,6 @@ CONFIG_SCSI_DH_RDAC=m
 CONFIG_SCSI_DH_HP_SW=m
 CONFIG_SCSI_DH_EMC=m
 CONFIG_SCSI_DH_ALUA=m
-CONFIG_VHBA=m
 # end of SCSI device support
 
 CONFIG_ATA=y
