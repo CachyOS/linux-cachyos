@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-cfs
 	pkgdesc = Linux CFS scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.4.12
+	pkgver = 6.5.0
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -22,14 +22,14 @@ pkgbase = linux-cachyos-cfs
 	makedepends = patch
 	makedepends = python
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.4.12.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.5.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
-	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.4/all/0001-cachyos-base-all.patch
-	b2sums = 0d8b6e447a7fe390b44967ab8dc2e116de29b6fac15a91fe8398d091f5803984495dea595d53938e75f0213b5268bbdb63a86284463552c8e59ffb02cb98ce17
-	b2sums = f86d5bc428a0a3213b186fc16e05779256f243b097b37e69af10b4cce29a9fbcd5b4458b057a86a9aaf12659da7c44df711844cb3beda3f995aa2c2fe7435f17
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.5/all/0001-cachyos-base-all.patch
+	b2sums = 2e641b79a080e8f4ce283bcf6b74e2c6f15a374367f1c4c875c663868dbe801317340824fb3adb46b3a51d3b7e1f67cc4e8144d367621ec43ffba5c4eb8abb39
+	b2sums = 89c1f1d8a700a71d38ee0bf8b2635abfa884b82abd88c5ded96683cd151bde4a5e4c8f13f4e34f26cb1582335303ab33c9d0095a80b17e8a68e845bac7abade8
 	b2sums = 11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0
-	b2sums = 7c5a7b0c6a8a81c9e995db034067c81e5815d110ac9be8629017dd893c64ab312b3ea52509b3cede79acb6de3c119be1abae6705ec773e8119927c8249297c27
+	b2sums = 276bf7623ce37cc29c8831db6036d28892d5822f9a0a384aa180dbc166c12846db533c9e88295aa2710a16796abc51cdbc287bc879e772ad888ddee2d133f507
 
 pkgname = linux-cachyos-cfs
 	pkgdesc = The Linux CFS scheduler Kernel by CachyOS with other patches and improvements kernel and modules
