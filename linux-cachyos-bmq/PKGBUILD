@@ -298,12 +298,6 @@ prepare() {
         scripts/config -e CACHY
     fi
 
-    ### Workaround for bcachefs
-    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/152
-    if [ -n "$_bcachefs" ]; then
-        scripts/config -d DRM_ACCEL_IVPU
-    fi
-
     ### Selecting the CPU scheduler
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
