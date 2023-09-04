@@ -156,7 +156,8 @@ _use_kcfi=${_use_kcfi-}
 # If you use ZFS, refrain from building the RT kernel
 _build_zfs=${_build_zfs-}
 
-# Build the nvidia module in to the kernel
+# Builds the nvidia module and package it into a own base
+# This does replace the requirement of nvidia-dkms
 _build_nvidia=${_build_nvidia-}
 
 # Enable bcachefs
@@ -816,10 +817,12 @@ _package-nvidia(){
     pkgdesc="nvidia module of ${_nv_ver} driver for the linux-$pkgsuffix kernel"
     depends=("linux-$pkgsuffix=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
+    license=('custom')
 
     cd "${srcdir}/${_nv_pkg}/"
     install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
     install -m644 kernel/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 LICENSE
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
 
