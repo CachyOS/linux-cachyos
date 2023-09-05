@@ -52,12 +52,11 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - 6 Different scheduler are supported,`CFS`,`TT`,`BMQ`,`BORE`,`PDS` and `EEVDF` scheduler.
 - Latency Nice included with EEVDF
 - AMD P-State Preferred Core and enabled as default
-- RCU fixes and improvements.
 - EEVDF Scheduler # https://lwn.net/Articles/927530/
-- EEVDF-BORE Scheduler Variant used in linux-cachyos
 ### :bookmark_tabs: Filesystem & memory
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
 - ZFS Filesystem Support and prebuilt in the repository.
+- NVIDIA Module Support - Build the nvidia module together with the kernel
 - Latest & improved ZSTD 1.5.5 patch-set.
 - UserKSM daemon from pf.
 - Improved BFQ Scheduler.
