@@ -4,6 +4,8 @@ find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization-y/_use_au
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs-/_build_zfs-y/" {}
 ## Enable Generic v3 
 find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU=y/GENERIC_CPU3=y/' {}
+## Enable NVIDIA module
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia-/_build_nvidia-y/" {}
 
 ## GCC v3 Kernel
 
