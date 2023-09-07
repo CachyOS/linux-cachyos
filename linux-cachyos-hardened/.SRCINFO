@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-hardened
 	pkgdesc = Linux hardenened BORE scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.4.12
+	pkgver = 6.4.22
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -22,7 +22,7 @@ pkgbase = linux-cachyos-hardened
 	makedepends = patch
 	makedepends = python
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.4.12.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.4.22.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.4/all/0001-cachyos-base-all.patch
