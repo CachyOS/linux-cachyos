@@ -171,10 +171,10 @@ else
     pkgsuffix=cachyos-rc
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.5
-_minor=2
+_major=6.6
+_minor=0
 #_minorc=$((_minor+1))
-_rcver=rc7
+_rcver=rc1
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -211,7 +211,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=8ce2eba9e6a384feef93d77c397f37d17dc588ce")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=0ee9b02390d57c10a4dee0f3d19fcb115b424ca5")
 fi
 
 # NVIDIA pre-build module support
@@ -219,12 +219,13 @@ if [ -n "$_build_nvidia" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run")
 fi
 
+## ToDo: Adjust for new Scheduler Changes
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
-                 "${_patchsource}/sched/0001-bore-eevdf.patch");;
+        source+=("${_patchsource}/sched/0001-latency-nice.patch"
+                 "${_patchsource}/sched/0001-bore-cachy.patch");;
     eevdf) # EEVDF Scheduler
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch");;
+        source+=("${_patchsource}/sched/0001-latency-nice.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
@@ -711,8 +712,8 @@ _package() {
     ZSTD_CLEVEL=19 _make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
-    # remove build and source links
-    rm "$modulesdir"/{source,build}
+    # remove build links
+    rm "$modulesdir"/build
 }
 
 _package-headers() {
@@ -819,9 +820,10 @@ _package-nvidia(){
     provides=('NVIDIA-MODULE')
     license=('custom')
 
+    local moduleprefix=${_major}.${_minor}-${_rcver}-${pkgrel}
     cd "${srcdir}/${_nv_pkg}/"
-    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 kernel/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -dm755 "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
+    install -m644 kernel/*.ko "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 LICENSE
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
@@ -836,9 +838,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('764c0953ffea3bf728be007132346faba1dd348b1d4685bef523b57dd3d0cd4fb293e6174415d3fe7299e5a1ff722221508182b69bd69191234025e563e468de'
-        'af3dff3147853cb451468315805e04b5ebdf90c3eade72957576e28455e5828d94379ffb7966d48b8b0db23899559e8eb0b129208e4c05439b39b34dfef8d361'
+b2sums=('2b184709626a2513bfbcf4a06bb473266371b01e6b3cb9b9c185fc3624ea01a044353c1728ec0bbd984fac34865a42cf141ebaf5a9bc124f096c7040c410ac88'
+        'f868871ff8c1ebe8f2d70d8b4be7534807770a59b0fe88211dc129821994288be845f4934329fa78da027f6ecd8a3a1d64eaea5bc49244f32df49681080b7bfd'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '84d38cd79a1680bff4f84acd692d948d8ef5e798dca4dd3e14927b0f6c6295956e7ef583daa7749e212037bbb6b5d17eec01be8fd31966549bae0a90cb5d63e5'
-        'db78ba180ea95c77f04d3d3dc99d07c35c0e9efcfd2baf997e485b721adefb5684bf62185436353f7faceba1d2271b5c1c430fcad9a441657bfabdf74d36917b'
-        '21bd89028133e9a25878e5841808194c1aa742afe0700e669bc5a024091e04b87b23566e96b451bbad235a33d828f5853e75dab0ec677ad9a16c6406c2ced850')
+        'f8a8f67d7ce55b4812b3aa11d6189178bc64533d86ff4e79e6635ba2312b12d458058d5aa83e55e6159039e26c351220c6cc1833205eb7d2eb9897075344add2'
+        '6e2d7989c2bc38fd9fe5a95865a07e765c1d64983f4e891a9d39ae09f48f8d812f84fa26e968c467586545afa778e32c62ed519069a70b49051d13e1343fa1bf'
+        'ac2843875980ea824ba855362012dae2a4f783a7cab82db1ad950b747e53813cae42a9fbd263eb244e427bccda5b57be51371436c8943f3d4e5c4cf713b0ab94')
