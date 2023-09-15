@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.5.3
-	pkgrel = 1
+	pkgrel = 4
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -32,8 +32,8 @@ pkgbase = linux-cachyos
 	b2sums = 8525c9229216aec01813a65ce9405a9e83c2b6e8d6b2028cc92ffbfa33fe903d325b63a98316ee491ce519a2c5f49ff4d1f28f3f6a89e4ed9c8d652b4294e5ee
 	b2sums = 11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0
 	b2sums = 11db258f71156a35cfa49f551da31b3a23a8ebb02e300b9789c8fe1590d1a1af64f907520a71fcdf78c330fb2b6a39943f1a64f21386d29dd3e2e50e951f5b67
-	b2sums = 9e7277598a85f9b30f5ac6ffdddce3c2ae0afb682f9f65e7fffb7b9db2050f36ae25ef04b37a89470f047b8446b694201f732b7dc1ba7ff5c3f4a24b08d4d617
-	b2sums = 21bd89028133e9a25878e5841808194c1aa742afe0700e669bc5a024091e04b87b23566e96b451bbad235a33d828f5853e75dab0ec677ad9a16c6406c2ced850
+	b2sums = 98d3acea3559e942dee540c1b4d05d8e3d48afcae9508fecac1a975f5065d1a3d6cf3d38cbeffba62ed4e32c5fe4182fc3dd90ec39a7f82d8d53d7a59998d125
+	b2sums = 3e20eea8ac6b393a49010e9cf84da846cad3a1d3f3bf606eba5d546f673a1a48ba2828e4d9cf6f02d46374088a0c679e5573cd5736bf3e17d69bac015b176969
 
 pkgname = linux-cachyos
 	pkgdesc = The Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules
