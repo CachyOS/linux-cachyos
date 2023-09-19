@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-rt
 	pkgdesc = Linux kernel with RT patches by CachyOS with other patches and improvements
-	pkgver = 6.5.3
+	pkgver = 6.5.4
 	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -22,16 +22,16 @@ pkgbase = linux-cachyos-rt
 	makedepends = patch
 	makedepends = python
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.5.3.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.5.4.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.5/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.5/misc/0001-rt.patch
 	source = linux-cachyos-rt.install
-	b2sums = 7673a5375b0a715eca2dcff5b4f6fca13c8564a930b3b7ee112b67ed51541277378408abed1e1b128610f0db3425abbb30cd3751ce30ff73795cf594fb508142
+	b2sums = 99df210ee8f244de9059c9699648f7aad8e520030ce14e61971ba95365635e698e7c66074aa3f5c57bd75f1058e1c1dbaecea66d0b381202f239b3a04a396371
 	b2sums = 8525c9229216aec01813a65ce9405a9e83c2b6e8d6b2028cc92ffbfa33fe903d325b63a98316ee491ce519a2c5f49ff4d1f28f3f6a89e4ed9c8d652b4294e5ee
 	b2sums = 11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0
-	b2sums = 11db258f71156a35cfa49f551da31b3a23a8ebb02e300b9789c8fe1590d1a1af64f907520a71fcdf78c330fb2b6a39943f1a64f21386d29dd3e2e50e951f5b67
+	b2sums = 03bbb205a8a916867b1960ce6b949b6c12817808c38d306bc291a7215cbb90f1187755e317af50f8f704d524e11353f469ab305192479fbd624788a49ea7289d
 	b2sums = faea2d7280e27c80d1bc5b69aa21a24cff87cc8acae7750d0512d2a88c527522ae8bd814b731e5429f2aef212129448d40e525acb378688b56d040af433fe36f
 	b2sums = e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b
 
