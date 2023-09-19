@@ -71,9 +71,6 @@ _nr_cpus=${_nr_cpus-}
 ### Set performance governor as default
 _per_gov=${_per_gov-y}
 
-### Enable TCP_CONG_BBR2
-_tcp_bbr2=${_tcp_bbr2-y}
-
 ### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-500}
 
@@ -474,24 +471,6 @@ prepare() {
             -e CONFIG_CC_OPTIMIZE_FOR_SIZE
     fi
 
-    ### Enable bbr2
-    if [ -n "$_tcp_bbr2" ]; then
-        echo "Disabling TCP_CONG_CUBIC..."
-        scripts/config -m TCP_CONG_CUBIC \
-            -d DEFAULT_CUBIC \
-            -e TCP_CONG_BBR2 \
-            -e DEFAULT_BBR2 \
-            --set-str DEFAULT_TCP_CONG bbr2
-
-        # BBR2 doesn't work properly with FQ_CODEL
-        echo "Disabling fq_codel by default..."
-        scripts/config -m NET_SCH_FQ_CODEL \
-            -e NET_SCH_FQ \
-            -d DEFAULT_FQ_CODEL \
-            -e DEFAULT_FQ \
-            --set-str DEFAULT_NET_SCH fq
-    fi
-
     ### Select LRU config
     [ -z "$_lru_config" ] && _die "The value is empty. Choose the correct one again."
 
@@ -876,8 +855,8 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('a3181e46d407cd6ab15f412402e8220684ff9659b0262b7a3de7384405ce4e27'
-            '54378f359775a42ce1426631bd8104183acc0133b053ff002ffb234d9ecd4322'
+            '45161c715cab5c70098383328d7ad09ffe5efb596084e1f2673457dcd1b148b5'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
-            'c74502f52cd9c237406d6a15b6ed3ac4819069d16509da78942a08d42784ea81'
+            '25add4447def58e36ef295dd8692c6e1d531fb22f3cd3ce94638a259a17dcc54'
             '94183cf66bd0df543ee47917a9f1c5919a217695c3d1f4f7912fbf20ea31e047'
             '9a28d2875e3eb3c0b5413bf6928f318f31784fb6edc90be00950be562b528f35')
