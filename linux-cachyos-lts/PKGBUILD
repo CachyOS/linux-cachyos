@@ -191,7 +191,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.1
-_minor=49
+_minor=54
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -230,7 +230,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=e25f9131d679692704c11dc0c1df6d4585b70c35")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=8ce2eba9e6a384feef93d77c397f37d17dc588ce")
 fi
 
 ## Latency NICE Support
@@ -875,7 +875,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('c9ea14231ca4ca6e3882a9339a8c3c414e4c91519d3e50af6822f47e99057a0f'
+sha256sums=('a3181e46d407cd6ab15f412402e8220684ff9659b0262b7a3de7384405ce4e27'
             '54378f359775a42ce1426631bd8104183acc0133b053ff002ffb234d9ecd4322'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
             'a44874758c1e0ec9873efba7e4db247a99fff05ed95b97d11e4064e49e8d5563'
