@@ -256,11 +256,6 @@ export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EP
 
 _die() { error "$@" ; exit; }
 
-_make() {
-  test -s version
-  make KERNELRELEASE="$(<version)" "$@"
-}
-
 prepare() {
 
     cd ${srcdir}/$_srcname
@@ -268,14 +263,12 @@ prepare() {
     echo "Setting version..."
     echo "-$pkgrel" > localversion.10-pkgrel
     echo "${pkgbase#linux}" > localversion.20-pkgname
-    make ${BUILD_FLAGS[*]} defconfig
-    make ${BUILD_FLAGS[*]} -s kernelrelease > version
-    make ${BUILD_FLAGS[*]} mrproper
 
     local src
     for src in "${source[@]}"; do
         src="${src%%::*}"
         src="${src##*/}"
+        src="${src%.zst}"
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -625,11 +618,12 @@ prepare() {
 
     ### Rewrite configuration
     echo "Rewrite configuration..."
-    _make ${BUILD_FLAGS[*]} prepare
-    yes "" | _make ${BUILD_FLAGS[*]} config >/dev/null
+    make ${BUILD_FLAGS[*]} prepare
+    yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
     diff -u ../config .config || :
 
     ### Prepared version
+    make -s kernelrelease > version
     echo "Prepared $pkgbase version $(<version)"
 
     ### Running make nconfig
@@ -702,13 +696,13 @@ _package() {
     echo "Installing boot image..."
     # systemd expects to find the kernel here to allow hibernation
     # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-    install -Dm644 "$(_make -s image_name)" "$modulesdir/vmlinuz"
+    install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
 
     # Used by mkinitcpio to name the kernel
     echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
     echo "Installing modules..."
-    ZSTD_CLEVEL=19 _make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+    ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
     # remove build and source links
