@@ -188,7 +188,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.1
-_minor=54
+_minor=55
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -198,7 +198,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -854,7 +854,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('a3181e46d407cd6ab15f412402e8220684ff9659b0262b7a3de7384405ce4e27'
+sha256sums=('a87e241ec15d53452c4efe219713a3769d88cc436b5b98cf6efb262c4aff15c0'
             '45161c715cab5c70098383328d7ad09ffe5efb596084e1f2673457dcd1b148b5'
             '41c34759ed248175e905c57a25e2b0ed09b11d054fe1a8783d37459f34984106'
             '25add4447def58e36ef295dd8692c6e1d531fb22f3cd3ce94638a259a17dcc54'
