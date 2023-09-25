@@ -69,7 +69,7 @@ _cc_size=${_cc_size-}
 _nr_cpus=${_nr_cpus-}
 
 ### Set performance governor as default
-_per_gov=${_per_gov-y}
+_per_gov=${_per_gov-}
 
 ### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-500}

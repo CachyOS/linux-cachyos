@@ -71,7 +71,7 @@ _cc_size=${_cc_size-}
 _nr_cpus=${_nr_cpus-}
 
 ### Set performance governor as default
-_per_gov=${_per_gov-y}
+_per_gov=${_per_gov-}
 
 ### Enable TCP_CONG_BBR3
 _tcp_bbr3=${_tcp_bbr3-y}
