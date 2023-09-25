@@ -13,7 +13,6 @@
   - [How to add CachyOS repositories](#how-to-add-cachyos-repositories)
   - [Check CPU compatibility](#check-cpu-compatibility)
 - [Other GNU/Linux distributions](#other-gnulinux-distributions)
-  - [Gentoo](#gentoo)
   - [Fedora](#fedora)
   - [NixOS](#NixOS)
  - [Revert changes](#revert-changes)
@@ -202,14 +201,6 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 - Complete patch for simple patching on the kernel
 - It is planned to implement into our kernel builder from cachyos buildsystem, which works also on other distributions.
 
-### Gentoo
-Its a community maintained ebuild from a user, which can be used for a dynamic building right [here](https://github.com/Szowisz/CachyOS-kernels)
-
-Or simply run:
-```
-eselect repository add CachyOS-kernels git https://github.com/Szowisz/CachyOS-kernels
-emaint sync -r CachyOS-kernels
-```
 ### Fedora
 [Port](https://github.com/sirlucjan/copr-linux-cachyos) of kernel linux-cachyos-bore and linux-cachyos-bore-lto by [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
 
