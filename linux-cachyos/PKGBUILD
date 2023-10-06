@@ -172,7 +172,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.5
-_minor=5
+_minor=6
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -182,7 +182,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -828,9 +828,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('2152bdcd8799b89612e76c1b3794313f981e08eda23c0150e56297a07f326c85f2a7a08106eb4e4d502b2134ed69e4344263fe6a2b398af5b5d7ccd018c0899b'
+b2sums=('6fec33a0ee1700694c43c2271263d23408f3ad53f71200717ebd3843dd0aecb5235a058439e63e304da276978f1e4148ae1aac78a22166b2ca236b137a406c0f'
         '8525c9229216aec01813a65ce9405a9e83c2b6e8d6b2028cc92ffbfa33fe903d325b63a98316ee491ce519a2c5f49ff4d1f28f3f6a89e4ed9c8d652b4294e5ee'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        'd366bbe98ec4edea81eeecba9be814e37029da1539990fc0b47cbce2de133f033cbddeaa0842c53a1399a4fed3853cdc6877621fdfe7bc977ce392c393ccef1c'
+        '8bd2bf05e74df54fcba3c355f442cddc01dae18c2e3fd278ad7504e6e842ae9e4840a1271325592bda1f854e6a7ea434ce9f9d74492f3b5cf45399bd496de704'
         'bf40d76a15dce5f4bc3c1d1d9e2aa8fc0fcd7308d89e1e2490f8049a98de150892172b29fea4f7667c0347259221ba4358eaa4fe0f6664832198afa1f111f7ab'
-        'f9975c36670c09511b96854ebf29cc5053dc7e4d07d0782205b99cf653c49f4a62f88a5f6e61e538d5a0d474b19a02a62afc4dc060c8fc10ec92555ab3fa40e0')
+        '85061bb961ce15909d0ea8aaabd75fee305b0eea4913a2efbb1def5a5728f83edfbfa7024357dd86e20d74a675357eaa0a3e7207a9273e8ae5aef47d38c31e75')
