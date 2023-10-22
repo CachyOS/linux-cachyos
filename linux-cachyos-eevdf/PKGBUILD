@@ -172,7 +172,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.5
-_minor=7
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -182,7 +182,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -211,7 +211,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=8ce2eba9e6a384feef93d77c397f37d17dc588ce")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=95785196f26e92d82cf4445654ba84e4a9671c57")
 fi
 
 # NVIDIA pre-build module support
@@ -828,8 +828,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('a9bed9907bf4b22c08df8a8beaaf923648e4f0f1a4b00c11012871094e7c06a127e54bc1935edb8afc92999456c01ebabd04bc542a0e2fa16de0852a5f4be681'
+b2sums=('5d104cfd8f1f08b181ab85bb251e0a2fc1b37a791f396e83fab82ff5aeadc0c69a746359a6005dc766546c5a880235e1b4c477d67bd7b33ef6c4aaf4a8ea488b'
         '0d15075ccc31eee90b4a71def492279660fd02f52b227f06b40cf4578be730f955121922dc2cd1f2373df4174e92bb50a6f92d79f1b2104d982c6c10b4ac7443'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '2fd14cc8eaf0273ea9db453d2193716fb76290fc36a27f326853d3345c6f3c227193124cf86947cb1373fe13c41c59ca43cc13b0bffefd7c333a6d9deceeaf2c'
-        'c8673b0d9317024e0c1819913a636adc73eda9b61c9c5b077447070ffd3f42b211c494cbdc868e7be57bf691b6c532e90dd17ebc63e2155a6308d8a94dc67d8f')
+        'af331fffff6a0bc2557bf78dd199ee4f58ac749ea72e6c25a05508631b90161640b729167de602d771e0aae4a0c2473be6cddcf45bbda95d88a6674d8d9af0fe'
+        '744ecc17b49f1b048636b8b1f310007c95121924618a7694fe835149770f9237c3362bc88de1aa4723839bc411f52b3b64a29835c1cf225f57665051397f70d9')

@@ -26,12 +26,14 @@ pkgbase = linux-cachyos-rc
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/all/0001-cachyos-base-all.patch
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/misc/0001-sched-ext-on-top-of-cachyos-rc.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/sched/0001-latency-nice.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/sched/0001-bore-cachy.patch
 	b2sums = bc7be57380a4d2a28dccced3303d54f72514d4bb4ffa29ad8e3d39da8a918a3ef58bc68ebae7b2d195934471b7a7308ed907e66e84fb490ca76f76049df760b4
 	b2sums = 2244efe07fa60e8259d4167b0d3725ea06eea584e70877c7bb4df2c21772bdcf6bd18c8b4380c7259e226243f1b6486e7ba36309399756172b6b071d07443d16
 	b2sums = 11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0
 	b2sums = def80eb3e3c62433fc2346eefadd9c94560ec0b1e00e35067922d6c5a07cbd2c581d4e3a3f52e5b7f3485ab83cadf1d5326a34103b05f80e4addac4fd8540dcb
+	b2sums = 0ff78813cdc941ae8e2a32619d5f313a3e439c1d5231159b7959f9c2580e19c75786d122502b009f2496112b2fda41cdb885790261e46a8861a0f2dc8c28f32e
 	b2sums = d31037ded7dec48f2e5792b8a8361c3392ee5c6807e7468516ca28b436cc7ab1f8fa42c99362624daa8557212bcf71b2482abe4e44f70753d0daad4c2f27acf1
 	b2sums = fff2afc9dff0589f9d236f5882de2cb9e4079f157aca2724da92a942b46b3eff7ee81a4ac47bedd10b73c322c860b96c20bc15b840e6aa0b0874a56823debf60
 
