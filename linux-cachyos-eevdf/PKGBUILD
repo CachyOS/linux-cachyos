@@ -224,7 +224,8 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
                  "${_patchsource}/sched/0001-bore-eevdf.patch");;
     eevdf) # EEVDF Scheduler
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch");;
+        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
+                 "${_patchsource}/misc/0001-eevdf-Disable-DELAY_DEQUEUE.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
@@ -832,4 +833,5 @@ b2sums=('fb5fcc0dc79e2f615a550283481492a8185414d65369cbe805909112735593e5fc8bdbd
         '0d15075ccc31eee90b4a71def492279660fd02f52b227f06b40cf4578be730f955121922dc2cd1f2373df4174e92bb50a6f92d79f1b2104d982c6c10b4ac7443'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         'a939d934bdea2a933a0dc5d59ef5049b228d71f642ede974f307ad53e7a725d0c5191213d3ad9b8691c7dd4c8510cf67c2689d4dda016ce96394f26768b01832'
-        '47464ce4e69f55256fdb3b5fdd23921203310fd18aea3b92ccc6f59e260f3512f1e62cb16a5f6c1e6c60e94da226ada98272dfd802f4af759e914215668690b5')
+        '47464ce4e69f55256fdb3b5fdd23921203310fd18aea3b92ccc6f59e260f3512f1e62cb16a5f6c1e6c60e94da226ada98272dfd802f4af759e914215668690b5'
+        '179606e6ec151b88351f4986eed596735aaba296d42dcb752ffe6c0ed8fc4b291001e8908b9ae41b78dbede584950aeb9bf1603a80e95318a590a685b128ae55')

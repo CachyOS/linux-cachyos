@@ -224,7 +224,8 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
                  "${_patchsource}/sched/0001-bore-eevdf.patch");;
     eevdf) # EEVDF Scheduler
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch");;
+        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
+                 "${_patchsource}/misc/0001-eevdf-Disable-DELAY_DEQUEUE.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
