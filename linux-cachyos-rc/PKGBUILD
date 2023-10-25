@@ -174,7 +174,7 @@ fi
 _major=6.6
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc6
+_rcver=rc7
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -223,10 +223,10 @@ fi
 ## ToDo: Adjust for new Scheduler Changes
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
-        source+=("${_patchsource}/sched/0001-latency-nice.patch"
+        source+=("${_patchsource}/sched/0001-EEVDF.patch"
                  "${_patchsource}/sched/0001-bore-cachy.patch");;
     eevdf) # EEVDF Scheduler
-        source+=("${_patchsource}/sched/0001-latency-nice.patch");;
+        source+=("${_patchsource}/sched/0001-EEVDF.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
@@ -833,10 +833,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('bc7be57380a4d2a28dccced3303d54f72514d4bb4ffa29ad8e3d39da8a918a3ef58bc68ebae7b2d195934471b7a7308ed907e66e84fb490ca76f76049df760b4'
+b2sums=('cedf29ec54e17a7425e659fbac3f6ca9878656ab3edab86e210c74ba33a93d4cca96a3ff9867a2fc516889d462c4dd2e0e1b2f79e59ecfcba88ddf7a5ea52c6a'
         '2244efe07fa60e8259d4167b0d3725ea06eea584e70877c7bb4df2c21772bdcf6bd18c8b4380c7259e226243f1b6486e7ba36309399756172b6b071d07443d16'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         'def80eb3e3c62433fc2346eefadd9c94560ec0b1e00e35067922d6c5a07cbd2c581d4e3a3f52e5b7f3485ab83cadf1d5326a34103b05f80e4addac4fd8540dcb'
         '0ff78813cdc941ae8e2a32619d5f313a3e439c1d5231159b7959f9c2580e19c75786d122502b009f2496112b2fda41cdb885790261e46a8861a0f2dc8c28f32e'
-        'd31037ded7dec48f2e5792b8a8361c3392ee5c6807e7468516ca28b436cc7ab1f8fa42c99362624daa8557212bcf71b2482abe4e44f70753d0daad4c2f27acf1'
-        'fff2afc9dff0589f9d236f5882de2cb9e4079f157aca2724da92a942b46b3eff7ee81a4ac47bedd10b73c322c860b96c20bc15b840e6aa0b0874a56823debf60')
+        '6165529b42df4d8469598ae7b926bf71e4fc1ae5f288a1118e864ccbb84d02b11fc1d215b675000bfa4693c8b4afc21053e16e52ab2375b406dd65eecc6ea071'
+        '8b4724873d5c402d044cb38a9556b8d837583a43183be736eb1c7bed478090546b86e929f215fef3a435dfb9e9b3492dff5947302ca88a41ba46877bf22e9115')
