@@ -20,6 +20,7 @@ _cachy_config=${_cachy_config-y}
 # 'cachyos' - select 'EEVDF-BORE Variant Scheduler' EEVDF includes latency nice
 # 'eevdf' - select 'EEVDF Scheduler' EEVDF includes latency nice
 # 'rt' - select CFS, but includes a series of realtime patches
+# 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
 _cpusched=${_cpusched-cachyos}
 
 ## Apply some suggested sysctl values from the bore developer
@@ -182,7 +183,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -199,6 +200,10 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
         LLVM_IAS=1
     )
 fi
+if [ "$_cpusched" = "sched-ext" ]; then
+    makedepends+=(clang llvm lld bpf libbpf rust)
+fi
+
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 _nv_ver=535.113.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
@@ -211,7 +216,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=7ac56b86cd69487fa018b6c92cb2cfb2f82fefba")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=043c6ee3b6bfb55f8d36e1f048ff13128c279fb8")
 fi
 
 # NVIDIA pre-build module support
@@ -222,25 +227,26 @@ fi
 ## ToDo: Adjust for new Scheduler Changes
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
-        source+=("${_patchsource}/sched/0001-EEVDF.patch"
+        source+=("${_patchsource}/sched/0001-latency-nice.patch"
                  "${_patchsource}/sched/0001-bore-cachy.patch");;
-    eevdf) # EEVDF Scheduler
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
-                 "${_patchsource}/misc/0001-eevdf-Disable-DELAY_DEQUEUE.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
     tt) ## TT Scheduler
         source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
     bore) ## BORE Scheduler
-        [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+        source+=("${_patchsource}/sched/0001-bore.patch");;
     rt) ## CFS with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch"
+        source+=("${_patchsource}/sched/0001-latency-nice.patch"
+                 "${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
+    sched-ext) ## Sched-ext with BORE and Latency Nice
+        source+=("${_patchsource}/sched/0001-latency-nice.patch"
+                 "${_patchsource}/sched/0001-bore-cachy.patch"
+                 "${_patchsource}/sched/0001-sched-ext.patch");;
 esac
 
 ## bcachefs Support
@@ -314,6 +320,7 @@ prepare() {
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         cfs|eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_LAZY -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_LAZY -d PREEMPT_BUILD;;
+        sched-ext) scripts/config -e SCHED_BORE SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -680,6 +687,14 @@ build() {
             --with-linux=${srcdir}/$_srcname
         make ${BUILD_FLAGS[*]}
     fi
+
+    if [ "$_cpusched" = "sched-ext" ]; then
+        # Build the sched_ext schedulers
+        cd $srcdir/sched_ext/tools/sched_ext
+        unset CFLAGS
+        unset CXXFLAGS
+        make CC=clang LLVM=1 -j
+    fi
 }
 
 _package() {
@@ -823,9 +838,24 @@ _package-nvidia(){
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
 
+_package-scheduler() {
+   pkgdesc="Schedulers for $pkgdesc kernel"
+   depends=('libbpf' 'bpf' 'clang')
+
+   cd $srcdir/sched_ext/tools/sched_ext/build/bin
+   install -Dm755 scx_central "$pkgdir"/usr/bin/scx_central
+   install -Dm755 scx_flatcg "$pkgdir"/usr/bin/scx_flatcg
+   install -Dm755 scx_pair "$pkgdir"/usr/bin/scx_pair
+   install -Dm755 scx_qmap "$pkgdir"/usr/bin/scx_qmap
+   install -Dm755 scx_rusty "$pkgdir"/usr/bin/scx_rusty
+   install -Dm755 scx_simple "$pkgdir"/usr/bin/scx_simple
+   install -Dm755 scx_userland "$pkgdir"/usr/bin/scx_userland
+}
+
 pkgname=("$pkgbase" "$pkgbase-headers")
 [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
+[ "$_cpusched" = "sched-ext" ] && pkgname+=("$pkgbase-scheduler")
 for _p in "${pkgname[@]}"; do
     eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
@@ -836,6 +866,6 @@ done
 b2sums=('cedf29ec54e17a7425e659fbac3f6ca9878656ab3edab86e210c74ba33a93d4cca96a3ff9867a2fc516889d462c4dd2e0e1b2f79e59ecfcba88ddf7a5ea52c6a'
         '2244efe07fa60e8259d4167b0d3725ea06eea584e70877c7bb4df2c21772bdcf6bd18c8b4380c7259e226243f1b6486e7ba36309399756172b6b071d07443d16'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        'def80eb3e3c62433fc2346eefadd9c94560ec0b1e00e35067922d6c5a07cbd2c581d4e3a3f52e5b7f3485ab83cadf1d5326a34103b05f80e4addac4fd8540dcb'
-        '6165529b42df4d8469598ae7b926bf71e4fc1ae5f288a1118e864ccbb84d02b11fc1d215b675000bfa4693c8b4afc21053e16e52ab2375b406dd65eecc6ea071'
-        '355c78116caa140c4cf018ac81f7b7c9ad5bff2ea006e6a3b3e8e2155e9cf2a8c30add230d375e62282fa0ae48b728df221361e87389c803fd8be3474cbe6930')
+        'b99458e40605388759bfc3d07233acb5ae29c4c0ff3b10c2532f11a5a946a752ec1a654ba2a51670afc415e90ac2ce48a24c0977a92fe8acf691345171d95924'
+        '4da8c04f0824984dbb58e950af07fb5a87559a86bbcf0217ce8459d8983f99569b465e1b5ce422c7dc6926a621e93b599ee1b3d500769fe7e23d3ebed077231e'
+        'caedeef9cf148961a2fc1a06f175682c401448276e57921221c54ffaf7b27135de9d6b8e22f12cdc14b31a042493ffc8970211d68819264d202b811cd7db0c36')
