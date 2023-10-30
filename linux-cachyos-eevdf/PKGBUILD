@@ -841,9 +841,6 @@ _package-schedulers() {
    install -Dm755 scx_rusty "$pkgdir"/usr/bin/scx_rusty
    install -Dm755 scx_simple "$pkgdir"/usr/bin/scx_simple
    install -Dm755 scx_userland "$pkgdir"/usr/bin/scx_userland
-   ## Also install scx_nest since it is not upstreamed now
-   cd $srcdir
-   install -Dm755 scx_nest "$pkgdir"/usr/bin/scx_nest
 }
 
 pkgname=("$pkgbase" "$pkgbase-headers")
