@@ -680,6 +680,14 @@ build() {
             --with-linux=${srcdir}/$_srcname
         make ${BUILD_FLAGS[*]}
     fi
+
+    if [ "$_cpusched" = "sched-ext" ]; then
+        # Build the sched_ext schedulers
+        cd "$srcdir/sched_ext/tools/sched_ext"
+        unset CFLAGS
+        unset CXXFLAGS
+        make CC=clang LLVM=1 -j
+    fi
 }
 
 _package() {
@@ -820,10 +828,28 @@ _package-nvidia(){
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
 
+_package-schedulers() {
+   pkgdesc="Schedulers for $pkgdesc kernel"
+   depends=('libbpf' 'bpf' 'clang')
+
+   cd "${srcdir}/sched_ext/tools/sched_ext/build/bin"
+
+   install -Dm755 scx_central "$pkgdir"/usr/bin/scx_central
+   install -Dm755 scx_flatcg "$pkgdir"/usr/bin/scx_flatcg
+   install -Dm755 scx_pair "$pkgdir"/usr/bin/scx_pair
+   install -Dm755 scx_qmap "$pkgdir"/usr/bin/scx_qmap
+   install -Dm755 scx_rusty "$pkgdir"/usr/bin/scx_rusty
+   install -Dm755 scx_simple "$pkgdir"/usr/bin/scx_simple
+   install -Dm755 scx_userland "$pkgdir"/usr/bin/scx_userland
+   ## Also install scx_nest since it is not upstreamed now
+   cd $srcdir
+   install -Dm755 scx_nest "$pkgdir"/usr/bin/scx_nest
+}
+
 pkgname=("$pkgbase" "$pkgbase-headers")
 [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
-[ "$_cpusched" = "sched-ext" ] && pkgname+=("$pkgbase-scheduler")
+[ "$_cpusched" = "sched-ext" ] && pkgname+=("$pkgbase-schedulers")
 for _p in "${pkgname[@]}"; do
     eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
@@ -832,7 +858,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('5f02fd8696d42f7ec8c5fbadec8e7270bdcfcb1f9844a6c4db3e1fd461c93ce1ccda650ca72dceb4890ebcbbf768ba8fba0bce91efc49fbd2c307b04e95665f2'
-        'a98d3ec8eaa4767be2b89c72ebf8589852dc09d8e325b127db869380fb6c28b0f0cc60cad8951064b11babc7931fd6a789f2d7780898cd1ce713b27947c9fd27'
+        'c3f5d4f7eaf8b95b6a7f371e985abb0d2a0981b855558a305048f5c9fa2e79dbbd9f1f0eca3707d9f9c73d3ac969839a2641727a7787470b1da6994d0ce377df'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         'b99458e40605388759bfc3d07233acb5ae29c4c0ff3b10c2532f11a5a946a752ec1a654ba2a51670afc415e90ac2ce48a24c0977a92fe8acf691345171d95924'
         '9f338dc2939661e6250ddc9a1ab2a8c02a96fea38534191aeda78c43a8cdf4a07596e08bdf8a749ccc87e5019782d6c92ed19b844a58ddfc73cff99120296454')
