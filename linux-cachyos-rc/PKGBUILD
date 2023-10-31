@@ -22,10 +22,6 @@ _cachy_config=${_cachy_config-y}
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
 _cpusched=${_cpusched-cachyos}
 
-## Apply some suggested sysctl values from the bore developer
-## These are adjusted to BORE
-_tune_bore=${_tune_bore-}
-
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
 
@@ -238,10 +234,9 @@ case "$_cpusched" in
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
-        source+=("${_patchsource}/sched/0001-latency-nice.patch"
-                 "${_patchsource}/sched/0001-bore-cachy.patch"
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
-    sched-ext) ## Sched-ext with BORE and Latency Nice
+    sched-ext) ## Sched-ext with BORE
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/sched/0001-sched-ext.patch");;
 esac
@@ -301,6 +296,12 @@ prepare() {
         _die "ZFS and bcachefs support cannot be built at the same time. "
     fi
 
+    ### Prevent ZFS and LTO building at the same time
+    # More infos here: https://github.com/openzfs/zfs/issues/15384
+    if [[ "$_use_llvm_lto" != "none" && -n "$_build_zfs"  ]]; then
+        _die "ZFS and LTO support cannot be built at the same time. "
+    fi
+
     ### Selecting CachyOS config
     if [ -n "$_cachy_config" ]; then
         echo "Enabling CachyOS config..."
@@ -316,8 +317,8 @@ prepare() {
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         eevdf) ;;
-        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_LAZY -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_LAZY -d PREEMPT_BUILD;;
-        sched-ext) scripts/config -e SCHED_BORE SCHED_CLASS_EXT;;
+        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_AUTO -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_AUTO -d PREEMPT_BUILD;;
+        sched-ext) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -687,7 +688,7 @@ build() {
 
     if [ "$_cpusched" = "sched-ext" ]; then
         # Build the sched_ext schedulers
-        cd $srcdir/sched_ext/tools/sched_ext
+        cd "$srcdir/sched_ext/tools/sched_ext"
         unset CFLAGS
         unset CXXFLAGS
         make CC=clang LLVM=1 -j
@@ -835,11 +836,12 @@ _package-nvidia(){
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
 
-_package-scheduler() {
+_package-schedulers() {
    pkgdesc="Schedulers for $pkgdesc kernel"
    depends=('libbpf' 'bpf' 'clang')
 
-   cd $srcdir/sched_ext/tools/sched_ext/build/bin
+   cd "${srcdir}/sched_ext/tools/sched_ext/build/bin"
+
    install -Dm755 scx_central "$pkgdir"/usr/bin/scx_central
    install -Dm755 scx_flatcg "$pkgdir"/usr/bin/scx_flatcg
    install -Dm755 scx_pair "$pkgdir"/usr/bin/scx_pair
@@ -852,7 +854,7 @@ _package-scheduler() {
 pkgname=("$pkgbase" "$pkgbase-headers")
 [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
-[ "$_cpusched" = "sched-ext" ] && pkgname+=("$pkgbase-scheduler")
+[ "$_cpusched" = "sched-ext" ] && pkgname+=("$pkgbase-schedulers")
 for _p in "${pkgname[@]}"; do
     eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
