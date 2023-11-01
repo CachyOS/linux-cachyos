@@ -14,17 +14,15 @@ _cachy_config=${_cachy_config-}
 # 'bmq' - select 'BitMap Queue CPU scheduler'
 # 'pds' - select 'Priority and Deadline based Skip list multiple queue CPU scheduler'
 # 'bore' - select 'Burst-Oriented Response Enhancer'
-# 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select 'EEVDF-BORE Variant Scheduler' EEVDF includes latency nice
-# 'eevdf' - select 'EEVDF Scheduler' EEVDF includes latency nice
-# 'rt' - select CFS, but includes a series of realtime patches
-_cpusched=${_cpusched-cfs}
+# 'cachyos' - select 'EEVDF-BORE Variant Scheduler'
+# 'eevdf' - select 'EEVDF Scheduler'
+# 'rt' - select EEVDF, but includes a series of realtime patches
+# 'bore-rt' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
+# 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
+_cpusched=${_cpusched-eevdf}
 
-## Apply some suggested sysctl values from the bore developer
-## These are adjusted to BORE
-_tune_bore=${_tune_bore-}
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
@@ -171,17 +169,17 @@ else
     pkgsuffix=cachyos-server
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.5
-_minor=9
+_major=6.6
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux CFS scheduler Kernel by CachyOS targeted for Servers'
+pkgdesc='Linux EEVDF scheduler Kernel by CachyOS targeted for Servers'
 pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
@@ -199,6 +197,10 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
         LLVM_IAS=1
     )
 fi
+if [ "$_cpusched" = "sched-ext" ]; then
+    makedepends+=(clang llvm lld bpf libbpf rust)
+fi
+
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 _nv_ver=545.29.02
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
@@ -211,7 +213,7 @@ source=(
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=95785196f26e92d82cf4445654ba84e4a9671c57")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=043c6ee3b6bfb55f8d36e1f048ff13128c279fb8")
 fi
 
 # NVIDIA pre-build module support
@@ -219,27 +221,30 @@ if [ -n "$_build_nvidia" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run")
 fi
 
+## ToDo: Adjust for new Scheduler Changes
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
-                 "${_patchsource}/sched/0001-bore-eevdf.patch");;
-    eevdf) # EEVDF Scheduler
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
-                 "${_patchsource}/misc/0001-eevdf-Disable-DELAY_DEQUEUE.patch");;
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
     tt) ## TT Scheduler
         source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
     bore) ## BORE Scheduler
-        [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    rt) ## CFS with RT patches
+        source+=("${_patchsource}/sched/0001-bore.patch");;
+    rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
+                 linux-cachyos-rt.install);;
+    bore-rt) ## RT with BORE Scheduler
+        source+=("${_patchsource}/misc/0001-rt.patch"
+                 "${_patchsource}/sched/0001-bore-cachy-rt.patch"
                  linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
+    sched-ext) ## Sched-ext with BORE
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch"
+                 "${_patchsource}/sched/0001-sched-ext.patch");;
 esac
 
 ## bcachefs Support
@@ -297,6 +302,12 @@ prepare() {
         _die "ZFS and bcachefs support cannot be built at the same time. "
     fi
 
+    ### Prevent ZFS and LTO building at the same time
+    # More infos here: https://github.com/openzfs/zfs/issues/15384
+    if [[ "$_use_llvm_lto" != "none" && -n "$_build_zfs"  ]]; then
+        _die "ZFS and LTO support cannot be built at the same time. "
+    fi
+
     ### Selecting CachyOS config
     if [ -n "$_cachy_config" ]; then
         echo "Enabling CachyOS config..."
@@ -311,8 +322,10 @@ prepare() {
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS -e PSI_DEFAULT_DISABLED;;
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
-        cfs|eevdf) ;;
-        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_LAZY -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_LAZY -d PREEMPT_BUILD;;
+        eevdf) ;;
+        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_AUTO -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_AUTO -d PREEMPT_BUILD;;
+        bore-rt) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_AUTO -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_AUTO -d PREEMPT_BUILD;;
+        sched-ext) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -402,7 +415,7 @@ prepare() {
     ### Select preempt type
 
     # We should not set up the PREEMPT for RT kernels
-    if [ "$_cpusched" != "rt" ]; then
+    if [[ "$_cpusched" != "rt" || "$_cpusched" != "bore-rt" ]]; then
         [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
         case "$_preempt" in
@@ -665,7 +678,7 @@ build() {
         make ${BUILD_FLAGS[*]} ${MODULE_FLAGS[*]} -j$(nproc) modules
     fi
 
-    if [ -n "$_build_zfs" ]; then
+    if [[ "$_cpusched" != "rt" || "$_cpusched" != "bore-rt" ]] && [ -n "$_build_zfs" ]; then
         cd ${srcdir}/"zfs"
 
         local CONFIGURE_FLAGS=()
@@ -678,6 +691,14 @@ build() {
             --with-udevdir=/lib/udev --libexecdir=/usr/lib/zfs --with-config=kernel \
             --with-linux=${srcdir}/$_srcname
         make ${BUILD_FLAGS[*]}
+    fi
+
+    if [ "$_cpusched" = "sched-ext" ]; then
+        # Build the sched_ext schedulers
+        cd "$srcdir/sched_ext/tools/sched_ext"
+        unset CFLAGS
+        unset CXXFLAGS
+        make CC=clang LLVM=1 -j
     fi
 }
 
@@ -706,8 +727,8 @@ _package() {
     ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
-    # remove build and source links
-    rm "$modulesdir"/{source,build}
+    # remove build links
+    rm "$modulesdir"/build
 }
 
 _package-headers() {
@@ -819,9 +840,26 @@ _package-nvidia(){
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
 
+_package-schedulers() {
+   pkgdesc="Schedulers for $pkgdesc kernel"
+   depends=('libbpf' 'bpf' 'clang')
+
+   cd "${srcdir}/sched_ext/tools/sched_ext/build/bin"
+
+   install -Dm755 scx_central "$pkgdir"/usr/bin/scx_central
+   install -Dm755 scx_flatcg "$pkgdir"/usr/bin/scx_flatcg
+   install -Dm755 scx_pair "$pkgdir"/usr/bin/scx_pair
+   install -Dm755 scx_qmap "$pkgdir"/usr/bin/scx_qmap
+   install -Dm755 scx_rusty "$pkgdir"/usr/bin/scx_rusty
+   install -Dm755 scx_simple "$pkgdir"/usr/bin/scx_simple
+   install -Dm755 scx_userland "$pkgdir"/usr/bin/scx_userland
+   install -Dm755 scx_nest "$pkgdir"/usr/bin/scx_nest
+}
+
 pkgname=("$pkgbase" "$pkgbase-headers")
 [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
+[ "$_cpusched" = "sched-ext" ] && pkgname+=("$pkgbase-schedulers")
 for _p in "${pkgname[@]}"; do
     eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
@@ -829,7 +867,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('fb5fcc0dc79e2f615a550283481492a8185414d65369cbe805909112735593e5fc8bdbd482a347dc4cb3dcac979bea21cd03c503932e9321856eeea685d31c65'
-        '0d15075ccc31eee90b4a71def492279660fd02f52b227f06b40cf4578be730f955121922dc2cd1f2373df4174e92bb50a6f92d79f1b2104d982c6c10b4ac7443'
+b2sums=('5f02fd8696d42f7ec8c5fbadec8e7270bdcfcb1f9844a6c4db3e1fd461c93ce1ccda650ca72dceb4890ebcbbf768ba8fba0bce91efc49fbd2c307b04e95665f2'
+        'c3f5d4f7eaf8b95b6a7f371e985abb0d2a0981b855558a305048f5c9fa2e79dbbd9f1f0eca3707d9f9c73d3ac969839a2641727a7787470b1da6994d0ce377df'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        'a939d934bdea2a933a0dc5d59ef5049b228d71f642ede974f307ad53e7a725d0c5191213d3ad9b8691c7dd4c8510cf67c2689d4dda016ce96394f26768b01832')
+        'b99458e40605388759bfc3d07233acb5ae29c4c0ff3b10c2532f11a5a946a752ec1a654ba2a51670afc415e90ac2ce48a24c0977a92fe8acf691345171d95924')
