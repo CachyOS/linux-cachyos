@@ -235,7 +235,7 @@ case "$_cpusched" in
     rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
-    bore-rt) ## EEVDF with RT patches
+    bore-rt) ## RT with BORE Scheduler
         source+=("${_patchsource}/misc/0001-rt.patch"
                  "${_patchsource}/sched/0001-bore-cachy-rt.patch"
                  linux-cachyos-rt.install);;
