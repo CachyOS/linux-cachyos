@@ -21,7 +21,8 @@ _cachy_config=${_cachy_config-y}
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'bore-rt' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
-_cpusched=${_cpusched-cachyos}
+_cpusched=${_cpusched-bore-rt}
+
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
@@ -74,7 +75,7 @@ _per_gov=${_per_gov-}
 _tcp_bbr3=${_tcp_bbr3-y}
 
 ### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
-_HZ_ticks=${_HZ_ticks-500}
+_HZ_ticks=${_HZ_ticks-1000}
 
 ## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
@@ -161,24 +162,24 @@ _build_nvidia=${_build_nvidia-}
 _bcachefs=${_bcachefs-}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
-    pkgsuffix=cachyos-rc-lto
+    pkgsuffix=cachyos-${_cpusched}-lto
     pkgbase=linux-$pkgsuffix
 
 else
-    pkgsuffix=cachyos-rc
+    pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.6
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc7
-pkgver=${_major}.${_rcver}
+#_rcver=rc8
+pkgver=${_major}.${_minor}
 #_stable=${_major}.${_minor}
-#_stable=${_major}
-_stable=${_major}-${_rcver}
+_stable=${_major}
+#_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
+pkgdesc='Linux kernel with BORE-RT patches by CachyOS with other patches and improvements'
 pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
@@ -204,7 +205,7 @@ _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${
 _nv_ver=545.29.02
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 source=(
-    "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
+    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
@@ -819,11 +820,9 @@ _package-zfs(){
     depends=('pahole' linux-$pkgsuffix=$_kernver)
     provides=('ZFS-MODULE')
 
-    local moduleprefix=${_major}.${_minor}-${_rcver}-${pkgrel}
-
     cd ${srcdir}/"zfs"
-    install -dm755 "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
-    install -m644 module/*.ko "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
+    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -m644 module/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
@@ -834,10 +833,9 @@ _package-nvidia(){
     provides=('NVIDIA-MODULE')
     license=('custom')
 
-    local moduleprefix=${_major}.${_minor}-${_rcver}-${pkgrel}
     cd "${srcdir}/${_nv_pkg}/"
-    install -dm755 "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
-    install -m644 kernel/*.ko "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
+    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -m644 kernel/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 LICENSE
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
@@ -868,8 +866,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('cedf29ec54e17a7425e659fbac3f6ca9878656ab3edab86e210c74ba33a93d4cca96a3ff9867a2fc516889d462c4dd2e0e1b2f79e59ecfcba88ddf7a5ea52c6a'
-        '8b7ec28c10a3e9b722e481470d0d9d3c092ef6681cd2e26c5fe7d4eccfcdc0ad2b7227527c3d91310ece20f064e8a7b99659cfc9d82ee5cc8e96224ecee3a8ab'
+b2sums=('5f02fd8696d42f7ec8c5fbadec8e7270bdcfcb1f9844a6c4db3e1fd461c93ce1ccda650ca72dceb4890ebcbbf768ba8fba0bce91efc49fbd2c307b04e95665f2'
+        'c3f5d4f7eaf8b95b6a7f371e985abb0d2a0981b855558a305048f5c9fa2e79dbbd9f1f0eca3707d9f9c73d3ac969839a2641727a7787470b1da6994d0ce377df'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         'b99458e40605388759bfc3d07233acb5ae29c4c0ff3b10c2532f11a5a946a752ec1a654ba2a51670afc415e90ac2ce48a24c0977a92fe8acf691345171d95924'
-        'caedeef9cf148961a2fc1a06f175682c401448276e57921221c54ffaf7b27135de9d6b8e22f12cdc14b31a042493ffc8970211d68819264d202b811cd7db0c36')
+        '2e8e5ab4edfd169e1971ccadddcf3837bbda853572cc39a23d1cc2ce10a51e73b22dff55494fff2a54a04bb4600973b1ac65de1dacd6c9e09689946a9aec034b'
+        '7b5da03d79ab7701ac3dc6581b494fe5542a625ed6510f3f66ae33d915208bfac138a178276b85fde1412dff6f2c2947e01a6b9397d343d3cd1939b539b1d57e'
+        'e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b')
