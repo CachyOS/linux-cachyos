@@ -857,7 +857,7 @@ _package-schedulers() {
 }
 
 pkgname=("$pkgbase" "$pkgbase-headers")
-[ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
+[[ "$_cpusched" != "rt" || "$_cpusched" != "bore-rt" ]] && [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
 [ "$_cpusched" = "sched-ext" ] && pkgname+=("$pkgbase-schedulers")
 for _p in "${pkgname[@]}"; do
