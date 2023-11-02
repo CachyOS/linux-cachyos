@@ -694,7 +694,7 @@ build() {
 
     if [ "$_cpusched" = "sched-ext" ]; then
         # Build the sched_ext schedulers
-        cd "$srcdir/sched_ext/tools/sched_ext"
+        cd "$srcdir/$_srcname/tools/sched_ext"
         unset CFLAGS
         unset CXXFLAGS
         make CC=clang LLVM=1 -j
@@ -846,7 +846,7 @@ _package-schedulers() {
    pkgdesc="Schedulers for $pkgdesc kernel"
    depends=('libbpf' 'bpf' 'clang')
 
-   cd "${srcdir}/sched_ext/tools/sched_ext/build/bin"
+   cd "$srcdir/$_srcname/tools/sched_ext/build/bin"
 
    install -Dm755 scx_central "$pkgdir"/usr/bin/scx_central
    install -Dm755 scx_flatcg "$pkgdir"/usr/bin/scx_flatcg
