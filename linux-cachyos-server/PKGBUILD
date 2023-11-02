@@ -582,6 +582,8 @@ prepare() {
     fi
 
     ### Disable DEBUG
+    # Doesn't work with sched-ext
+    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/187
     if [[ "$_cpusched" != "sched-ext" &&  -n "$_disable_debug" ]]; then
         scripts/config -d DEBUG_INFO \
             -d DEBUG_INFO_BTF \
