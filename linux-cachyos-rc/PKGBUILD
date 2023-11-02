@@ -581,7 +581,7 @@ prepare() {
     fi
 
     ### Disable DEBUG
-    if [ -n "$_disable_debug" ]; then
+    if [[ "$_cpusched" != "sched-ext" &&  -n "$_disable_debug" ]]; then
         scripts/config -d DEBUG_INFO \
             -d DEBUG_INFO_BTF \
             -d DEBUG_INFO_DWARF4 \
