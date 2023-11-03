@@ -296,12 +296,6 @@ prepare() {
         "${srcdir}"/auto-cpu-optimization.sh
     fi
 
-    ### Prevent ZFS and bcachefs building at the same time
-    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/152
-    if [[ -n "$_bcachefs" && -n "$_build_zfs"  ]]; then
-        _die "ZFS and bcachefs support cannot be built at the same time. "
-    fi
-
     ### Prevent ZFS and LTO building at the same time
     # More infos here: https://github.com/openzfs/zfs/issues/15384
     if [[ "$_use_llvm_lto" != "none" && -n "$_build_zfs"  ]]; then
