@@ -180,7 +180,7 @@ _stable=${_major}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux kernel with RT patches by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=3
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -322,8 +322,8 @@ prepare() {
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         eevdf) ;;
-        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_AUTO -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_AUTO -d PREEMPT_BUILD;;
-        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_AUTO -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_AUTO -d PREEMPT_BUILD;;
+        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
+        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         sched-ext) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
