@@ -19,9 +19,9 @@ _cachy_config=${_cachy_config-y}
 # 'cachyos' - select 'EEVDF-BORE Variant Scheduler'
 # 'eevdf' - select 'EEVDF Scheduler'
 # 'rt' - select EEVDF, but includes a series of realtime patches
-# 'bore-rt' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
+# 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
-_cpusched=${_cpusched-bore-rt}
+_cpusched=${_cpusched-rt-bore}
 
 
 ### Tweak kernel options prior to a build via nconfig
@@ -211,7 +211,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # WARNING The ZFS module doesn't build with selected RT sched due to licensing issues.
-if [[ "$_cpusched" = "rt" || "$_cpusched" = "bore-rt" ]]; then
+if [[ "$_cpusched" = "rt" || "$_cpusched" = "rt-bore" ]]; then
     unset _build_zfs
 fi
 
@@ -240,7 +240,7 @@ case "$_cpusched" in
     rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
-    bore-rt) ## RT with BORE Scheduler
+    rt-bore) ## RT with BORE Scheduler
         source+=("${_patchsource}/misc/0001-rt.patch"
                  "${_patchsource}/sched/0001-bore-cachy-rt.patch"
                  linux-cachyos-rt.install);;
@@ -323,7 +323,7 @@ prepare() {
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_AUTO -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_AUTO -d PREEMPT_BUILD;;
-        bore-rt) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_AUTO -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_AUTO -d PREEMPT_BUILD;;
+        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_AUTO -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_AUTO -d PREEMPT_BUILD;;
         sched-ext) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
@@ -414,7 +414,7 @@ prepare() {
     ### Select preempt type
 
     # We should not set up the PREEMPT for RT kernels
-    if [[ "$_cpusched" != "rt" || "$_cpusched" != "bore-rt" ]]; then
+    if [[ "$_cpusched" != "rt" || "$_cpusched" != "rt-bore" ]]; then
         [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
         case "$_preempt" in
