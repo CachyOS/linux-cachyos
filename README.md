@@ -27,16 +27,22 @@ We have provided all these CPU schedulers because each scheduler performs differ
 - **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** & **([BORE](https://github.com/firelzrd/bore-scheduler))** **Burst-Oriented Response Enhancer** - have been combined in the `linux-cachyos`.
 - **([BORE](https://github.com/firelzrd/bore-scheduler))** **Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-bore` / `linux-cachyos-bore`
 - **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** - `linux-cachyos-eevdf`
-- **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
-- **(BMQ) - BitMap Queue** by Alfred Chen - `linux-cachyos-bmq`
-- **(PDS) - Priority and Deadline based Skiplist multiple queue** by Alfred Chen - `linux-cachyos-pds`
-- **(CFS) - Standard Scheduler Completely Fair Scheduler** - `linux-cachyos-cfs`
+- **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** - `linux-cachyos-sched-ext`
+
 #### CachyOS default kernel
 > - **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** & **([BORE](https://github.com/firelzrd/bore-scheduler))** **Burst-Oriented Response Enhancer** - have been combined in the `linux-cachyos`.
 
 ### :books: Archived schedulers
 - **CacULE and CacULE-RDB** by Hamad Marri, supported by CachyOS in the past as - `linux-cachyos-cacule`  
   ***ATTENTION:** Not supported after version 6.1. If you still want to use it, you can get it from the archive repository - [linux-cacule](https://github.com/ptr1337/linux-cacule)*
+- **(CFS) - Standard Scheduler Completely Fair Scheduler** - `linux-cachyos-cfs`  
+  ***ATTENTION:** Not supported after version 6.6.*
+
+### :books: Temporarily archived kernels
+- **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
+- **(BMQ) - BitMap Queue** by Alfred Chen - `linux-cachyos-bmq`
+- **(PDS) - Priority and Deadline based Skiplist multiple queue** by Alfred Chen - `linux-cachyos-pds`
+  ***ATTENTION:** Not supported after version 6.6. If there will be patch updates, they will most likely be updated to the latest version.*
 > The CachyOS repositories provide prebuilt kernels in three different march versions: `x86-64`, `x86-64-v3`, and `x86-64-v4`. In addition, the repositories also offer LTO-enabled kernels.
 
 ## Features
@@ -49,10 +55,9 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 
 ### :abacus: CPU enhancements
-- 6 Different scheduler are supported,`CFS`,`TT`,`BMQ`,`BORE`,`PDS` and `EEVDF` scheduler.
-- Latency Nice included with EEVDF
+- 3 Different scheduler are supported,`SCHED-EXT`,`BORE`, and `EEVDF` scheduler.
 - AMD P-State Preferred Core and enabled as default
-- EEVDF Scheduler # https://lwn.net/Articles/927530/
+- SCHED-EXT Schedulers prebuilt in the repository # https://lwn.net/Articles/922405/
 ### :bookmark_tabs: Filesystem & memory
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
 - ZFS Filesystem Support and prebuilt in the repository.
