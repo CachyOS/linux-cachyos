@@ -301,12 +301,6 @@ prepare() {
         "${srcdir}"/auto-cpu-optimization.sh
     fi
 
-    ### Prevent ZFS and LTO building at the same time
-    # More infos here: https://github.com/openzfs/zfs/issues/15384
-    if [[ "$_use_llvm_lto" != "none" && -n "$_build_zfs"  ]]; then
-        _die "ZFS and LTO support cannot be built at the same time. "
-    fi
-
     ### Selecting CachyOS config
     if [ -n "$_cachy_config" ]; then
         echo "Enabling CachyOS config..."
@@ -685,6 +679,9 @@ build() {
         local CONFIGURE_FLAGS=()
         [ "$_use_llvm_lto" != "none" ] && CONFIGURE_FLAGS+=("KERNEL_LLVM=1")
 
+        export KCPPFLAGS+=' -Wno-error=uninitialized'
+        export KCFLAGS+=' -Wno-error=uninitialized'
+
         ./autogen.sh
         sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
         ./configure ${CONFIGURE_FLAGS[*]} --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin \
@@ -869,7 +866,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('5f02fd8696d42f7ec8c5fbadec8e7270bdcfcb1f9844a6c4db3e1fd461c93ce1ccda650ca72dceb4890ebcbbf768ba8fba0bce91efc49fbd2c307b04e95665f2'
-        'c3f5d4f7eaf8b95b6a7f371e985abb0d2a0981b855558a305048f5c9fa2e79dbbd9f1f0eca3707d9f9c73d3ac969839a2641727a7787470b1da6994d0ce377df'
+        '98efc768a2048843086a0a0ee495d992b615fcc0dc3003f71e9828a2595dde2be0302739d99d84fdae69531be4f0a3277328b06985f40e811593764e907257aa'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         'b99458e40605388759bfc3d07233acb5ae29c4c0ff3b10c2532f11a5a946a752ec1a654ba2a51670afc415e90ac2ce48a24c0977a92fe8acf691345171d95924'
         '2e8e5ab4edfd169e1971ccadddcf3837bbda853572cc39a23d1cc2ce10a51e73b22dff55494fff2a54a04bb4600973b1ac65de1dacd6c9e09689946a9aec034b'
