@@ -86,7 +86,7 @@ The repositories contain both Arch Linux and CachyOS packages, which have been r
 - `x86-64-v3` - all Arch Linux packages + LTO.
 - `x86-64` - all Arch Linux packages + LTO.
 
-## Installing CachyOS repositories
+## How to add CachyOS repositories
 
 ### Option 1: Automated Installation of cachyos repositories
 
