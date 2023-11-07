@@ -58,7 +58,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 ### :abacus: CPU enhancements
 - 3 Different scheduler are supported,`SCHED-EXT`,`BORE`, and `EEVDF` scheduler.
 - AMD P-State Preferred Core and enabled as default
-- SCHED-EXT Schedulers prebuilt in the repository # https://lwn.net/Articles/922405/
+- SCHED-EXT Schedulers prebuilt in the repository # https://lwn.net/Articles/922405/ (only for `linux-cachyos-sched-ext`)
 ### :bookmark_tabs: Filesystem & memory
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
 - ZFS Filesystem Support and prebuilt in the repository.
