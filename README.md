@@ -12,6 +12,7 @@
 - [CachyOS repositories](#cachyos-repositories)
   - [How to add CachyOS repositories](#how-to-add-cachyos-repositories)
   - [Check CPU compatibility](#check-cpu-compatibility)
+  - [Uninstalling CachyOS repositories](#uninstalling-cachyos-repositories)
 - [Other GNU/Linux distributions](#other-gnulinux-distributions)
   - [Gentoo](#gentoo)
   - [Fedora](#fedora)
