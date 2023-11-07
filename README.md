@@ -37,7 +37,7 @@ We have provided all these CPU schedulers because each scheduler performs differ
 - **CacULE and CacULE-RDB** by Hamad Marri, supported by CachyOS in the past as - `linux-cachyos-cacule`  
   ***ATTENTION:** Not supported after version 6.1. If you still want to use it, you can get it from the archive repository - [linux-cacule](https://github.com/ptr1337/linux-cacule)*
 - **(CFS) - Standard Scheduler Completely Fair Scheduler** - `linux-cachyos-cfs`  
-  ***ATTENTION:** Not supported after version 6.6.*
+  ***ATTENTION:** Not supported after version 6.6. It has been replaced in the upstream by EEVDF*
 
 ### :books: Temporarily archived kernels
 - **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
