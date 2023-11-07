@@ -12,6 +12,7 @@
 - [CachyOS repositories](#cachyos-repositories)
   - [How to add CachyOS repositories](#how-to-add-cachyos-repositories)
   - [Check CPU compatibility](#check-cpu-compatibility)
+  - [Uninstalling CachyOS repositories](#uninstalling-cachyos-repositories)
 - [Other GNU/Linux distributions](#other-gnulinux-distributions)
   - [Gentoo](#gentoo)
   - [Fedora](#fedora)
@@ -24,19 +25,24 @@ The Schedulers listed below are supported
 
 ## linux-cachyos
 We have provided all these CPU schedulers because each scheduler performs differently depending on usage. We recommend testing each one to determine which best suits your specific requirements.
-- **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** & **([BORE](https://github.com/firelzrd/bore-scheduler))** **Burst-Oriented Response Enhancer** - have been combined in the `linux-cachyos`.
-- **([BORE](https://github.com/firelzrd/bore-scheduler))** **Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-bore` / `linux-cachyos-bore`
+- **([BORE](https://github.com/firelzrd/bore-scheduler))** **Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-bore` / `linux-cachyos-bore` / `linux-cachyos`
 - **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** - `linux-cachyos-eevdf`
-- **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
-- **(BMQ) - BitMap Queue** by Alfred Chen - `linux-cachyos-bmq`
-- **(PDS) - Priority and Deadline based Skiplist multiple queue** by Alfred Chen - `linux-cachyos-pds`
-- **(CFS) - Standard Scheduler Completely Fair Scheduler** - `linux-cachyos-cfs`
+- **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** - `linux-cachyos-sched-ext`
+
 #### CachyOS default kernel
-> - **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** & **([BORE](https://github.com/firelzrd/bore-scheduler))** **Burst-Oriented Response Enhancer** - have been combined in the `linux-cachyos`.
+> - **([BORE](https://github.com/firelzrd/bore-scheduler))** **Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-cachyos`
 
 ### :books: Archived schedulers
 - **CacULE and CacULE-RDB** by Hamad Marri, supported by CachyOS in the past as - `linux-cachyos-cacule`  
   ***ATTENTION:** Not supported after version 6.1. If you still want to use it, you can get it from the archive repository - [linux-cacule](https://github.com/ptr1337/linux-cacule)*
+- **(CFS) - Standard Scheduler Completely Fair Scheduler** - `linux-cachyos-cfs`  
+  ***ATTENTION:** Not supported after version 6.6. It has been replaced in the upstream by EEVDF*
+
+### :books: Temporarily archived kernels
+- **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
+- **(BMQ) - BitMap Queue** by Alfred Chen - `linux-cachyos-bmq`
+- **(PDS) - Priority and Deadline based Skiplist multiple queue** by Alfred Chen - `linux-cachyos-pds`  
+  ***ATTENTION:** Not supported after version 6.6. If there will be patch updates, they will most likely be updated to the latest version.*
 > The CachyOS repositories provide prebuilt kernels in three different march versions: `x86-64`, `x86-64-v3`, and `x86-64-v4`. In addition, the repositories also offer LTO-enabled kernels.
 
 ## Features
@@ -49,10 +55,9 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 
 ### :abacus: CPU enhancements
-- 6 Different scheduler are supported,`CFS`,`TT`,`BMQ`,`BORE`,`PDS` and `EEVDF` scheduler.
-- Latency Nice included with EEVDF
+- 3 Different scheduler are supported,`SCHED-EXT`,`BORE`, and `EEVDF` scheduler.
 - AMD P-State Preferred Core and enabled as default
-- EEVDF Scheduler # https://lwn.net/Articles/927530/
+- SCHED-EXT Schedulers prebuilt in the repository # https://lwn.net/Articles/922405/ (only for `linux-cachyos-sched-ext`)
 ### :bookmark_tabs: Filesystem & memory
 - Latest BTRFS/XFS/EXT4 improvements & fixes.
 - ZFS Filesystem Support and prebuilt in the repository.
@@ -82,13 +87,18 @@ The repositories contain both Arch Linux and CachyOS packages, which have been r
 - `x86-64` - all Arch Linux packages + LTO.
 
 ## How to add CachyOS repositories
-### 🦾 Automatic adding of cachyos repositories
-Run following commands:
+
+### Option 1: Automated Installation of cachyos repositories
+
+We've made it easy for you! Simply run the following commands to use our helper script that does all the work for you.  😉
+
+Run the following commands:
 1. Get archive with script
+
 ```
 wget https://mirror.cachyos.org/cachyos-repo.tar.xz
 ```
-> If don't have `wget`, install them by `sudo pacman -S wget`
+> If you don't have `wget`, install it with `sudo pacman -S wget`
 
 2. Extract and enter into the archive
 ```
@@ -100,34 +110,35 @@ tar xvf cachyos-repo.tar.xz && cd cachyos-repo
 sudo ./cachyos-repo.sh
 ```
 
-#### Behaviour of script  
-1. The script automatically detects the CPU architecture. If the CPU supports `x86-64-v4` or `x86-64-v3`, the script uses the repositories optimized with this flag and other flags.
-2. The script will create a backup of your previous `pacman.conf` file.
+#### Behaviour of script
+1. Script will auto-detect CPU architecture, if CPU has `x86-64-v4` or `x86-64-v3` support, script will automatically use the repositories which are optimized with this flag > and some other flags.
+2. Script will backup your old `pacman.conf`.
 
-### Manually
-1. Add both keys
+For more information, check out our [GitHub](https://github.com/cachyos) or join our [Discord](https://discord.gg/k39qfrxPNa) community.
+
+### Option 2: Manual Installation
+
+1. Install the cachyos keyring
 ```
 sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
-```
-```
 sudo pacman-key --lsign-key F3B607488DB35A47
 ```
 
-2. You can download first initial packages
+2. Install required packages
 ```
 sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-3-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-18-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-18-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-6-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-6.0.2-14-x86_64.pkg.tar.zst'
 ```
 
 ## Check CPU compatibility
 If you want to add our repositories manually, you must check the compatibility of the CPU with cachyos repositories.
-> If you use script above for adding cachyos repositories, you can skip checking.
+> If you are using the script above to add cachyos repositories, you can skip the check.
 
-### 1. Check support by the following the command
+#### 1. Check support by running the following the command
 ```
 /lib/ld-linux-x86-64.so.2 --help | grep supported
 ```
 
-### 2. Understanding of command output
+#### 2. Understanding of command output
 Pay attention to the following text with brackets. **(supported, searched)**
 - If you see `x86-64-v4 (supported, searched)`, that means the **CPU is compatible** and can use **x86-64-v4** instruction set.
 - If you see `x86-64-v4`, that means the **CPU is incompatible** and can't use **x86-64-v4** instruction set.
@@ -146,29 +157,26 @@ Pay attention to the following text with brackets. **(supported, searched)**
 
 #### Example of CPU incompatible with x86-64-v4 instruction set
 ```
-  > /lib/ld-linux-x86-64.so.2 --help | grep supported
-     STDIN
-  40 Subdirectories of glibc-hwcaps directories, in priority order:
-  41   x86-64-v4
-  42   x86-64-v3 (supported, searched)                                          
-  43   x86-64-v2 (supported, searched)       
+> /lib/ld-linux-x86-64.so.2 --help | grep supported
+  x86-64-v4
+  x86-64-v3 (supported, searched)
+  x86-64-v2 (supported, searched)
 ```
 
 ### 3. Adding cachyos repositories
-You need edit `pacman.conf` and add repositories.
+You need to edit `pacman.conf` and add repositories.
 ```
 sudo nano /etc/pacman.conf
 ```
 
-#### if CPU support `x86-64`, then add only `[cachyos]` repositories
+#### if your CPU supports `x86-64`, then add only `[cachyos]` repositories
 ```
 # cachyos repos
-## Only add if your CPU does v3 architecture
 [cachyos]
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-#### if CPU support `x86-64-v3`, then add `[cachyos-v3]`,`[cachyos-core-v3]`, `[cachyos-extra-v3]` and `[cachyos]`
+#### if your CPU supports `x86-64-v3`, then add `[cachyos-v3]`,`[cachyos-core-v3]`,`[cachyos-extra-v3]` and `[cachyos]`
 ```
 # cachyos repos
 ## Only add if your CPU does v3 architecture
@@ -182,7 +190,7 @@ Include = /etc/pacman.d/cachyos-v3-mirrorlist
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-#### if CPU support `x86-64-v4`, then add `[cachyos-v4]`, `[cachyos-v3]`, `[cachyos-core-v3]`, `[cachyos-extra-v3]` and `[cachyos]`
+#### if your CPU supports `x86-64-v4`, then add `[cachyos-v4]`, `[cachyos-v3]`, `[cachyos-core-v3]`, `[cachyos-extra-v3]` and `[cachyos]`
 ```
 # cachyos repos
 ## Only add if your CPU does support x86-64-v4 architecture
@@ -196,6 +204,60 @@ Include = /etc/pacman.d/cachyos-v3-mirrorlist
 Include = /etc/pacman.d/cachyos-v3-mirrorlist
 [cachyos]
 Include = /etc/pacman.d/cachyos-mirrorlist
+```
+
+Finally, update your system with CachyOS packages:
+
+```
+sudo pacman -Syu
+```
+Enjoy improved system speed with CachyOS packages!
+
+## Debug packages
+
+We provide a debuginfod server for easy access to debug symbols via `gdb`. Set the following environment variable:
+
+```
+export DEBUGINFOD_URLS=https://debuginfod.cachyos.org
+```
+
+Debug packages are available in the `cachyos-debug-v3` repository. Add it with the following configuration:
+
+```
+[cachyos-debug-v3]
+Server = https://debug.cachyos.org/repo/$arch_v3/$repo
+[cachyos-core-debug-v3]
+Server = https://debug.cachyos.org/repo/$arch_v3/$repo
+[cachyos-extra-debug-v3]
+Server = https://debug.cachyos.org/repo/$arch_v3/$repo
+```
+
+## Uninstalling CachyOS repositories
+
+### Option 1: Automated Removal
+
+Run these commands to remove the CachyOS repos from your system:
+
+```
+wget https://build.cachyos.org/cachyos-repo.tar.xz
+tar xvf cachyos-repo.tar.xz
+cd cachyos-repo
+sudo ./cachyos-repo.sh --remove
+```
+
+### Option 2: Manual Removal
+
+1.  Backup or remove the config file at `/etc/pacman.conf`.
+2.  Run this command:
+
+```
+sudo mv /etc/pacman.conf.bak /etc/pacman.conf
+```
+
+3.  Switch to default Arch Linux packages with this command:
+
+```
+sudo pacman -Suuy
 ```
 
 ## Other GNU/Linux distributions
