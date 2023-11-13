@@ -248,7 +248,7 @@ case "$_cpusched" in
                  "${_patchsource}/misc/0001-hardened.patch");;
     sched-ext) ## Sched-ext with BORE
         source+=("${_patchsource}/sched/0001-sched-ext.patch"
-                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
+                 "${_patchsource}/sched/0001-bore-cachy.patch");;
 esac
 
 ## bcachefs Support
@@ -442,14 +442,6 @@ prepare() {
             -e TCP_CONG_BBR \
             -e DEFAULT_BBR \
             --set-str DEFAULT_TCP_CONG bbr
-
-        # BBR3 doesn't work properly with FQ_CODEL
-        echo "Disabling fq_codel by default..."
-        scripts/config -m NET_SCH_FQ_CODEL \
-            -e NET_SCH_FQ \
-            -d DEFAULT_FQ_CODEL \
-            -e DEFAULT_FQ \
-            --set-str DEFAULT_NET_SCH fq
     fi
 
     ### Select LRU config
@@ -848,12 +840,13 @@ _package-schedulers() {
 
    install -Dm755 scx_central "$pkgdir"/usr/bin/scx_central
    install -Dm755 scx_flatcg "$pkgdir"/usr/bin/scx_flatcg
+   install -Dm755 scx_layered "$pkgdir"/usr/bin/scx_layered
+   install -Dm755 scx_nest "$pkgdir"/usr/bin/scx_nest
    install -Dm755 scx_pair "$pkgdir"/usr/bin/scx_pair
    install -Dm755 scx_qmap "$pkgdir"/usr/bin/scx_qmap
    install -Dm755 scx_rusty "$pkgdir"/usr/bin/scx_rusty
    install -Dm755 scx_simple "$pkgdir"/usr/bin/scx_simple
    install -Dm755 scx_userland "$pkgdir"/usr/bin/scx_userland
-   install -Dm755 scx_nest "$pkgdir"/usr/bin/scx_nest
 }
 
 pkgname=("$pkgbase" "$pkgbase-headers")
@@ -867,8 +860,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('cedf29ec54e17a7425e659fbac3f6ca9878656ab3edab86e210c74ba33a93d4cca96a3ff9867a2fc516889d462c4dd2e0e1b2f79e59ecfcba88ddf7a5ea52c6a'
-        '98efc768a2048843086a0a0ee495d992b615fcc0dc3003f71e9828a2595dde2be0302739d99d84fdae69531be4f0a3277328b06985f40e811593764e907257aa'
+b2sums=('948f9f92828020503b14711e1593b6308e955f2b3021f0f779e007d4c8cb1b93b22265534691eff3dd42cca9afc81488dc7c445c2c66de28ac3cb291b9e423a9'
+        'ecc74fa604ab9a2b917a20fe3e5f0cc5caa95fbe83e57d29987aac2bcf180f5040eebabc80cbd66c2d7cedc1da4d8e185c09210143c4cb8fc30299e492bbbaa6'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        'b99458e40605388759bfc3d07233acb5ae29c4c0ff3b10c2532f11a5a946a752ec1a654ba2a51670afc415e90ac2ce48a24c0977a92fe8acf691345171d95924'
-        'caedeef9cf148961a2fc1a06f175682c401448276e57921221c54ffaf7b27135de9d6b8e22f12cdc14b31a042493ffc8970211d68819264d202b811cd7db0c36')
+        'f72d5aace53f4abd5c9d32d7ca10e332327d447dd003f16f27b1e18a0729be1cd65800ead23bc43a82c22adc114252a1adacc3bcb6c639ddb93746cdaa35229f'
+        'b8ad2e51222c5882f44e3849a2deb505d57cbbf278b4af0c1d383ddfdd218a57797b70137a8be4c6738c15fe819eac2c76719748ba9328a79ba9371ea43064a7')
