@@ -157,9 +157,6 @@ _build_zfs=${_build_zfs-}
 # This does replace the requirement of nvidia-dkms
 _build_nvidia=${_build_nvidia-}
 
-# Enable bcachefs
-_bcachefs=${_bcachefs-}
-
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
     pkgsuffix=cachyos-rc-lto
     pkgbase=linux-$pkgsuffix
@@ -251,10 +248,6 @@ case "$_cpusched" in
                  "${_patchsource}/sched/0001-bore-cachy.patch");;
 esac
 
-## bcachefs Support
-if [ -n "$_bcachefs" ]; then
-    source+=("${_patchsource}/misc/0001-bcachefs.patch")
-fi
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
     source+=("${_patchsource}/misc/0001-lrng.patch")
