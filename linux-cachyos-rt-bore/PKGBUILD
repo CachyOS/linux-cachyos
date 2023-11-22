@@ -218,7 +218,7 @@ fi
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=043c6ee3b6bfb55f8d36e1f048ff13128c279fb8")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=55dd24c4ccee2da61d5396289ef560f9b7bc6a68")
 fi
 
 # NVIDIA pre-build module support
@@ -678,9 +678,6 @@ build() {
 
         local CONFIGURE_FLAGS=()
         [ "$_use_llvm_lto" != "none" ] && CONFIGURE_FLAGS+=("KERNEL_LLVM=1")
-
-        export KCPPFLAGS+=' -Wno-error=uninitialized'
-        export KCFLAGS+=' -Wno-error=uninitialized'
 
         ./autogen.sh
         sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
