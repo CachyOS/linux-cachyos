@@ -180,7 +180,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -870,4 +870,4 @@ b2sums=('88fc55107834d4308d33547211a031674ffaa8e48e23d6612ba39430292b18073d49271
         '5ddb5dcdb79354268e69d01523f06d5071538ba53171adcef0dd455b286df7785611d64f13b3aae06ac298cc60d990ebfa7b11d75dec9ab4a256b431de549483'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         '1337c4884d270cd77ec0873c0e5fdeffc2ea174f88feb235ef661dbbcbf8f40bc298cc61aa2c44e9bf7d95b85958d20ae84a4b3613ea1a351e0741213affe41d'
-        '0e1a801f965fafc2163c6ad7c5a1081d66a09a63a6ebe18040d37f3977d2f3ac6b5a634f0d4a6ce5a4fd2a4c3ec47489c5afb49e7191b24738c872990d38042c')
+        'a1b4d2aa8bee8de58737843e9eca7d495fe9d621b13f8bc1e3058dc1e3d3f060984dd6ba87e393f5864a5e79a9ce8220d1c23b04323677c27cba0393bf61ab7d')
