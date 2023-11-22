@@ -180,7 +180,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT with BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -871,4 +871,4 @@ b2sums=('88fc55107834d4308d33547211a031674ffaa8e48e23d6612ba39430292b18073d49271
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         '1337c4884d270cd77ec0873c0e5fdeffc2ea174f88feb235ef661dbbcbf8f40bc298cc61aa2c44e9bf7d95b85958d20ae84a4b3613ea1a351e0741213affe41d'
         'ddcb6bc6a88f2018dbf6adf189732a4fa0c0ff5437a5f5ffb3734064c499ea4ef034d3f49bb700cf60e16d031e28deee69125b0302ed7055561a7b2667996472'
-        'bef0a0748349047148ecbb615700809a8eeb00232db86c10f46abde0d6ebb809f4df1f88d27721a353dd4761ebcb3f71da22cbf8e9767abeccd0086095f85cb2')
+        'd0cccc8d114086bcce3fd8d8e08f3814b278fe080d308f63953766be503747252c231ed6038f0f16f5c90811f6ab37db6c5137ad93aca348d9639530fb3fa95f')
