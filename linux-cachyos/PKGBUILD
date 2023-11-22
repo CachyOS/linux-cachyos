@@ -180,7 +180,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=3
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -202,7 +202,7 @@ if [ "$_cpusched" = "sched-ext" ]; then
 fi
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=545.29.02
+_nv_ver=545.29.06
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"

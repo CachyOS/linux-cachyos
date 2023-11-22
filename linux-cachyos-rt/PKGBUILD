@@ -202,7 +202,7 @@ if [ "$_cpusched" = "sched-ext" ]; then
 fi
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=545.29.02
+_nv_ver=545.29.06
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
@@ -870,5 +870,5 @@ b2sums=('88fc55107834d4308d33547211a031674ffaa8e48e23d6612ba39430292b18073d49271
         '5ddb5dcdb79354268e69d01523f06d5071538ba53171adcef0dd455b286df7785611d64f13b3aae06ac298cc60d990ebfa7b11d75dec9ab4a256b431de549483'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         '1337c4884d270cd77ec0873c0e5fdeffc2ea174f88feb235ef661dbbcbf8f40bc298cc61aa2c44e9bf7d95b85958d20ae84a4b3613ea1a351e0741213affe41d'
-        '661077d3d9d03ed7c7bc54c4ca241ae7775844582973ca03a64c0458a56cb558ecd15944259d6c9be3b74f994b2b0504c0bc14ffe1c960bffaad90361ee9cd28'
+        '22bd0ab3bf6718a81038f18c67ea216ee5144d263ac60d355db5be3dd8f62560202bcf733d115c962c4b4bd33fa23f6acafb8b965f8a34b9bf9ef2ac98ae68ab'
         'e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b')

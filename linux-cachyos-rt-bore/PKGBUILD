@@ -202,7 +202,7 @@ if [ "$_cpusched" = "sched-ext" ]; then
 fi
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=545.29.02
+_nv_ver=545.29.06
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"

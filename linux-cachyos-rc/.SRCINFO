@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux EEVDF-BORE scheduler Kernel by CachyOS and with some other patches and other improvements
 	pkgver = 6.7.rc1
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
