@@ -156,7 +156,7 @@ _build_zfs=${_build_zfs-}
 
 # Builds the nvidia module and package it into a own base
 # This does replace the requirement of nvidia-dkms
-_build_nvidia=${_build_nvidia-y}
+_build_nvidia=${_build_nvidia-}
 
 # Enable bcachefs
 _bcachefs=${_bcachefs-}
@@ -866,6 +866,5 @@ b2sums=('cd0d70316592fface23a6eddb9d0f8b0c67593f5466388043ebd68613be4eabc3e7c712
         '5ddb5dcdb79354268e69d01523f06d5071538ba53171adcef0dd455b286df7785611d64f13b3aae06ac298cc60d990ebfa7b11d75dec9ab4a256b431de549483'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         'e56bb1bbedd7db10d9b7dcc02bd1e121c6338533ddd16bd9c7aeae660d62004b6e0b02aee824325e974e94cdbaeefdad436eb284ebb3cdd825606631ae49134d'
-        '4b6ef76942f34422a366eb226a75f0e2fa17c8eda58b239fcff7a217bce0e237677a762603553120b49bbf458be763461266f5454bf1b37d99905701cc1d1aa5'
         '620e10d37ca689dba174bbf1041c399f32d7b2d436409586b80ba2f99fcf58af9041b0d01302d69d7277da9414f8ec9535ec3518668d20bac2df48aa30dfd014'
         'd0cccc8d114086bcce3fd8d8e08f3814b278fe080d308f63953766be503747252c231ed6038f0f16f5c90811f6ab37db6c5137ad93aca348d9639530fb3fa95f')
