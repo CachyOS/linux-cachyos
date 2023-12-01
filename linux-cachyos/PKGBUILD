@@ -180,7 +180,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -844,6 +844,7 @@ _package-schedulers() {
    install -Dm755 scx_central "$pkgdir"/usr/bin/scx_central
    install -Dm755 scx_flatcg "$pkgdir"/usr/bin/scx_flatcg
    install -Dm755 scx_layered "$pkgdir"/usr/bin/scx_layered
+   install -Dm755 scx_nest "$pkgdir"/usr/bin/scx_nest
    install -Dm755 scx_pair "$pkgdir"/usr/bin/scx_pair
    install -Dm755 scx_qmap "$pkgdir"/usr/bin/scx_qmap
    install -Dm755 scx_rusty "$pkgdir"/usr/bin/scx_rusty
@@ -866,4 +867,4 @@ b2sums=('cd0d70316592fface23a6eddb9d0f8b0c67593f5466388043ebd68613be4eabc3e7c712
         '5ddb5dcdb79354268e69d01523f06d5071538ba53171adcef0dd455b286df7785611d64f13b3aae06ac298cc60d990ebfa7b11d75dec9ab4a256b431de549483'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
         'e56bb1bbedd7db10d9b7dcc02bd1e121c6338533ddd16bd9c7aeae660d62004b6e0b02aee824325e974e94cdbaeefdad436eb284ebb3cdd825606631ae49134d'
-        'a1b4d2aa8bee8de58737843e9eca7d495fe9d621b13f8bc1e3058dc1e3d3f060984dd6ba87e393f5864a5e79a9ce8220d1c23b04323677c27cba0393bf61ab7d')
+        'e4e372527e84110566265ba3852e9277467bcc0448e4210deb9a30951b5f63a727f6188eeaacaa89ac7f44229304464d4fb89e93384fccc4c5c27ca924d47a9d')

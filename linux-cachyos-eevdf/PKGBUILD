@@ -844,6 +844,7 @@ _package-schedulers() {
    install -Dm755 scx_central "$pkgdir"/usr/bin/scx_central
    install -Dm755 scx_flatcg "$pkgdir"/usr/bin/scx_flatcg
    install -Dm755 scx_layered "$pkgdir"/usr/bin/scx_layered
+   install -Dm755 scx_nest "$pkgdir"/usr/bin/scx_nest
    install -Dm755 scx_pair "$pkgdir"/usr/bin/scx_pair
    install -Dm755 scx_qmap "$pkgdir"/usr/bin/scx_qmap
    install -Dm755 scx_rusty "$pkgdir"/usr/bin/scx_rusty
