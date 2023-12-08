@@ -23,6 +23,7 @@ _cachy_config=${_cachy_config-y}
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
 _cpusched=${_cpusched-cachyos}
 
+
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
 
@@ -192,9 +193,6 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
         LLVM=1
         LLVM_IAS=1
     )
-fi
-if [ "$_cpusched" = "sched-ext" ]; then
-    makedepends+=(clang llvm lld bpf libbpf rust)
 fi
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
@@ -672,13 +670,6 @@ build() {
         make ${BUILD_FLAGS[*]}
     fi
 
-    if [ "$_cpusched" = "sched-ext" ]; then
-        # Build the sched_ext schedulers
-        cd "$srcdir/$_srcname/tools/sched_ext"
-        unset CFLAGS
-        unset CXXFLAGS
-        make CC=clang LLVM=1 -j
-    fi
 }
 
 _package() {
@@ -822,27 +813,9 @@ _package-nvidia(){
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
 
-_package-schedulers() {
-   pkgdesc="Schedulers for $pkgdesc kernel"
-   depends=('libbpf' 'bpf' 'clang')
-
-   cd "$srcdir/$_srcname/tools/sched_ext/build/bin"
-
-   install -Dm755 scx_central "$pkgdir"/usr/bin/scx_central
-   install -Dm755 scx_flatcg "$pkgdir"/usr/bin/scx_flatcg
-   install -Dm755 scx_layered "$pkgdir"/usr/bin/scx_layered
-   install -Dm755 scx_nest "$pkgdir"/usr/bin/scx_nest
-   install -Dm755 scx_pair "$pkgdir"/usr/bin/scx_pair
-   install -Dm755 scx_qmap "$pkgdir"/usr/bin/scx_qmap
-   install -Dm755 scx_rusty "$pkgdir"/usr/bin/scx_rusty
-   install -Dm755 scx_simple "$pkgdir"/usr/bin/scx_simple
-   install -Dm755 scx_userland "$pkgdir"/usr/bin/scx_userland
-}
-
 pkgname=("$pkgbase" "$pkgbase-headers")
 [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
-[ "$_cpusched" = "sched-ext" ] && pkgname+=("$pkgbase-schedulers")
 for _p in "${pkgname[@]}"; do
     eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
