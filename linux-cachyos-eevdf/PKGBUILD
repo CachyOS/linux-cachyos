@@ -198,6 +198,10 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
     )
 fi
 
+if [ "$_cpusched" = "sched-ext" ]; then
+    depends+=(scx-scheds)
+fi
+
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 _nv_ver=545.29.06
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
