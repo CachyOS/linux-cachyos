@@ -14,17 +14,15 @@ _cachy_config=${_cachy_config-y}
 # 'bmq' - select 'BitMap Queue CPU scheduler'
 # 'pds' - select 'Priority and Deadline based Skip list multiple queue CPU scheduler'
 # 'bore' - select 'Burst-Oriented Response Enhancer'
-# 'cfs' - select 'Completely Fair Scheduler'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select 'EEVDF-BORE Variant Scheduler' EEVDF includes latency nice
-# 'eevdf' - select 'EEVDF Scheduler' EEVDF includes latency nice
-# 'rt' - select CFS, but includes a series of realtime patches
+# 'cachyos' - select 'EEVDF-BORE Variant Scheduler'
+# 'eevdf' - select 'EEVDF Scheduler'
+# 'rt' - select EEVDF, but includes a series of realtime patches
+# 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
+# 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
 _cpusched=${_cpusched-hardened}
 
-## Apply some suggested sysctl values from the bore developer
-## These are adjusted to BORE
-_tune_bore=${_tune_bore-}
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
@@ -67,7 +65,7 @@ _cc_harder=${_cc_harder-y}
 ## DO NOT SET, THIS IS FOR INTERNAL CI USE ONLY.
 _cc_size=${_cc_size-}
 
-### Set this to your number of threads you have in your machine otherwise it will default to 128
+### Set this to your number of threads you have in your machine otherwise it will default to 320
 _nr_cpus=${_nr_cpus-}
 
 ### Set performance governor as default
@@ -171,8 +169,8 @@ else
     pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.5
-_minor=9
+_major=6.6
+_minor=5
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -199,6 +197,7 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
         LLVM_IAS=1
     )
 fi
+
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 _nv_ver=545.29.06
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
@@ -208,10 +207,15 @@ source=(
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
+# WARNING The ZFS module doesn't build with selected RT sched due to licensing issues.
+if [[ "$_cpusched" = "rt" || "$_cpusched" = "rt-bore" ]]; then
+    unset _build_zfs
+fi
+
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=95785196f26e92d82cf4445654ba84e4a9671c57")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=d38565b5ac3ecbf9dde7e8f7d71f4620a9cea9f9")
 fi
 
 # NVIDIA pre-build module support
@@ -219,27 +223,30 @@ if [ -n "$_build_nvidia" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run")
 fi
 
+## ToDo: Adjust for new Scheduler Changes
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
-                 "${_patchsource}/sched/0001-bore-eevdf.patch");;
-    eevdf) # EEVDF Scheduler
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
-                 "${_patchsource}/misc/0001-eevdf-Disable-DELAY_DEQUEUE.patch");;
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     pds|bmq) # BMQ/PDS scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
                  linux-cachyos-prjc.install);;
     tt) ## TT Scheduler
         source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
     bore) ## BORE Scheduler
-        [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    rt) ## CFS with RT patches
+        source+=("${_patchsource}/sched/0001-bore.patch");;
+    rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
+    rt-bore) ## RT with BORE Scheduler
+        source+=("${_patchsource}/misc/0001-rt.patch"
+                 "${_patchsource}/sched/0001-bore-cachy-rt.patch"
+                 linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch"
+        source+=("${_patchsource}/sched/0001-bore.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
+    sched-ext) ## Sched-ext with BORE
+        source+=("${_patchsource}/sched/0001-sched-ext.patch"
+                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
 esac
 
 ## bcachefs Support
@@ -291,12 +298,6 @@ prepare() {
         "${srcdir}"/auto-cpu-optimization.sh
     fi
 
-    ### Prevent ZFS and bcachefs building at the same time
-    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/152
-    if [[ -n "$_bcachefs" && -n "$_build_zfs"  ]]; then
-        _die "ZFS and bcachefs support cannot be built at the same time. "
-    fi
-
     ### Selecting CachyOS config
     if [ -n "$_cachy_config" ]; then
         echo "Enabling CachyOS config..."
@@ -311,8 +312,10 @@ prepare() {
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS -e PSI_DEFAULT_DISABLED;;
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
-        cfs|eevdf) ;;
-        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_LAZY -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_LAZY -d PREEMPT_BUILD;;
+        eevdf) ;;
+        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
+        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
+        sched-ext) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -402,7 +405,7 @@ prepare() {
     ### Select preempt type
 
     # We should not set up the PREEMPT for RT kernels
-    if [ "$_cpusched" != "rt" ]; then
+    if [[ "$_cpusched" != "rt" || "$_cpusched" != "rt-bore" ]]; then
         [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
         case "$_preempt" in
@@ -437,14 +440,6 @@ prepare() {
             -e TCP_CONG_BBR \
             -e DEFAULT_BBR \
             --set-str DEFAULT_TCP_CONG bbr
-
-        # BBR3 doesn't work properly with FQ_CODEL
-        echo "Disabling fq_codel by default..."
-        scripts/config -m NET_SCH_FQ_CODEL \
-            -e NET_SCH_FQ \
-            -d DEFAULT_FQ_CODEL \
-            -e DEFAULT_FQ \
-            --set-str DEFAULT_NET_SCH fq
     fi
 
     ### Select LRU config
@@ -569,7 +564,9 @@ prepare() {
     fi
 
     ### Disable DEBUG
-    if [ -n "$_disable_debug" ]; then
+    # Doesn't work with sched-ext
+    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/187
+    if [[ "$_cpusched" != "sched-ext" &&  -n "$_disable_debug" ]]; then
         scripts/config -d DEBUG_INFO \
             -d DEBUG_INFO_BTF \
             -d DEBUG_INFO_DWARF4 \
@@ -679,6 +676,7 @@ build() {
             --with-linux=${srcdir}/$_srcname
         make ${BUILD_FLAGS[*]}
     fi
+
 }
 
 _package() {
@@ -706,8 +704,8 @@ _package() {
     ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
-    # remove build and source links
-    rm "$modulesdir"/{source,build}
+    # remove build links
+    rm "$modulesdir"/build
 }
 
 _package-headers() {
@@ -829,9 +827,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('fb5fcc0dc79e2f615a550283481492a8185414d65369cbe805909112735593e5fc8bdbd482a347dc4cb3dcac979bea21cd03c503932e9321856eeea685d31c65'
-        '1fe59b2217f78446750d3d6733f461647a72cca85942bab79f456f37c2e889e73d7d1bc6ab8a515aac45b9dbbf4385d035ac55f0ad2f0d7ac63856f332bb5b86'
+b2sums=('9d66d720f2f037cfd480835ab38807fe5aabcff09bd210c5cb0dc80bd3e1182434df9f04a286df4e8cbc508ac984ecba12d2098a3296e3aac60afad94c085876'
+        '95cf69e6394b6fda04cd6ba1fa49ea149f38d8619094bc4a673e41344cf296a8165de5c85b5fe57d5a27d6c374e1b52c895c55fd135a4173a1c58e5ab003af4b'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        'a939d934bdea2a933a0dc5d59ef5049b228d71f642ede974f307ad53e7a725d0c5191213d3ad9b8691c7dd4c8510cf67c2689d4dda016ce96394f26768b01832'
-        'beec71731394d6c127a7a2765f62e66d43ec95134214e1ba3a442fc91adf3fbeb24655d4fad7588b3fc0416cc1858e4c0fd660d318a6c557794adfb850bb6f05'
-        '05fb65c2b5f05954bb25aa48d2aa3b4b95a4de396106c872eab5ea913df514fa037ff0d1a14010e31708db68e7662c984ac5790455e57ff763b2498501979fc4')
+        '96ab8ee123335565195fcb5a5e3448d01cd15da64002b321ee88f71c0f826913a7c8bf17bc46a49aaa5eef526b39bf589769a4590dac229621044f58833e5d07'
+        '59a4ed2bd4f950944532b92ace4bb2c1a53b600d1ec1b195a2f0b8db6a7a53d87ef898e77deb7c4e74428afa8052842d880854a04193df44492f56eff478a048'
+        '4122b04145b0b13143ddd878ead159f8c23fa9c086908cc32524ab7c94d17da07e65c5b8dbc25b22dd0309471613e01d381e93c848a59663908420a4fe319dea')
