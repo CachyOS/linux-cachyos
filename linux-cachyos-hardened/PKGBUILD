@@ -10,9 +10,7 @@
 _cachy_config=${_cachy_config-y}
 
 ### Selecting the CPU scheduler
-# ATTENTION - one of six predefined values should be selected!
-# 'bmq' - select 'BitMap Queue CPU scheduler'
-# 'pds' - select 'Priority and Deadline based Skip list multiple queue CPU scheduler'
+# ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
@@ -227,9 +225,6 @@ fi
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    pds|bmq) # BMQ/PDS scheduler
-        source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
-                 linux-cachyos-prjc.install);;
     tt) ## TT Scheduler
         source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
     bore) ## BORE Scheduler
@@ -308,8 +303,6 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        pds) scripts/config -e SCHED_ALT -d SCHED_BMQ -e SCHED_PDS -e PSI_DEFAULT_DISABLED;;
-        bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS -e PSI_DEFAULT_DISABLED;;
         tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         eevdf) ;;
