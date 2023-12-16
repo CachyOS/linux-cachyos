@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.6.6
+	pkgver = 6.6.7
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -22,15 +22,15 @@ pkgbase = linux-cachyos
 	makedepends = patch
 	makedepends = python
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.6.6.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.6.7.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/sched/0001-bore-cachy.patch
-	b2sums = aef38e65d2bcccabb6d96691f96e5c0b3961e4e6125a33feb7ee99cd95c480984e35cc1e72bfa8da60ca76a40744054b8817012f6ebf85fc66161b802be73fb6
+	b2sums = 000c45693d074c79816ea61c8e46b58281eed5532903df92c466d3f062ec6a302e59c2782235b21d309976929659e581ff08c8d5b067bb02e7f0cc4e40593643
 	b2sums = 5ddb5dcdb79354268e69d01523f06d5071538ba53171adcef0dd455b286df7785611d64f13b3aae06ac298cc60d990ebfa7b11d75dec9ab4a256b431de549483
 	b2sums = 11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0
-	b2sums = 96ab8ee123335565195fcb5a5e3448d01cd15da64002b321ee88f71c0f826913a7c8bf17bc46a49aaa5eef526b39bf589769a4590dac229621044f58833e5d07
+	b2sums = 18fa20e44b1db30f15efd1116719ed4c1e6a4c439e1cd838f5ba3f2a8833fd0f6569cb37bd8ada9495b427d4b891c75147e1b97194e88d03de03f08f86835790
 	b2sums = a9ac9281babe991c49eaf3f55dbe27edd5647d2b9f98f7ef589f1eaace63453e964e188ea9983b7d2324c63e6f1fb5b6408393bb297069e135a501c83ae9920f
 
 pkgname = linux-cachyos

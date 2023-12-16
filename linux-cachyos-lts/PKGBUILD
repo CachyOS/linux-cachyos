@@ -186,7 +186,7 @@ else
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.1
-_minor=61
+_minor=71
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
