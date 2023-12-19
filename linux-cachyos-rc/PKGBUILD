@@ -167,7 +167,7 @@ fi
 _major=6.7
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc5
+_rcver=rc6
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -214,7 +214,7 @@ fi
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=d38565b5ac3ecbf9dde7e8f7d71f4620a9cea9f9")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=2d940c7c29a0ba5f84f50ea9773dea237e27bb08")
 fi
 
 # NVIDIA pre-build module support
@@ -820,8 +820,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('40b76c9743f02ed6c4c05a29a445b3773dd6b40b8d0f38e7ddd05e2a8d81cca7d4925b6ea64dda72a7030812704df64366ab4db91856fc0531734119297ddef7'
-        'ea62e7ebaa2e948be67bd5baf3a88aa1f8a60560e044ed88b1671353981739408d4046cf83745444630ab22eef69ded2822544efdd103aa9a5e772a740c07ea6'
+b2sums=('321f606bd30fe3929257371e2b480d67395b0939d996d190c54ec162f402504e591f54073fa0f4a3d5f078a7981606055566a45f7525870d971c2fe9a78fdba3'
+        '95d3159a8338802c3c73a5607037d6f68d8c9cd1a734c60c24dfe935c852c77c4f07e7d4ba9a3a60d1bcf6b4183eacaefa0b3332655fffc561796c723c6a5516'
         '11d2003b7d71258c4ca71d71c6b388f00fe9a2ddddc0270e304148396dadfd787a6cac1363934f37d0bfb098c7f5851a02ecb770e9663ffe57ff60746d532bd0'
-        '284b825b99195e8aa60c36a63bca33090a010bf7e366410ac7e3ea7d0f15becc276822388aa885f287e6e192d11fa874912bcd6d97eae7e327502f4d1c942cd2'
-        '39013479cb0aa61a2a150beb69b5a83ad6b2a66984b052b9ab4076d755774b4b7a71d7b1e068d2e0fb0f9ac7a57b50578e1f91cb61d90057c4c0cb5535dd7a1c')
+        '6ca1e2414ef95bb9c26dbd58e0b1f994115b776565b3e37c5bcfe0bde27a6cc0ae1af658a7b77e2c4caf48bf7f9c80f997cc8220e22a0c59334461e6d8224bb9'
+        '03ba6b741afa9adaf3f0a85cc1d0384062fd6dc0dc3de28995e312b879ff90d5c55d68173f59419fa0fe04e4271c3eb72c0af85262a84d5b29b55ec15de38ddd')
