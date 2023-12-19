@@ -38,11 +38,9 @@ We have provided all these CPU schedulers because each scheduler performs differ
 - **(CFS) - Standard Scheduler Completely Fair Scheduler** - `linux-cachyos-cfs`
 - **(BMQ) - BitMap Queue** by Alfred Chen - `linux-cachyos-bmq`
 - **(PDS) - Priority and Deadline based Skiplist multiple queue** by Alfred Chen - `linux-cachyos-pds`
+- **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`  
   ***ATTENTION:** Not supported after version 6.6.*
 
-### :books: Temporarily archived kernels
-- **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`
-  ***ATTENTION:** Not supported after version 6.6. If there will be patch updates, they will most likely be updated to the latest version.*
 > The CachyOS repositories provide prebuilt kernels in three different march versions: `x86-64`, `x86-64-v3`, and `x86-64-v4`. In addition, the repositories also offer LTO-enabled kernels.
 
 ## Features
