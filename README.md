@@ -13,6 +13,7 @@
   - [How to add CachyOS repositories](#how-to-add-cachyos-repositories)
   - [Check CPU compatibility](#check-cpu-compatibility)
   - [Uninstalling CachyOS repositories](#uninstalling-cachyos-repositories)
+  - [Install SCX schedulers - only for linux-cachyos-sched-ext](#install-scx-schedulers)
 - [Other GNU/Linux distributions](#other-gnulinux-distributions)
   - [Gentoo](#gentoo)
   - [Fedora](#fedora)
@@ -256,6 +257,33 @@ sudo mv /etc/pacman.conf.bak /etc/pacman.conf
 
 ```
 sudo pacman -Suuy
+```
+## Install SCX Schedulers
+
+If you chose linux-cachyos-sched-ext you can install scx-scheds-git, which includes external schedulers.
+
+```
+sudo pacman -S scx-scheds-git
+```
+
+Below is a list of schedulers with their locations:
+
+```
+/usr/bin/scx_simple
+/usr/bin/scx_qmap
+/usr/bin/scx_central
+/usr/bin/scx_pair
+/usr/bin/scx_flatcg
+/usr/bin/scx_userland
+/usr/bin/scx_nest
+/usr/bin/scx_layered
+/usr/bin/scx_rusty
+```
+
+To start the scheduler, execute in the console:
+
+```
+sudo scx_NAME
 ```
 
 ## Other GNU/Linux distributions
