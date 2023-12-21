@@ -277,6 +277,7 @@ Below is a list of schedulers with their locations:
 /usr/bin/scx_userland
 /usr/bin/scx_nest
 /usr/bin/scx_layered
+/usr/bin/scx_rustlite
 /usr/bin/scx_rusty
 ```
 
