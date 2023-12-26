@@ -787,7 +787,7 @@ _package-headers() {
 
 _package-zfs(){
     pkgdesc="zfs module for the $pkgdesc kernel"
-    depends=('pahole' linux-$pkgsuffix=$_kernver)
+    depends=('pahole' $pkgbase=$_kernver)
     provides=('ZFS-MODULE')
 
     cd ${srcdir}/"zfs"
@@ -799,7 +799,7 @@ _package-zfs(){
 
 _package-nvidia(){
     pkgdesc="nvidia module of ${_nv_ver} driver for the linux-$pkgsuffix kernel"
-    depends=("linux-$pkgsuffix=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
+    depends=("$pkgbase=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
     license=('custom')
 
