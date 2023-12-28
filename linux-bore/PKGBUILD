@@ -178,7 +178,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=3
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -222,8 +222,8 @@ fi
 
 # NVIDIA pre-build module support
 if [ -n "$_build_nvidia" ]; then
-    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run")
-    source+=("nvidia-drm-hotplug-workqueue.nvpatch::$_patchsource/misc/nvidia/nvidia-drm-hotplug-workqueue.patch")
+    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
+             "$_patchsource/misc/nvidia/nvidia-drm-hotplug-workqueue.patch")
 fi
 
 ## ToDo: Adjust for new Scheduler Changes
@@ -277,6 +277,7 @@ prepare() {
         src="${src%%::*}"
         src="${src##*/}"
         src="${src%.zst}"
+        [[ $src = nvidia-drm-hotplug-workqueue.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -644,7 +645,7 @@ prepare() {
 
         # Temporary fix for fbdev=1
         # https://forums.developer.nvidia.com/t/545-29-06-18-1-flip-event-timeout-error-on-startup-shutdown-and-sometimes-suspend-wayland-unusable/274788/21
-        patch -Np0 -i "${srcdir}/nvidia-drm-hotplug-workqueue.nvpatch" -d "${srcdir}/${_nv_pkg}"
+        patch -Np0 -i "${srcdir}/nvidia-drm-hotplug-workqueue.patch" -d "${srcdir}/${_nv_pkg}"
     fi
 }
 

@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-sched-ext
 	pkgdesc = Linux SCHED-EXT with BORE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.6.8
-	pkgrel = 2
+	pkgrel = 3
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
