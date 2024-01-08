@@ -227,7 +227,7 @@ case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     bore) ## BORE Scheduler
-        source+=("${_patchsource}/sched/0001-bore.patch");;
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
@@ -236,7 +236,7 @@ case "$_cpusched" in
                  "${_patchsource}/sched/0001-bore-cachy-rt.patch"
                  linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
-        source+=("${_patchsource}/sched/0001-bore.patch"
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
     sched-ext) ## Sched-ext with BORE
         source+=("${_patchsource}/sched/0001-sched-ext.patch"
@@ -827,5 +827,5 @@ b2sums=('c71e651438216e86e436af032cb529c029351b72b460568bd75858f835212360d646bae
         '20f42891e01b248b0df74e0f395e58314052af1d0f364e93a67180cdae63d13299316d37f61002f13ab11b73f8cf52de91a4f49a3038c965a3cd120625d461e3'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
         'a5e5c6ad326c2e3522ff6d6208e87c06a1d545dfecc47cd50dc1176dc5409cc8a2ae380e7bc0f2a191d835558fb5c7d5b7de1b2e250b019b7f45088a60bac0cf'
-        'c3a229fb84489864f0cca5bef47833494af334cca0a69433b8be98e8529d3404ba3186eae3f77331a6464b6981e118872e3f5e596f5151873c17708f07446fbd'
+        '0c71a752ea50d5606af54aac3569baa371f88896aad98dd34d405227cd0890d76b71bec4e000bfb2b6d38021303281399c4632952cafde1cc3a6e2c876ced9ce'
         '4122b04145b0b13143ddd878ead159f8c23fa9c086908cc32524ab7c94d17da07e65c5b8dbc25b22dd0309471613e01d381e93c848a59663908420a4fe319dea')
