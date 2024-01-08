@@ -12,7 +12,6 @@ _cachy_config=${_cachy_config-y}
 ### Selecting the CPU scheduler
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
-# 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 # 'cachyos' - select 'EEVDF-BORE Variant Scheduler'
 # 'eevdf' - select 'EEVDF Scheduler'
@@ -37,6 +36,7 @@ _makegconfig=${_makegconfig-}
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
+# It seems that in 2023 this is not really a huge regression anymore
 _NUMAdisable=${_NUMAdisable-}
 
 # Compile ONLY used modules to VASTLYreduce the number of modules built
@@ -111,7 +111,7 @@ _damon=${_damon-}
 _lrng_enable=${_lrng_enable-}
 
 # CPU compiler optimizations - Defaults to prompt at kernel config if left empty
-# AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3"
+# AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" "zen4"
 # Intel CPUs : "mpsc"(P4 & older Netburst based Xeon) "atom" "core2" "nehalem" "westmere" "silvermont" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "skylakex" "cannonlake" "icelake" "goldmont" "goldmontplus" "cascadelake" "cooperlake" "tigerlake" "sapphirerapids" "rocketlake" "alderlake"
 # Other options :
 # - "native_amd" (use compiler autodetection - Selecting your arch manually in the list above is recommended instead of this option)
@@ -156,9 +156,6 @@ _build_zfs=${_build_zfs-}
 # This does replace the requirement of nvidia-dkms
 _build_nvidia=${_build_nvidia-}
 
-# Enable bcachefs
-_bcachefs=${_bcachefs-}
-
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
     pkgsuffix=${_cpusched}-lto
     pkgbase=linux-$pkgsuffix
@@ -167,17 +164,17 @@ else
     pkgsuffix=${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.6
-_minor=10
+_major=6.7
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
+pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
 pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
@@ -217,7 +214,7 @@ fi
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=d38565b5ac3ecbf9dde7e8f7d71f4620a9cea9f9")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=2d940c7c29a0ba5f84f50ea9773dea237e27bb08")
 fi
 
 # NVIDIA pre-build module support
@@ -230,8 +227,6 @@ fi
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    tt) ## TT Scheduler
-        source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore.patch");;
     rt) ## EEVDF with RT patches
@@ -246,13 +241,9 @@ case "$_cpusched" in
                  "${_patchsource}/misc/0001-hardened.patch");;
     sched-ext) ## Sched-ext with BORE
         source+=("${_patchsource}/sched/0001-sched-ext.patch"
-                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
+                 "${_patchsource}/sched/0001-bore-cachy.patch");;
 esac
 
-## bcachefs Support
-if [ -n "$_bcachefs" ]; then
-    source+=("${_patchsource}/misc/0001-bcachefs.patch")
-fi
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
     source+=("${_patchsource}/misc/0001-lrng.patch")
@@ -309,7 +300,6 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;

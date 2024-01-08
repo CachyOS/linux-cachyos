@@ -226,8 +226,6 @@ fi
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (EEVDF + BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    tt) ## TT Scheduler
-        source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore.patch");;
     rt) ## EEVDF with RT patches
@@ -305,7 +303,6 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;

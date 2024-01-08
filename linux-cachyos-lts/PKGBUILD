@@ -10,17 +10,15 @@
 _cachy_config=${_cachy_config-y}
 
 ### Selecting the CPU scheduler
-# ATTENTION - only one of the following values can be selected
+# ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
-# 'cfs' - select 'Completely Fair Scheduler'
-# 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'rt' - select CFS, but includes a series of realtime patches
-_cpusched=${_cpusched-bore}
-
-## Apply some suggested sysctl values from the bore developer
-## These are adjusted to BORE
-_tune_bore=${_tune_bore-}
+# 'cachyos' - select 'EEVDF-BORE Variant Scheduler'
+# 'eevdf' - select 'EEVDF Scheduler'
+# 'rt' - select EEVDF, but includes a series of realtime patches
+# 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
+# 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
+_cpusched=${_cpusched-cachyos}
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
@@ -69,6 +67,9 @@ _nr_cpus=${_nr_cpus-}
 ### Set performance governor as default
 _per_gov=${_per_gov-}
 
+### Enable TCP_CONG_BBR3
+_tcp_bbr3=${_tcp_bbr3-y}
+
 ### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-500}
 
@@ -91,7 +92,7 @@ _lru_config=${_lru_config-standard}
 # 'standard' - enable per-VMA locking
 # 'stats' - enable per-VMA locking with stats
 # 'none' - disable per-VMA locking
-_vma_config=${_vma_config-none}
+_vma_config=${_vma_config-standard}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -136,22 +137,12 @@ _use_llvm_lto=${_use_llvm_lto-none}
 # https://github.com/CachyOS/linux-cachyos/issues/36
 _use_lto_suffix=${_use_lto_suffix-y}
 
-# ATTENTION!: Really experimental LTO implementation for GCC
-# This can improve the performance of the kernel
-# The performance difference is currently negligible
-# DEBUG and BTF needs to be disabled, otherwise the compilation is failing
-# The Kernel is bigger with GCC LTO due to more inlining
-# More informations:
-# https://lore.kernel.org/lkml/20221114114344.18650-1-jirislaby@kernel.org/T/#md8014ad799b02221b67f33584002d98ede6234eb
-_use_gcc_lto=${_use_gcc_lto-}
-
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-# ATTENTION!: You need llvm-git or a patched llvm 15
-# ATTENTION!: This is experimental, could fail to boot with nvidia
+# ATTENTION!: kCFI is only available in llvm 16
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
@@ -166,17 +157,6 @@ _build_nvidia=${_build_nvidia-}
 # Enable bcachefs
 _bcachefs=${_bcachefs-}
 
-# Enable LATENCY NICE
-# Latency nice is a approach to sets latency-nice as a per-task attribute
-# It can improve the latency of applications similar to sched_nice, but focused on the latency
-# You need to set the values per task
-# Ananicy-cpp has a experimental implementation for this
-# It converts sched_nice to latency_nice and set this per task
-# You need to configure ananicy-cpp for this or use existing settings
-# If you want to test it, use the following branch
-# https://gitlab.com/ananicy-cpp/ananicy-cpp/-/tree/feature/latency-nice
-_latency_nice=${_latency_nice-}
-
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
     pkgsuffix=cachyos-lts-lto
     pkgbase=linux-$pkgsuffix
@@ -185,8 +165,8 @@ else
     pkgsuffix=cachyos-lts
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.1
-_minor=69
+_major=6.6
+_minor=10
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -195,7 +175,7 @@ _stable=${_major}.${_minor}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux BORE scheduler Kernel by CachyOS with other patches and improvements'
+pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
 pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
@@ -213,6 +193,7 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
         LLVM_IAS=1
     )
 fi
+
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 _nv_ver=545.29.06
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
@@ -222,17 +203,15 @@ source=(
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
+# WARNING The ZFS module doesn't build with selected RT sched due to licensing issues.
+if [[ "$_cpusched" = "rt" || "$_cpusched" = "rt-bore" ]]; then
+    unset _build_zfs
+fi
+
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=95785196f26e92d82cf4445654ba84e4a9671c57")
-fi
-
-## Latency NICE Support
-if [ -n "$_latency_nice" ]; then
-    if [[ "$_cpusched" = "bore"  || "$_cpusched" = "cfs" || "$_cpusched" = "hardened" ]]; then
-         source+=("${_patchsource}/misc/0001-Add-latency-priority-for-CFS-class.patch")
-    fi
+    source+=("git+https://github.com/cachyos/zfs.git#commit=d38565b5ac3ecbf9dde7e8f7d71f4620a9cea9f9")
 fi
 
 # NVIDIA pre-build module support
@@ -241,33 +220,30 @@ if [ -n "$_build_nvidia" ]; then
              "$_patchsource/misc/nvidia/nvidia-drm-hotplug-workqueue.patch")
 fi
 
+## ToDo: Adjust for new Scheduler Changes
 case "$_cpusched" in
-    tt) ## TT Scheduler
-        source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
-    bore) ## BORE Scheduler with latency_nice
-        [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
+    cachyos) # CachyOS Scheduler (EEVDF + BORE)
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+    bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore.patch");;
-    rt) ## CFS with RT patches
+    rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
+    rt-bore) ## RT with BORE Scheduler
+        source+=("${_patchsource}/misc/0001-rt.patch"
+                 "${_patchsource}/sched/0001-bore-cachy-rt.patch"
+                 linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch"
+        source+=("${_patchsource}/sched/0001-bore.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
+    sched-ext) ## Sched-ext with BORE
+        source+=("${_patchsource}/sched/0001-sched-ext.patch"
+                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
 esac
 
 ## bcachefs Support
 if [ -n "$_bcachefs" ]; then
     source+=("${_patchsource}/misc/0001-bcachefs.patch")
-fi
-if [ -n "$_use_gcc_lto" ]; then
-## GCC-LTO Patch
-## Fix for current gcc --enable-default-pie option
-    source+=("${_patchsource}/misc/gcc-lto/0001-gcc-LTO-support-for-the-kernel.patch"
-             "${_patchsource}/misc/gcc-lto/0002-gcc-lto-no-pie.patch")
-fi
-## Use vma lock as an extra patch since it has some issues right now
-if [[ "$_vma_config" = "standard"  || "$_vma_config" = "stats" ]]; then
-    source+=("${_patchsource}/misc/0001-Introduce-per-VMA-lock.patch")
 fi
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
@@ -285,7 +261,6 @@ prepare() {
     cd ${srcdir}/$_srcname
 
     echo "Setting version..."
-    scripts/setlocalversion --save-scmversion
     echo "-$pkgrel" > localversion.10-pkgrel
     echo "${pkgbase#linux}" > localversion.20-pkgname
 
@@ -293,6 +268,7 @@ prepare() {
     for src in "${source[@]}"; do
         src="${src%%::*}"
         src="${src##*/}"
+        src="${src%.zst}"
         [[ $src = nvidia-drm-hotplug-workqueue.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
@@ -315,32 +291,21 @@ prepare() {
         "${srcdir}"/auto-cpu-optimization.sh
     fi
 
-    ### Prevent ZFS and bcachefs building at the same time
-    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/152
-    if [[ -n "$_bcachefs" && -n "$_build_zfs"  ]]; then
-        _die "ZFS and bcachefs support cannot be built at the same time. "
-    fi
-
     ### Selecting CachyOS config
     if [ -n "$_cachy_config" ]; then
         echo "Enabling CachyOS config..."
         scripts/config -e CACHY
     fi
 
-    ### Workaround for bcachefs
-    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/152
-    if [ -n "$_bcachefs" ]; then
-        scripts/config -d DRM_ACCEL_IVPU
-    fi
-
     ### Selecting the CPU scheduler
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
-        bore|hardened) scripts/config -e SCHED_BORE;;
-        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_LAZY -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_LAZY -d PREEMPT_BUILD;;
-        cfs) ;;
+        bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
+        eevdf) ;;
+        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
+        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
+        sched-ext) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -364,15 +329,6 @@ prepare() {
     esac
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
-
-    ### Enable GCC FULL LTO
-    ### Disable LTO_CP_CLONE, its experimental
-    if [ -n "$_use_gcc_lto" ]; then
-         scripts/config -e LTO_GCC \
-            -d LTO_CP_CLONE
-    ### Disable DEBUG, pahole is currently broken with GCC LTO
-            _disable_debug=y
-    fi
 
     ### Select tick rate
     [ -z $_HZ_ticks ] && _die "The value is empty. Choose the correct one again."
@@ -439,7 +395,7 @@ prepare() {
     ### Select preempt type
 
     # We should not set up the PREEMPT for RT kernels
-    if [ "$_cpusched" != "rt" ]; then
+    if [[ "$_cpusched" != "rt" || "$_cpusched" != "rt-bore" ]]; then
         [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
         case "$_preempt" in
@@ -464,6 +420,16 @@ prepare() {
         echo "Enabling KBUILD_CFLAGS -Os..."
         scripts/config -d CC_OPTIMIZE_FOR_PERFORMANCE \
             -e CONFIG_CC_OPTIMIZE_FOR_SIZE
+    fi
+
+    ### Enable bbr3
+    if [ -n "$_tcp_bbr3" ]; then
+        echo "Disabling TCP_CONG_CUBIC..."
+        scripts/config -m TCP_CONG_CUBIC \
+            -d DEFAULT_CUBIC \
+            -e TCP_CONG_BBR \
+            -e DEFAULT_BBR \
+            --set-str DEFAULT_TCP_CONG bbr
     fi
 
     ### Select LRU config
@@ -588,7 +554,9 @@ prepare() {
     fi
 
     ### Disable DEBUG
-    if [ -n "$_disable_debug" ]; then
+    # Doesn't work with sched-ext
+    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/187
+    if [[ "$_cpusched" != "sched-ext" &&  -n "$_disable_debug" ]]; then
         scripts/config -d DEBUG_INFO \
             -d DEBUG_INFO_BTF \
             -d DEBUG_INFO_DWARF4 \
@@ -643,7 +611,7 @@ prepare() {
     diff -u ../config .config || :
 
     ### Prepared version
-    make ${BUILD_FLAGS[*]} -s kernelrelease > version
+    make -s kernelrelease > version
     echo "Prepared $pkgbase version $(<version)"
 
     ### Running make nconfig
@@ -715,8 +683,7 @@ _package() {
 
     cd ${srcdir}/$_srcname
 
-    local kernver="$(<version)"
-    local modulesdir="$pkgdir/usr/lib/modules/$kernver"
+    local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
 
     echo "Installing boot image..."
     # systemd expects to find the kernel here to allow hibernation
@@ -730,8 +697,8 @@ _package() {
     ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
-    # remove build and source links
-    rm "$modulesdir"/{source,build}
+    # remove build links
+    rm "$modulesdir"/build
 }
 
 _package-headers() {
@@ -853,8 +820,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('7e3d2694d18ce502068cc88a430da809abbd17d0773268524ebece442612b541'
-            '54da027dcf21cde409b6a8cc3315ca82aa390f6698fe137f0358fd21483710e9'
+sha256sums=('9ee627e4c109aec7fca3eda5898e81d201af2c7eb2f7d9d7d94c1f0e1205546c'
+            '01e0933bd6fd3e5fcd667ecb3c692b94d2d57dff79d64512dc2e0badac00446c'
             '3f3233256725683aa95c29ee423932a5bcc74c0653e09d502240601387c3edec'
-            'f0899bc893d6a15cf1bc454cdfd8ef79e2dc15425348c466c3054ce8324f8b13'
-            '3dde55ca9cfc5e907b2f1945e17b0750d28067bd22aca1a2f4e73d47e64b12fb')
+            'd22c1978ab28e35f1f6be65903b4bf304e5454ac98d131a1f65d1dc7c20db004'
+            'a5bd81c759757ae46c809de0c39b84a52c8646ef1cb9469c220774ecb81aa788')

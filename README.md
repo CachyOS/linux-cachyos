@@ -50,7 +50,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Very customizable PKGBUILD with many features and improvements.
 - `GCC/CLANG` Optimization with automatically found CPU architecture or also selectable CPU architecture.
 - Choose between `LLVM/LTO & Thin-LTO` or `GCC`.
-- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 500Hz for BORE/CFS/EEVDF and 1000Hz for other schedulers.
+- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 500Hz
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 
 ### :abacus: CPU enhancements
@@ -64,7 +64,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Latest & improved ZSTD 1.5.5 patch-set.
 - UserKSM daemon from pf.
 - Improved BFQ Scheduler.
-- support for bcachefs.
+- Bcachefs enabled by default
 
 ### &#128423; Network 
 - BBRv3 tcp_congestion_control.
@@ -77,13 +77,12 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - LRNG Framework - *default disabled*
 - OpenRGB and ACS Override support
 - maple-tree, MG-LRU and per-VMA-locks fixes from upstream
-- kvm-lru patches from upstream
 
 # [CachyOS repositories](https://mirror.cachyos.org/)
 The repositories contain both Arch Linux and CachyOS packages, which have been re-built with flags optimized for performance, stability, and security.
-- `x86-64-v4` - currently only kernel packages + LTO.
-- `x86-64-v3` - all Arch Linux packages + LTO.
-- `x86-64` - all Arch Linux packages + LTO.
+- `x86-64-v4` - all Arch Linux packages + LTO
+- `x86-64-v3` - all Arch Linux packages + LTO
+- `x86-64` - currently only kernel packages
 
 ## How to add CachyOS repositories
 
@@ -148,10 +147,6 @@ Pay attention to the following text with brackets. **(supported, searched)**
   x86-64-v4 (supported, searched)
   x86-64-v3 (supported, searched)
   x86-64-v2 (supported, searched)
-  haswell (AT_PLATFORM; supported, searched)
-  tls (supported, searched)
-  avx512_1 (supported, searched)
-  x86_64 (supported, searched)
 ```
 
 #### Example of CPU incompatible with x86-64-v4 instruction set
@@ -195,12 +190,10 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 ## Only add if your CPU does support x86-64-v4 architecture
 [cachyos-v4]
 Include = /etc/pacman.d/cachyos-v4-mirrorlist
-[cachyos-v3]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
-[cachyos-core-v3]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
-[cachyos-extra-v3]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
+[cachyos-core-v4]
+Include = /etc/pacman.d/cachyos-v4-mirrorlist
+[cachyos-extra-v4]
+Include = /etc/pacman.d/cachyos-v4-mirrorlist
 [cachyos]
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
