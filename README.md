@@ -320,7 +320,8 @@ How to backup and use Arch packages?
 **PayPal:** <https://paypal.me/pttrr> <br />
 **Patreon:** <https://www.patreon.com/CachyOS> <br />
 **BTC:** bc1qmwglfchlc335du6pcu6w64cexu7cck0mzhyw42 <br />
-**ETH:** 0xc2dc77327F78A7B85Db3941Eb49e74F41E961649
+**ETH:** 0xc2dc77327F78A7B85Db3941Eb49e74F41E961649 <br />
+**LTC:** LgGTwcEBcXqMgNT6XyyNWABMb7dZVtVg9w
 
 ## Valueable Contributors
 [Hamad Marri](https://github.com/hamadmarri) for the TT Scheduler <br />
