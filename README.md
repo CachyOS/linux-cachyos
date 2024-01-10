@@ -293,56 +293,9 @@ eselect repository add CachyOS-kernels git https://github.com/Szowisz/CachyOS-ke
 emaint sync -r CachyOS-kernels
 ```
 ### Fedora
-[Port](https://github.com/sirlucjan/copr-linux-cachyos) of kernel linux-cachyos-bore and linux-cachyos-bore-lto by [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
+[Port](https://github.com/sirlucjan/copr-linux-cachyos) of kernel linux-cachyos-bore, linux-cachyos-rt-bore, linux-cachyos-bore-lto and linux-cachyos-lts by [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
 
-Only x86_64_v3 versions are available. Check support by the following the command
-```
-/lib64/ld-linux-x86-64.so.2 --help | grep "(supported, searched)"
-
-```
-If it does not detect x86_64_v3 support do not install the kernel. Otherwise you will end up with a non-functioning operating system!
-
-##### Installation Instructions:
-
-###### Fedora Workstation
-
-```
-sudo dnf copr enable bieszczaders/kernel-cachyos
-```
-
-and next
-
-```
-sudo dnf install kernel-cachyos-bore
-```
-
-OR
-```
-sudo dnf install kernel-cachyos-bore-eevdf
-```
-
-###### Fedora Silverblue
-
-```
-cd /etc/yum.repos.d/
-
-sudo wget https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/repo/fedora-$(rpm -E %fedora)/bieszczaders-kernel-cachyos-fedora-$(rpm -E %fedora).repo
-```
-
-and next
-
-```
-sudo rpm-ostree override remove kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra --install kernel-cachyos-bore
-
-sudo systemctl reboot
-```
-
-OR
-```
-sudo rpm-ostree override remove kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra --install kernel-cachyos-bore-eevdf
-
-sudo systemctl reboot
-```
+Visit the [COPR page](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/) for installation instructions and the latest announcements.
 
 ### NixOS
 
