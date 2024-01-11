@@ -640,7 +640,11 @@ prepare() {
 
 build() {
     cd ${srcdir}/${_srcname}
-    make ${BUILD_FLAGS[*]} -j$(nproc) all
+    if [ -z "${_use_llvm_lto}" ] && ([ -z "${CC}" ] || [ "${CC}" != "clang" ] || [ "${CC}" == "gcc" ]); then
+        make KCFLAGS="-fivopts -fmodulo-sched" ${BUILD_FLAGS[*]} -j$(nproc) all
+    else
+        make ${BUILD_FLAGS[*]} -j$(nproc) all
+    fi
 
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}/${_nv_pkg}/kernel"
