@@ -640,7 +640,7 @@ prepare() {
 
 build() {
     cd ${srcdir}/${_srcname}
-    if [ -z "${_use_llvm_lto}" ] && ([ -z "${CC}" ] || [ "${CC}" != "clang" ] || [ "${CC}" == "gcc" ]); then
+    if [ "$_use_llvm_lto" = "none" ]; then
         make KCFLAGS="-fivopts -fmodulo-sched" ${BUILD_FLAGS[*]} -j$(nproc) all
     else
         make ${BUILD_FLAGS[*]} -j$(nproc) all
