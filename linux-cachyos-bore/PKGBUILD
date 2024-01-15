@@ -193,7 +193,7 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
     )
 fi
 
-if [ "$_cpusched" = "sched-ext" ]; then
+if [[ "$_cpusched" = "sched-ext" || "$_cpusched" = "cachyos" ]]; then
     depends+=(scx-scheds)
 fi
 
@@ -223,10 +223,11 @@ if [ -n "$_build_nvidia" ]; then
              "$_patchsource/misc/nvidia/nvidia-drm-hotplug-workqueue.patch")
 fi
 
-## ToDo: Adjust for new Scheduler Changes
+## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos) # CachyOS Scheduler (EEVDF + BORE)
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+    cachyos|sched-ext) # CachyOS Scheduler (BORE + EEVDF)
+        source+=("${_patchsource}/sched/0001-sched-ext.patch"
+                 "${_patchsource}/sched/0001-bore-cachy.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     rt) ## EEVDF with RT patches
@@ -239,9 +240,6 @@ case "$_cpusched" in
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
-    sched-ext) ## Sched-ext with BORE
-        source+=("${_patchsource}/sched/0001-sched-ext.patch"
-                 "${_patchsource}/sched/0001-bore-cachy.patch");;
 esac
 
 ## lrng patchset
@@ -300,11 +298,11 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
+        cachyos|sched-ext) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
+        bore|hardened) scripts/config -e SCHED_BORE;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
-        sched-ext) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -555,7 +553,7 @@ prepare() {
     ### Disable DEBUG
     # Doesn't work with sched-ext
     # More infos here: https://github.com/CachyOS/linux-cachyos/issues/187
-    if [[ "$_cpusched" != "sched-ext" &&  -n "$_disable_debug" ]]; then
+    if [[ "$_cpusched" != "sched-ext" || "$_cpusched" != "cachyos" ]] && [ -n "$_disable_debug" ]; then
         scripts/config -d DEBUG_INFO \
             -d DEBUG_INFO_BTF \
             -d DEBUG_INFO_DWARF4 \
