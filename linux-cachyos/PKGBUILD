@@ -248,6 +248,10 @@ if [ -n "$_lrng_enable" ]; then
     source+=("${_patchsource}/misc/0001-lrng.patch")
 fi
 
+if [ "$_use_llvm_lto" = "none" ]; then
+    source+=("${_patchsource}/misc/0001-Add-extra-GCC-optimization-flags.patch")
+else
+
 export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER=$pkgbase
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
@@ -640,11 +644,7 @@ prepare() {
 
 build() {
     cd ${srcdir}/${_srcname}
-    if [ "$_use_llvm_lto" = "none" ]; then
-        make KCFLAGS="-fivopts -fmodulo-sched" ${BUILD_FLAGS[*]} -j$(nproc) all
-    else
-        make ${BUILD_FLAGS[*]} -j$(nproc) all
-    fi
+    make ${BUILD_FLAGS[*]} -j$(nproc) all
 
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}/${_nv_pkg}/kernel"
