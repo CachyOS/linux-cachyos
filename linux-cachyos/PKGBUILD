@@ -260,7 +260,7 @@ fi
 # gcc specific flags
 if [ "$_use_llvm_lto" = "none" ]; then
     source+=("${_patchsource}/misc/0001-Add-extra-GCC-optimization-flags.patch")
-else
+fi
 
 export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER=$pkgbase
