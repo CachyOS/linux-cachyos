@@ -27,11 +27,13 @@ pkgbase = linux-cachyos-lts
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/sched/0001-bore-cachy.patch
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/misc/0001-Add-extra-GCC-optimization-flags.patch
 	sha256sums = 1fd7ec8c3d9c4e4b3a41d11e2c6d151e5fbf875dd08b3577f73afd6ee6674605
 	sha256sums = 01e0933bd6fd3e5fcd667ecb3c692b94d2d57dff79d64512dc2e0badac00446c
 	sha256sums = 3f3233256725683aa95c29ee423932a5bcc74c0653e09d502240601387c3edec
 	sha256sums = d9e0ba3fd2dc64f96544bb781c60993ad149b9446125b42c4d6e1a180a7f6e85
 	sha256sums = a5bd81c759757ae46c809de0c39b84a52c8646ef1cb9469c220774ecb81aa788
+	sha256sums = 5bc026e17190ad72d5907c9040480c5e72fdb200b5d22fedf565424aea31e36f
 
 pkgname = linux-cachyos-lts
 	pkgdesc = The Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules
