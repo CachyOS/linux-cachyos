@@ -257,8 +257,8 @@ if [ -n "$_lrng_enable" ]; then
     source+=("${_patchsource}/misc/0001-lrng.patch")
 fi
 
-# GCC specific flags
-if [[ "$_use_llvm_lto" = "none" ]] && [[ -z "$_use_kcfi" ]]; then
+# gcc specific flags
+if [ "$_use_llvm_lto" = "none" ]; then
     source+=("${_patchsource}/misc/0001-Add-extra-GCC-optimization-flags.patch")
 fi
 
