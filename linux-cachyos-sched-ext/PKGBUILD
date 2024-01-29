@@ -20,10 +20,6 @@ _cachy_config=${_cachy_config-y}
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
 _cpusched=${_cpusched-sched-ext}
 
-# Apply suggested sysctl values from them developer of the BORE Scheduler
-# base_slice and disable tuneable scaling
-_bore_tuning_sysctl=${_bore_tuning_sysctl-}
-
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
 
@@ -246,11 +242,6 @@ case "$_cpusched" in
     sched-ext) ## SCHED-EXT
         source+=("${_patchsource}/sched/0001-sched-ext.patch");;
 esac
-
-# BORE Tuning Sysctl
-if [ -n "$_bore_tuning_sysctl" ]; then
-    source+=("${_patchsource}/misc/bore-tuning-sysctl.patch")
-fi
 
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then

@@ -20,10 +20,6 @@ _cachy_config=${_cachy_config-y}
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
 _cpusched=${_cpusched-bore}
 
-# Apply suggested sysctl values from them developer of the BORE Scheduler
-# base_slice and disable tuneable scaling
-_bore_tuning_sysctl=${_bore_tuning_sysctl-y}
-
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
 
@@ -246,11 +242,6 @@ case "$_cpusched" in
     sched-ext) ## SCHED-EXT
         source+=("${_patchsource}/sched/0001-sched-ext.patch");;
 esac
-
-# BORE Tuning Sysctl
-if [ -n "$_bore_tuning_sysctl" ]; then
-    source+=("${_patchsource}/misc/bore-tuning-sysctl.patch")
-fi
 
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
@@ -833,5 +824,4 @@ b2sums=('4c1f480de0c1458aa67379cd02d35708f63850adb84a85061088de1f82b5d084bc7cf7d
         '1da8ae554a57e2c2ecbc2bce091a8f27f2f8403b63a4c38f0c1df0b1607de67abbe99ba5fcb87a246a46e925b762865adc092bf18c7317d5b19e58087d787491'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
         'a89904cd7c7248ca97ace716330d76950edcbbbc9b9fb36e46841914c1ab6f0ec16549d308846b89b16df1943c652977983632808da59d8596fbe12e9e9e3f9f'
-        '95bae7723f6837b86f8897a006a7d191f56a10b9b6797f8d5f89388e4a5038c6d9cf4072d44e7e6fcd720d0270765f44fdc37f955dd43c29454cd86be022e64a'
-        '0c8d56c54b589abf20691ac7c209f7a76f4a23ba754ac2f7e66ce4b5843b461a2e4b6799dd1acd1ac60292fa2938d8563513b79fc1dd2274c7153c324ae7d759')
+        '95bae7723f6837b86f8897a006a7d191f56a10b9b6797f8d5f89388e4a5038c6d9cf4072d44e7e6fcd720d0270765f44fdc37f955dd43c29454cd86be022e64a')

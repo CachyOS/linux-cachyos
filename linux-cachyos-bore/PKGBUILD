@@ -243,11 +243,6 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-sched-ext.patch");;
 esac
 
-# BORE Tuning Sysctl
-if [ -n "$_bore_tuning_sysctl" ]; then
-    source+=("${_patchsource}/misc/bore-tuning-sysctl.patch")
-fi
-
 ## lrng patchset
 if [ -n "$_lrng_enable" ]; then
     source+=("${_patchsource}/misc/0001-lrng.patch")
