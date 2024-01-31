@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-hardened
 	pkgdesc = Linux hardenened BORE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.6.14
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -32,7 +32,7 @@ pkgbase = linux-cachyos-hardened
 	b2sums = 20f42891e01b248b0df74e0f395e58314052af1d0f364e93a67180cdae63d13299316d37f61002f13ab11b73f8cf52de91a4f49a3038c965a3cd120625d461e3
 	b2sums = 43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d
 	b2sums = d4bb4969dd86eb99b3659294fa5a1ef477fa9c9e05e7d36c673061f9f3acc658c26543d910d851057683426fce0844644cf1e150f60c611774cc95b0e32322ed
-	b2sums = 0c71a752ea50d5606af54aac3569baa371f88896aad98dd34d405227cd0890d76b71bec4e000bfb2b6d38021303281399c4632952cafde1cc3a6e2c876ced9ce
+	b2sums = 31bf236711a802403bb686cace4c48601a24eb9cc8ec6c1d0a864fedd2dd321c6b52c55443c9d0437b383881e0673bfc64565134c5000fa347727fe401a99aa4
 	b2sums = 4122b04145b0b13143ddd878ead159f8c23fa9c086908cc32524ab7c94d17da07e65c5b8dbc25b22dd0309471613e01d381e93c848a59663908420a4fe319dea
 
 pkgname = linux-cachyos-hardened

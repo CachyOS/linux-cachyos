@@ -173,8 +173,8 @@ pkgver=${_major}.${_rcver}
 _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS and with some other patches and other improvements'
-pkgrel=1
+pkgdesc='Linux EEVDF scheduler with the sched-ext framework Kernel by CachyOS and with some other patches and other improvements'
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -225,8 +225,7 @@ fi
 ## List of CachyOS schedulers
 case "$_cpusched" in
     cachyos|sched-ext) ## SCHED-EXT
-        source+=("${_patchsource}/sched/0001-sched-ext.patch"
-                 "${_patchsource}/sched/0001-bore-cachy.patch");;
+        source+=("${_patchsource}/sched/0001-sched-ext.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     rt) ## EEVDF with RT patches
@@ -824,5 +823,4 @@ b2sums=('74e9374629131245bfa4d2948499b6cfa00c9375d70e738b6b81e54958976d6bc92cb4c
         'c0f9e4b8caac7607da9c299f3e49e811df50ec869ada08e4e5dffad820077e77de79f11de3febb358ae7eee18d1ded4dfc4f07358e0723409ba32a532a163e0b'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
         'f1f0b16b9afc54f7b1af3836066fc580b4915a74105f6f566cbde4256039548dab9bcefa3e0167722262953e7f278fa9d4f42907f8030a7af7ee8e7dfed55d72'
-        '574e60b25fc38cb1eac59fdc839ff66ce71c0ce7adf33c396e4cc34043c6122aa9f1f6090e721db92a372a9394e7c435720fa87fb213b592bb7d118344a56169'
-        'b4fa10f29fa9a82cf155cbbf5fdf5f12e7bbef121afc26bc3c1a256d9616ffdbd064b69b63851ca1b338d310de401ad993e44cfedca20f987e1c726be3ca0982')
+        '574e60b25fc38cb1eac59fdc839ff66ce71c0ce7adf33c396e4cc34043c6122aa9f1f6090e721db92a372a9394e7c435720fa87fb213b592bb7d118344a56169')
