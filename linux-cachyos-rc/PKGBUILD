@@ -134,7 +134,8 @@ _use_llvm_lto=${_use_llvm_lto-none}
 
 # Use suffix -lto only when requested by the user
 # Enabled by default.
-# If you do not want the suffix -lto remove the "y" sign next to the flag.
+# y - enable -lto suffix
+# n - disable -lto suffix
 # https://github.com/CachyOS/linux-cachyos/issues/36
 _use_lto_suffix=${_use_lto_suffix-y}
 
@@ -155,11 +156,11 @@ _build_zfs=${_build_zfs-}
 # This does replace the requirement of nvidia-dkms
 _build_nvidia=${_build_nvidia-}
 
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
+if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
     pkgsuffix=cachyos-rc-lto
     pkgbase=linux-$pkgsuffix
 
-else
+elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgsuffix=cachyos-rc
     pkgbase=linux-$pkgsuffix
 fi
