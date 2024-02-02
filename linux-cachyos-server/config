@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.7.2 Kernel Configuration
+# Linux/x86 6.7.3 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 13.2.1 20231110"
 CONFIG_CC_IS_GCC=y
@@ -11564,7 +11564,7 @@ CONFIG_STACKTRACE=y
 #
 # Debug kernel data structures
 #
-CONFIG_DEBUG_LIST=y
+# CONFIG_DEBUG_LIST is not set
 # CONFIG_DEBUG_PLIST is not set
 # CONFIG_DEBUG_SG is not set
 # CONFIG_DEBUG_NOTIFIERS is not set
