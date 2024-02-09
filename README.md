@@ -312,7 +312,7 @@ How to backup and use Arch packages?
 > This is no longer necessary, as you can simply install the latest DKMS version from our repository.
 
 ## Support
-**Discord:** <https://discord.gg/qJqj94uFwE> <br />
+**Discord:** <https://discord.gg/cachyos-862292009423470592> <br />
 **Telegram:** <https://t.me/+zCzPX4cAFjk1MTYy> <br />
 **Matrix:** <https://matrix.cachyos.org> <br />
 
