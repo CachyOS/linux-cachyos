@@ -112,7 +112,7 @@ sudo ./cachyos-repo.sh
 1. Script will auto-detect CPU architecture, if CPU has `x86-64-v4` or `x86-64-v3` support, script will automatically use the repositories which are optimized with this flag > and some other flags.
 2. Script will backup your old `pacman.conf`.
 
-For more information, check out our [GitHub](https://github.com/cachyos) or join our [Discord](https://discord.gg/k39qfrxPNa) community.
+For more information, check out our [GitHub](https://github.com/cachyos) or join our [Discord](https://discord.gg/cachyos-862292009423470592) community.
 
 ### Option 2: Manual Installation
 
