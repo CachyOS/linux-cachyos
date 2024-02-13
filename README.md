@@ -54,27 +54,25 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 
 ### :abacus: CPU enhancements
-- 3 Different scheduler are supported,`SCHED-EXT`,`BORE`, and `EEVDF` scheduler.
-- AMD P-State Preferred Core and enabled as default
-- SCHED-EXT Schedulers prebuilt in the repository # https://lwn.net/Articles/922405/ (only for `linux-cachyos-sched-ext`)
+- 3 Different scheduler are supported,`SCHED-EXT`,`BORE`, and `EEVDF` scheduler
+- AMD P-State Preferred Core, AMD cpb boost (disable boost) and upstream amd-pstate enhancements
+- SCHED-EXT Schedulers prebuilt in the repository # https://lwn.net/Articles/922405/ - `linux-cachyos` and `linux-cachyos-sched-ext`
+- Cachy Sauce (CONFIG_CACHY), enables various tweaks for the scheduler and other settings
 ### :bookmark_tabs: Filesystem & memory
-- Latest BTRFS/XFS/EXT4 improvements & fixes.
-- ZFS Filesystem Support and prebuilt in the repository.
+- Latest BTRFS/XFS/EXT4 improvements & fixes
+- ZFS Filesystem Support and prebuilt in the repository
 - NVIDIA Module Support - Build the nvidia module together with the kernel
-- Latest & improved ZSTD 1.5.5 patch-set.
-- UserKSM daemon from pf.
-- Improved BFQ Scheduler.
-- Bcachefs enabled by default
+- Latest & improved ZSTD 1.5.5 patch-set
+- UserKSM daemon from pf
+- Improved BFQ Scheduler
 
 ### &#128423; Network 
-- BBRv3 tcp_congestion_control.
+- BBRv3 tcp_congestion_control
 
 ### :arrow_heading_down: Other features
 - partial Clearlinux Patchset.
-- Back-ported patches from `linux-next`.
-- Scheduler patches from linux-next/tip.
-- General improved sysctl settings and upstream scheduler fixes.
-- LRNG Framework - *default disabled*
+- Back-ported patches from `linux-next`
+- Scheduler patches from linux-next/tip
 - OpenRGB and ACS Override support
 - maple-tree, MG-LRU and per-VMA-locks fixes from upstream
 
