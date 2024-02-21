@@ -567,6 +567,7 @@ prepare() {
 build() {
     cd ${srcdir}/${_srcname}
     make ${BUILD_FLAGS[*]} -j$(nproc) all
+    make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
 
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}/${_nv_pkg}/kernel"
@@ -635,7 +636,7 @@ _package-headers() {
 
     echo "Installing build files..."
     install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
-        localversion.* version vmlinux
+        localversion.* version vmlinux tools/bpf/bpftool/vmlinux.h
     install -Dt "$builddir/kernel" -m644 kernel/Makefile
     install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
     cp -t "$builddir" -a scripts
@@ -746,7 +747,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('91e5abb3905ba9e8b5cdf26b89758f4454b4e573f148fb08340c60852115d95068e44420d73373a406cb47fb011fc14ee65294489f197a3f7f39d3d8e24b2f2d'
-        '2457193fbdfbbb261caf59950ec56f6292f8883fbac7603d188a1e61df1d7c73446f8cc3f4301ae2ab3a5a6f582e16e1c7732e72f190805a3edb7a8ce0593069'
+        'e11ddfab85b76948aa9d1c2873c6149208d1f901b2a46bf78845ac27c2cd771010991e2697cd9d30fa087f97be2fd00354ae27e8a912253561430e2061c198d7'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
         '7694188757171486d58081641d2c19d0f4cfaef4626394b3a68c4106fd39bb306027b33b61c0414567a40e8e20252b7078f67ff6e960482712b9e2e5bf216669'
         'fb67415ea31cac08825f482691fcfa188a4912e4fe0ec2189c5124999dcf2ee7f9cc16cf42a1b45ccbdb245ef64e5260cbe22c5c85727ebd4b0d9adf98cba987')
