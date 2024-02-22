@@ -84,36 +84,6 @@ The repositories contain both Arch Linux and CachyOS packages, which have been r
 
 ## How to add CachyOS repositories
 
-### Option 1: Automated Installation of cachyos repositories
-
-We've made it easy for you! Simply run the following commands to use our helper script that does all the work for you.  😉
-
-Run the following commands:
-1. Get archive with script
-
-```
-wget https://mirror.cachyos.org/cachyos-repo.tar.xz
-```
-> If you don't have `wget`, install it with `sudo pacman -S wget`
-
-2. Extract and enter into the archive
-```
-tar xvf cachyos-repo.tar.xz && cd cachyos-repo
-```
-
-3. Run script with sudo
-```
-sudo ./cachyos-repo.sh
-```
-
-#### Behaviour of script
-1. Script will auto-detect CPU architecture, if CPU has `x86-64-v4` or `x86-64-v3` support, script will automatically use the repositories which are optimized with this flag > and some other flags.
-2. Script will backup your old `pacman.conf`.
-
-For more information, check out our [GitHub](https://github.com/cachyos) or join our [Discord](https://discord.gg/cachyos-862292009423470592) community.
-
-### Option 2: Manual Installation
-
 1. Install the cachyos keyring
 ```
 sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
@@ -126,7 +96,7 @@ sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-3
 ```
 
 ## Check CPU compatibility
-If you want to add our repositories manually, you must check the compatibility of the CPU with cachyos repositories.
+If you want to add our repositories , you must check the compatibility of the CPU with cachyos repositories.
 > If you are using the script above to add cachyos repositories, you can skip the check.
 
 #### 1. Check support by running the following the command
@@ -157,6 +127,7 @@ Pay attention to the following text with brackets. **(supported, searched)**
 
 ### 3. Adding cachyos repositories
 You need to edit `pacman.conf` and add repositories.
+To avoid breaking your system or if you would want to uninstall the cachyos repos later , you are advised to make a backup of your pacman.conf before any modifications.
 ```
 sudo nano /etc/pacman.conf
 ```
@@ -224,26 +195,14 @@ Server = https://debug.cachyos.org/repo/$arch_v3/$repo
 
 ## Uninstalling CachyOS repositories
 
-### Option 1: Automated Removal
+Removal
 
-Run these commands to remove the CachyOS repos from your system:
-
-```
-wget https://build.cachyos.org/cachyos-repo.tar.xz
-tar xvf cachyos-repo.tar.xz
-cd cachyos-repo
-sudo ./cachyos-repo.sh --remove
-```
-
-### Option 2: Manual Removal
-
-1.  Backup or remove the config file at `/etc/pacman.conf`.
-2.  Run this command:
-
-```
-sudo mv /etc/pacman.conf.bak /etc/pacman.conf
-```
-
+1. Remove the config file at `/etc/pacman.conf`.
+2. Copy the backup of pacman.conf that you had made earlier.
+4. Run this command
+   ```
+   sudo pacman -R cachyos-keyring cachyos-mirrorlist cachyos-v3-mirrorlist cachyos-v4-mirrorlist 
+   ```
 3.  Switch to default Arch Linux packages with this command:
 
 ```
