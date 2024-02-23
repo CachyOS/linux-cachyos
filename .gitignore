@@ -10,6 +10,6 @@
 *.log.*
 *.sig
 *.xz*
-
+*.run
 pkg/
 src/

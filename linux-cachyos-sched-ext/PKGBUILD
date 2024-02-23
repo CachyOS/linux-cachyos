@@ -557,12 +557,6 @@ prepare() {
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}"
         sh "${_nv_pkg}.run" --extract-only
-
-        # Temporary fix for fbdev=1
-        # https://forums.developer.nvidia.com/t/545-29-06-18-1-flip-event-timeout-error-on-startup-shutdown-and-sometimes-suspend-wayland-unusable/274788/21
-        patch -Np0 -i "${srcdir}/nvidia-drm-hotplug-workqueue.patch" -d "${srcdir}/${_nv_pkg}"
-        # Temporary fix for nvidia module build
-        patch -Np2 --no-backup-if-mismatch -i "${srcdir}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch" -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 }
 
