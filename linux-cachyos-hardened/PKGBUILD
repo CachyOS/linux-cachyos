@@ -72,7 +72,7 @@ _per_gov=${_per_gov-}
 _tcp_bbr3=${_tcp_bbr3-y}
 
 ### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
-_HZ_ticks=${_HZ_ticks-500}
+_HZ_ticks=${_HZ_ticks-1000}
 
 ## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
@@ -105,8 +105,6 @@ _hugepage=${_hugepage-always}
 
 ## Enable DAMON
 _damon=${_damon-}
-
-
 
 # CPU compiler optimizations - Defaults to prompt at kernel config if left empty
 # AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" "zen4"
@@ -164,7 +162,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.7
-_minor=5
+_minor=6
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -197,7 +195,7 @@ if [[ "$_cpusched" = "sched-ext" || "$_cpusched" = "cachyos" ]]; then
 fi
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=545.29.06
+_nv_ver=550.54.14
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
@@ -213,20 +211,19 @@ fi
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=2d940c7c29a0ba5f84f50ea9773dea237e27bb08")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=c883088df83ced3a2b8b38e6d89a5e63fb153ee4")
 fi
 
 # NVIDIA pre-build module support
 if [ -n "$_build_nvidia" ]; then
-    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
-             "$_patchsource/misc/nvidia/nvidia-drm-hotplug-workqueue.patch"
-             "$_patchsource/misc/nvidia/nvidia-drivers-470.223.02-gpl-pfn_valid.patch")
+    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run")
 fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos|sched-ext) ## SCHED-EXT
-        source+=("${_patchsource}/sched/0001-sched-ext.patch");;
+    cachyos) # CachyOS Scheduler (BORE + SCHED-EXT)
+        source+=("${_patchsource}/sched/0001-sched-ext.patch"
+                 "${_patchsource}/sched/0001-bore-cachy.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     rt) ## EEVDF with RT patches
@@ -239,6 +236,8 @@ case "$_cpusched" in
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
+    sched-ext) ## SCHED-EXT
+        source+=("${_patchsource}/sched/0001-sched-ext.patch");;
 esac
 
 
@@ -262,8 +261,6 @@ prepare() {
         src="${src%%::*}"
         src="${src##*/}"
         src="${src%.zst}"
-        [[ $src = nvidia-drm-hotplug-workqueue.patch ]] && continue
-        [[ $src = nvidia-drivers-470.223.02-gpl-pfn_valid.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -295,11 +292,12 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        cachyos|sched-ext) scripts/config -e SCHED_CLASS_EXT;;
+        cachyos) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
         bore|hardened) scripts/config -e SCHED_BORE;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
+        sched-ext) scripts/config -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -746,9 +744,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('91e5abb3905ba9e8b5cdf26b89758f4454b4e573f148fb08340c60852115d95068e44420d73373a406cb47fb011fc14ee65294489f197a3f7f39d3d8e24b2f2d'
+b2sums=('51d6e2304e7a9188a0fec5714276589cb46948157c76a2f4ed3f5e0bf634d94a89ea75251229a86e018767a3367328c16b610d631c78d82663dcd1d904b73385'
         '2b687086226532fd879fb4c28c6c8707ef416c7f860c5fb6a7d1d19858282914a29cb8af322e95174697777d6a602693600758ddff3f3f94ee8a898f7de7f005'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        '7694188757171486d58081641d2c19d0f4cfaef4626394b3a68c4106fd39bb306027b33b61c0414567a40e8e20252b7078f67ff6e960482712b9e2e5bf216669'
-        'fb67415ea31cac08825f482691fcfa188a4912e4fe0ec2189c5124999dcf2ee7f9cc16cf42a1b45ccbdb245ef64e5260cbe22c5c85727ebd4b0d9adf98cba987'
+        '92dc15e75ad82bb75a338651b52c5d9693d6e577140f9a6184f0593e09dd306991ab17b5515ef90cfa343121eeb56f6d989f9247d889b9c016e840c2784cc460'
+        '6c2400c0f49d413599c359860cc51b5a1fe61be52ae309f11cc7a7de229b46195229a70f87a01381e93b8421675c09a0268714f1cabf5ef16900af7102f637ab'
         'd603702cb37da26deec2f4cbbde4cdc99edaa528130f9657d33e7dfff2e4472fb90c4730b431be0fce4dabeaa353c2a8bc48ed8173c546a3be0c50ab997dc3a9')
