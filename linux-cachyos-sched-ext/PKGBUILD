@@ -119,9 +119,6 @@ _processor_opt=${_processor_opt-}
 
 _use_auto_optimization=${_use_auto_optimization-y}
 
-# disable debug to lower the size of the kernel
-_disable_debug=${_disable_debug-}
-
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
@@ -473,28 +470,6 @@ prepare() {
             -e DAMON_PADDR \
             -e DAMON_RECLAIM \
             -e DAMON_LRU_SORT
-    fi
-
-
-
-    ### Disable DEBUG
-    # Doesn't work with sched-ext
-    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/187
-    if [[ "$_cpusched" != "sched-ext" || "$_cpusched" != "cachyos" ]] && [ -n "$_disable_debug" ]; then
-        scripts/config -d DEBUG_INFO \
-            -d DEBUG_INFO_BTF \
-            -d DEBUG_INFO_DWARF4 \
-            -d DEBUG_INFO_DWARF5 \
-            -d PAHOLE_HAS_SPLIT_BTF \
-            -d DEBUG_INFO_BTF_MODULES \
-            -d SLUB_DEBUG \
-            -d PM_DEBUG \
-            -d PM_ADVANCED_DEBUG \
-            -d PM_SLEEP_DEBUG \
-            -d ACPI_DEBUG \
-            -d SCHED_DEBUG \
-            -d LATENCYTOP \
-            -d DEBUG_PREEMPT
     fi
 
     echo "Enable USER_NS_UNPRIVILEGED"
