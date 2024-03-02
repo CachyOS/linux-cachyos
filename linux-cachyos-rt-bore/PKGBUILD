@@ -159,7 +159,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.7
-_minor=7
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -713,7 +713,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('ef97a036ab6cd421200b2e8f0a49c6b570d2269a5e182ea948d48d456e6414bfa61f5f6efa2bad65efbe811d2078a54a4edff9c27de609401160f3905fe27a22'
+b2sums=('1e0d42507f639eedc3405d08f67d720ecc6fd8d53603886c296d67e51ac6aa89d44e94b2ddef98b3c44f6ea1724ca89db7658efaada025284cd03ffd53e95895'
         '13ae3342ec770c4fc4a3196379503dcf48e756073b785e20431b039536b85eddf51c33e7be907be3083f78874ebb480fe66d64de31412939a0fc0b1e301131d5'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
         '99c37ab91632fd6dd1bab52f4bcb1e243c0ccc0ede860c6cf6523ef62f07b47350f55d613d995bbde51b04f445b975e92d54796050b5c4b52f31e426871a902e'
