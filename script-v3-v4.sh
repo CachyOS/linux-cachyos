@@ -25,7 +25,7 @@ mv */*-x86_64_v3.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64_
 repoctl update -P cachyos-v3
 
 ## LLVM ThinLTO v3 Kernel
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-fulll/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-full/" {}
 
 files=$(find . -name "PKGBUILD")
 
