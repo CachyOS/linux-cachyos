@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-sched-ext
 	pkgdesc = Linux SCHED-EXT + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.7.8
+	pkgver = 6.7.9
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -23,15 +23,15 @@ pkgbase = linux-cachyos-sched-ext
 	makedepends = python
 	depends = scx-scheds
 	options = !strip
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.7.8.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.7.9.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.7/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.7/sched/0001-sched-ext.patch
-	b2sums = 1e0d42507f639eedc3405d08f67d720ecc6fd8d53603886c296d67e51ac6aa89d44e94b2ddef98b3c44f6ea1724ca89db7658efaada025284cd03ffd53e95895
+	b2sums = 2a5990e067439dcb3a6e7647832c85a2ce7faf28c48f414ebcb4d33ea37f870204c4b6bf98fca1faaf61bb59f579d6b597d8b2b29bd8cd2cc3b25afba3fe1fd8
 	b2sums = 13ae3342ec770c4fc4a3196379503dcf48e756073b785e20431b039536b85eddf51c33e7be907be3083f78874ebb480fe66d64de31412939a0fc0b1e301131d5
 	b2sums = 43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d
-	b2sums = 99c37ab91632fd6dd1bab52f4bcb1e243c0ccc0ede860c6cf6523ef62f07b47350f55d613d995bbde51b04f445b975e92d54796050b5c4b52f31e426871a902e
+	b2sums = 10d0ac1eca89658cca9784d264b51e7445013840a4453902b88759b551a9eb5ec1d08ea6329b1d3befc566598a70f21fa3a7681994eb03bbe1804d9fe16440e4
 	b2sums = 8d6a5fd99be7f637a2d18f9034ba2298f28f24d706f1a7f6a7afe54cea93752e2acac82b720a5c0d7495a51cdb564f5a1dd43d9c64e7b5a3dc3baeb63f24cf63
 
 pkgname = linux-cachyos-sched-ext
