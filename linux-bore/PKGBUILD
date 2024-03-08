@@ -138,7 +138,6 @@ _use_lto_suffix=${_use_lto_suffix-y}
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-# ATTENTION!: kCFI is only available in llvm 16
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
@@ -158,13 +157,13 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgsuffix=${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.7
-_minor=9
+_major=6.8
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}

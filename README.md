@@ -74,7 +74,6 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Back-ported patches from `linux-next`
 - Scheduler patches from linux-next/tip
 - OpenRGB and ACS Override support
-- maple-tree, MG-LRU and per-VMA-locks fixes from upstream
 
 # [CachyOS repositories](https://mirror.cachyos.org/)
 The repositories contain both Arch Linux and CachyOS packages, which have been re-built with flags optimized for performance, stability, and security.
