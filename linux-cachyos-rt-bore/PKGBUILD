@@ -138,7 +138,6 @@ _use_lto_suffix=${_use_lto_suffix-y}
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-# ATTENTION!: kCFI is only available in llvm 16
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
@@ -158,17 +157,17 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.7
-_minor=9
+_major=6.8
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux kernel with BORE-RT patches by CachyOS with other patches and improvements'
+pkgdesc='Linux BORE-RT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
 pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
@@ -208,7 +207,7 @@ fi
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=c883088df83ced3a2b8b38e6d89a5e63fb153ee4")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=6a58cf0ba7a3db11a5acf041cc503e8b7afb0b56")
 fi
 
 # NVIDIA pre-build module support
@@ -707,10 +706,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('2a5990e067439dcb3a6e7647832c85a2ce7faf28c48f414ebcb4d33ea37f870204c4b6bf98fca1faaf61bb59f579d6b597d8b2b29bd8cd2cc3b25afba3fe1fd8'
-        '13ae3342ec770c4fc4a3196379503dcf48e756073b785e20431b039536b85eddf51c33e7be907be3083f78874ebb480fe66d64de31412939a0fc0b1e301131d5'
+b2sums=('c6f17f816cea16e629f63e9379b98888713f57b2c5173306926471f139a9d612a0c74e119341f8075390e55e203d787d9edeb4ad5a064b18870f6f0f7ffaafb2'
+        'd663b890dc2e505a1892b42881bbac4965b7528c7cd8672d153b8659f6b3a8136314c7f5a17b9d1434d55310aae781532238d66f565ce9ae5f74c57e42edf736'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        '10d0ac1eca89658cca9784d264b51e7445013840a4453902b88759b551a9eb5ec1d08ea6329b1d3befc566598a70f21fa3a7681994eb03bbe1804d9fe16440e4'
-        '5c4ba68217543fdb1b6b325b285f30ff9e730e2cd6a2401b5c15f2c8b44616cb4ece9df1da7388a672c420f9ba2c46cacbadda1179636189704a7fd2ca07ea2b'
-        '2138c3502a5912d8ac5c0a4e0fe91cc68d8794c6c60c84d287bb0725c5752c20d49cd1a0f1071d311b3de3e1bd1656d929e09db296b5d23acea394ba5b83e6d6'
+        '5a6eadbd3a69a089eacf46dda698e49e8bd267bb60228d44720e5e1ddc621089d7a29bec16471cfc45b30e4405fd2865964e556cfb36be2d289e609f34947657'
+        '96fca1885594e0285caeb5f48955e1ec895fd4ca34e556907d67ecd1f6b3ad9632c90ce985d30336d66eae7a556e8f24899e3d3b40e78720dfb1f723c1a26b3e'
+        'e5d51ad234349a9e6bccc02ed9bf4a3d32c878f41fc30bc8f8eca0f1d12e3e9405d6f1907d8ae84e77a4b8d89d0a693e9122c524cbed6c5ccc03de6be7050af0'
         'e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b')

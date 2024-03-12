@@ -10,21 +10,15 @@
 _cachy_config=${_cachy_config-y}
 
 ### Selecting the CPU scheduler
-# ATTENTION - one of six predefined values should be selected!
-# 'bmq' - select 'BitMap Queue CPU scheduler'
-# 'pds' - select 'Priority and Deadline based Skip list multiple queue CPU scheduler'
+# ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
-# 'cfs' - select 'Completely Fair Scheduler'
-# 'tt' - select 'Task Type Scheduler by Hamad Marri'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select 'EEVDF-BORE Variant Scheduler' EEVDF includes latency nice
-# 'eevdf' - select 'EEVDF Scheduler' EEVDF includes latency nice
-# 'rt' - select CFS, but includes a series of realtime patches
-_cpusched=${_cpusched-tt}
-
-## Apply some suggested sysctl values from the bore developer
-## These are adjusted to BORE
-_tune_bore=${_tune_bore-}
+# 'cachyos' - select 'EEVDF-BORE Variant Scheduler'
+# 'eevdf' - select 'EEVDF Scheduler'
+# 'rt' - select EEVDF, but includes a series of realtime patches
+# 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
+# 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
+_cpusched=${_cpusched-sched-ext}
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
@@ -41,6 +35,7 @@ _makegconfig=${_makegconfig-}
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
+# It seems that in 2023 this is not really a huge regression anymore
 _NUMAdisable=${_NUMAdisable-}
 
 # Compile ONLY used modules to VASTLYreduce the number of modules built
@@ -67,7 +62,7 @@ _cc_harder=${_cc_harder-y}
 ## DO NOT SET, THIS IS FOR INTERNAL CI USE ONLY.
 _cc_size=${_cc_size-}
 
-### Set this to your number of threads you have in your machine otherwise it will default to 128
+### Set this to your number of threads you have in your machine otherwise it will default to 320
 _nr_cpus=${_nr_cpus-}
 
 ### Set performance governor as default
@@ -111,10 +106,8 @@ _hugepage=${_hugepage-always}
 ## Enable DAMON
 _damon=${_damon-}
 
-
-
 # CPU compiler optimizations - Defaults to prompt at kernel config if left empty
-# AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3"
+# AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" "zen4"
 # Intel CPUs : "mpsc"(P4 & older Netburst based Xeon) "atom" "core2" "nehalem" "westmere" "silvermont" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "skylakex" "cannonlake" "icelake" "goldmont" "goldmontplus" "cascadelake" "cooperlake" "tigerlake" "sapphirerapids" "rocketlake" "alderlake"
 # Other options :
 # - "native_amd" (use compiler autodetection - Selecting your arch manually in the list above is recommended instead of this option)
@@ -126,9 +119,6 @@ _processor_opt=${_processor_opt-}
 
 _use_auto_optimization=${_use_auto_optimization-y}
 
-# disable debug to lower the size of the kernel
-_disable_debug=${_disable_debug-}
-
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
@@ -138,7 +128,8 @@ _use_llvm_lto=${_use_llvm_lto-none}
 
 # Use suffix -lto only when requested by the user
 # Enabled by default.
-# If you do not want the suffix -lto remove the "y" sign next to the flag.
+# y - enable -lto suffix
+# n - disable -lto suffix
 # https://github.com/CachyOS/linux-cachyos/issues/36
 _use_lto_suffix=${_use_lto_suffix-y}
 
@@ -147,7 +138,6 @@ _use_lto_suffix=${_use_lto_suffix-y}
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-# ATTENTION!: kCFI is only available in llvm 16
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
@@ -159,28 +149,25 @@ _build_zfs=${_build_zfs-}
 # This does replace the requirement of nvidia-dkms
 _build_nvidia=${_build_nvidia-}
 
-# Enable bcachefs
-_bcachefs=${_bcachefs-}
-
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
-    pkgsuffix=cachyos-${_cpusched}-lto
+if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
+    pkgsuffix=cachyos-${_cpusched}debug--lto
     pkgbase=linux-$pkgsuffix
 
-else
-    pkgsuffix=cachyos-${_cpusched}
+elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
+    pkgsuffix=cachyos-${_cpusched}-debug
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.5
-_minor=9
+_major=6.8
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux TT scheduler Kernel by CachyOS with other patches and improvements'
+pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
 pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
@@ -198,6 +185,11 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
         LLVM_IAS=1
     )
 fi
+
+if [[ "$_cpusched" = "sched-ext" || "$_cpusched" = "cachyos" ]]; then
+    depends+=(scx-scheds)
+fi
+
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
 _nv_ver=550.54.14
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
@@ -207,10 +199,15 @@ source=(
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
+# WARNING The ZFS module doesn't build with selected RT sched due to licensing issues.
+if [[ "$_cpusched" = "rt" || "$_cpusched" = "rt-bore" ]]; then
+    unset _build_zfs
+fi
+
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=95785196f26e92d82cf4445654ba84e4a9671c57")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=6a58cf0ba7a3db11a5acf041cc503e8b7afb0b56")
 fi
 
 # NVIDIA pre-build module support
@@ -218,34 +215,23 @@ if [ -n "$_build_nvidia" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run")
 fi
 
+## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos) # CachyOS Scheduler (EEVDF + BORE)
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
-                 "${_patchsource}/sched/0001-bore-eevdf.patch");;
-    eevdf) # EEVDF Scheduler
-        source+=("${_patchsource}/sched/0001-EEVDF-cachy.patch"
-                 "${_patchsource}/misc/0001-eevdf-Disable-DELAY_DEQUEUE.patch");;
-    pds|bmq) # BMQ/PDS scheduler
-        source+=("${_patchsource}/sched/0001-prjc-cachy.patch"
-                 linux-cachyos-prjc.install);;
-    tt) ## TT Scheduler
-        source+=("${_patchsource}/sched/0001-tt-cachy.patch");;
+    cachyos|sched-ext) ## SCHED-EXT
+        source+=("${_patchsource}/sched/0001-sched-ext.patch");;
     bore) ## BORE Scheduler
-        [ -n "$_tune_bore" ] && source+=("${_patchsource}/misc/0001-bore-tuning-sysctl.patch")
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    rt) ## CFS with RT patches
+    rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
+                 linux-cachyos-rt.install);;
+    rt-bore) ## RT with BORE Scheduler
+        source+=("${_patchsource}/misc/0001-rt.patch"
+                 "${_patchsource}/sched/0001-bore-cachy-rt.patch"
                  linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
 esac
-
-## bcachefs Support
-if [ -n "$_bcachefs" ]; then
-    source+=("${_patchsource}/misc/0001-bcachefs.patch")
-fi
-
 
 export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER=$pkgbase
@@ -287,12 +273,6 @@ prepare() {
         "${srcdir}"/auto-cpu-optimization.sh
     fi
 
-    ### Prevent ZFS and bcachefs building at the same time
-    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/152
-    if [[ -n "$_bcachefs" && -n "$_build_zfs"  ]]; then
-        _die "ZFS and bcachefs support cannot be built at the same time. "
-    fi
-
     ### Selecting CachyOS config
     if [ -n "$_cachy_config" ]; then
         echo "Enabling CachyOS config..."
@@ -303,12 +283,11 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        pds) scripts/config -e SCHED_ALT -d SCHED_BMQ -e SCHED_PDS -e PSI_DEFAULT_DISABLED;;
-        bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ -d SCHED_PDS -e PSI_DEFAULT_DISABLED;;
-        tt)  scripts/config -e TT_SCHED -e TT_ACCOUNTING_STATS;;
-        bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
-        cfs|eevdf) ;;
-        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -e PREEMPT_LAZY -d PREEMPT_DYNAMIC -e HAVE_PREEMPT_LAZY -d PREEMPT_BUILD;;
+        cachyos|sched-ext) scripts/config -e SCHED_CLASS_EXT;;
+        bore|hardened) scripts/config -e SCHED_BORE;;
+        eevdf) ;;
+        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
+        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -398,7 +377,7 @@ prepare() {
     ### Select preempt type
 
     # We should not set up the PREEMPT for RT kernels
-    if [ "$_cpusched" != "rt" ]; then
+    if [[ "$_cpusched" != "rt" || "$_cpusched" != "rt-bore" ]]; then
         [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
         case "$_preempt" in
@@ -433,14 +412,6 @@ prepare() {
             -e TCP_CONG_BBR \
             -e DEFAULT_BBR \
             --set-str DEFAULT_TCP_CONG bbr
-
-        # BBR3 doesn't work properly with FQ_CODEL
-        echo "Disabling fq_codel by default..."
-        scripts/config -m NET_SCH_FQ_CODEL \
-            -e NET_SCH_FQ \
-            -d DEFAULT_FQ_CODEL \
-            -e DEFAULT_FQ \
-            --set-str DEFAULT_NET_SCH fq
     fi
 
     ### Select LRU config
@@ -488,26 +459,6 @@ prepare() {
             -e DAMON_PADDR \
             -e DAMON_RECLAIM \
             -e DAMON_LRU_SORT
-    fi
-
-
-
-    ### Disable DEBUG
-    if [ -n "$_disable_debug" ]; then
-        scripts/config -d DEBUG_INFO \
-            -d DEBUG_INFO_BTF \
-            -d DEBUG_INFO_DWARF4 \
-            -d DEBUG_INFO_DWARF5 \
-            -d PAHOLE_HAS_SPLIT_BTF \
-            -d DEBUG_INFO_BTF_MODULES \
-            -d SLUB_DEBUG \
-            -d PM_DEBUG \
-            -d PM_ADVANCED_DEBUG \
-            -d PM_SLEEP_DEBUG \
-            -d ACPI_DEBUG \
-            -d SCHED_DEBUG \
-            -d LATENCYTOP \
-            -d DEBUG_PREEMPT
     fi
 
     echo "Enable USER_NS_UNPRIVILEGED"
@@ -576,6 +527,7 @@ prepare() {
 build() {
     cd ${srcdir}/${_srcname}
     make ${BUILD_FLAGS[*]} -j$(nproc) all
+    make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
 
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}/${_nv_pkg}/kernel"
@@ -603,6 +555,7 @@ build() {
             --with-linux=${srcdir}/$_srcname
         make ${BUILD_FLAGS[*]}
     fi
+
 }
 
 _package() {
@@ -630,8 +583,8 @@ _package() {
     ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
-    # remove build and source links
-    rm "$modulesdir"/{source,build}
+    # remove build links
+    rm "$modulesdir"/build
 }
 
 _package-headers() {
@@ -643,7 +596,7 @@ _package-headers() {
 
     echo "Installing build files..."
     install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
-        localversion.* version vmlinux
+        localversion.* version vmlinux tools/bpf/bpftool/vmlinux.h
     install -Dt "$builddir/kernel" -m644 kernel/Makefile
     install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
     cp -t "$builddir" -a scripts
@@ -710,9 +663,6 @@ _package-headers() {
         esac
     done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
 
-    echo "Stripping vmlinux..."
-    strip -v $STRIP_STATIC "$builddir/vmlinux"
-
     echo "Adding symlink..."
     mkdir -p "$pkgdir/usr/src"
     ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
@@ -753,8 +703,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('fb5fcc0dc79e2f615a550283481492a8185414d65369cbe805909112735593e5fc8bdbd482a347dc4cb3dcac979bea21cd03c503932e9321856eeea685d31c65'
-        '0d15075ccc31eee90b4a71def492279660fd02f52b227f06b40cf4578be730f955121922dc2cd1f2373df4174e92bb50a6f92d79f1b2104d982c6c10b4ac7443'
+b2sums=('c6f17f816cea16e629f63e9379b98888713f57b2c5173306926471f139a9d612a0c74e119341f8075390e55e203d787d9edeb4ad5a064b18870f6f0f7ffaafb2'
+        'd663b890dc2e505a1892b42881bbac4965b7528c7cd8672d153b8659f6b3a8136314c7f5a17b9d1434d55310aae781532238d66f565ce9ae5f74c57e42edf736'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        'a939d934bdea2a933a0dc5d59ef5049b228d71f642ede974f307ad53e7a725d0c5191213d3ad9b8691c7dd4c8510cf67c2689d4dda016ce96394f26768b01832'
-        '7c95ca8afa51c7b02b38d48745ec12427024b48d6bb06c1e31deaf09f95c1dacfe52aace2e874b28bd737e1f10a57bc41020e2a74ea929383c8127cb373de684')
+        '5a6eadbd3a69a089eacf46dda698e49e8bd267bb60228d44720e5e1ddc621089d7a29bec16471cfc45b30e4405fd2865964e556cfb36be2d289e609f34947657'
+        '9661b9cb2e3337c59db846aad96944858de6ea3ed5f515c9171a86c68e52b75d5b54302f14d0f766f65daff25dd481edb8d3ee51f379ac8ae96f5585e38c1351')
