@@ -165,7 +165,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.6
-_minor=20
+_minor=22
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -210,12 +210,13 @@ fi
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=c883088df83ced3a2b8b38e6d89a5e63fb153ee4")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=6a58cf0ba7a3db11a5acf041cc503e8b7afb0b56")
 fi
 
 # NVIDIA pre-build module support
 if [ -n "$_build_nvidia" ]; then
-    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run")
+    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
+             "${_patchsource}/misc/nvidia/0001-NVIDIA-take-modeset-ownership-early.patch")
 fi
 
 ## ToDo: Adjust for new Scheduler Changes
@@ -264,6 +265,7 @@ prepare() {
         src="${src%%::*}"
         src="${src##*/}"
         src="${src%.zst}"
+        [[ $src = 0001-NVIDIA-take-modeset-ownership-early.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -555,6 +557,9 @@ prepare() {
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}"
         sh "${_nv_pkg}.run" --extract-only
+
+        # Temporary fix for nvidia module
+        patch -Np2 --no-backup-if-mismatch -i "${srcdir}/0001-NVIDIA-take-modeset-ownership-early.patch" -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 }
 
@@ -740,8 +745,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('e2f6c7f39b304248193370f8c5755553ab73ad5672e92dae994a344084d8dd22'
+sha256sums=('23e3e7b56407250f5411bdab95763d0bc4e3a19dfa431d951df7eacabd61a2f4'
             '01e0933bd6fd3e5fcd667ecb3c692b94d2d57dff79d64512dc2e0badac00446c'
             '3f3233256725683aa95c29ee423932a5bcc74c0653e09d502240601387c3edec'
-            'cbb0cc7506e7b8b4e504e47ef073b2d0430f3e3a7568753334b782a8ccc5037f'
-            '63ebd00d819dcd6c8ac8631fc5c94ca381d8fe13166ee05ac6f948248be609cc')
+            '314d5b436420ff1611e9fbcfe5389446f50846ad556bdf12c37498b14cd04cfc'
+            'd43061bf76f06835a7b400b06b3db876d336e871d654854a515899b84e6c9c01')
