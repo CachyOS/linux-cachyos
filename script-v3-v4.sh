@@ -44,7 +44,7 @@ repoctl update -P cachyos-v3
 
 ## GCC v4 Kernel
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-full/_use_llvm_lto-none/" {}
-find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU=y/GENERIC_CPU4=y/' {}
+find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU3=y/GENERIC_CPU4=y/' {}
 
 files=$(find . -name "PKGBUILD")
 
