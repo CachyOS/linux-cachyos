@@ -22,6 +22,7 @@ pkgbase = linux-cachyos-hardened
 	makedepends = patch
 	makedepends = python
 	options = !strip
+	options = !debug
 	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.7.9.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh

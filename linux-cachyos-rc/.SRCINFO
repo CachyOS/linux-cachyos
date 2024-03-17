@@ -23,6 +23,7 @@ pkgbase = linux-cachyos-rc
 	makedepends = python
 	depends = scx-scheds
 	options = !strip
+	options = !debug
 	source = https://github.com/torvalds/linux/archive/refs/tags/v6.8-rc7.tar.gz
 	source = config
 	source = auto-cpu-optimization.sh
