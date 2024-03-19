@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements
 	pkgver = 6.8.rc7
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -32,8 +32,8 @@ pkgbase = linux-cachyos-rc
 	b2sums = f78cc33e15c1364ec621a03ff02c40dfbe896449bdbef3d754882d6df98def802c6840e166423172ddcc939deb13844ba24d377ecb9a315d64af8666a4df0bc2
 	b2sums = 8178cdd3224ca5b7ef9e971fdb403b57d4f4e44d3b9de31cf118bc1b195cf5d376b424cd5a5013c10182116b9ed18d09b893633ccf2486454d60bcced32149a0
 	b2sums = 43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d
-	b2sums = 1b898b83320e71f13c6fc0568fbee36589d14eed777d41455cfe87b9b929345f2e1f2a35fa2a7483b9145deaa097b345fa341a20866cd8d105b13fcbcb2df4e0
-	b2sums = 2fff57e7883817a2890e2775b7bf829c473ceeb81c96eea408b2d7622ae92cb8c83c4df8e969197a4d50da3412fa60661fd07811342d9c55f2fda25926f20ddb
+	b2sums = 2617ffcdb57df5d2537382b89036dc9786c139815d14da7b3a246e74b204c6e84c04648a596316b467c05304fef2368491a3553344cac5475504edccdac58257
+	b2sums = 76b2dd6cf11ec1a8281556106b4458885e603e307c26f706b06dcdd8f8766ff045ae404a8cb197ac1d0ecd1bcdfef3d81a9ee492c371d0aaea4b8048cae6d384
 
 pkgname = linux-cachyos-rc
 	pkgdesc = The Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel and modules
