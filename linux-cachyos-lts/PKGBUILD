@@ -215,7 +215,8 @@ fi
 
 # NVIDIA pre-build module support
 if [ -n "$_build_nvidia" ]; then
-    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run")
+    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
+             "${_patchsource}/misc/nvidia/0001-NVIDIA-take-modeset-ownership-early.patch")
 fi
 
 ## ToDo: Adjust for new Scheduler Changes
@@ -264,6 +265,7 @@ prepare() {
         src="${src%%::*}"
         src="${src##*/}"
         src="${src%.zst}"
+        [[ $src = 0001-NVIDIA-take-modeset-ownership-early.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -555,6 +557,9 @@ prepare() {
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}"
         sh "${_nv_pkg}.run" --extract-only
+
+        # Temporary fix for nvidia module
+        patch -Np2 --no-backup-if-mismatch -i "${srcdir}/0001-NVIDIA-take-modeset-ownership-early.patch" -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 }
 
