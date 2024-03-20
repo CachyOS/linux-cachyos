@@ -150,7 +150,7 @@ _build_zfs=${_build_zfs-}
 _build_nvidia=${_build_nvidia-}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
-    pkgsuffix=cachyos-${_cpusched}debug--lto
+    pkgsuffix=cachyos-${_cpusched}debug-lto
     pkgbase=linux-$pkgsuffix
 
 elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
