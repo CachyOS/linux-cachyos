@@ -18,7 +18,6 @@ _cachy_config=${_cachy_config-y}
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
-# 'echo' - select 'ECHO' Scheduler from Hamad
 _cpusched=${_cpusched-cachyos}
 
 ### Tweak kernel options prior to a build via nconfig
@@ -234,8 +233,6 @@ case "$_cpusched" in
                  "${_patchsource}/misc/0001-hardened.patch");;
     sched-ext) ## SCHED-EXT
         source+=("${_patchsource}/sched/0001-sched-ext.patch");;
-    echo) ## ECHO Scheduler
-        source+=("${_patchsource}/sched/0001-echo-cachy.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
@@ -291,7 +288,6 @@ prepare() {
         sched-ext) scripts/config -e SCHED_CLASS_EXT;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         eevdf) ;;
-        echo) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
@@ -716,7 +712,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('809f4c010ce6dd1e1033e0b73e465b8303814797397754a21d98bb7423f2ab73c523c106f205fbd3f9bb0856ee5e96a259a03f3cea02d81957c60d92536eae39'
-        'baf8dab9427bd404f598026619b11b533fffa14ea5c306d3ae6761a396ff49284e4ba293dc3c974982692a156ec8e391fc8d064bf3ed04b8c729e31d33592fc9'
+        '084447bcbc1429f4fd7a213ff777f480a1dfa95c3c5aec940226048f07a7c543cf2af08bd0a051a689479840c22fb5db2ddc7381ad592566b9cfe7a16c4b4590'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
         '3c736ed35ed166c2606540b45d3c0d0616baf8280595c7222c51d691c973f891aab73436cdb71e7ae8242c3bd4a8d25429f3807cf5263e19a425cd0d23b22f61'
         'd7cbdec7da9edd4ff1d373b34041a867f651433cb01aac8633d72fed8d7042ae715494697292c2a0b0fd6562f89f46cf5778c45a6e69cf5d2b2fe132580aa15a')
