@@ -18,6 +18,7 @@ _cachy_config=${_cachy_config-y}
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
+# 'echo' - select 'ECHO' Scheduler from Hamad
 _cpusched=${_cpusched-cachyos}
 
 ### Tweak kernel options prior to a build via nconfig
@@ -157,10 +158,10 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgsuffix=cachyos-rc
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.8
+_major=6.9
 _minor=1
 #_minorc=$((_minor+1))
-_rcver=rc7
+_rcver=rc1
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -168,7 +169,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -217,8 +218,8 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos|sched-ext) ## SCHED-EXT
-        source+=("${_patchsource}/sched/0001-sched-ext.patch");;
+    cachyos) ## SCHED-EXT
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     rt) ## EEVDF with RT patches
@@ -231,6 +232,10 @@ case "$_cpusched" in
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
+    sched-ext) ## SCHED-EXT
+        source+=("${_patchsource}/sched/0001-sched-ext.patch");;
+    echo) ## ECHO Scheduler
+        source+=("${_patchsource}/sched/0001-echo-cachy.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
@@ -283,9 +288,10 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        cachyos|sched-ext) scripts/config -e SCHED_CLASS_EXT;;
-        bore|hardened) scripts/config -e SCHED_BORE;;
+        sched-ext) scripts/config -e SCHED_CLASS_EXT;;
+        bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         eevdf) ;;
+        echo) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
@@ -709,8 +715,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('f78cc33e15c1364ec621a03ff02c40dfbe896449bdbef3d754882d6df98def802c6840e166423172ddcc939deb13844ba24d377ecb9a315d64af8666a4df0bc2'
-        '8178cdd3224ca5b7ef9e971fdb403b57d4f4e44d3b9de31cf118bc1b195cf5d376b424cd5a5013c10182116b9ed18d09b893633ccf2486454d60bcced32149a0'
+b2sums=('809f4c010ce6dd1e1033e0b73e465b8303814797397754a21d98bb7423f2ab73c523c106f205fbd3f9bb0856ee5e96a259a03f3cea02d81957c60d92536eae39'
+        'baf8dab9427bd404f598026619b11b533fffa14ea5c306d3ae6761a396ff49284e4ba293dc3c974982692a156ec8e391fc8d064bf3ed04b8c729e31d33592fc9'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        '5a02cc06ec593f62c497445058bf9d4aeb13b5ab11a56f72712ddc6a5457a3e9fcab9e3fbc1b4e30bca39b846b3969dc3e97e90bfd1f7be5ec8356de89faee00'
-        '76b2dd6cf11ec1a8281556106b4458885e603e307c26f706b06dcdd8f8766ff045ae404a8cb197ac1d0ecd1bcdfef3d81a9ee492c371d0aaea4b8048cae6d384')
+        '3c736ed35ed166c2606540b45d3c0d0616baf8280595c7222c51d691c973f891aab73436cdb71e7ae8242c3bd4a8d25429f3807cf5263e19a425cd0d23b22f61'
+        'd7cbdec7da9edd4ff1d373b34041a867f651433cb01aac8633d72fed8d7042ae715494697292c2a0b0fd6562f89f46cf5778c45a6e69cf5d2b2fe132580aa15a')
