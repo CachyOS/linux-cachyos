@@ -18,6 +18,7 @@ _cachy_config=${_cachy_config-y}
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
+# 'echo' - select 'ECHO Scheduler'
 _cpusched=${_cpusched-sched-ext}
 
 ### Tweak kernel options prior to a build via nconfig
@@ -222,6 +223,8 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-sched-ext.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+    echo) ## ECHO Scheduler
+        source+=("${_patchsource}/sched/0001-echo-cachy.patch");;
     rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
@@ -287,6 +290,7 @@ prepare() {
     case "$_cpusched" in
         cachyos|sched-ext) scripts/config -e SCHED_CLASS_EXT;;
         bore|hardened) scripts/config -e SCHED_BORE;;
+        echo) scripts/config -e ECHO_SCHED;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
@@ -712,7 +716,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('f057c2512040600fbf0df67cf9c7200aee0c06b82b3cf749be8c5685844d2662a585ce17685c7af880c0d9dbbbd81302e5a1fa41c3dbd39869123121a0e82dc2'
-        '8178cdd3224ca5b7ef9e971fdb403b57d4f4e44d3b9de31cf118bc1b195cf5d376b424cd5a5013c10182116b9ed18d09b893633ccf2486454d60bcced32149a0'
+        'e1ae120a44804983b010309b71c21dcac444319505e4c1306eba57419b3811aa29cdc793449587a82e1a4b6171a58f611a53b66860614b53887be37689debb55'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
         '2a1405c927f5f21b0f88ffa43dd5137750929ad348d9fa5ee01e8e3d20bf98808be6cbc8a5b0c355245de4347f6db02af4d116262a3a672c790db431ee1cd243'
         '76b2dd6cf11ec1a8281556106b4458885e603e307c26f706b06dcdd8f8766ff045ae404a8cb197ac1d0ecd1bcdfef3d81a9ee492c371d0aaea4b8048cae6d384')
