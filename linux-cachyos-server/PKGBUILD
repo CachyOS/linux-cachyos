@@ -72,7 +72,7 @@ _per_gov=${_per_gov-}
 ### Enable TCP_CONG_BBR3
 _tcp_bbr3=${_tcp_bbr3-y}
 
-### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
+### Running with a 1000HZ, 750Hz, 625Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-300}
 
 ## Choose between perodic, idle or full
@@ -322,7 +322,7 @@ prepare() {
     [ -z $_HZ_ticks ] && _die "The value is empty. Choose the correct one again."
 
     case "$_HZ_ticks" in
-        100|250|500|600|750|1000)
+        100|250|500|600|625|750|1000)
             scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ "${_HZ_ticks}";;
         300)
             scripts/config -e HZ_300 --set-val HZ 300;;
