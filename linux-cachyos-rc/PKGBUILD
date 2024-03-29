@@ -71,7 +71,7 @@ _per_gov=${_per_gov-}
 ### Enable TCP_CONG_BBR3
 _tcp_bbr3=${_tcp_bbr3-y}
 
-### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
+### Running with a 1000HZ, 750Hz, 625Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-1000}
 
 ## Choose between perodic, idle or full
@@ -221,6 +221,8 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+    echo) ## ECHO Scheduler
+        source+=("${_patchsource}/sched/0001-echo-cachy.patch");;
     rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
@@ -287,6 +289,7 @@ prepare() {
     case "$_cpusched" in
         sched-ext) scripts/config -e SCHED_CLASS_EXT;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
+        echo) scripts/config -e ECHO_SCHED;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
@@ -318,7 +321,7 @@ prepare() {
     [ -z $_HZ_ticks ] && _die "The value is empty. Choose the correct one again."
 
     case "$_HZ_ticks" in
-        100|250|500|600|750|1000)
+        100|250|500|600|625|750|1000)
             scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ "${_HZ_ticks}";;
         300)
             scripts/config -e HZ_300 --set-val HZ 300;;
@@ -712,7 +715,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('809f4c010ce6dd1e1033e0b73e465b8303814797397754a21d98bb7423f2ab73c523c106f205fbd3f9bb0856ee5e96a259a03f3cea02d81957c60d92536eae39'
-        '084447bcbc1429f4fd7a213ff777f480a1dfa95c3c5aec940226048f07a7c543cf2af08bd0a051a689479840c22fb5db2ddc7381ad592566b9cfe7a16c4b4590'
+        'c61ba297d2f241de7ec880e1ede04e7be22885f544d13669196f5a12ce5fbd73c7c16e3c789249eb287e0f628e8392e6a3e1b71e18a4c09d70b79fd77b47b14b'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
         '3c736ed35ed166c2606540b45d3c0d0616baf8280595c7222c51d691c973f891aab73436cdb71e7ae8242c3bd4a8d25429f3807cf5263e19a425cd0d23b22f61'
         'd7cbdec7da9edd4ff1d373b34041a867f651433cb01aac8633d72fed8d7042ae715494697292c2a0b0fd6562f89f46cf5778c45a6e69cf5d2b2fe132580aa15a')
