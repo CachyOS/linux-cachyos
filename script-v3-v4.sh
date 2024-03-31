@@ -15,7 +15,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v /home/ptr1337/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg pttrr/docker-makepkg-v3
+    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
     docker rm kernelbuild
     cd ..
 done
@@ -25,7 +25,7 @@ mv */*-x86_64_v3.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64_
 repoctl update -P cachyos-v3
 
 ## LLVM ThinLTO v3 Kernel
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-full/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-thin/" {}
 
 files=$(find . -name "PKGBUILD")
 
@@ -33,7 +33,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v /home/ptr1337/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg pttrr/docker-makepkg-v3
+    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
     docker rm kernelbuild
     cd ..
 done
@@ -43,7 +43,7 @@ mv */*-x86_64_v3.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64_
 repoctl update -P cachyos-v3
 
 ## GCC v4 Kernel
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-full/_use_llvm_lto-none/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-thin/_use_llvm_lto-none/" {}
 find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU3=y/GENERIC_CPU4=y/' {}
 
 files=$(find . -name "PKGBUILD")
@@ -52,7 +52,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v /home/ptr1337/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg pttrr/docker-makepkg-v4
+    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v4
     docker rm kernelbuild
     cd ..
 done
@@ -62,7 +62,7 @@ mv */*-x86_64_v4.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64_
 repoctl update -P cachyos-v4
 
 ## LLVM ThinLTO v4 Kernel
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-full/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-thin/" {}
 
 files=$(find . -name "PKGBUILD")
 
@@ -70,7 +70,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v /home/ptr1337/docker-makepkg/llvm:/home/notroot/llvm -v $PWD:/pkg pttrr/docker-makepkg-v4
+    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v4
     docker rm kernelbuild
     cd ..
 done
