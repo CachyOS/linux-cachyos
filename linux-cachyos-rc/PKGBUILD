@@ -158,9 +158,9 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.9
-_minor=2
+_minor=0
 #_minorc=$((_minor+1))
-_rcver=rc1
+_rcver=rc2
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -218,7 +218,8 @@ fi
 ## List of CachyOS schedulers
 case "$_cpusched" in
     cachyos) ## SCHED-EXT
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+        source+=("${_patchsource}/sched/0001-sched-ext.patch"
+                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     echo) ## ECHO Scheduler
@@ -287,6 +288,7 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
+        cachyos) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
         sched-ext) scripts/config -e SCHED_CLASS_EXT;;
         bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
         echo) scripts/config -e ECHO_SCHED;;
@@ -714,8 +716,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('809f4c010ce6dd1e1033e0b73e465b8303814797397754a21d98bb7423f2ab73c523c106f205fbd3f9bb0856ee5e96a259a03f3cea02d81957c60d92536eae39'
-        'c61ba297d2f241de7ec880e1ede04e7be22885f544d13669196f5a12ce5fbd73c7c16e3c789249eb287e0f628e8392e6a3e1b71e18a4c09d70b79fd77b47b14b'
+b2sums=('90482b9959d96050cdc18dc7ab86833c7e0f38483e98c59cc0c1a2bc9fccb536296ac91e14793e2ac40a6e8cb4f010d043bf910377acf7a63068dcb8e7c71bf7'
+        'f93a194dfa71d19f04e30fe2abbe681563afd99fa7bcb8f9e2e12e4b84fdf460f873c8d6f1d9ca1370c16e20dfd55aa1e0298972a829dcf6083f3a0b5127ff9c'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        '3c736ed35ed166c2606540b45d3c0d0616baf8280595c7222c51d691c973f891aab73436cdb71e7ae8242c3bd4a8d25429f3807cf5263e19a425cd0d23b22f61'
-        'd7cbdec7da9edd4ff1d373b34041a867f651433cb01aac8633d72fed8d7042ae715494697292c2a0b0fd6562f89f46cf5778c45a6e69cf5d2b2fe132580aa15a')
+        '2217d97016d2d1ab2a5cdf0a6680328a2f8d8faf9bb954d542df664684f50a67777f062825eee6a20aeae249043ebdb6bd62d4804dff4953fc82e4d3bc3e293f'
+        'b0c5d00c25922e1a11911855a65b98997be7e4911e608d34e9be2ded4d241331e6dadf05c3f71db11aacf4db81f2c4dff9222f2a7499a8e2b8b65df7706fee0f'
+        '2878d8388184ffb0bbaae9ef3516702f20d54d202e29fea5d56c994094dc464946ef6c0d2f97d954c1186bfe32ea716188393634b37269aed8f0d01d0af60ec9')
