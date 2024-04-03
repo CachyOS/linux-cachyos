@@ -62,7 +62,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Latest BTRFS/XFS/EXT4 improvements & fixes
 - ZFS Filesystem Support and prebuilt in the repository
 - NVIDIA Module Support - Build the nvidia module together with the kernel
-- Latest & improved ZSTD 1.5.5 patch-set
+- Latest & improved ZSTD 1.5.6 patch-set
 - UserKSM daemon from pf
 - Improved BFQ Scheduler
 
