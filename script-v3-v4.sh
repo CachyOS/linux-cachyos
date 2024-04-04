@@ -20,10 +20,6 @@ do
     cd ..
 done
 
-echo "move kernels to the repo"
-mv */*-x86_64_v3.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64_v3/cachyos-v3/
-repoctl update -P cachyos-v3
-
 ## LLVM ThinLTO v3 Kernel
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-thin/" {}
 
@@ -41,6 +37,8 @@ done
 echo "move kernels to the repo"
 mv */*-x86_64_v3.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64_v3/cachyos-v3/
 repoctl update -P cachyos-v3
+## Ensure that repo-add/repoctl catches all new packages
+repoctl update -P cachyos-v3
 
 ## GCC v4 Kernel
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-thin/_use_llvm_lto-none/" {}
@@ -56,10 +54,6 @@ do
     docker rm kernelbuild
     cd ..
 done
-
-echo "move kernels to the repo"
-mv */*-x86_64_v4.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64_v4/cachyos-v4/
-repoctl update -P cachyos-v4
 
 ## LLVM ThinLTO v4 Kernel
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-thin/" {}
@@ -77,4 +71,6 @@ done
 
 echo "move kernels to the repo"
 mv */*-x86_64_v4.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64_v4/cachyos-v4/
+repoctl update -P cachyos-v4
+## Ensure that repo-add/repoctl catches all new packages
 repoctl update -P cachyos-v4
