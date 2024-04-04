@@ -165,7 +165,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.6
-_minor=24
+_minor=25
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -745,8 +745,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('3e9ef879dae8319338eb0dc2d2c2025c13257fdeddf6245c000cb5a85a8af6f5'
+sha256sums=('99d210be87908233a55b0fadc0dccd3b95926c0651b6b82e37350b2029de1f44'
             'a53b90c53cad62cad4f29456a845fc452c16c4edd77ceadeddbee278966c08f7'
             '3f3233256725683aa95c29ee423932a5bcc74c0653e09d502240601387c3edec'
-            '314d5b436420ff1611e9fbcfe5389446f50846ad556bdf12c37498b14cd04cfc'
-            'd43061bf76f06835a7b400b06b3db876d336e871d654854a515899b84e6c9c01')
+            '1949bdd4bd6928fc80f8caa7329bc14655af3c6a1efe8691341c7512eccee849'
+            '0f02dea1054a5caa69fa945e396fdd6e4052c161e492c1c5a6a8423f4ff488cf')

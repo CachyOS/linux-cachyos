@@ -159,7 +159,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.8
-_minor=3
+_minor=4
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -169,7 +169,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -719,9 +719,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('d03f8938da5a3322447fa639718590f5630cd391de45952bf2ca697d95210cc47d4ff27f26b7ebe5ce2328ea4f4df040ed0f335a3607fa8c05feb17a8c7d545c'
+b2sums=('cf58732397bfa11988b79901092887d53c3367d09f63da51ebdcc83518be3a7e9a638fbbb1ff080cd7abed633fadff03d1d7a3928b772de57b14e46e552f9462'
         'aed56a9f01bebda81eb39f8a2160538581614d8163cdeb6980f78aab489f9c990349c93e9c82cf5ca93f407bdd8853078fc5dadfddb9c733518e6928ca612212'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        '0ca1cca39120f15be9b8e6c169ac67bcffd72d091c7581be7c2b79e8c1c9575c3a2ef8a8540bc219f2b4d527d3196fe2647f0e4c8977bdb81093384fc44e385d'
+        '0c400c649ab765e65a05bc3fa51e7d1bc28f702ffeefa1a4140898d20a992fa57bd1b3ff43d33c032042d1f0321455ab8b6f83afb2beda1ac52c9ba6a4af9e11'
         '0038edc70a3775150c60b531587278e14f9117bcdf9fd7f6f98dff5e86a2ce1f16f4cae5b07f07b5f17c0aeb5401a6fa13c3b75711e5dc3955a1fc481925378f'
         'dfc52d584e9d75c468d21a98bd97dbcf2ee0b7e686026f9202064060b17d599b552a50fe0f428ac21e56eb098bee90795f32eb2e44d912b5ed562bc73fa6e842')
