@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.8.4 Kernel Configuration
+# Linux/x86 6.8.5 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 13.2.1 20230801"
 CONFIG_CC_IS_GCC=y
@@ -618,6 +618,9 @@ CONFIG_CPU_SRSO=y
 CONFIG_SLS=y
 # CONFIG_GDS_FORCE_MITIGATION is not set
 CONFIG_MITIGATION_RFDS=y
+CONFIG_SPECTRE_BHI_ON=y
+# CONFIG_SPECTRE_BHI_OFF is not set
+# CONFIG_SPECTRE_BHI_AUTO is not set
 CONFIG_ARCH_HAS_ADD_PAGES=y
 
 #
