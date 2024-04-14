@@ -18,6 +18,7 @@ _cachy_config=${_cachy_config-y}
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
+# 'echo' - select 'ECHO Scheduler'
 _cpusched=${_cpusched-hardened}
 
 ### Tweak kernel options prior to a build via nconfig
@@ -71,7 +72,7 @@ _per_gov=${_per_gov-}
 ### Enable TCP_CONG_BBR3
 _tcp_bbr3=${_tcp_bbr3-y}
 
-### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
+### Running with a 1000HZ, 750Hz, 625Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-1000}
 
 ## Choose between perodic, idle or full
@@ -101,7 +102,7 @@ _vma_config=${_vma_config-standard}
 # 'madvise' - madvise, prevent applications from allocating more memory resources than necessary
 # More infos here:
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
-_hugepage=${_hugepage-always}
+_hugepage=${_hugepage-madvise}
 
 ## Enable DAMON
 _damon=${_damon-}
@@ -138,7 +139,6 @@ _use_lto_suffix=${_use_lto_suffix-y}
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-# ATTENTION!: kCFI is only available in llvm 16
 _use_kcfi=${_use_kcfi-}
 
 # Build the zfs module in to the kernel
@@ -158,8 +158,8 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.7
-_minor=9
+_major=6.8
+_minor=6
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -168,7 +168,7 @@ _stable=${_major}.${_minor}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux EEVDF-BORE scheduler hardened Kernel by CachyOS with other patches and improvements'
+pkgdesc='Linux BORE scheduler and hardened Kernel by CachyOS with other patches and improvements'
 pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
@@ -208,20 +208,24 @@ fi
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=c883088df83ced3a2b8b38e6d89a5e63fb153ee4")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=6a58cf0ba7a3db11a5acf041cc503e8b7afb0b56")
 fi
 
 # NVIDIA pre-build module support
 if [ -n "$_build_nvidia" ]; then
-    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run")
+    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
+             "${_patchsource}/misc/nvidia/0001-NVIDIA-take-modeset-ownership-early.patch")
 fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos|sched-ext) ## SCHED-EXT
-        source+=("${_patchsource}/sched/0001-sched-ext.patch");;
+    cachyos) ## SCHED-EXT + BORE Scheduler
+        source+=("${_patchsource}/sched/0001-sched-ext.patch"
+                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
+    echo) ## ECHO Scheduler
+        source+=("${_patchsource}/sched/0001-echo-cachy.patch");;
     rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
@@ -232,6 +236,8 @@ case "$_cpusched" in
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
+    sched-ext) ## SCHED-EXT
+        source+=("${_patchsource}/sched/0001-sched-ext.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
@@ -253,6 +259,7 @@ prepare() {
         src="${src%%::*}"
         src="${src##*/}"
         src="${src%.zst}"
+        [[ $src = 0001-NVIDIA-take-modeset-ownership-early.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -284,11 +291,13 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        cachyos|sched-ext) scripts/config -e SCHED_CLASS_EXT;;
+        cachyos) scripts/config -e SCHED_CLASS_EXT -e SCHED_BORE;;
         bore|hardened) scripts/config -e SCHED_BORE;;
+        echo) scripts/config -e ECHO_SCHED;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
+        sched-ext) scripts/config -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -317,7 +326,7 @@ prepare() {
     [ -z $_HZ_ticks ] && _die "The value is empty. Choose the correct one again."
 
     case "$_HZ_ticks" in
-        100|250|500|600|750|1000)
+        100|250|500|600|625|750|1000)
             scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ "${_HZ_ticks}";;
         300)
             scripts/config -e HZ_300 --set-val HZ 300;;
@@ -522,12 +531,16 @@ prepare() {
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}"
         sh "${_nv_pkg}.run" --extract-only
+
+        # Temporary fix for nvidia module
+        patch -Np2 --no-backup-if-mismatch -i "${srcdir}/0001-NVIDIA-take-modeset-ownership-early.patch" -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 }
 
 build() {
     cd ${srcdir}/${_srcname}
     make ${BUILD_FLAGS[*]} -j$(nproc) all
+    make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
 
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}/${_nv_pkg}/kernel"
@@ -596,7 +609,7 @@ _package-headers() {
 
     echo "Installing build files..."
     install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
-        localversion.* version vmlinux
+        localversion.* version vmlinux tools/bpf/bpftool/vmlinux.h
     install -Dt "$builddir/kernel" -m644 kernel/Makefile
     install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
     cp -t "$builddir" -a scripts
@@ -706,9 +719,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('2a5990e067439dcb3a6e7647832c85a2ce7faf28c48f414ebcb4d33ea37f870204c4b6bf98fca1faaf61bb59f579d6b597d8b2b29bd8cd2cc3b25afba3fe1fd8'
-        '6d09ff3a85d210207c39b20da240a61d10cc454d41970cdec848acd73580a780e89ae12ab97a122d72ef16c0e47464b444c5f6e4b50d0cb849419bb3df9714fc'
+b2sums=('fea25d171e8e4e0394211b5589d76fd85537094dc80c135e80fc8bd32acf0d6f4f34524c35df960e8c7ee488c8288d158fc233d6cc7a76182996a658741da71b'
+        '89203703eea864403c2eee3f9adfd7572a827e8071e36a45f653a0a4836d79748033bec1dc9f8a25f707808eaa24a664e0de3b1b10cf196e0bb28633ca41d08a'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        '10d0ac1eca89658cca9784d264b51e7445013840a4453902b88759b551a9eb5ec1d08ea6329b1d3befc566598a70f21fa3a7681994eb03bbe1804d9fe16440e4'
-        '342d9eeeab8a46bad9e744d9e9f857b123f92e1b5dd7af1e9fdcf5f85652ae98de2062545482664278c1bd63682bc71b3ea590d6426ee365518cf2847a19af6d'
-        'd603702cb37da26deec2f4cbbde4cdc99edaa528130f9657d33e7dfff2e4472fb90c4730b431be0fce4dabeaa353c2a8bc48ed8173c546a3be0c50ab997dc3a9')
+        '663a39b89cc8132c1c715509edff466fc08daa69148f0029b16d6667b96ef5029319a2ea0a7e2d1fa503456bd5cca527d1122cea0f17ad9be5f3fd7c603d0f28'
+        '986e2c306529bd7f298683bc4c505f192880a8e164a62ac202a662fd3983290f64a0b490960676196fc6f923fd56c1be490c0e22d68f48277ad5dca71692eb50'
+        '4dbae9ca35a02575d3664a8d9d366ed985a987948d8520be171f8fb3390a419cab844b423fc7abf3b0c65149d1942aedd5a18dfdd8432ca7b45a3b0b0e517019')
