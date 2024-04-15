@@ -217,7 +217,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos) ## SCHED-EXT
+    cachyos) # CachyOS Scheduler (BORE + SCHED-EXT)
         source+=("${_patchsource}/sched/0001-sched-ext.patch"
                  "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
     bore) ## BORE Scheduler
@@ -289,12 +289,12 @@ prepare() {
 
     case "$_cpusched" in
         cachyos) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
-        sched-ext) scripts/config -e SCHED_CLASS_EXT;;
-        bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
+        bore|hardened) scripts/config -e SCHED_BORE;;
         echo) scripts/config -e ECHO_SCHED;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
+        sched-ext) scripts/config -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
