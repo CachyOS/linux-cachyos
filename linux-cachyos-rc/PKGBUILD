@@ -161,7 +161,7 @@ fi
 _major=6.9
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc4
+_rcver=rc5
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -169,7 +169,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -713,9 +713,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('3adb7f15d8ffae93fa368f3cba673a39b6d29d175b9a0d993e1223826f1b423b4a3884012d2a20f44084d2082cee617bb04221c66c8dbcb284ebc244437278cb'
+b2sums=('86640286e9c979f45cf3211b99c7c1fe1ae7347e01772b52231863ba726443ec3c1c6b961b7f8e6d7505b80ab692893df926567664abf7f09f10a4590d5e83f8'
         '88b91d85a0d0eb984a02cb6d7e9268521212f4a66de62f35bc7dd1899a56552a5e43f4bd3d15307be04814dc96ff2cd1556b32c9fbeb93b185bc3bca9c8d17f4'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        '7a55b9793b615e28005380553092dc8143de593bbe79661a1c7e0be29023be4d3b7e965a312e494d9d24dde5eaa7d6153114c8cfca4456ba05b540cb8e4f77b5'
+        '880172d44bcd4564e765dd260f5c8e8c09420d67635938df901a6f63af5c27545b43c75a8393b095c351386487baacdd4f0f3bfe19e561c7cd4c84b47eff40fb'
         'f51b2de9a9e028044de2816d00334119346b9cb59f9c4241b6fd80f61a7c7c86ee5bc61e5715a8b48dbba2423ec8c18d99f9235664762af923e7769cd830f957'
-        '2878d8388184ffb0bbaae9ef3516702f20d54d202e29fea5d56c994094dc464946ef6c0d2f97d954c1186bfe32ea716188393634b37269aed8f0d01d0af60ec9')
+        'bbe41fb39d1a7ec5a9764a4c84b24608f0d5f52f4be36a08ea4688aaaab287ee59a98fc411fc2d81a47225f446c33120309f93be69fde33f0e679d7549421a94')
