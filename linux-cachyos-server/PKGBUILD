@@ -159,7 +159,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.8
-_minor=7
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -169,7 +169,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF scheduler Kernel by CachyOS targeted for Servers'
-pkgrel=3
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -715,7 +715,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('e8626a99c6c5769a8126d5ee1c7962c3df3c7a8c689193ffa864c4a4b8e72daeeaf22c3e3bb6ba5490eca3ef64c32a4a12980360a196444a53abadd791cd1855'
-        '2b82490fac9554c6a70cb0fe7a91aeda22cbb86b28de7b7d8c6ca31cd1921dc09b0ab8835c625384eddffb398ae72828180ae23372d8ff333d179abe4820077f'
+b2sums=('3c04407c6875d1547c18024db7a020c450b332b10707c847208080819fa92624281fd9b628c1fefe7c16439f60d64dcc80010726a7d4320354b682ccaadb1f35'
+        'd9dda2b20df4d2493e47095b6ed65e9217bb2d985dbd6fc3e3139bbe6411b5bca8a09c26b07bb39d83a6603b77b8a307a1153649e78b6cec2f07b9a43fb6984d'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        '0238b1d895cf58fe538f9da2fc84b61af4932f35c5202255ea7131716b44da62b83db8b972fbb7063f5e78bf7022d844394fcc407275578b363a7c9342032e46')
+        '3ead3586e95ee48d0d22ca492bd5922e68a1548bf19f4da287740252fda423ed1fb67c3774c95c9ec743a433cb68b98e1c34266367a6debe4a5f6b1a37b96360')
