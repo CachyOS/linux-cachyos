@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-echo
 	pkgdesc = Linux ECHO scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.8.9
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -31,7 +31,7 @@ pkgbase = linux-cachyos-echo
 	b2sums = 0305b6636a4e382855a2804cedc3984f1e891b26b24412e3533b1f29a07459d39be5121d4618da20098623290e922d502b7ac1b774f39e732f23a778a4b5b5be
 	b2sums = f4ee3d01d266c08830474cdc5b2a51bbc4ab827c5dfc2c50b75f6e92adcc064d19dbd25f57f979d337e452698e84674483bf3c8b0b24e1d89315212b63fddde8
 	b2sums = 43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d
-	b2sums = 31d36cf6eb5c3bc114ce985b864b79796bd605def0a22ea7f49fe3a0029831c16a039cc614fe77af274bf956b2bacde67d7f9555a548ab55a9a77f0ea121b17c
+	b2sums = 5bc9545ae70e9e3ff1407fa6dc733cabe7c06576b107c6587de4934d5838bd99b9615801e6f73c1ea93645bed578a1fa042adf348f34c56782a55a17c1140fac
 	b2sums = dad783c8c59964c66884b84fd05886733db9dc0e30202e31dbeef75c6d46a5cc195146198cb3242f6b5e32f18b80d8370e18eb92746f97c8f99fe8af422ef57d
 
 pkgname = linux-cachyos-echo
