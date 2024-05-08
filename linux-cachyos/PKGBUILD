@@ -168,7 +168,7 @@ _stable=${_major}.${_minor}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
+pkgdesc='Linux SCHED-EXT + Cachy Sauce + BORE Kernel by CachyOS with other patches and improvements'
 pkgrel=4
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
@@ -210,7 +210,7 @@ fi
 # NVIDIA pre-build module support
 if [ -n "$_build_nvidia" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
-             "${_patchsource}/misc/nvidia/0001-NVIDIA-take-modeset-ownership-early.patch")
+             "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch")
 fi
 
 ## List of CachyOS schedulers
@@ -255,7 +255,7 @@ prepare() {
         src="${src%%::*}"
         src="${src##*/}"
         src="${src%.zst}"
-        [[ $src = 0001-NVIDIA-take-modeset-ownership-early.patch ]] && continue
+        [[ $src = make-modeset-fbdev-default.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -528,8 +528,8 @@ prepare() {
         cd "${srcdir}"
         sh "${_nv_pkg}.run" --extract-only
 
-        # Temporary fix for nvidia module
-        patch -Np2 --no-backup-if-mismatch -i "${srcdir}/0001-NVIDIA-take-modeset-ownership-early.patch" -d "${srcdir}/${_nv_pkg}/kernel"
+        # Use fbdev and modeset as default
+        patch -Np1 -i "${srcdir}/make-modeset-fbdev-default.patch" -d "${srcdir}/${_nv_pkg}"
     fi
 }
 

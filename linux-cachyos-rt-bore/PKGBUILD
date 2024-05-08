@@ -210,7 +210,7 @@ fi
 # NVIDIA pre-build module support
 if [ -n "$_build_nvidia" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
-             "${_patchsource}/misc/nvidia/0001-NVIDIA-take-modeset-ownership-early.patch")
+             "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch")
 fi
 
 ## List of CachyOS schedulers
@@ -255,7 +255,7 @@ prepare() {
         src="${src%%::*}"
         src="${src##*/}"
         src="${src%.zst}"
-        [[ $src = 0001-NVIDIA-take-modeset-ownership-early.patch ]] && continue
+        [[ $src = make-modeset-fbdev-default.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -528,8 +528,8 @@ prepare() {
         cd "${srcdir}"
         sh "${_nv_pkg}.run" --extract-only
 
-        # Temporary fix for nvidia module
-        patch -Np2 --no-backup-if-mismatch -i "${srcdir}/0001-NVIDIA-take-modeset-ownership-early.patch" -d "${srcdir}/${_nv_pkg}/kernel"
+        # Use fbdev and modeset as default
+        patch -Np1 -i "${srcdir}/make-modeset-fbdev-default.patch" -d "${srcdir}/${_nv_pkg}"
     fi
 }
 
