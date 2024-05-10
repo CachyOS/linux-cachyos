@@ -169,7 +169,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=3
+pkgrel=5
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -216,9 +216,8 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos) # CachyOS Scheduler (BORE + SCHED-EXT)
-        source+=("${_patchsource}/sched/0001-sched-ext.patch"
-                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
+    cachyos) # CachyOS Scheduler (SCHED-EXT)
+        source+=("${_patchsource}/sched/0001-sched-ext.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     echo) ## ECHO Scheduler
@@ -289,7 +288,7 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        cachyos) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
+        cachyos) scripts/config -e SCHED_CLASS_EXT;;
         bore|hardened) scripts/config -e SCHED_BORE;;
         echo) scripts/config -e ECHO_SCHED;;
         eevdf) ;;
@@ -724,6 +723,5 @@ done
 b2sums=('9f346bbd6c540249de07d2e20efcdaecec7159a2ef04d9208dc0ee5165fc1bab80fc1424e1391ec4aa8c1682c49989188beba902d34472bbf39ae3440845d216'
         '47ef1bc417813cd6eac010c9e35c01c0bcddba095bcdd5b974e85bd37ca562ca9525914797eab81040ff5d4e2395236b854e4fc6a44ad7096d51a74a854e13ec'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        'ed251f65beef8681814df599adb5becb617b7bfa6957b4316811b119879a5c69bdc27e499aac7eac310a6f3b4ae09b2d604ad1e0a38eeab2847469e62095cf4f'
-        '1ebb80c0e3838f017062b2de09ca1a2a8989b7ddadc817497aa37de29c17e99397e2d35cb64b7d9c1f1eec4281f0a3dcd2d9796d43f2f2c892cb4c4edafda68f'
-        '0fa23df9ca224e2da208b39af0d479b758622f06543ed9b6a7c1058813d5d498d3057d45cb774ed496c54c36cc686eec09a47ef5860ceeb2b11ed267e66612f7')
+        '88f947f6c5363f34024eaaadd793a0605b5f92082d41ed6f822bc3c8b4dfd02b7a09136026676a30f8aa62b8fc7ac808a2c8d5eeb6178b247428ac9890f6931a'
+        '1ebb80c0e3838f017062b2de09ca1a2a8989b7ddadc817497aa37de29c17e99397e2d35cb64b7d9c1f1eec4281f0a3dcd2d9796d43f2f2c892cb4c4edafda68f')
