@@ -1,7 +1,7 @@
-pkgbase = linux-cachyos
-	pkgdesc = Linux SCHED-EXT + Cachy Sauce + BORE Kernel by CachyOS with other patches and improvements
+pkgbase = linux-cachyos-deckify
+	pkgdesc = Linux SCHED-EXT + Cachy Sauce + BORE + Deckify Patches Kernel by CachyOS with other patches and improvements
 	pkgver = 6.8.9
-	pkgrel = 4
+	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -36,8 +36,8 @@ pkgbase = linux-cachyos
 	b2sums = d3b398d83537dd4d4e3c5e8774ecb94b2021b56ceff129ab20b49945dda0090850570f7b631cfd6b3d17bfd941da190dc77b2bccb2f2ccaa8a72837db09b1367
 	b2sums = e73f9da7831708b14c3a1542daa89d4a46a44fe8298ce4d6eee780a74eac50669002a1f00e0553ce7c269064f1720d13909dc231355e54f8e6cccbd5ce12736c
 
-pkgname = linux-cachyos
-	pkgdesc = The Linux SCHED-EXT + Cachy Sauce + BORE Kernel by CachyOS with other patches and improvements kernel and modules
+pkgname = linux-cachyos-deckify
+	pkgdesc = The Linux SCHED-EXT + Cachy Sauce + BORE + Deckify Patches Kernel by CachyOS with other patches and improvements kernel and modules
 	depends = coreutils
 	depends = kmod
 	depends = initramfs
@@ -51,7 +51,7 @@ pkgname = linux-cachyos
 	provides = KSMBD-MODULE
 	provides = UKSMD-BUILTIN
 
-pkgname = linux-cachyos-headers
-	pkgdesc = Headers and scripts for building modules for the Linux SCHED-EXT + Cachy Sauce + BORE Kernel by CachyOS with other patches and improvements kernel
+pkgname = linux-cachyos-deckify-headers
+	pkgdesc = Headers and scripts for building modules for the Linux SCHED-EXT + Cachy Sauce + BORE + Deckify Patches Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
-	depends = linux-cachyos
+	depends = linux-cachyos-deckify
