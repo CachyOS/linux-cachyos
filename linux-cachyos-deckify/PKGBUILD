@@ -216,7 +216,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos) ## SCHED-EXT + BORE Scheduler
+    cachyos) # CachyOS Scheduler (Sched-ext + BORE + Cachy Sauce)
         source+=("${_patchsource}/sched/0001-sched-ext.patch"
                  "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
     bore) ## BORE Scheduler
