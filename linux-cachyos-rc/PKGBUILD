@@ -13,7 +13,7 @@ _cachy_config=${_cachy_config-y}
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select 'EEVDF-BORE Variant Scheduler'
+# 'cachyos' - select 'Sched-Ext Scheduler Framework Variant Scheduler'
 # 'eevdf' - select 'EEVDF Scheduler'
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
@@ -82,20 +82,6 @@ _tickrate=${_tickrate-full}
 ## Choose between full(low-latency), voluntary or server
 _preempt=${_preempt-full}
 
-### Enable multigenerational LRU
-# ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable multigenerational LRU
-# 'stats' - enable multigenerational LRU with stats
-# 'none' - disable multigenerational LRU
-_lru_config=${_lru_config-standard}
-
-### Enable per-VMA locking
-# ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable per-VMA locking
-# 'stats' - enable per-VMA locking with stats
-# 'none' - disable per-VMA locking
-_vma_config=${_vma_config-standard}
-
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
 # 'always' - always enable THP
@@ -115,9 +101,9 @@ _damon=${_damon-}
 # - "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
 # - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
 #
-# Or use the _use_auto_optimization with _use_auto_optimization=y
 _processor_opt=${_processor_opt-}
 
+# This does automatically detect your supported CPU and optimizes for it
 _use_auto_optimization=${_use_auto_optimization-y}
 
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
@@ -216,7 +202,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos) # CachyOS Scheduler (SCHED-EXT)
+    cachyos) # CachyOS Scheduler (Sched-ext + Cachy Sauce)
         source+=("${_patchsource}/sched/0001-sched-ext.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
@@ -421,29 +407,7 @@ prepare() {
             --set-str DEFAULT_TCP_CONG bbr
     fi
 
-    ### Select LRU config
-    [ -z "$_lru_config" ] && _die "The value is empty. Choose the correct one again."
 
-    case "$_lru_config" in
-        standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
-        stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
-        none) scripts/config -d LRU_GEN;;
-        *) _die "The value '$_lru_config' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_lru_config' LRU_GEN config..."
-
-    ### Select VMA config
-    [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_vma_config" in
-        standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
-        stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
-        none) scripts/config -d PER_VMA_LOCK;;
-        *) _die "The value '$_vma_config' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_vma_config' PER_VMA_LOCK config..."
 
     ### Select THP
     [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
@@ -721,7 +685,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('9f346bbd6c540249de07d2e20efcdaecec7159a2ef04d9208dc0ee5165fc1bab80fc1424e1391ec4aa8c1682c49989188beba902d34472bbf39ae3440845d216'
-        '47ef1bc417813cd6eac010c9e35c01c0bcddba095bcdd5b974e85bd37ca562ca9525914797eab81040ff5d4e2395236b854e4fc6a44ad7096d51a74a854e13ec'
+        '541228216bba29398cdb391b88fed7e8a34c8f1192cf73fd07c90bc8bb06e537d935ea940261541322acf2c492479990cf7ff42f017c6e719ecf4e29284324ec'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        '88f947f6c5363f34024eaaadd793a0605b5f92082d41ed6f822bc3c8b4dfd02b7a09136026676a30f8aa62b8fc7ac808a2c8d5eeb6178b247428ac9890f6931a'
+        '2a5d72807eb08aefee0e7ee35a617c1dc87a99b2f41857b8687dce0e106910b5bae07e2995784df9c14e37c63afb860f3f3a8b422ac29d83d3cdff87b176758e'
         '1ebb80c0e3838f017062b2de09ca1a2a8989b7ddadc817497aa37de29c17e99397e2d35cb64b7d9c1f1eec4281f0a3dcd2d9796d43f2f2c892cb4c4edafda68f')

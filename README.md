@@ -25,22 +25,13 @@ The Schedulers listed below are supported
 
 ## linux-cachyos
 We have provided all these CPU schedulers because each scheduler performs differently depending on usage. We recommend testing each one to determine which best suits your specific requirements.
-- **([BORE](https://github.com/firelzrd))** **Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-bore` / `linux-cachyos-bore` / `linux-cachyos`
+- **([BORE](https://github.com/firelzrd))** **Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-cachyos` / `linux-bore` / `linux-cachyos-bore`
 - **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** - `linux-cachyos-eevdf`
-- **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** - `linux-cachyos-sched-ext`
+- **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** - `linux-cachyos-sched-ext` / `linux-cachyos-sched-ext-debug`
 - **([ECHO](https://github.com/hamadmarri))** **Enhanced CPU Handling Orchestrator** Scheduler by [Hamad Marri](https://github.com/hamadmarri) - `linux-cachyos-echo`
 
 #### CachyOS default kernel
-> - **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** - `linux-cachyos`
-
-### :books: Archived schedulers
-- **CacULE and CacULE-RDB** by Hamad Marri, supported by CachyOS in the past as - `linux-cachyos-cacule`  
-  ***ATTENTION:** Not supported after version 6.1. If you still want to use it, you can get it from the archive repository - [linux-cacule](https://github.com/ptr1337/linux-cacule)*
-- **(CFS) - Standard Scheduler Completely Fair Scheduler** - `linux-cachyos-cfs`
-- **(BMQ) - BitMap Queue** by Alfred Chen - `linux-cachyos-bmq`
-- **(PDS) - Priority and Deadline based Skiplist multiple queue** by Alfred Chen - `linux-cachyos-pds`
-- **(TT) - Task Type** Scheduler by [Hamad Marri](https://github.com/hamadmarri/TT-CPU-Scheduler) - `linux-cachyos-tt` / `linux-tt`  
-  ***ATTENTION:** Not supported after version 6.6.*
+> - **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** + **BORE Scheduler** - `linux-cachyos`
 
 > The CachyOS repositories provide prebuilt kernels in three different march versions: `x86-64`, `x86-64-v3`, and `x86-64-v4`. In addition, the repositories also offer LTO-enabled kernels.
 
@@ -50,7 +41,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Very customizable PKGBUILD with many features and improvements.
 - `GCC/CLANG` Optimization with automatically found CPU architecture or also selectable CPU architecture.
 - Choose between `LLVM/LTO & Thin-LTO` or `GCC`.
-- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 500Hz
+- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 1000Hz
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 
 ### :abacus: CPU enhancements
@@ -59,9 +50,8 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - SCHED-EXT Schedulers prebuilt in the repository # https://lwn.net/Articles/922405/ - `linux-cachyos` and `linux-cachyos-sched-ext`
 - Cachy Sauce (CONFIG_CACHY), enables various tweaks for the scheduler and other settings
 ### :bookmark_tabs: Filesystem & memory
-- Latest BTRFS/XFS/EXT4 improvements & fixes
 - ZFS Filesystem Support and prebuilt in the repository
-- NVIDIA Module Support - Build the nvidia module together with the kernel
+- NVIDIA Module Support including patches - Build the nvidia module together with the kernel
 - Latest & improved ZSTD 1.5.6 patch-set
 - UserKSM daemon from pf
 - Improved BFQ Scheduler
@@ -75,6 +65,13 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Scheduler patches from linux-next/tip
 - OpenRGB and ACS Override support
 - AMD: Allow override of min_powercap with `amdgpu_ignore_min_pcap`
+- Steam Deck Patches included - Audi, HW Quirks, HID
+- Rog Ally patches included
+- v4l2loopback modules as default included
+- HDR support enabled
+- Various GCC Optimization flags applied (`-fivopts -fmodulo-sched`)
+- NTSync patched and integrated into the kernel (`NTSYNC=y`)
+- VRR fixes for AMD GPU's
 
 # [CachyOS repositories](https://mirror.cachyos.org/)
 The repositories contain both Arch Linux and CachyOS packages, which have been re-built with flags optimized for performance, stability, and security.
@@ -265,6 +262,7 @@ Just follow this [README](https://github.com/chaotic-cx/nyx#how-to-use-it)
 
 ## Support
 **Discord:** <https://discord.gg/cachyos-862292009423470592> <br />
+**Forum:** <https://discuss.cachyos.org> <br />
 **Telegram:** <https://t.me/+zCzPX4cAFjk1MTYy> <br />
 **Matrix:** <https://matrix.cachyos.org> <br />
 
