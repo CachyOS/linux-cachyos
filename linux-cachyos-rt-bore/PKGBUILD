@@ -145,12 +145,12 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.9
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -680,10 +680,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('4cf86c3cfe6e6534745d42dfaeca59b17ea1168c4e8b615c80e6d8aac735f11283cd85fa992b440b5d4452917e94b9f08397a64af0be5894e3df23c68892377e'
+b2sums=('388af1d13e78a424f72a961697f4b0b6a234e54ce1e4a2532fc73717301e048c6f4a6251b6e3c4541179d1382566c3f411baa6883818a10d178ef27d036b5379'
         '2e008839b9466532b887066cb8772bde09f80c5ef11ae3b6bf2c45441278df79bbe70ffddc0010b48a62592849393dded00461ef741bfcd6b82e738d706713ff'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        '260b9fb553c75c2dcdb1d2312899008860350b7e786c76a37a53af2d1bd63b6551ec1553c43420d9ed61a0a5d32037b8ed97213894215583762d56b645d63793'
+        'f7c64bdfd1afc521e32cbe2d025aa9df201c7ee1462b921447cf5df5abdbfce4a555fe4569773dbc6e0ad77965cc64a685eb866f882a9917a764861089505a76'
         '84c53976b94c567fef1fede069b92ffc917cf823f847ce20afc5b6bffcae327a1bfd05243c32c80298ddf6e0165dfde81d61b095d766986f870bd9cc32f6de77'
         '3a815d03ce4c02f971a13bb5835aed5c0ef36124ebde642291aa9ba09aeb87a3d89cb4dcef5aea2ac8aa1a194390b7a8d69edc4f1269e96e751e955e3aba5c62'
         'e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b')
