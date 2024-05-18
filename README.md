@@ -65,7 +65,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - Scheduler patches from linux-next/tip
 - OpenRGB and ACS Override support
 - AMD: Allow override of min_powercap with `amdgpu_ignore_min_pcap`
-- Steam Deck Patches included - Audi, HW Quirks, HID
+- Steam Deck Patches included - Audio, HW Quirks, HID
 - Rog Ally patches included
 - v4l2loopback modules as default included
 - HDR support enabled
