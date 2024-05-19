@@ -722,6 +722,7 @@ _package-zfs(){
     pkgdesc="zfs module for the $pkgdesc kernel"
     depends=('pahole' $pkgbase=$_kernver)
     provides=('ZFS-MODULE')
+    license=('CDDL')
 
     cd ${srcdir}/"zfs"
     install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
@@ -747,7 +748,6 @@ _package-nvidia-open(){
     pkgdesc="nvidia open modules of ${_nv_ver} driver for the linux-$pkgsuffix kernel"
     depends=("$pkgbase=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
-    conflicts=('NVIDIA-MODULE')
     license=('GPL')
 
     cd "${srcdir}/${_nv_open_pkg}"

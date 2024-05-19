@@ -422,8 +422,6 @@ prepare() {
             --set-str DEFAULT_TCP_CONG bbr
     fi
 
-
-
     ### Select THP
     [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
 
@@ -687,7 +685,7 @@ _package-zfs(){
     pkgdesc="zfs module for the $pkgdesc kernel"
     depends=('pahole' $pkgbase=$_kernver)
     provides=('ZFS-MODULE')
-
+    license=('CDDL')
     local moduleprefix=${_major}.${_minor}-${_rcver}-${pkgrel}
 
     cd ${srcdir}/"zfs"
@@ -715,12 +713,12 @@ _package-nvidia-open(){
     pkgdesc="nvidia open modules of ${_nv_ver} driver for the linux-$pkgsuffix kernel"
     depends=("$pkgbase=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
-    conflicts=('NVIDIA-MODULE')
     license=('GPL')
 
+    local moduleprefix=${_major}.${_minor}-${_rcver}-${pkgrel}
     cd "${srcdir}/${_nv_open_pkg}"
-    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 kernel-open/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -dm755 "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
+    install -m644 kernel/*.ko "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 COPYING
 
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
