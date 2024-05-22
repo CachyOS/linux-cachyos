@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-sched-ext-debug
 	pkgdesc = Linux SCHED-EXT + Cachy Sauce + Developer Kernel by CachyOS with other patches and improvements
 	pkgver = 6.9.1
-	pkgrel = 2
+	pkgrel = 3
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	arch = x86_64_v3
@@ -23,6 +23,7 @@ pkgbase = linux-cachyos-sched-ext-debug
 	makedepends = python
 	options = !strip
 	options = !debug
+	options = !lto
 	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.9.1.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
@@ -31,7 +32,7 @@ pkgbase = linux-cachyos-sched-ext-debug
 	b2sums = 388af1d13e78a424f72a961697f4b0b6a234e54ce1e4a2532fc73717301e048c6f4a6251b6e3c4541179d1382566c3f411baa6883818a10d178ef27d036b5379
 	b2sums = 2e008839b9466532b887066cb8772bde09f80c5ef11ae3b6bf2c45441278df79bbe70ffddc0010b48a62592849393dded00461ef741bfcd6b82e738d706713ff
 	b2sums = 43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d
-	b2sums = f7c64bdfd1afc521e32cbe2d025aa9df201c7ee1462b921447cf5df5abdbfce4a555fe4569773dbc6e0ad77965cc64a685eb866f882a9917a764861089505a76
+	b2sums = 5704297c29cba82d1fcf6c15651513cb6226447720593c85ed3fb0cee1ab341fb59c38cd18fa3964e6b4407c158393b382a2582a0d9ca605600766fa75eb8fc4
 	b2sums = 1ebb80c0e3838f017062b2de09ca1a2a8989b7ddadc817497aa37de29c17e99397e2d35cb64b7d9c1f1eec4281f0a3dcd2d9796d43f2f2c892cb4c4edafda68f
 
 pkgname = linux-cachyos-sched-ext-debug
