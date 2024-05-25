@@ -13,7 +13,7 @@ _cachy_config=${_cachy_config-y}
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select 'EEVDF-BORE Variant Scheduler'
+# 'cachyos' - select 'Sched-Ext Scheduler Framework Variant Scheduler with BORE Scheduler'
 # 'eevdf' - select 'EEVDF Scheduler'
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
@@ -82,20 +82,6 @@ _tickrate=${_tickrate-full}
 ## Choose between full(low-latency), voluntary or server
 _preempt=${_preempt-full}
 
-### Enable multigenerational LRU
-# ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable multigenerational LRU
-# 'stats' - enable multigenerational LRU with stats
-# 'none' - disable multigenerational LRU
-_lru_config=${_lru_config-standard}
-
-### Enable per-VMA locking
-# ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable per-VMA locking
-# 'stats' - enable per-VMA locking with stats
-# 'none' - disable per-VMA locking
-_vma_config=${_vma_config-standard}
-
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
 # 'always' - always enable THP
@@ -115,9 +101,9 @@ _damon=${_damon-}
 # - "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
 # - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
 #
-# Or use the _use_auto_optimization with _use_auto_optimization=y
 _processor_opt=${_processor_opt-}
 
+# This does automatically detect your supported CPU and optimizes for it
 _use_auto_optimization=${_use_auto_optimization-y}
 
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
@@ -163,8 +149,8 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgsuffix=cachyos-deckify
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.8
-_minor=10
+_major=6.9
+_minor=2
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -174,7 +160,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce + BORE + Deckify Patches Kernel by CachyOS with other patches and improvements'
-pkgrel=3
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -200,7 +186,8 @@ source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
     "auto-cpu-optimization.sh"
-    "${_patchsource}/all/0001-cachyos-base-all.patch")
+    "${_patchsource}/all/0001-cachyos-base-all.patch"
+    "${_patchsource}/misc/0001-wifi-ath11k-Rename-QCA2066-fw-dir-to-QCA206X.patch")
 
 # WARNING The ZFS module doesn't build with selected RT sched due to licensing issues.
 if [[ "$_cpusched" = "rt" || "$_cpusched" = "rt-bore" ]]; then
@@ -432,30 +419,6 @@ prepare() {
             -e DEFAULT_BBR \
             --set-str DEFAULT_TCP_CONG bbr
     fi
-
-    ### Select LRU config
-    [ -z "$_lru_config" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_lru_config" in
-        standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
-        stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
-        none) scripts/config -d LRU_GEN;;
-        *) _die "The value '$_lru_config' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_lru_config' LRU_GEN config..."
-
-    ### Select VMA config
-    [ -z "$_vma_config" ] && _die "The value is empty. Choose the correct one again."
-
-    case "$_vma_config" in
-        standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
-        stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
-        none) scripts/config -d PER_VMA_LOCK;;
-        *) _die "The value '$_vma_config' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_vma_config' PER_VMA_LOCK config..."
 
     ### Select THP
     [ -z "$_hugepage" ] && _die "The value is empty. Choose the correct one again."
@@ -764,9 +727,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('1e3fba4cdbe1c3d4f0ea56f8e54242e0276a3ae47e5dc97152d0afd7042a02ae9b57d6808ed8482358eb244eecc73ed41f7411ab50d4b462fc776b68c293c30a'
+b2sums=('ae19877e19239c2b521cdf04d182c0ee849228c9ecb4c9dddb626d85ed51faaa5215cc70b5c1ad203c346df85197cd5512894a27eba1c1fd6add9cd2fbaa2a3e'
         'ec7cc7c3c204f6e1c331fc09353fd6195939bcf6144fe7a62991fe082933743bb080aadcc07daeef191bd0fb1448884bac8686590af87a3ad10a74885e490599'
         '43ef7a347878592740d9eb23b40a56083fa747f7700fa1e2c6d039d660c0b876d99bf1a3160e15d041fb13d45906cdb5defef034d4d0ae429911864239c94d8d'
-        'aa5275370144b3b7a15e90bc7e8e09ab4b3a21e974dd5540d1178231b1f76bc5fd5d2459e8fc1dfb7d68150429240fa6867ec790b8644b733ace4b80e943e1a0'
-        'd3b398d83537dd4d4e3c5e8774ecb94b2021b56ceff129ab20b49945dda0090850570f7b631cfd6b3d17bfd941da190dc77b2bccb2f2ccaa8a72837db09b1367'
-        'e73f9da7831708b14c3a1542daa89d4a46a44fe8298ce4d6eee780a74eac50669002a1f00e0553ce7c269064f1720d13909dc231355e54f8e6cccbd5ce12736c')
+        '0d56c5abf5486f5b948e1fcb49ac96c1eb42f9842a0c09ae26429ed6bba68bb114e24da986a9c8146d30595cb2faf3c4e86c1c79abab2e665bae94a57ba3dfec'
+        '53e125e8838ef6a3b2a7e1828b225888b2a5dac749c71c622009f61109fe3c113373c42e322af4427d636e0ebe9d23b46c6d0a2b342e7d8dabd8cfa198eed63e'
+        '1ebb80c0e3838f017062b2de09ca1a2a8989b7ddadc817497aa37de29c17e99397e2d35cb64b7d9c1f1eec4281f0a3dcd2d9796d43f2f2c892cb4c4edafda68f'
+        '8b4d6d51ff981783dd0fb9e33ae0c96accd8b36b4de22370145fdf85e281ac74b02a44cb7ed9e65ac1057e9ee2ab3cb97bbb211712203c702aee0945e1503348')
