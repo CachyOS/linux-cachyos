@@ -30,46 +30,47 @@ cpu_arch() {
   > 24) MZEN2 : Select this for AMD Family 17h Zen 2 processors.\n \
   > 25) MZEN3 : Select this for AMD Family 19h Zen 3 processors. - GCC 10.3 required\n \
   > 26) MZEN4 : Select this for AMD Family 19h Zen 4 processors. - GCC 13.1 required\n \
-  > 27) MCRUSOE : Select this for a Transmeta Crusoe processor.\n \
-  > 28) MEFFICEON : Select this for a Transmeta Efficeon processor.\n \
-  > 29) MWINCHIPC6 : Select this for an IDT Winchip C6 chip.\n \
-  > 30) MWINCHIP3D : Select this for an IDT Winchip-2, 2A or 3.\n \
-  > 31) MELAN : Select this for an AMD Elan processor.\n \
-  > 32) MGEODEGX1 : Select this for a Geode GX1 (Cyrix MediaGX) chip.\n \
-  > 33) MGEODE_LX Select this for AMD Geode GX and LX processors.\n \
-  > 34) MCYRIXIII : Select this for a Cyrix III or C3 chip.\n \
-  > 35) MVIAC3_2 : Select this for a VIA C3 "Nehemiah".\n \
-  > 36) MVIAC7 : Select this for a VIA C7.\n \
-  > 37) MPSC : Optimize for Intel Pentium 4, Pentium D and older Nocona/Dempsey Xeon CPUs with Intel 64bit which is compatible with x86-64.\n \
-  > 38) MATOM : Select this for the Intel Atom platform.\n \
-  > 39) MCORE2 : Select this for Intel Core 2 and newer Core 2 Xeons (Xeon 51xx and 53xx) CPUs.\n \
-  > 40) MNEHALEM : Select this for 1st Gen Core processors in the Nehalem family.\n \
-  > 41) MWESTMERE : Select this for the Intel Westmere formerly Nehalem-C family.\n \
-  > 42) MSILVERMONT Select this for the Intel Silvermont platform.\n \
-  > 43) MGOLDMONT : Select this for the Intel Goldmont platform including Apollo Lake and Denverton.\n \
-  > 44) MGOLDMONTPLUS : Select this for the Intel Goldmont Plus platform including Gemini Lake.\n \
-  > 45) MSANDYBRIDGE : Select this for 2nd Gen Core processors in the Sandy Bridge family.\n \
-  > 46) MIVYBRIDGE : Select this for 3rd Gen Core processors in the Ivy Bridge family.\n \
-  > 47) MHASWELL : Select this for 4th Gen Core processors in the Haswell family.\n \
-  > 48) MBROADWELL : Select this for 5th Gen Core processors in the Broadwell family.\n \
-  > 49) MSKYLAKE : Select this for 6th Gen Core processors in the Skylake family.\n \
-  > 50) MSKYLAKEX : Select this for 6th Gen Core processors in the Skylake X family.\n \
-  > 51) MCANNONLAKE : Select this for 8th Gen Core processors.\n \
-  > 52) MICELAKE : Select this for 10th Gen Core processors in the Ice Lake family.\n \
-  > 53) MCASCADELAKE : Select this for Xeon processors in the Cascade Lake family.\n \
-  > 54) MCOOPERLAKE : Select this for Xeon processors in the Cooper Lake family. - GCC 10.1 required\n \
-  > 55) MTIGERLAKE : Select this for third-generation 10 nm process processors in the Tiger Lake family. - GCC 10.1 required\n \
-  > 56) MSAPPHIRERAPIDS : Select this for third-generation 10 nm process processors in the Sapphire Rapids family. - GCC 11 required\n \
-  > 57) MALDERLAKE : Select this for twelfth-generation processors in the Alder Lake family.- GCC 11 required\n \
-  > 58) MRAPTORLAKE : Select this for thirteenth-generation processors in the Raptor Lake family.- GCC 13 required\n \
-  > 59) MMETORLAKE : Select this for fourteenth-generation processors in the Meteor Lake family.- GCC 13 required\n \
-  > 60) GENERIC_CPU : Generic x86-64 CPU. Run equally well on all x86-64 CPUs.\n \
-  > 61) GENERIC_CPU2 : Run equally well on all x86-64 CPUs with min support of x86-64-v2. - GCC 11 required\n \
-  > 62) GENERIC_CPU3 : Generic x86-64-v3 CPU with v3 instructions. Run equally well on all x86-64 CPUs with min support of x86-64-v3. - GCC 11 required\n \
-  > 63) GENERIC_CPU4 : Generic x86-64 CPU with v4 instructions. Run equally well on all x86-64 CPUs with min support of x86-64-v4. - GCC 11 required\n \
-  > 64) MNATIVE_INTEL : Intel-Native optimizations autodetected by GCC.\n \
-  > 65) MNATIVE_AMD : AMD-Native optimizations autodetected by GCC.\n \
-  > Default (60 : Gneric CPU)\nchoice[0-65]: '`" _microarchitecture
+  > 27) MZEN5 : Select this for AMD Family 19h Zen 5 processors. - GCC 14.1 required\n \
+  > 28) MCRUSOE : Select this for a Transmeta Crusoe processor.\n \
+  > 29) MEFFICEON : Select this for a Transmeta Efficeon processor.\n \
+  > 30) MWINCHIPC6 : Select this for an IDT Winchip C6 chip.\n \
+  > 31) MWINCHIP3D : Select this for an IDT Winchip-2, 2A or 3.\n \
+  > 32) MELAN : Select this for an AMD Elan processor.\n \
+  > 33) MGEODEGX1 : Select this for a Geode GX1 (Cyrix MediaGX) chip.\n \
+  > 34) MGEODE_LX Select this for AMD Geode GX and LX processors.\n \
+  > 35) MCYRIXIII : Select this for a Cyrix III or C3 chip.\n \
+  > 36) MVIAC3_2 : Select this for a VIA C3 "Nehemiah".\n \
+  > 37) MVIAC7 : Select this for a VIA C7.\n \
+  > 38) MPSC : Optimize for Intel Pentium 4, Pentium D and older Nocona/Dempsey Xeon CPUs with Intel 64bit which is compatible with x86-64.\n \
+  > 39) MATOM : Select this for the Intel Atom platform.\n \
+  > 40) MCORE2 : Select this for Intel Core 2 and newer Core 2 Xeons (Xeon 51xx and 53xx) CPUs.\n \
+  > 41) MNEHALEM : Select this for 1st Gen Core processors in the Nehalem family.\n \
+  > 42) MWESTMERE : Select this for the Intel Westmere formerly Nehalem-C family.\n \
+  > 43) MSILVERMONT Select this for the Intel Silvermont platform.\n \
+  > 44) MGOLDMONT : Select this for the Intel Goldmont platform including Apollo Lake and Denverton.\n \
+  > 45) MGOLDMONTPLUS : Select this for the Intel Goldmont Plus platform including Gemini Lake.\n \
+  > 46) MSANDYBRIDGE : Select this for 2nd Gen Core processors in the Sandy Bridge family.\n \
+  > 47) MIVYBRIDGE : Select this for 3rd Gen Core processors in the Ivy Bridge family.\n \
+  > 48) MHASWELL : Select this for 4th Gen Core processors in the Haswell family.\n \
+  > 49) MBROADWELL : Select this for 5th Gen Core processors in the Broadwell family.\n \
+  > 50) MSKYLAKE : Select this for 6th Gen Core processors in the Skylake family.\n \
+  > 51) MSKYLAKEX : Select this for 6th Gen Core processors in the Skylake X family.\n \
+  > 52) MCANNONLAKE : Select this for 8th Gen Core processors.\n \
+  > 53) MICELAKE : Select this for 10th Gen Core processors in the Ice Lake family.\n \
+  > 54) MCASCADELAKE : Select this for Xeon processors in the Cascade Lake family.\n \
+  > 55) MCOOPERLAKE : Select this for Xeon processors in the Cooper Lake family. - GCC 10.1 required\n \
+  > 56) MTIGERLAKE : Select this for third-generation 10 nm process processors in the Tiger Lake family. - GCC 10.1 required\n \
+  > 57) MSAPPHIRERAPIDS : Select this for third-generation 10 nm process processors in the Sapphire Rapids family. - GCC 11 required\n \
+  > 58) MALDERLAKE : Select this for twelfth-generation processors in the Alder Lake family.- GCC 11 required\n \
+  > 59) MRAPTORLAKE : Select this for thirteenth-generation processors in the Raptor Lake family.- GCC 13 required\n \
+  > 60) MMETORLAKE : Select this for fourteenth-generation processors in the Meteor Lake family.- GCC 13 required\n \
+  > 61) GENERIC_CPU : Generic x86-64 CPU. Run equally well on all x86-64 CPUs.\n \
+  > 62) GENERIC_CPU2 : Run equally well on all x86-64 CPUs with min support of x86-64-v2. - GCC 11 required\n \
+  > 63) GENERIC_CPU3 : Generic x86-64-v3 CPU with v3 instructions. Run equally well on all x86-64 CPUs with min support of x86-64-v3. - GCC 11 required\n \
+  > 64) GENERIC_CPU4 : Generic x86-64 CPU with v4 instructions. Run equally well on all x86-64 CPUs with min support of x86-64-v4. - GCC 11 required\n \
+  > 65) MNATIVE_INTEL : Intel-Native optimizations autodetected by GCC.\n \
+  > 66) MNATIVE_AMD : AMD-Native optimizations autodetected by GCC.\n \
+  > Default (61 : Gneric CPU)\nchoice[0-66]: '`" _microarchitecture
 
   if [[ "$_microarchitecture" = "1" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
@@ -151,120 +152,123 @@ cpu_arch() {
     scripts/config --enable CONFIG_MZEN4
   elif [[ "$_microarchitecture" = "27" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MCRUSOE
+    scripts/config --enable CONFIG_MZEN5
   elif [[ "$_microarchitecture" = "28" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MEFFICEON
+    scripts/config --enable CONFIG_MCRUSOE
   elif [[ "$_microarchitecture" = "29" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MWINCHIPC6
+    scripts/config --enable CONFIG_MEFFICEON
   elif [[ "$_microarchitecture" = "30" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MWINCHIP3D
+    scripts/config --enable CONFIG_MWINCHIPC6
   elif [[ "$_microarchitecture" = "31" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MELAN
+    scripts/config --enable CONFIG_MWINCHIP3D
   elif [[ "$_microarchitecture" = "32" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MGEODEGX1
+    scripts/config --enable CONFIG_MELAN
   elif [[ "$_microarchitecture" = "33" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MGEODE_LX
+    scripts/config --enable CONFIG_MGEODEGX1
   elif [[ "$_microarchitecture" = "34" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MCYRIXIII
+    scripts/config --enable CONFIG_MGEODE_LX
   elif [[ "$_microarchitecture" = "35" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MVIAC3_2
+    scripts/config --enable CONFIG_MCYRIXIII
   elif [[ "$_microarchitecture" = "36" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MVIAC7
+    scripts/config --enable CONFIG_MVIAC3_2
   elif [[ "$_microarchitecture" = "37" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MPSC
+    scripts/config --enable CONFIG_MVIAC7
   elif [[ "$_microarchitecture" = "38" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MATOM
+    scripts/config --enable CONFIG_MPSC
   elif [[ "$_microarchitecture" = "39" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MCORE2
+    scripts/config --enable CONFIG_MATOM
   elif [[ "$_microarchitecture" = "40" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MNEHALEM
+    scripts/config --enable CONFIG_MCORE2
   elif [[ "$_microarchitecture" = "41" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MWESTMERE
+    scripts/config --enable CONFIG_MNEHALEM
   elif [[ "$_microarchitecture" = "42" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MSILVERMONT
+    scripts/config --enable CONFIG_MWESTMERE
   elif [[ "$_microarchitecture" = "43" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MGOLDMONT
+    scripts/config --enable CONFIG_MSILVERMONT
   elif [[ "$_microarchitecture" = "44" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MGOLDMONTPLUS
+    scripts/config --enable CONFIG_MGOLDMONT
   elif [[ "$_microarchitecture" = "45" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MSANDYBRIDGE
+    scripts/config --enable CONFIG_MGOLDMONTPLUS
   elif [[ "$_microarchitecture" = "46" ]]; then
+    scripts/config --disable CONFIG_GENERIC_CPU
+    scripts/config --enable CONFIG_MSANDYBRIDGE
+  elif [[ "$_microarchitecture" = "47" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
     scripts/config --disable CONFIG_AGP_AMD64 
     scripts/config --disable CONFIG_MICROCODE_AMD
     scripts/config --enable CONFIG_MIVYBRIDGE
-  elif [[ "$_microarchitecture" = "47" ]]; then
-    scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MHASWELL
   elif [[ "$_microarchitecture" = "48" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MBROADWELL
+    scripts/config --enable CONFIG_MHASWELL
   elif [[ "$_microarchitecture" = "49" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MSKYLAKE
+    scripts/config --enable CONFIG_MBROADWELL
   elif [[ "$_microarchitecture" = "50" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MSKYLAKEX
+    scripts/config --enable CONFIG_MSKYLAKE
   elif [[ "$_microarchitecture" = "51" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MCANNONLAKE
+    scripts/config --enable CONFIG_MSKYLAKEX
   elif [[ "$_microarchitecture" = "52" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MICELAKE
+    scripts/config --enable CONFIG_MCANNONLAKE
   elif [[ "$_microarchitecture" = "53" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MCASCADELAKE
+    scripts/config --enable CONFIG_MICELAKE
   elif [[ "$_microarchitecture" = "54" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MCOOPERLAKE
+    scripts/config --enable CONFIG_MCASCADELAKE
   elif [[ "$_microarchitecture" = "55" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MTIGERLAKE
+    scripts/config --enable CONFIG_MCOOPERLAKE
   elif [[ "$_microarchitecture" = "56" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MSAPPHIRERAPIDS
+    scripts/config --enable CONFIG_MTIGERLAKE
   elif [[ "$_microarchitecture" = "57" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MALDERLAKE
+    scripts/config --enable CONFIG_MSAPPHIRERAPIDS
   elif [[ "$_microarchitecture" = "58" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MRAPTORLAKE
+    scripts/config --enable CONFIG_MALDERLAKE
   elif [[ "$_microarchitecture" = "59" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MMETORLAKE
+    scripts/config --enable CONFIG_MRAPTORLAKE
   elif [[ "$_microarchitecture" = "60" ]]; then
-    scripts/config --enable CONFIG_GENERIC_CPU
-  elif [[ "$_microarchitecture" = "61" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_GENERIC_CPU2
+    scripts/config --enable CONFIG_MMETORLAKE
+  elif [[ "$_microarchitecture" = "61" ]]; then
+    scripts/config --enable CONFIG_GENERIC_CPU
   elif [[ "$_microarchitecture" = "62" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_GENERIC_CPU3
+    scripts/config --enable CONFIG_GENERIC_CPU2
   elif [[ "$_microarchitecture" = "63" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_GENERIC_CPU4
+    scripts/config --enable CONFIG_GENERIC_CPU3
   elif [[ "$_microarchitecture" = "64" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
-    scripts/config --enable CONFIG_MNATIVE_INTEL
+    scripts/config --enable CONFIG_GENERIC_CPU4
   elif [[ "$_microarchitecture" = "65" ]]; then
+    scripts/config --disable CONFIG_GENERIC_CPU
+    scripts/config --enable CONFIG_MNATIVE_INTEL
+  elif [[ "$_microarchitecture" = "66" ]]; then
     scripts/config --disable CONFIG_GENERIC_CPU
     scripts/config --enable CONFIG_MNATIVE_AMD
   else
