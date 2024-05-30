@@ -424,6 +424,7 @@ CONFIG_INTEL_TDX_GUEST=y
 # CONFIG_MZEN2 is not set
 # CONFIG_MZEN3 is not set
 # CONFIG_MZEN4 is not set
+# CONFIG_MZEN5 is not set
 # CONFIG_MPSC is not set
 # CONFIG_MCORE2 is not set
 # CONFIG_MATOM is not set
