@@ -160,7 +160,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -179,7 +179,7 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
 fi
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=555.42.02
+_nv_ver=555.52.04
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="open-gpu-kernel-modules-${_nv_ver}"
 source=(
@@ -730,4 +730,4 @@ b2sums=('8d8fe931d304458bcaa8c8b9572a5354ad272d88d1e0642e76b37247ce13bf70c49c8de
         'a6ac159cdbb8865e9746a6801a3ae3f4b67d5ce50803452706206df8187febe2b3d1912b94d7c4539a7b635ad81f5ddff9f85bfe6439bd6d7854af6e3decb7d9'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
         '93bfcde7ac4f0f4cae7605c4cc94d63a9752e4fa078c3de1336db9e3f48d168e0443f772662e86bf6e2413ea3fc7aa3dccd45cb96385eaa7451a2d9546c218a5'
-        '3a4a1edbe73d7c66408a93cbc50f5fe5e677146546883a1893c450cddc37f09b6a940717fdedd1e54bf0f6ed0b8bbefd57c115b01573218ea32a2ad6552fed11')
+        '43e06e1501ac5f52144c71c34d0a14582ff066bf1e99e1c2949a8919490333c0698e72b66c625ff08bba504b8abf2a0eecb42fde08701c4124bbe2fa6a2ae47c')
