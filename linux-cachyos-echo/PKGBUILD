@@ -150,7 +150,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.9
-_minor=3
+_minor=4
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -160,7 +160,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux ECHO scheduler + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=3
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -726,8 +726,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('8d8fe931d304458bcaa8c8b9572a5354ad272d88d1e0642e76b37247ce13bf70c49c8de6d8843fbb3037ee074ebc6cc94f0cc2b5b7e7187385a9dd0b0e2e250d'
+b2sums=('5579aef00f38e87ee9a9878ad4340aebc9c2590d8e813e2e106af59c6739e39a37267672ab7aff56160c8519d3014d139e6c849f33b9292c6fba019bc88d09da'
         '0862f1b55021956008dbaf9a9fa1825dd54c185ddad4f5ae2e14980377466a98f39c48c64ce634be46f4f8991b7bb10c5f41927e1e7c23aa78a58f2ad6b2e4cc'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '6347a5909d954b360c0911ce048622796052f51cba6d3028984c898682732d74c36e570ccdc0a20e887f726a7127b3230067b57cc5e6d8f134cde4cae716d31b'
+        'c8716a7b9de6d7247fd09f1b9fb3e52604e68b9173ba7258669b66e537279637d026e72de0310b281e47126f0a64367c3cd8409fbe0378e77aa71dd22ac833e5'
         '6eedcd7ef7e82dea92022734076999a4f961bbe8bb2a86095982eb12c620751b45bcca458e728957203ab15c11da30a750f89f195fa3778595f13acf72ed123f')
