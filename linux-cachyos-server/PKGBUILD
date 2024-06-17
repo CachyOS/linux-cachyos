@@ -266,7 +266,14 @@ prepare() {
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
         MARCH="${_processor_opt^^}"
-        MARCH2=M${MARCH}
+        MARCH2=${MARCH}
+
+        if [[ ! "$MARCH" =~ GENERIC* ]]; then
+            MARCH2="M${MARCH}"
+        else
+            MARCH2="${MARCH/V/CPU}"
+        fi
+
         scripts/config -k -d CONFIG_GENERIC_CPU
         scripts/config -k -e CONFIG_${MARCH2}
     fi
