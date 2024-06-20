@@ -688,7 +688,7 @@ _package-headers() {
 }
 
 _package-debug(){
-    pkgdesc="Contain a non-stripped vmlinux file for analyzing dumps"
+    pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
     depends=(linux-${pkgsuffx}-headers)
 
     cd "${srcdir}/${_srcname}"
