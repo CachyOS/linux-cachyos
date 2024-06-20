@@ -802,8 +802,9 @@ _package-nvidia-open(){
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
 
-pkgname=("$pkgbase" "$pkgbase-headers")
+pkgname=("$pkgbase")
 [ -n "$_build_debug" ] && pkgname+=("$pkgbase-dbg")
+pkgname+=("$pkgbase-headers")
 [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
 [ -n "$_build_nvidia_open" ] && pkgname+=("$pkgbase-nvidia-open")
