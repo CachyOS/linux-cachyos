@@ -687,7 +687,7 @@ _package-headers() {
 
 _package-dbg(){
     pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
-    depends=(linux-${pkgsuffx}-headers)
+    depends=(linux-${pkgsuffix}-headers)
 
     cd "${srcdir}/${_srcname}"
     mkdir -p "$pkgdir/usr/src/debug/linux-${pkgsuffix}"
