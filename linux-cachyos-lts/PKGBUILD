@@ -161,6 +161,9 @@ _bcachefs=${_bcachefs-}
 # Use this only if you have Turing+ GPU
 _build_nvidia_open=${_build_nvidia_open-}
 
+# Build a debug package with non-stripped vmlinux
+_build_debug=${_build_debug-}
+
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
     pkgsuffix=cachyos-lts-lto
     pkgbase=linux-$pkgsuffix
@@ -750,6 +753,15 @@ _package-headers() {
     ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
 
+_package-dbg(){
+    pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
+    depends=(linux-${pkgsuffix}-headers)
+
+    cd "${srcdir}/${_srcname}"
+    mkdir -p "$pkgdir/usr/src/debug/linux-${pkgsuffix}"
+    install -Dt "$pkgdir/usr/src/debug/linux-${pkgsuffix}" -m644 vmlinux
+}
+
 _package-zfs(){
     pkgdesc="zfs module for the $pkgdesc kernel"
     depends=('pahole' $pkgbase=$_kernver)
@@ -790,7 +802,9 @@ _package-nvidia-open(){
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
 
-pkgname=("$pkgbase" "$pkgbase-headers")
+pkgname=("$pkgbase")
+[ -n "$_build_debug" ] && pkgname+=("$pkgbase-dbg")
+pkgname+=("$pkgbase-headers")
 [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
 [ -n "$_build_nvidia_open" ] && pkgname+=("$pkgbase-nvidia-open")
