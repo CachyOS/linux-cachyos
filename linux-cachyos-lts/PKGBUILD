@@ -758,8 +758,8 @@ _package-debug(){
     depends=(linux-${pkgsuffx}-headers)
 
     cd "${srcdir}/${_srcname}"
-    mkdir -p "$pkgdir/usr/src/debug/linux"
-    install -Dt "$pkgdir/usr/src/debug/linux" -m644 vmlinux
+    mkdir -p "$pkgdir/usr/src/debug/linux-${pkgsuffix}"
+    install -Dt "$pkgdir/usr/src/debug/linux-${pkgsuffix}" -m644 vmlinux
 }
 
 _package-zfs(){
