@@ -684,7 +684,7 @@ _package-headers() {
     ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
 
-_package-debug(){
+_package-dbg(){
     pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
     depends=(linux-${pkgsuffx}-headers)
 
@@ -734,7 +734,7 @@ _package-nvidia-open(){
 }
 
 pkgname=("$pkgbase" "$pkgbase-headers")
-[ -n "$_build_debug" ] && pkgname+=("$pkgbase-debug")
+[ -n "$_build_debug" ] && pkgname+=("$pkgbase-dbg")
 [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
 [ -n "$_build_nvidia_open" ] && pkgname+=("$pkgbase-nvidia-open")
