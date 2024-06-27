@@ -209,7 +209,7 @@ if [ -n "$_build_nvidia" ]; then
 fi
 
 if [ -n "$_build_nvidia_open" ]; then
-    source+=("nvidia-open-${_nv_ver}.tar.gz::https://github.com/CachyOS/open-gpu-kernel-modules/archive/refs/tags/${_nv_ver}.tar.gz"
+    source+=("nvidia-open-${_nv_ver}.tar.gz::https://github.com/NVIDIA/open-gpu-kernel-modules/archive/refs/tags/${_nv_ver}.tar.gz"
              "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch"
              "${_patchsource}/misc/nvidia/nvidia-open-gcc-ibt-sls.patch")
 fi
