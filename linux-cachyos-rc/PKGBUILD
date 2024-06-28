@@ -735,7 +735,7 @@ _package-nvidia-open(){
     local moduleprefix=${_major}.${_minor}-${_rcver}-${pkgrel}
     cd "${srcdir}/${_nv_open_pkg}"
     install -dm755 "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
-    install -m644 kernel/*.ko "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
+    install -m644 kernel-open/*.ko "$pkgdir/usr/lib/modules/${moduleprefix}-${pkgsuffix}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 COPYING
 
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
