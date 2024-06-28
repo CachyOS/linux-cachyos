@@ -730,7 +730,7 @@ _package-nvidia-open(){
     pkgdesc="nvidia open modules of ${_nv_ver} driver for the linux-$pkgsuffix kernel"
     depends=("$pkgbase=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
-    license=('GPL')
+    license=(GPL-1.0-only)
 
     cd "${srcdir}/${_nv_open_pkg}"
     install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
