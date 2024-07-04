@@ -298,12 +298,12 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        cachyos) scripts/config -e SCHED_CLASS_EXT -e SCHED_BORE;;
-        bore|hardened) scripts/config -e SCHED_BORE;;
+        cachyos) scripts/config -e SCHED_CLASS_EXT -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 2000000;;
+        bore|hardened) scripts/config -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 2000000;;
         echo) scripts/config -e ECHO_SCHED;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
-        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
+        rt-bore) scripts/config -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 2000000 -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
         sched-ext) scripts/config -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
