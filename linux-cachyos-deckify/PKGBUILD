@@ -717,6 +717,7 @@ _package-nvidia(){
     pkgdesc="nvidia module of ${_nv_ver} driver for the linux-$pkgsuffix kernel"
     depends=("$pkgbase=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
+    conflicts=("$pkgbase-nvidia-open")
     license=('custom')
 
     cd "${srcdir}/${_nv_pkg}/"
@@ -730,6 +731,7 @@ _package-nvidia-open(){
     pkgdesc="nvidia open modules of ${_nv_ver} driver for the linux-$pkgsuffix kernel"
     depends=("$pkgbase=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
+    conflicts=("$pkgbase-nvidia")
     license=(GPL-1.0-only)
 
     cd "${srcdir}/${_nv_open_pkg}"
