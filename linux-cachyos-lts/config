@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.6.35 Kernel Configuration
+# Linux/x86 6.6.39 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 14.1.1 20240522"
 CONFIG_CC_IS_GCC=y
@@ -9483,7 +9483,6 @@ CONFIG_IIO_CONSUMERS_PER_TRIGGER=2
 CONFIG_IIO_SW_DEVICE=m
 CONFIG_IIO_SW_TRIGGER=m
 CONFIG_IIO_TRIGGERED_EVENT=m
-CONFIG_IIO_BACKEND=m
 
 #
 # Accelerometers
