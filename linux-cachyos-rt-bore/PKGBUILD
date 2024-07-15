@@ -152,13 +152,13 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgsuffix=cachyos-${_cpusched}
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.9
-_minor=9
+_major=6.10
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -199,7 +199,7 @@ fi
 # ZFS support
 if [ -n "$_build_zfs" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=228ff3867f53d31dab403a3b6b3b555eaf8bdc04")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=55a3483f28e69bf0514abb8c0a8e3812da282e73")
 fi
 
 # NVIDIA pre-build module support
@@ -753,10 +753,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('a228397902894f566d49adef24e4d44271893173cf0c58e8eb6006137dfb870b5f3aea17cadc775988a0682ba4a5261ebd3f10689b6c096f762cc8af666c56ff'
-        '06d0753d804a12a1e7299f948d79770a326aa573af7ef8adef607ae8b00e8576f4327bfb0f4ad520cd3e694107a8c2e2ce9a952f33de4d7c89ce533938116049'
+b2sums=('bb243ea7493b9d63aa2df2050a3f1ae2b89ee84a20015239cf157e3f4f51c7ac5efedc8a51132b2d7482f9276ac418de6624831c8a3b806130d9c2d2124c539b'
+        '817d2a55b71b48727f286c43b2c267f73189401b0fd6be870214e9a4d1826eba8fdb3d368f41b299776b51daae07d8a16aa4faa2586a237c4a092627f9aaa809'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        'bf13687cfa952136b63542fec6cb011f13853386e143370ea62eb40b403073cb7822e41aa1824fb77c878c43c34fda2980235897e2a7fcade484dc2c56a503ad'
-        '6f89a411a05bbd62f98032f42975f558b45dee8fbb95950cbfe602dc5a98a691f27c525dd575c6cf8fd0eb0c6184e359c45c4feca9a44b9feadcec7bb777d0f6'
-        '03b4e089c5bfc43cfef1ea673fde51eb57e08b2d2b39f337fb771376febe7b5418da4f5a61b85a2e1109d4632b6ba3cc221180788ef925a0f5b81ac22456ad9b'
+        '68d65985331035ab3191082878e0c4ba017ddc95539e209feb4375fd1ec2bd52a58f8ad0ce9eacc088803c5c7caa429a5001a830dcf8f3e16f8cd66a801494ef'
+        '1e68832f7e05c572d4a67d3cf2b9d2d4a15689e7a47f23f7136ed3c1b4d7ca7f1e09187533afb43985c0193dd97c98d69648372990d8ef5f676b201fa143c9e7'
+        '420c9dbb807a6af3e507dd267c511abbc8dd3b3493700fdaf458a34ff9c758436792152a48734e4982c5461b20bddf0ab828f025c349885f41bd61ea924e24ff'
         'e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b')
