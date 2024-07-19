@@ -676,7 +676,7 @@ _package() {
 
 _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-    depends=('pahole' linux-${pkgsuffix} )
+    depends=('pahole' ${pkgbase} )
 
     cd ${srcdir}/${_srcname}
     local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
@@ -760,11 +760,11 @@ _package-headers() {
 
 _package-dbg(){
     pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
-    depends=(linux-${pkgsuffix}-headers)
+    depends=(${pkgbase}-headers)
 
     cd "${srcdir}/${_srcname}"
-    mkdir -p "$pkgdir/usr/src/debug/linux-${pkgsuffix}"
-    install -Dt "$pkgdir/usr/src/debug/linux-${pkgsuffix}" -m644 vmlinux
+    mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
+    install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
 }
 
 _package-zfs(){
@@ -781,7 +781,7 @@ _package-zfs(){
 }
 
 _package-nvidia(){
-    pkgdesc="nvidia module of ${_nv_ver} driver for the linux-$pkgsuffix kernel"
+    pkgdesc="nvidia module of ${_nv_ver} driver for the ${pkgbase} kernel"
     depends=("$pkgbase=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
     conflicts=("$pkgbase-nvidia-open")
@@ -795,7 +795,7 @@ _package-nvidia(){
 }
 
 _package-nvidia-open(){
-    pkgdesc="nvidia open modules of ${_nv_ver} driver for the linux-$pkgsuffix kernel"
+    pkgdesc="nvidia open modules of ${_nv_ver} driver for the ${pkgbase} kernel"
     depends=("$pkgbase=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
     conflicts=("$pkgbase-nvidia")
