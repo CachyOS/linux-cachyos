@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-hardened
 	pkgdesc = Linux BORE scheduler and hardened Kernel by CachyOS with other patches and improvements
-	pkgver = 6.9.9
+	pkgver = 6.9.10
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -24,16 +24,16 @@ pkgbase = linux-cachyos-hardened
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.9.9.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.9.10.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.9/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.9/sched/0001-bore-cachy.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.9/misc/0001-hardened.patch
-	b2sums = a228397902894f566d49adef24e4d44271893173cf0c58e8eb6006137dfb870b5f3aea17cadc775988a0682ba4a5261ebd3f10689b6c096f762cc8af666c56ff
+	b2sums = e08cce7f271cfda05c5ad777d06cbb04b57fdb7992d10d24f9e0193cae185d02881cc089bab14639a058cae12d1f89ac79c7d0be528c077d8b09d385dd3fa616
 	b2sums = 4c26ddb09b19458846c5072bab862b84e9bb6247641d7e1ffdcc6f468baf79163ae0abd77befb74745d90b4cb08bf6895a09e86c7ff200f5339db82aaf90ba1f
 	b2sums = b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667
-	b2sums = bf13687cfa952136b63542fec6cb011f13853386e143370ea62eb40b403073cb7822e41aa1824fb77c878c43c34fda2980235897e2a7fcade484dc2c56a503ad
+	b2sums = 6f1a60ace295554a280c0b0543e9424d4162a6a9bd1d1f10c747fc81dec82ae998fffa224ccd8f0c0a0de5013e8f957af86abffe1795261abd198a66f5f9bf67
 	b2sums = 60a78fc4bdd91ea13de44c19e1da692185098c274360322784375ff5dafed978c2cf0a6e88dd7f3c558e44cfdfed7883c51c09f94a484beed12f5fc1a4db6fbe
 	b2sums = aef0ba793b1fa9d39c82bfcd43107343741cf230e8e0ebe7d947a4a7c885100d959af8fc4c01a23c12e9bcf1ecd1d29381e554c556140cd3558409763cb7a9b0
 
