@@ -141,9 +141,6 @@ _build_nvidia=${_build_nvidia-}
 # Use this only if you have Turing+ GPU
 _build_nvidia_open=${_build_nvidia_open-}
 
-# Build a debug package with non-stripped vmlinux
-_build_debug=${_build_debug-}
-
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
     pkgsuffix=cachyos-${_cpusched}-lto
     pkgbase=linux-$pkgsuffix
@@ -169,7 +166,7 @@ _kernuname="${pkgver}-${pkgsuffix}"
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL-2.0-only')
-options=('!strip' '!debug' '!lto')
+options=('!lto')
 makedepends=('bc' 'libelf' 'pahole' 'cpio' 'perl' 'tar' 'xz' 'zstd' 'gcc' 'gcc-libs' 'glibc' 'binutils' 'make' 'patch' 'python')
 # LLVM makedepends
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
@@ -666,36 +663,9 @@ _package-headers() {
     echo "Removing loose objects..."
     find "$builddir" -type f -name '*.o' -printf 'Removing %P\n' -delete
 
-    echo "Stripping build tools..."
-    local file
-    while read -rd '' file; do
-        case "$(file -Sib "$file")" in
-            application/x-sharedlib\;*)      # Libraries (.so)
-                strip -v $STRIP_SHARED "$file" ;;
-            application/x-archive\;*)        # Libraries (.a)
-                strip -v $STRIP_STATIC "$file" ;;
-            application/x-executable\;*)     # Binaries
-                strip -v $STRIP_BINARIES "$file" ;;
-            application/x-pie-executable\;*) # Relocatable binaries
-                strip -v $STRIP_SHARED "$file" ;;
-        esac
-    done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
-
-    echo "Stripping vmlinux..."
-    strip -v $STRIP_STATIC "$builddir/vmlinux"
-
     echo "Adding symlink..."
     mkdir -p "$pkgdir/usr/src"
     ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
-}
-
-_package-dbg(){
-    pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
-    depends=(linux-${pkgsuffix}-headers)
-
-    cd "${srcdir}/${_srcname}"
-    mkdir -p "$pkgdir/usr/src/debug/linux-${pkgsuffix}"
-    install -Dt "$pkgdir/usr/src/debug/linux-${pkgsuffix}" -m644 vmlinux
 }
 
 _package-zfs(){
@@ -741,7 +711,6 @@ _package-nvidia-open(){
 }
 
 pkgname=("$pkgbase")
-[ -n "$_build_debug" ] && pkgname+=("$pkgbase-dbg")
 pkgname+=("$pkgbase-headers")
 [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
