@@ -165,6 +165,7 @@ _srcname=linux-${_stable}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
 pkgrel=2
 _kernver=$pkgver-$pkgrel
+_kernuname="${pkgver}-${pkgsuffix}"
 arch=('x86_64' 'x86_64_v3')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL-2.0-only')
@@ -535,7 +536,7 @@ build() {
 
     if [ -n "$_build_nvidia" ]; then
         local MODULE_FLAGS=(
-           KERNEL_UNAME="${pkgver}-${pkgsuffix}"
+           KERNEL_UNAME="${_kernuname}"
            IGNORE_PREEMPT_RT_PRESENCE=1
            NV_EXCLUDE_BUILD_MODULES='__EXCLUDE_MODULES'
            SYSSRC="${srcdir}/${_srcname}"
@@ -550,7 +551,7 @@ build() {
     if [ -n "$_build_nvidia_open" ]; then
         cd "${srcdir}/${_nv_open_pkg}"
         local MODULE_FLAGS=(
-           KERNEL_UNAME="${pkgver}-${pkgsuffix}"
+           KERNEL_UNAME="${_kernuname}"
            IGNORE_PREEMPT_RT_PRESENCE=1
            IGNORE_CC_MISMATCH=yes
            SYSSRC="${srcdir}/${_srcname}"
@@ -566,7 +567,7 @@ build() {
         [ "$_use_llvm_lto" != "none" ] && CONFIGURE_FLAGS+=("KERNEL_LLVM=1")
 
         ./autogen.sh
-        sed -i "s|\$(uname -r)|${pkgver}-${pkgsuffix}|g" configure
+        sed -i "s|\$(uname -r)|${_kernuname}|g" configure
         ./configure ${CONFIGURE_FLAGS[*]} --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin \
             --libdir=/usr/lib --datadir=/usr/share --includedir=/usr/include \
             --with-udevdir=/lib/udev --libexecdir=/usr/lib/zfs --with-config=kernel \
