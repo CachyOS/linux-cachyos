@@ -773,9 +773,12 @@ _package-zfs(){
     provides=('ZFS-MODULE')
     license=('CDDL')
 
+    cd ${srcdir}/$_srcname
+    local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
+
     cd ${srcdir}/"zfs"
-    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 module/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -dm755 "${modulesdir}"
+    install -m644 module/*.ko "${modulesdir}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
@@ -787,9 +790,12 @@ _package-nvidia(){
     conflicts=("$pkgbase-nvidia-open")
     license=('custom')
 
+    cd ${srcdir}/$_srcname
+    local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
+
     cd "${srcdir}/${_nv_pkg}/"
-    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 kernel/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -dm755 "${modulesdir}"
+    install -m644 kernel/*.ko "${modulesdir}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 LICENSE
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
 }
@@ -801,9 +807,12 @@ _package-nvidia-open(){
     conflicts=("$pkgbase-nvidia")
     license=(GPL-1.0-only)
 
+    cd ${srcdir}/$_srcname
+    local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
+
     cd "${srcdir}/${_nv_open_pkg}"
-    install -dm755 "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
-    install -m644 kernel-open/*.ko "$pkgdir/usr/lib/modules/${_kernver}-${pkgsuffix}"
+    install -dm755 "${modulesdir}"
+    install -m644 kernel-open/*.ko "${modulesdir}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 COPYING
 
     find "$pkgdir" -name '*.ko' -exec zstd --rm -10 {} +
