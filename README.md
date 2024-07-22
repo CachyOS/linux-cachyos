@@ -251,7 +251,7 @@ eselect repository add CachyOS-kernels git https://github.com/Szowisz/CachyOS-ke
 emaint sync -r CachyOS-kernels
 ```
 ### Fedora
-[Port](https://github.com/sirlucjan/copr-linux-cachyos) of kernel linux-cachyos-bore, linux-cachyos-rt-bore, linux-cachyos-bore-lto and linux-cachyos-lts by [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
+[Port](https://github.com/CachyOS/copr-linux-cachyos/) of kernel linux-cachyos-bore, linux-cachyos-rt-bore, linux-cachyos-bore-lto and linux-cachyos-lts by [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
 
 Visit the [COPR page](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/) for installation instructions and the latest announcements.
 
