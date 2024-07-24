@@ -153,20 +153,20 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.10
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE-RT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=3
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 _kernuname="${pkgver}-${pkgsuffix}"
-arch=('x86_64' 'x86_64_v3')
+arch=('x86_64')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL-2.0-only')
 options=('!strip' '!debug' '!lto')
@@ -763,10 +763,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('bb243ea7493b9d63aa2df2050a3f1ae2b89ee84a20015239cf157e3f4f51c7ac5efedc8a51132b2d7482f9276ac418de6624831c8a3b806130d9c2d2124c539b'
+b2sums=('f3332b2a0e63918ae7583e6cc8009122c7aecbc42e8a3f40c044ed04639731c3bd70165cc0c0927db75fca185721c9b48339df5cd739101a2db45b9b2f10f22c'
         'a4c945d49035c247a014e6791fa021c53f92d338455b0fe6e255c1e74b5ead9c95b0f3999417c727542238aacca0c35d7611202201fc0db2e050b3c8645cfafa'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        'ef61a114293e1153f425eb35642175acef864ec548cf76f10e44d203763949d61180ba1b848a24a538840792ce431387e014ca50a27f2cb90d693aa706bad08c'
+        'f7075dcb694165905daff9beddcceb195dfaacef22d9f5a711258707b5c7716ce46578698b02a34b187ff5bea491bc54acc89971193aba2e9ea6a446955dd022'
         '1e68832f7e05c572d4a67d3cf2b9d2d4a15689e7a47f23f7136ed3c1b4d7ca7f1e09187533afb43985c0193dd97c98d69648372990d8ef5f676b201fa143c9e7'
-        'b0087fc754977ffac55489418141cf74d554c692d770cbaa91329286fd72b9fdf72b8050cb498f16b2c05dfcf9bc6cfba11042a1763cfe1134733129e1782646'
+        '91a8e0b16842afaa9ae56cfc52dc045ec2ac32b0d3498af12336f878076c22cbb4612db8259845e83db6a530ffb3597eb9c2a7e4ae80a14974d643e8571b34e2'
         'e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b')
