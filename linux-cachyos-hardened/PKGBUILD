@@ -736,7 +736,7 @@ _package-nvidia-open(){
     depends=("$pkgbase=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
     conflicts=("$pkgbase-nvidia")
-    license=(GPL-1.0-only)
+    license=('MIT AND GPL-2.0-only')
 
     cd ${srcdir}/$_srcname
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
