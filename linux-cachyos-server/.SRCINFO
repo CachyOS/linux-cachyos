@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-server
 	pkgdesc = Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads
-	pkgver = 6.10.1
+	pkgver = 6.10.2
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -23,14 +23,14 @@ pkgbase = linux-cachyos-server
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.10.1.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.10.2.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.10/all/0001-cachyos-base-all.patch
-	b2sums = f3332b2a0e63918ae7583e6cc8009122c7aecbc42e8a3f40c044ed04639731c3bd70165cc0c0927db75fca185721c9b48339df5cd739101a2db45b9b2f10f22c
+	b2sums = ab1d2e79a1bb8a9b78ab5b1af93db7ef356cb5e14bba1121bbd3ae06b9589c8bfc32bab373acdd0ecf965ac132130e7eb34e70b35a9df1bd85b49dab97e2c02a
 	b2sums = a4c945d49035c247a014e6791fa021c53f92d338455b0fe6e255c1e74b5ead9c95b0f3999417c727542238aacca0c35d7611202201fc0db2e050b3c8645cfafa
 	b2sums = b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667
-	b2sums = f7075dcb694165905daff9beddcceb195dfaacef22d9f5a711258707b5c7716ce46578698b02a34b187ff5bea491bc54acc89971193aba2e9ea6a446955dd022
+	b2sums = c9460039fa270fad30a9f9f090a94cb6e05498c9733d715121fa130096d7eba8262d2aaaaf16844fd44110a53902018b512b136c99ea71514917e93660136fd1
 
 pkgname = linux-cachyos-server
 	pkgdesc = The Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads kernel and modules
