@@ -30,6 +30,7 @@ pkgbase = linux-cachyos-deckify
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.10/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.10/misc/0001-wifi-ath11k-Rename-QCA2066-fw-dir-to-QCA206X.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.10/misc/0001-acpi-call.patch
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.10/misc/0001-handheld.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.10/sched/0001-sched-ext.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.10/sched/0001-bore-cachy-ext.patch
 	b2sums = ab1d2e79a1bb8a9b78ab5b1af93db7ef356cb5e14bba1121bbd3ae06b9589c8bfc32bab373acdd0ecf965ac132130e7eb34e70b35a9df1bd85b49dab97e2c02a
@@ -38,6 +39,7 @@ pkgbase = linux-cachyos-deckify
 	b2sums = c9460039fa270fad30a9f9f090a94cb6e05498c9733d715121fa130096d7eba8262d2aaaaf16844fd44110a53902018b512b136c99ea71514917e93660136fd1
 	b2sums = 53e125e8838ef6a3b2a7e1828b225888b2a5dac749c71c622009f61109fe3c113373c42e322af4427d636e0ebe9d23b46c6d0a2b342e7d8dabd8cfa198eed63e
 	b2sums = be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498
+	b2sums = 5ff28ceb19f50874a6b1fb245deb4835673b1428fe2a3595c17081c53e2d58967445027a41d6c0e836dca37aa9854c1a609b822e49eece3e30097877d52fa756
 	b2sums = 30c8f4756773d06065807e2173691f30c1324ba13e4ae3960dbc68736b79f9cb7d4629b99d6e224ddd4942a8c98cac336cd6c71366f820175646b97fc88c0b47
 	b2sums = 37a8ff3974c1ca7ce7f31c4b8d294703c41fcd12c5a039615feea9e4149b75dc10e8679190f8ac1a0aecbc1af6f3cdea68ca259d3d30c4c29f6f8b01b605905c
 
