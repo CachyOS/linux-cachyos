@@ -152,10 +152,10 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgsuffix=cachyos-rc
     pkgbase=linux-$pkgsuffix
 fi
-_major=6.10
+_major=6.11
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc7
+_rcver=rc1
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -163,7 +163,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=3
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 _kernuname="${pkgver}-${pkgsuffix}"
 arch=('x86_64' 'x86_64_v3')
@@ -763,9 +763,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('22935b9aafe58ec4f7f3711ad522ad6fd9566fc3e8b8ccc896ec83e18304482df6e9eb7f772eab9b0def88b918a7598cd937d2efe7f626142af361d6dbf6b9f6'
-        'a4c945d49035c247a014e6791fa021c53f92d338455b0fe6e255c1e74b5ead9c95b0f3999417c727542238aacca0c35d7611202201fc0db2e050b3c8645cfafa'
+b2sums=('4ac19e7af10038b95b3c66d8e9ee8c73dcd430be56f156e8af586209a2b8743f9e865364eb61b922fc143538e81f06479b94f7ab5db4998fd5f7f607deb3219d'
+        'e9966287ae2d0a638b0afcb1b986564559865f1377d5bf856b7cd703f053b29b2564c31da677dbac972badc257e446e2126ca4d71768c285dd5e58c3667e7609'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        'c9460039fa270fad30a9f9f090a94cb6e05498c9733d715121fa130096d7eba8262d2aaaaf16844fd44110a53902018b512b136c99ea71514917e93660136fd1'
-        '30c8f4756773d06065807e2173691f30c1324ba13e4ae3960dbc68736b79f9cb7d4629b99d6e224ddd4942a8c98cac336cd6c71366f820175646b97fc88c0b47'
-        '37a8ff3974c1ca7ce7f31c4b8d294703c41fcd12c5a039615feea9e4149b75dc10e8679190f8ac1a0aecbc1af6f3cdea68ca259d3d30c4c29f6f8b01b605905c')
+        'b42a622eed93bce9f0ef77e735215a82c507406fda0db878f5a9ce49c57fb6f661aa682731cfadbf90efda812162e0d4993116f88bf487b6475a332810a0bc6c'
+        '5d47ec49a326505c6199239d6b710ab329e47c3d23220a9f15d037e150f224cc0231499b99a4df2c6ec044a630577eeaa20a807a1c28fc36f253ef4cfff4bdce'
+        'e4ae410e322d16d212c5b0e35c5a3fba786274f8c77621661aabfc69fd82faefb1bb29916c25529f4f696fa84102de2d88e0f5ccdcfeaa31ccb8275c31cc8362')
