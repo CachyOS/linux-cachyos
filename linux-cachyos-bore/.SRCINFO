@@ -16,7 +16,6 @@ pkgbase = linux-cachyos-bore
 	makedepends = gcc
 	makedepends = gcc-libs
 	makedepends = glibc
-	makedepends = binutils
 	makedepends = make
 	makedepends = patch
 	makedepends = python
