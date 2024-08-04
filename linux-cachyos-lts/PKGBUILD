@@ -173,7 +173,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.6
-_minor=43
+_minor=44
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -183,7 +183,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 _kernuname="${pkgver}-${pkgsuffix}"
 arch=('x86_64' 'x86_64_v3')
@@ -846,7 +846,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('0ad83b1a1a780a1aad948d55aa55ee63c50c626f2d46910b9d2180028d100a5e'
+sha256sums=('93218296934915636fe6ba08e125948424cc270fd8948502c0ab91087a9fccd8'
             '2b43da6d7704b1f80db835079a3d6f921ce84f2215017b75156cbf12f7370646'
             'a91249420d61edb17b8659ab3feca86d24cf3b1c941b14f232c47064fa4f4ce7'
             '6c63da993f61df31b423480622274eb1ad3fe77fa50fcea88948acc2974261f8'
