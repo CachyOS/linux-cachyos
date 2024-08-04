@@ -31,8 +31,8 @@ pkgbase = linux-cachyos-lts
 	sha256sums = 93218296934915636fe6ba08e125948424cc270fd8948502c0ab91087a9fccd8
 	sha256sums = 2b43da6d7704b1f80db835079a3d6f921ce84f2215017b75156cbf12f7370646
 	sha256sums = a91249420d61edb17b8659ab3feca86d24cf3b1c941b14f232c47064fa4f4ce7
-	sha256sums = 6c63da993f61df31b423480622274eb1ad3fe77fa50fcea88948acc2974261f8
-	sha256sums = 9aa79a3d70d61897bb6f6555dc8b42db988b741f0a182342856ab2038cbfa850
+	sha256sums = 6516e23cf0daed0d565766840342276e00516c732a0e70f996b0e8319221f8c2
+	sha256sums = 8b71209aa8b091dea5fa85921fbd888b5d8a4d351f04ce12d70b9c8d22758389
 
 pkgname = linux-cachyos-lts
 	pkgdesc = The Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules
