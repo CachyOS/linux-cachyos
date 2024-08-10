@@ -4,7 +4,6 @@ pkgbase = linux-cachyos-echo
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
-	arch = x86_64_v3
 	license = GPL-2.0-only
 	makedepends = bc
 	makedepends = libelf
