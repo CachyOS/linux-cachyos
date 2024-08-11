@@ -153,7 +153,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.10
-_minor=3
+_minor=4
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -163,7 +163,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce + BORE + Deckify Patches Kernel by CachyOS with other patches and improvements'
-pkgrel=4
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 _kernuname="${pkgver}-${pkgsuffix}"
 arch=('x86_64')
@@ -777,10 +777,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('e114bbaea91d03efa318f5a85c11e28257defa5f0c8467d3a5d467a7985bdfd7c23a5f54856c85afe800c32694f382df9b147484a3aa85e1e3f4efefbd80b564'
+b2sums=('ea7e9a7d74621a6e76b2828ee80cf5df1fcf139469bb8877d93f30d7766f9145961324de5b2cadba29126d7df82a7eeba80303c82c7c1140be3fb46cf213e503'
         '7e29dbe00a61cb09253519d17924b6d313826cd39cd19c9d655f338bab7c5268ec9eab91c5fec4f524a437408db48ddbd64246d64a62b255b0db84269abd8ca4'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '5da048ff11b0371fda80f0c06f9b24a322d687effc28a23229381cbdf4f05d206440697dd19225c247e7c106f2c9f9a6877f7f84d210339290445857402d681a'
+        'c473c33b9be3da30c6c1627c37f7b56cd54bd6b5c88e666c23766ce62782641c65e3332a93d9530c3f9da8f3153265491e2f318bcbca61f58c7c4d2766fc6429'
         '53e125e8838ef6a3b2a7e1828b225888b2a5dac749c71c622009f61109fe3c113373c42e322af4427d636e0ebe9d23b46c6d0a2b342e7d8dabd8cfa198eed63e'
         'be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498'
         'b693604fc698a1741e6f79491250bdda22748081b2d813bc007e11d52732be62fe3fdec1ec3123a057ea6524bd9f334348df7d8df4940954c03406f2b7f7db6a'
