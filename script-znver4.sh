@@ -2,8 +2,8 @@
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization-y/_use_auto_optimization-/" {}
 ## Enable ZFS
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs-/_build_zfs-y/" {}
-## Enable Generic v3 
-find . -name "config" | xargs -I {} sed -i 's/GENERIC_CPU=y/GENERIC_MZEN4=y/' {}
+## Enable Zen 4
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_processor_opt-/_processor_opt-zen4/" {}
 ## Enable NVIDIA module
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia-/_build_nvidia-y/" {}
 ## Enable Open NVIDIA module
