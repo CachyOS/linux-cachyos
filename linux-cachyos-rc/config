@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.11.0-rc3 Kernel Configuration
+# Linux/x86 6.11.0-rc4 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 14.2.1 20240805"
 CONFIG_CC_IS_GCC=y
@@ -10732,6 +10732,7 @@ CONFIG_OVERLAY_FS_METACOPY=y
 #
 CONFIG_NETFS_SUPPORT=m
 CONFIG_NETFS_STATS=y
+# CONFIG_NETFS_DEBUG is not set
 CONFIG_FSCACHE=y
 CONFIG_FSCACHE_STATS=y
 CONFIG_CACHEFILES=m
