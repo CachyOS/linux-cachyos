@@ -163,7 +163,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE-RT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 _kernuname="${pkgver}-${pkgsuffix}"
 arch=('x86_64')
@@ -198,7 +198,7 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
 fi
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=560.31.02
+_nv_ver=560.35.03
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="open-gpu-kernel-modules-${_nv_ver}"
 source=(
@@ -227,7 +227,8 @@ fi
 if [ -n "$_build_nvidia_open" ]; then
     source+=("nvidia-open-${_nv_ver}.tar.gz::https://github.com/NVIDIA/open-gpu-kernel-modules/archive/refs/tags/${_nv_ver}.tar.gz"
              "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch"
-             "${_patchsource}/misc/nvidia/nvidia-open-gcc-ibt-sls.patch")
+             "${_patchsource}/misc/nvidia/nvidia-open-gcc-ibt-sls.patch"
+             "${_patchsource}/misc/nvidia/fix-zen5.patch")
 fi
 
 ## List of CachyOS schedulers
@@ -274,6 +275,7 @@ prepare() {
         src="${src%.zst}"
         [[ $src = make-modeset-fbdev-default.patch ]] && continue
         [[ $src = nvidia-open-gcc-ibt-sls.patch ]] && continue
+        [[ $src = fix-zen5.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -537,6 +539,8 @@ prepare() {
         patch -Np1 -i "${srcdir}/make-modeset-fbdev-default.patch" -d "${srcdir}/${_nv_open_pkg}/kernel-open"
         # Fix for https://bugs.archlinux.org/task/74886
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/nvidia-open-gcc-ibt-sls.patch" -d "${srcdir}/${_nv_open_pkg}"
+        # Fix for Zen5 error print in dmesg
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/fix-zen5.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
 }
 
@@ -778,6 +782,6 @@ b2sums=('e0e2c2419b6da1a6c5caaf9df669a362bdef3d6fb19742da6c5300a6f6d0994259ea2ac
         '7740fa64764be51df1e3433b02f549dcb187373f790f61a6886fe0cf9ffcfa495c3bbaa123c7f7d4d9ae5726c435c5090140ea735b68caf5efa7f02a4f4f5849'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
         '078169cd2449a144a7e4a3892865c5b0a527df9ae6121b9f7b70af88d93e09dcc83794bf2ad837faf73d58c378705e802e79b83d122e3e0cdfb6438657298dcc'
-        '342c4b1ccae34de20db832f24b14f1fa8e6b0962c14e541973929b2cd8ef9d2dc4f731961b9958e521917136ca8df499af7009f941cbb0113d795ff886d93d02'
+        '9bc4b14b44ab6ccbc71afb7d1afa6019d5c986e96da5e6112b9da6d709e7e9a7e6b27aef7ff348fda0629a0f197e6a17571f91ec37f708128f79abe5b0a8dcd3'
         'bb101e3fcfffeab6cef10ab97e303de0ae8b4b15b2da3fcf0942df9865d402650564115992bd0a3f3789d1f9ce2302ef4720279196a8d5f5994f4c26c807a8fd'
         'e395035f1b0b944beca434c1e24264342088365de267cbb83b111f02a029fc78145aec73c14e458bd3ad648c8bb2c2ef30c2ff091b1dad2f9b754ecbeb45e41b')

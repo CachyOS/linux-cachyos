@@ -163,7 +163,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 _kernuname="${pkgver}-${pkgsuffix}"
 arch=('x86_64')
@@ -198,7 +198,7 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
 fi
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=560.31.02
+_nv_ver=560.35.03
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="open-gpu-kernel-modules-${_nv_ver}"
 source=(
@@ -227,7 +227,8 @@ fi
 if [ -n "$_build_nvidia_open" ]; then
     source+=("nvidia-open-${_nv_ver}.tar.gz::https://github.com/NVIDIA/open-gpu-kernel-modules/archive/refs/tags/${_nv_ver}.tar.gz"
              "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch"
-             "${_patchsource}/misc/nvidia/nvidia-open-gcc-ibt-sls.patch")
+             "${_patchsource}/misc/nvidia/nvidia-open-gcc-ibt-sls.patch"
+             "${_patchsource}/misc/nvidia/fix-zen5.patch")
 fi
 
 ## List of CachyOS schedulers
@@ -274,6 +275,7 @@ prepare() {
         src="${src%.zst}"
         [[ $src = make-modeset-fbdev-default.patch ]] && continue
         [[ $src = nvidia-open-gcc-ibt-sls.patch ]] && continue
+        [[ $src = fix-zen5.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -537,6 +539,8 @@ prepare() {
         patch -Np1 -i "${srcdir}/make-modeset-fbdev-default.patch" -d "${srcdir}/${_nv_open_pkg}/kernel-open"
         # Fix for https://bugs.archlinux.org/task/74886
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/nvidia-open-gcc-ibt-sls.patch" -d "${srcdir}/${_nv_open_pkg}"
+        # Fix for Zen5 error print in dmesg
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/fix-zen5.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
 }
 

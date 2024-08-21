@@ -173,7 +173,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.6
-_minor=46
+_minor=47
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -218,7 +218,7 @@ if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_k
 fi
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=560.31.02
+_nv_ver=560.35.03
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="open-gpu-kernel-modules-${_nv_ver}"
 source=(
@@ -247,7 +247,8 @@ fi
 if [ -n "$_build_nvidia_open" ]; then
     source+=("nvidia-open-${_nv_ver}.tar.gz::https://github.com/NVIDIA/open-gpu-kernel-modules/archive/refs/tags/${_nv_ver}.tar.gz"
              "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch"
-             "${_patchsource}/misc/nvidia/nvidia-open-gcc-ibt-sls.patch")
+             "${_patchsource}/misc/nvidia/nvidia-open-gcc-ibt-sls.patch"
+             "${_patchsource}/misc/nvidia/fix-zen5.patch")
 fi
 
 ## List of CachyOS schedulers
@@ -298,6 +299,7 @@ prepare() {
         src="${src%.zst}"
         [[ $src = make-modeset-fbdev-default.patch ]] && continue
         [[ $src = nvidia-open-gcc-ibt-sls.patch ]] && continue
+        [[ $src = fix-zen5.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -605,6 +607,8 @@ prepare() {
         patch -Np1 -i "${srcdir}/make-modeset-fbdev-default.patch" -d "${srcdir}/${_nv_open_pkg}/kernel-open"
         # Fix for https://bugs.archlinux.org/task/74886
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/nvidia-open-gcc-ibt-sls.patch" -d "${srcdir}/${_nv_open_pkg}"
+        # Fix for Zen5 error print in dmesg
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/fix-zen5.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
 }
 
@@ -842,7 +846,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('052f932396d9c7d84ceeda91226a8ef797c12188bde41e6c419602d990dd45f2'
+sha256sums=('d43376c9e9eaa92bb1b926054bd160d329c58a62d64bd65fe1222c11c6564f50'
             '692977cbef1ce2d669e19492bc607f5fb2c6fac0f73c1f37be6c0c5b753c5a08'
             'a91249420d61edb17b8659ab3feca86d24cf3b1c941b14f232c47064fa4f4ce7'
             '6516e23cf0daed0d565766840342276e00516c732a0e70f996b0e8319221f8c2'
