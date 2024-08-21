@@ -228,7 +228,8 @@ if [ -n "$_build_nvidia_open" ]; then
     source+=("nvidia-open-${_nv_ver}.tar.gz::https://github.com/NVIDIA/open-gpu-kernel-modules/archive/refs/tags/${_nv_ver}.tar.gz"
              "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch"
              "${_patchsource}/misc/nvidia/nvidia-open-gcc-ibt-sls.patch"
-             "${_patchsource}/misc/nvidia/fix-zen5.patch")
+             "${_patchsource}/misc/nvidia/fix-zen5.patch"
+             "${_patchsource}/misc/nvidia/6.11-fbdev.patch")
 fi
 
 ## List of CachyOS schedulers
@@ -276,6 +277,7 @@ prepare() {
         [[ $src = make-modeset-fbdev-default.patch ]] && continue
         [[ $src = nvidia-open-gcc-ibt-sls.patch ]] && continue
         [[ $src = fix-zen5.patch ]] && continue
+        [[ $src = 6.11-fbdev.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -541,6 +543,8 @@ prepare() {
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/nvidia-open-gcc-ibt-sls.patch" -d "${srcdir}/${_nv_open_pkg}"
         # Fix for Zen5 error print in dmesg
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/fix-zen5.patch" -d "${srcdir}/${_nv_open_pkg}"
+        # Fix broken fbdev on 6.11
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/6.11-fbdev.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
 }
 
