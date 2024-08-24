@@ -145,12 +145,12 @@ _build_nvidia_open=${_build_nvidia_open-}
 _build_debug=${_build_debug-}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
-    pkgsuffix=cachyos-${_cpusched}-lto
-    pkgbase=linux-$pkgsuffix
+    _pkgsuffix="cachyos-${_cpusched}-lto"
+    pkgbase="linux-$_pkgsuffix"
 
 elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
-    pkgsuffix=cachyos-${_cpusched}
-    pkgbase=linux-$pkgsuffix
+    _pkgsuffix="cachyos-${_cpusched}"
+    pkgbase="linux-$_pkgsuffix"
 fi
 _major=6.10
 _minor=6
@@ -164,8 +164,8 @@ _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements'
 pkgrel=2
-_kernver=$pkgver-$pkgrel
-_kernuname="${pkgver}-${pkgsuffix}"
+_kernver="$pkgver-$pkgrel"
+_kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL-2.0-only')
@@ -255,14 +255,13 @@ case "$_cpusched" in
 esac
 
 export KBUILD_BUILD_HOST=cachyos
-export KBUILD_BUILD_USER=$pkgbase
+export KBUILD_BUILD_USER="$pkgbase"
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
 
 _die() { error "$@" ; exit; }
 
 prepare() {
-
-    cd ${srcdir}/$_srcname
+    cd "$_srcname"
 
     echo "Setting version..."
     echo "-$pkgrel" > localversion.10-pkgrel
@@ -296,7 +295,7 @@ prepare() {
         fi
 
         scripts/config -k -d CONFIG_GENERIC_CPU
-        scripts/config -k -e CONFIG_${MARCH2}
+        scripts/config -k -e "CONFIG_${MARCH2}"
     fi
 
     ### Use autooptimization
@@ -346,7 +345,7 @@ prepare() {
     echo "Selecting '$_use_llvm_lto' LLVM level..."
 
     ### Select tick rate
-    [ -z $_HZ_ticks ] && _die "The value is empty. Choose the correct one again."
+    [ -z "$_HZ_ticks" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_HZ_ticks" in
         100|250|500|600|625|750|1000)
@@ -492,19 +491,18 @@ prepare() {
     ### Optionally load needed modules for the make localmodconfig
     # See https://aur.archlinux.org/packages/modprobed-db
     if [ -n "$_localmodcfg" ]; then
-        if [ -e $HOME/.config/modprobed.db ]; then
+        if [ -e "$HOME/.config/modprobed.db" ]; then
             echo "Running Steven Rostedt's make localmodconfig now"
-            make ${BUILD_FLAGS[*]} LSMOD=$HOME/.config/modprobed.db localmodconfig
+            make "${BUILD_FLAGS[@]}" LSMOD="$HOME/.config/modprobed.db" localmodconfig
         else
-            echo "No modprobed.db data found"
-            exit
+            _die "No modprobed.db data found"
         fi
     fi
 
     ### Rewrite configuration
     echo "Rewrite configuration..."
-    make ${BUILD_FLAGS[*]} prepare
-    yes "" | make ${BUILD_FLAGS[*]} config >/dev/null
+    make "${BUILD_FLAGS[@]}" prepare
+    yes "" | make "${BUILD_FLAGS[@]}" config >/dev/null
     diff -u ../config .config || :
 
     ### Prepared version
@@ -512,20 +510,20 @@ prepare() {
     echo "Prepared $pkgbase version $(<version)"
 
     ### Running make nconfig
-    [[ -z "$_makenconfig" ]] ||  make ${BUILD_FLAGS[*]} nconfig
+    [[ -z "$_makenconfig" ]] ||  make "${BUILD_FLAGS[@]}" nconfig
 
     ### Running make menuconfig
-    [[ -z "$_makemenuconfig" ]] ||  make ${BUILD_FLAGS[*]} menuconfig
+    [[ -z "$_makemenuconfig" ]] ||  make "${BUILD_FLAGS[@]}" menuconfig
 
     ### Running make xconfig
-    [[ -z "$_makexconfig" ]] ||  make ${BUILD_FLAGS[*]} xconfig
+    [[ -z "$_makexconfig" ]] ||  make "${BUILD_FLAGS[@]}" xconfig
 
     ### Running make gconfig
-    [[ -z "$_makegconfig" ]] ||  make ${BUILD_FLAGS[*]} gconfig
+    [[ -z "$_makegconfig" ]] ||  make "${BUILD_FLAGS[@]}" gconfig
 
     ### Save configuration for later reuse
     echo "Save configuration for later reuse..."
-    cat .config > "${startdir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
+    cat .config > "${srcdir}/../config-${pkgver}-${pkgrel}${pkgbase#linux}"
 
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}"
@@ -545,8 +543,8 @@ prepare() {
 }
 
 build() {
-    cd ${srcdir}/${_srcname}
-    make ${BUILD_FLAGS[*]} -j$(nproc) all
+    cd "$_srcname"
+    make "${BUILD_FLAGS[@]}" -j"$(nproc)" all
     make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
 
     if [ -n "$_build_nvidia" ]; then
@@ -559,7 +557,7 @@ build() {
         )
 
         cd "${srcdir}/${_nv_pkg}/kernel"
-        make ${BUILD_FLAGS[*]} ${MODULE_FLAGS[*]} -j$(nproc) modules
+        make "${BUILD_FLAGS[@]}" "${MODULE_FLAGS[@]}" -j"$(nproc)" modules
 
     fi
 
@@ -572,7 +570,7 @@ build() {
            SYSSRC="${srcdir}/${_srcname}"
            SYSOUT="${srcdir}/${_srcname}"
         )
-        CFLAGS= CXXFLAGS= LDFLAGS= make ${BUILD_FLAGS[*]} ${MODULE_FLAGS[*]} -j$(nproc) modules
+        CFLAGS= CXXFLAGS= LDFLAGS= make "${BUILD_FLAGS[@]}" "${MODULE_FLAGS[@]}" -j"$(nproc)" modules
     fi
 
     if [ -n "$_build_zfs" ]; then
@@ -583,11 +581,11 @@ build() {
 
         ./autogen.sh
         sed -i "s|\$(uname -r)|${_kernuname}|g" configure
-        ./configure ${CONFIGURE_FLAGS[*]} --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin \
+        ./configure "${CONFIGURE_FLAGS[@]}" --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin \
             --libdir=/usr/lib --datadir=/usr/share --includedir=/usr/include \
             --with-udevdir=/lib/udev --libexecdir=/usr/lib/zfs --with-config=kernel \
-            --with-linux=${srcdir}/$_srcname
-        make ${BUILD_FLAGS[*]}
+            --with-linux="${srcdir}/$_srcname"
+        make "${BUILD_FLAGS[@]}"
     fi
 
 }
@@ -601,7 +599,7 @@ _package() {
                 'uksmd: Userspace KSM helper daemon')
     provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
 
-    cd ${srcdir}/$_srcname
+    cd "$_srcname"
 
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
 
@@ -623,9 +621,9 @@ _package() {
 
 _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-    depends=('pahole' ${pkgbase} )
+    depends=('pahole' "${pkgbase}")
 
-    cd ${srcdir}/${_srcname}
+    cd "${_srcname}"
     local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
     echo "Installing build files..."
@@ -707,23 +705,23 @@ _package-headers() {
 
 _package-dbg(){
     pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
-    depends=(${pkgbase}-headers)
+    depends=("${pkgbase}-headers")
 
-    cd "${srcdir}/${_srcname}"
+    cd "${_srcname}"
     mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
     install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
 }
 
 _package-zfs(){
     pkgdesc="zfs module for the $pkgdesc kernel"
-    depends=('pahole' $pkgbase=$_kernver)
+    depends=('pahole' "${pkgbase}=${_kernver}")
     provides=('ZFS-MODULE')
     license=('CDDL')
 
-    cd ${srcdir}/$_srcname
+    cd "$_srcname"
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
 
-    cd ${srcdir}/"zfs"
+    cd "${srcdir}/zfs"
     install -dm755 "${modulesdir}"
     install -m644 module/*.ko "${modulesdir}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -19 {} +
@@ -737,10 +735,10 @@ _package-nvidia(){
     conflicts=("$pkgbase-nvidia-open")
     license=('custom')
 
-    cd ${srcdir}/$_srcname
+    cd "$_srcname"
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
 
-    cd "${srcdir}/${_nv_pkg}/"
+    cd "${srcdir}/${_nv_pkg}"
     install -dm755 "${modulesdir}"
     install -m644 kernel/*.ko "${modulesdir}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 LICENSE
@@ -754,7 +752,7 @@ _package-nvidia-open(){
     conflicts=("$pkgbase-nvidia")
     license=('MIT AND GPL-2.0-only')
 
-    cd ${srcdir}/$_srcname
+    cd "$_srcname"
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
 
     cd "${srcdir}/${_nv_open_pkg}"
