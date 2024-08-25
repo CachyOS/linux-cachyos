@@ -526,7 +526,8 @@ prepare() {
 
     ### Save configuration for later reuse
     echo "Save configuration for later reuse..."
-    cat .config > "${srcdir}/../config-${pkgver}-${pkgrel}${pkgbase#linux}"
+    local basedir="$(dirname "$(readlink "${srcdir}/config")")"
+    cat .config > "${basedir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
 
     if [ -n "$_build_nvidia" ]; then
         cd "${srcdir}"
