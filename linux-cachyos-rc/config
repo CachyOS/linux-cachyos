@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.11.0-rc4 Kernel Configuration
+# Linux/x86 6.11.0-rc5 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 14.2.1 20240805"
 CONFIG_CC_IS_GCC=y
