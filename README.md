@@ -137,7 +137,6 @@ to avoid getting ``%INSTALLED_DB%`` warnings:
 
 ```
 sudo find /var/lib/pacman/local/ -type f -name "desc" -exec sed -i '/^%INSTALLED_DB%$/,+2d' {} \;
->>>>>>> a2a22515 (Update README)
 ```
 
 ## Check CPU compatibility
