@@ -27,7 +27,7 @@ The Schedulers listed below are supported
 We have provided all these CPU schedulers because each scheduler performs differently depending on usage. We recommend testing each one to determine which best suits your specific requirements.
 - **([BORE](https://github.com/firelzrd))** **Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-cachyos` / `linux-bore` / `linux-cachyos-bore`
 - **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** - `linux-cachyos-eevdf`
-- **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** - `linux-cachyos-sched-ext` / `linux-cachyos-sched-ext-debug`
+- **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** - `linux-cachyos-sched-ext`
 - **([ECHO](https://github.com/hamadmarri))** **Enhanced CPU Handling Orchestrator** Scheduler by [Hamad Marri](https://github.com/hamadmarri) - `linux-cachyos-echo`
 
 #### CachyOS default kernel
@@ -50,8 +50,8 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - SCHED-EXT Schedulers prebuilt in the repository # https://lwn.net/Articles/922405/ - `linux-cachyos` and `linux-cachyos-sched-ext`
 - Cachy Sauce (CONFIG_CACHY), enables various tweaks for the scheduler and other settings
 ### :bookmark_tabs: Filesystem & memory
-- ZFS Filesystem Support and prebuilt in the repository
-- NVIDIA Module Support including patches - Build the nvidia module together with the kernel
+- ZFS Filesystem support and prebuilt in the repository
+- NVIDIA Module support including patches - Build the nvidia module together with the kernel
 - Latest & improved ZSTD 1.5.6 patch-set
 - UserKSM daemon from pf
 - Improved BFQ Scheduler
@@ -60,7 +60,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - BBRv3 tcp_congestion_control
 
 ### :arrow_heading_down: Other features
-- partial Clearlinux Patchset.
+- Partial Clear Linux patchset.
 - Back-ported patches from `linux-next`
 - Scheduler patches from linux-next/tip
 - OpenRGB and ACS Override support
@@ -120,11 +120,24 @@ sudo pacman-key --lsign-key F3B607488DB35A47
 2. Install required packages
 
 ATTENTION: Installing the CachyOS Pacman, will install a forked pacman with features added from CachyOS, like "INSTALLED_FROM" and an automatic architecture check.
-Pacman 6.1 added a feature validation feature, which could lead when using the Archlinux pacman into warnings. We are working with archlinux to provide a proper compatibility again.
+Pacman 6.1 added a feature validation feature, which could lead when using the Arch Linux pacman into warnings. We are working with Arch Linux to provide a proper compatibility again.
 If you want to avoid this, don't add the "cachyos" repository, which contains the customized pacman. All other repositories like cachyos-v3, cachyos-v4, cachyos-extra/core-v3/4 are fine to add.
 
 ```
-sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-18-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-18-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-6-1-any.pkg.tar.zst' 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-6.1.0-7-x86_64.pkg.tar.zst'
+sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-18-1-any.pkg.tar.zst' \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-18-1-any.pkg.tar.zst' \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-6-1-any.pkg.tar.zst' \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-6.1.0-7-x86_64.pkg.tar.zst'
+```
+
+If you want to go back to the Arch Linux repositories and had our version of
+pacman installed, you will need to run the following command after the rollback
+to avoid getting ``%INSTALLED_DB%`` warnings:
+
+```
+sudo find /var/lib/pacman/local/ -type f -name "desc" -exec sed -i '/^%INSTALLED_DB%$/,+2d' {} \;
+>>>>>>> a2a22515 (Update README)
 ```
 
 ## Check CPU compatibility
@@ -275,5 +288,5 @@ Just follow this [README](https://github.com/chaotic-cx/nyx#how-to-use-it)
 
 ## Valueable Contributors
 [Hamad Marri](https://github.com/hamadmarri) for the TT Scheduler <br />
-[Archlinux](https://archlinux.org) for the great linux operating system <br />
+[Arch Linux](https://archlinux.org) for the great linux operating system <br />
 [And all other Kernel Developers and Supporters](https://github.com/torvalds/linux) <br />
