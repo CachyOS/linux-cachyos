@@ -1,8 +1,8 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.10.7 Kernel Configuration
+# Linux/x86 6.10.9 Kernel Configuration
 #
-CONFIG_CC_VERSION_TEXT="gcc (GCC) 14.2.1 20240805"
+CONFIG_CC_VERSION_TEXT="gcc (GCC) 14.2.1 20240904"
 CONFIG_CC_IS_GCC=y
 CONFIG_GCC_VERSION=140201
 CONFIG_CLANG_VERSION=0
