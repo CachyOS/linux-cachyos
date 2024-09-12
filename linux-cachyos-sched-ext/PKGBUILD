@@ -172,19 +172,15 @@ license=('GPL-2.0-only')
 options=('!strip' '!debug' '!lto')
 makedepends=(
   bc
+  cpio
+  gettext
   libelf
   pahole
-  cpio
   perl
+  python
   tar
   xz
   zstd
-  gcc
-  gcc-libs
-  glibc
-  make
-  patch
-  python
 )
 # LLVM makedepends
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
