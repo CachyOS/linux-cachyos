@@ -33,10 +33,9 @@ We have provided all these CPU schedulers because each scheduler performs differ
 #### CachyOS default kernel
 > - **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** + **BORE Scheduler** - `linux-cachyos`
 
-> The CachyOS repositories provide prebuilt kernels in three different march versions: `x86-64`, `x86-64-v3`, and `x86-64-v4`. In addition, the repositories also offer LTO-enabled kernels.
+> The CachyOS repositories provide prebuilt kernels in three different march versions: `x86-64`, `x86-64-v3`,`x86-64-v4` and `znver4` . In addition, the repositories also offer LTO-enabled kernels.
 
 ## Features
-Here is a list of features of Linux kernels prebuilt in the CachyOS repositories for `x86-64-v4`, `x86-64-v3`, and `x86-64`.
 ### :hammer_and_wrench: Advanced building & compiling
 - Very customizable PKGBUILD with many features and improvements.
 - `GCC/CLANG` Optimization with automatically found CPU architecture or also selectable CPU architecture.
@@ -46,17 +45,19 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 
 ### :abacus: CPU enhancements
 - 3 Different scheduler are supported,`SCHED-EXT`,`BORE`,`EEVDF` and `ECHO` scheduler
-- AMD P-State Preferred Core, AMD cpb boost (disable boost) and upstream amd-pstate enhancements
+- AMD P-State Preferred Core / amd-pstate enhancements and fixes from -next.
 - SCHED-EXT Schedulers prebuilt in the repository # https://lwn.net/Articles/922405/ - `linux-cachyos` and `linux-cachyos-sched-ext`
-- Cachy Sauce (CONFIG_CACHY), enables various tweaks for the scheduler and other settings
+- Cachy Sauce `CONFIG_CACHY`, enables various tweaks for the scheduler and other settings
+- Scheduler patches from `linux-next` in `linux-cachyos-bore` and `linux-cachyos-eevdf`
 ### :bookmark_tabs: Filesystem & memory
 - ZFS Filesystem support and prebuilt in the repository
 - NVIDIA Module support including patches - Build the nvidia module together with the kernel
 - Latest & improved ZSTD 1.5.6 patch-set
 - UserKSM daemon from pf
 - Improved BFQ Scheduler
+- le9uo # https://github.com/firelzrd/le9uo
 
-### &#128423; Network 
+### &#128423; Network
 - BBRv3 tcp_congestion_control
 
 ### :arrow_heading_down: Other features
@@ -71,7 +72,7 @@ Here is a list of features of Linux kernels prebuilt in the CachyOS repositories
 - HDR support enabled
 - Various GCC Optimization flags applied (`-fivopts -fmodulo-sched`)
 - NTSync patched and integrated into the kernel (`NTSYNC=y`)
-- VRR fixes for AMD GPU's
+- T2 Macbook support as default included
 
 # [CachyOS repositories](https://mirror.cachyos.org/)
 The repositories contain both Arch Linux and CachyOS packages, which have been re-built with flags optimized for performance, stability, and security.

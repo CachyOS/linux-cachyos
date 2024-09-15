@@ -152,13 +152,13 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     _pkgsuffix="cachyos-${_cpusched}"
     pkgbase="linux-$_pkgsuffix"
 fi
-_major=6.10
-_minor=10
+_major=6.11
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -224,7 +224,8 @@ if [ -n "$_build_nvidia_open" ]; then
     source+=("nvidia-open-${_nv_ver}.tar.gz::https://github.com/NVIDIA/open-gpu-kernel-modules/archive/refs/tags/${_nv_ver}.tar.gz"
              "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch"
              "${_patchsource}/misc/nvidia/nvidia-open-gcc-ibt-sls.patch"
-             "${_patchsource}/misc/nvidia/fix-zen5.patch")
+             "${_patchsource}/misc/nvidia/fix-zen5.patch"
+             "${_patchsource}/misc/nvidia/6.11-fbdev.patch")
 fi
 
 ## List of CachyOS schedulers
@@ -236,6 +237,8 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     echo) ## ECHO Scheduler
         source+=("${_patchsource}/sched/0001-echo-cachy.patch");;
+    eevdf) ## 6.12 EEVDF patches
+        source+=("${_patchsource}/sched/0001-eevdf-next.patch");;
     rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
@@ -271,6 +274,7 @@ prepare() {
         [[ $src = make-modeset-fbdev-default.patch ]] && continue
         [[ $src = nvidia-open-gcc-ibt-sls.patch ]] && continue
         [[ $src = fix-zen5.patch ]] && continue
+        [[ $src = 6.11-fbdev.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -324,8 +328,7 @@ prepare() {
     ### Enable KCFI
     if [ -n "$_use_kcfi" ]; then
         echo "Enabling kCFI"
-        scripts/config -e ARCH_SUPPORTS_CFI_CLANG \
-            -e CFI_CLANG
+        scripts/config -e ARCH_SUPPORTS_CFI_CLANG -e CFI_CLANG -e CFI_AUTO_DEFAULT
     fi
 
     ### Select LLVM level
@@ -536,6 +539,8 @@ prepare() {
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/nvidia-open-gcc-ibt-sls.patch" -d "${srcdir}/${_nv_open_pkg}"
         # Fix for Zen5 error print in dmesg
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/fix-zen5.patch" -d "${srcdir}/${_nv_open_pkg}"
+        # Fix broken fbdev on 6.11
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/6.11-fbdev.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
 }
 
@@ -773,8 +778,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('8a15910089d080886046b1fd8d57ef28ce872bf428e67ccbc9d5ca92da794d6dee7ab83cc914a499b40962e2990c3b1e5b11ae7d12c1eff7bec548c9a67df03a'
-        '99536fd0cebe7e913ab94d4847548b8947cb33d705660e96e47ea04f1553cf28ee7e5303778c1f8a788cb4be748ee0b5e43a780ce73a6064dc9bf4af7750a7b2'
+b2sums=('e7750c0878d71a56a0ce52d4c4c912199dad5bf5e2e8f872585a6494afbb37cbd852e612a6858936d2dc9b7776a3933818f540db408d57e90d18ea5249bba7ab'
+        'fa3fd6750d3bdecd8030d6f29032f9041c9d713e91b5ceefce9ad02a1c6b097146ab77eb298d6fa96a04ed0ec3db0c5449e17ea48283e9bf2312d40547fe5747'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '57a47335109bd4dad8a64f81ab0880ed5fc41ef35d6d354a3193e93dc5b89fdd28c9bd6f97b795bc53bd5bf141ea22e5099e18eb81fa8e25531a9c6db2dc2033'
-        'bade8bcf441a868b5ac1dc18c0cccf0a7a2b663124dcf3b5d2b51e7ccbeb84458b0e49fe7bbd8e107bf84afd388308b3551297a7ebcf90d96a8149b7765eddcf')
+        'ab6c372dbc0f4269d44d4900217cd5a784d03bfb498f673090134b86933f6d8cd3eefa12c8550dd4f135fbf4572f0f2bf17c388e7e7579d168466bdd1db467bc'
+        '8c3ec355ecef6aaf62758710385b607983f15498e19cbe6440ab068439ea33f40e47c3df72f2c02579a66eda976ce49430dbebf02956b951195a0721ac4a0180')
