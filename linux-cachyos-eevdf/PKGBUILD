@@ -234,10 +234,11 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-sched-ext.patch"
                  "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
     bore) ## BORE Scheduler
-        source+=("${_patchsource}/sched/0001-eevdf-next.patch"
-                 "${_patchsource}/sched/0001-bore-cachy-next.patch");;
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     echo) ## ECHO Scheduler
         source+=("${_patchsource}/sched/0001-echo-cachy.patch");;
+    eevdf) ## 6.12 EEVDF patches
+        source+=("${_patchsource}/sched/0001-eevdf-next.patch");;
     rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
