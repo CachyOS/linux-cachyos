@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-server
 	pkgdesc = Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads
 	pkgver = 6.11.0
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -26,7 +26,7 @@ pkgbase = linux-cachyos-server
 	b2sums = e7750c0878d71a56a0ce52d4c4c912199dad5bf5e2e8f872585a6494afbb37cbd852e612a6858936d2dc9b7776a3933818f540db408d57e90d18ea5249bba7ab
 	b2sums = fb3a58d6776bb2601e54131dfdbd0f70b4f5a053ca9d8c2adfb5c314a7ceca4add604418622e2a2c63efa6c7dc6b457efcbdf914bc6701af967c2910aa205ea6
 	b2sums = b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667
-	b2sums = ab6c372dbc0f4269d44d4900217cd5a784d03bfb498f673090134b86933f6d8cd3eefa12c8550dd4f135fbf4572f0f2bf17c388e7e7579d168466bdd1db467bc
+	b2sums = 8f4572a5abfba7c8bc1436e4b39abb60b8cce3d1986a9eda72338ed6fe7572feff9f8c4ac17e2d3aee8afbc06910cbaed701733f4990a39cdd9c7438ad225a51
 	b2sums = b80a343bc571f5f842d3390c8754bbf2b98c8f74beae2e7834a84d91c30d706bf3bf7a719414603b8b2218b2166ce9687d1d5bb36824cc9488d257a853372c5e
 
 pkgname = linux-cachyos-server
