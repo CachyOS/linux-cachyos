@@ -163,7 +163,7 @@ _stable=${_major}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads'
-pkgrel=2
+pkgrel=4
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -178,9 +178,6 @@ makedepends=(
   pahole
   perl
   python
-  rust
-  rust-bindgen
-  rust-src
   tar
   xz
   zstd
@@ -783,7 +780,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('e7750c0878d71a56a0ce52d4c4c912199dad5bf5e2e8f872585a6494afbb37cbd852e612a6858936d2dc9b7776a3933818f540db408d57e90d18ea5249bba7ab'
-        'a98a1e88b4d3b8a554b3c7c2c5a073e68cead2aded446673f48ecba369e39f4bc8093080395254e936939aa7fb89a56feb30fcc5363b4a9f7888c8d3116cfdb4'
+        'fb3a58d6776bb2601e54131dfdbd0f70b4f5a053ca9d8c2adfb5c314a7ceca4add604418622e2a2c63efa6c7dc6b457efcbdf914bc6701af967c2910aa205ea6'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
         '9eb3b415c780a04ceb820531acbf0994df0f626af1f3a3186845e178d39602d132b09668ea2073a11d20abf394f2e479d765b3de06afca3ce22a99738d5c7f32'
         'b80a343bc571f5f842d3390c8754bbf2b98c8f74beae2e7834a84d91c30d706bf3bf7a719414603b8b2218b2166ce9687d1d5bb36824cc9488d257a853372c5e')
