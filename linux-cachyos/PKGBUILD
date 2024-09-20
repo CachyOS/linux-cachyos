@@ -141,9 +141,6 @@ _build_nvidia=${_build_nvidia-}
 # Use this only if you have Turing+ GPU
 _build_nvidia_open=${_build_nvidia_open-}
 
-# Build a debug package with non-stripped vmlinux
-_build_debug=${_build_debug-}
-
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
     _pkgsuffix=cachyos-lto
     pkgbase="linux-$_pkgsuffix"
@@ -169,7 +166,7 @@ _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL-2.0-only')
-options=('!strip' '!debug' '!lto')
+options=('!lto')
 makedepends=(
   bc
   cpio
@@ -709,15 +706,6 @@ _package-headers() {
     ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
 
-_package-dbg(){
-    pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
-    depends=("${pkgbase}-headers")
-
-    cd "${_srcname}"
-    mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
-    install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
-}
-
 _package-zfs(){
     pkgdesc="zfs module for the $pkgdesc kernel"
     depends=('pahole' "${pkgbase}=${_kernver}")
@@ -770,7 +758,6 @@ _package-nvidia-open(){
 }
 
 pkgname=("$pkgbase")
-[ -n "$_build_debug" ] && pkgname+=("$pkgbase-dbg")
 pkgname+=("$pkgbase-headers")
 [ -n "$_build_zfs" ] && pkgname+=("$pkgbase-zfs")
 [ -n "$_build_nvidia" ] && pkgname+=("$pkgbase-nvidia")
