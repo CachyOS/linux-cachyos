@@ -90,9 +90,6 @@ _preempt=${_preempt-full}
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
 _hugepage=${_hugepage-always}
 
-## Enable DAMON
-_damon=${_damon-}
-
 # CPU compiler optimizations - Defaults to prompt at kernel config if left empty
 # AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" "zen4"
 # Intel CPUs : "mpsc"(P4 & older Netburst based Xeon) "atom" "core2" "nehalem" "westmere" "silvermont" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "skylakex" "cannonlake" "icelake" "goldmont" "goldmontplus" "cascadelake" "cooperlake" "tigerlake" "sapphirerapids" "rocketlake" "alderlake"
@@ -152,13 +149,13 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     _pkgsuffix=cachyos-deckify
     pkgbase="linux-$_pkgsuffix"
 fi
-_major=6.10
-_minor=10
+_major=6.11
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -220,14 +217,16 @@ fi
 # NVIDIA pre-build module support
 if [ -n "$_build_nvidia" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
-             "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch")
+             "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch"
+             "${_patchsource}/misc/nvidia/6.11-fbdev.patch")
 fi
 
 if [ -n "$_build_nvidia_open" ]; then
     source+=("nvidia-open-${_nv_ver}.tar.gz::https://github.com/NVIDIA/open-gpu-kernel-modules/archive/refs/tags/${_nv_ver}.tar.gz"
              "${_patchsource}/misc/nvidia/make-modeset-fbdev-default.patch"
              "${_patchsource}/misc/nvidia/nvidia-open-gcc-ibt-sls.patch"
-             "${_patchsource}/misc/nvidia/fix-zen5.patch")
+             "${_patchsource}/misc/nvidia/fix-zen5.patch"
+             "${_patchsource}/misc/nvidia/6.11-fbdev.patch")
 fi
 
 ## List of CachyOS schedulers
@@ -239,6 +238,8 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     echo) ## ECHO Scheduler
         source+=("${_patchsource}/sched/0001-echo-cachy.patch");;
+    eevdf) ## 6.12 EEVDF patches
+        source+=("${_patchsource}/sched/0001-eevdf-next.patch");;
     rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch"
                  linux-cachyos-rt.install);;
@@ -274,6 +275,7 @@ prepare() {
         [[ $src = make-modeset-fbdev-default.patch ]] && continue
         [[ $src = nvidia-open-gcc-ibt-sls.patch ]] && continue
         [[ $src = fix-zen5.patch ]] && continue
+        [[ $src = 6.11-fbdev.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
@@ -327,8 +329,7 @@ prepare() {
     ### Enable KCFI
     if [ -n "$_use_kcfi" ]; then
         echo "Enabling kCFI"
-        scripts/config -e ARCH_SUPPORTS_CFI_CLANG \
-            -e CFI_CLANG
+        scripts/config -e ARCH_SUPPORTS_CFI_CLANG -e CFI_CLANG -e CFI_AUTO_DEFAULT
     fi
 
     ### Select LLVM level
@@ -456,18 +457,6 @@ prepare() {
 
     echo "Selecting '$_hugepage' TRANSPARENT_HUGEPAGE config..."
 
-    ### Enable DAMON
-    if [ -n "$_damon" ]; then
-        echo "Enabling DAMON..."
-        scripts/config -e DAMON \
-            -e DAMON_VADDR \
-            -e DAMON_DBGFS \
-            -e DAMON_SYSFS \
-            -e DAMON_PADDR \
-            -e DAMON_RECLAIM \
-            -e DAMON_LRU_SORT
-    fi
-
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config -e USER_NS
 
@@ -531,6 +520,8 @@ prepare() {
 
         # Use fbdev and modeset as default
         patch -Np1 -i "${srcdir}/make-modeset-fbdev-default.patch" -d "${srcdir}/${_nv_pkg}/kernel"
+        # Fix broken fbdev on 6.11
+        patch -Np2 -i "${srcdir}/6.11-fbdev.patch" -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 
     if [ -n "$_build_nvidia_open" ]; then
@@ -539,6 +530,8 @@ prepare() {
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/nvidia-open-gcc-ibt-sls.patch" -d "${srcdir}/${_nv_open_pkg}"
         # Fix for Zen5 error print in dmesg
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/fix-zen5.patch" -d "${srcdir}/${_nv_open_pkg}"
+        # Fix broken fbdev on 6.11
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/6.11-fbdev.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
 }
 
@@ -632,6 +625,7 @@ _package-headers() {
     install -Dt "$builddir/kernel" -m644 kernel/Makefile
     install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
     cp -t "$builddir" -a scripts
+    ln -srt "$builddir" "$builddir/scripts/gdb/vmlinux-gdb.py"
 
     # required when STACK_VALIDATION is enabled
     install -Dt "$builddir/tools/objtool" tools/objtool/objtool
@@ -776,12 +770,12 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('8a15910089d080886046b1fd8d57ef28ce872bf428e67ccbc9d5ca92da794d6dee7ab83cc914a499b40962e2990c3b1e5b11ae7d12c1eff7bec548c9a67df03a'
-        '43ba28079f4a7b5f4d57bf25ea7c83d3079041e216f731d995f33157913a52d21e5a8a455ceda24c874082e40eca107a6026d463b0fbce327ccab41b85e572e0'
+b2sums=('e7750c0878d71a56a0ce52d4c4c912199dad5bf5e2e8f872585a6494afbb37cbd852e612a6858936d2dc9b7776a3933818f540db408d57e90d18ea5249bba7ab'
+        '3c62f541c6ba94b413024a873b4603dfdd275bf41033f8c8d2eb723b17906dbc47a6e49a3a0c6b0ac767823447112abab50897277b7fcc2f849f89874ce05d7c'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '57a47335109bd4dad8a64f81ab0880ed5fc41ef35d6d354a3193e93dc5b89fdd28c9bd6f97b795bc53bd5bf141ea22e5099e18eb81fa8e25531a9c6db2dc2033'
+        '9eb3b415c780a04ceb820531acbf0994df0f626af1f3a3186845e178d39602d132b09668ea2073a11d20abf394f2e479d765b3de06afca3ce22a99738d5c7f32'
         '53e125e8838ef6a3b2a7e1828b225888b2a5dac749c71c622009f61109fe3c113373c42e322af4427d636e0ebe9d23b46c6d0a2b342e7d8dabd8cfa198eed63e'
         'be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498'
-        '2da31437bf7030908205dff7bfe50807a9190878eac916b24882a0223effdf3f2f65165bfbd829302df09a05f8a48d70ee7c76d2d3f2a2e2c7da05aec3b3fd5d'
-        'b36978e78a9a5c4dbf759850d6277e1781e495863963dfaf6d625ea734a3b712d5b1a63a2d18745a70c6d22967c3ef901efe3817c01348f16accad90daef79e4'
-        'f4eac46ae191bb6fdb66244a69355a8b623c2323849d9b12c1880c4465b6389f199dd3d9f064383e78faaf9266905b55f7073e2cf2aeb0437edb3e783596f3ff')
+        'c2217928e78a12d06cf0764115fba6c7915eb9fea24731c72a145a3ca039eaa3da0e853993c6ea9181fb1103bdcb8e9b9328498012e31f7454c06896a7f9225f'
+        '1c053768249d608a69144c005d653839a6d56f757ef36ebf6089f6754332a4247d5509bb9e6d2ab4a0518960fac24bf2536c0b817284bd9c9ca5b4732943b365'
+        'ba8cf5f2cca0303a914acbae0f4786b9397d7f0acb2f504c8bdec9411c62050e72be2cc6f5b4a015a05407cc92bfc3df8fcf43b7d50c03e38c3ad5d27ba1cee6')
