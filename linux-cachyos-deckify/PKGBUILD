@@ -90,9 +90,6 @@ _preempt=${_preempt-full}
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
 _hugepage=${_hugepage-always}
 
-## Enable DAMON
-_damon=${_damon-}
-
 # CPU compiler optimizations - Defaults to prompt at kernel config if left empty
 # AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" "zen4"
 # Intel CPUs : "mpsc"(P4 & older Netburst based Xeon) "atom" "core2" "nehalem" "westmere" "silvermont" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "skylakex" "cannonlake" "icelake" "goldmont" "goldmontplus" "cascadelake" "cooperlake" "tigerlake" "sapphirerapids" "rocketlake" "alderlake"
@@ -459,18 +456,6 @@ prepare() {
     esac
 
     echo "Selecting '$_hugepage' TRANSPARENT_HUGEPAGE config..."
-
-    ### Enable DAMON
-    if [ -n "$_damon" ]; then
-        echo "Enabling DAMON..."
-        scripts/config -e DAMON \
-            -e DAMON_VADDR \
-            -e DAMON_DBGFS \
-            -e DAMON_SYSFS \
-            -e DAMON_PADDR \
-            -e DAMON_RECLAIM \
-            -e DAMON_LRU_SORT
-    fi
 
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config -e USER_NS
