@@ -12,13 +12,13 @@ _cachy_config=${_cachy_config-}
 ### Selecting the CPU scheduler
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
+# 'bmq' - select 'BMQ Scheduler'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 # 'cachyos' - select 'Sched-Ext Scheduler Framework Variant Scheduler with BORE Scheduler'
 # 'eevdf' - select 'EEVDF Scheduler'
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
-# 'echo' - select 'ECHO Scheduler'
 _cpusched=${_cpusched-eevdf}
 
 ### Tweak kernel options prior to a build via nconfig
@@ -236,8 +236,8 @@ case "$_cpusched" in
                  "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    echo) ## ECHO Scheduler
-        source+=("${_patchsource}/sched/0001-echo-cachy.patch");;
+    bmq) ## Project C Scheduler
+        source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
     eevdf) ## 6.12 EEVDF patches
         source+=("${_patchsource}/sched/0001-eevdf-next.patch");;
     rt) ## EEVDF with RT patches
@@ -316,7 +316,7 @@ prepare() {
     case "$_cpusched" in
         cachyos) scripts/config -e SCHED_CLASS_EXT -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 1000000;;
         bore|hardened) scripts/config -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 1000000;;
-        echo) scripts/config -e ECHO_SCHED;;
+        bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -d PREEMPT_RT -d PREEMPT_DYNAMIC -e PREEMPT_BUILD -e PREEMPT_BUILD_AUTO -e PREEMPT_AUTO;;
         rt-bore) scripts/config -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 1000000 -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -d PREEMPT_RT -d PREEMPT_DYNAMIC -e PREEMPT_BUILD -e PREEMPT_BUILD_AUTO -e PREEMPT_AUTO;;
@@ -783,7 +783,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('e7750c0878d71a56a0ce52d4c4c912199dad5bf5e2e8f872585a6494afbb37cbd852e612a6858936d2dc9b7776a3933818f540db408d57e90d18ea5249bba7ab'
-        'fb3a58d6776bb2601e54131dfdbd0f70b4f5a053ca9d8c2adfb5c314a7ceca4add604418622e2a2c63efa6c7dc6b457efcbdf914bc6701af967c2910aa205ea6'
+        'f91a4d1256ef17ea9be587678850cf2ac30a900071502ac74eb950537e4ce4167ecabbfa446127c6231a17ff7d1b286808aed5e6d3847cc85e366868c758852e'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
         '9eb3b415c780a04ceb820531acbf0994df0f626af1f3a3186845e178d39602d132b09668ea2073a11d20abf394f2e479d765b3de06afca3ce22a99738d5c7f32'
         'b80a343bc571f5f842d3390c8754bbf2b98c8f74beae2e7834a84d91c30d706bf3bf7a719414603b8b2218b2166ce9687d1d5bb36824cc9488d257a853372c5e')
