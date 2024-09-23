@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-server
 	pkgdesc = Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads
 	pkgver = 6.11.0
-	pkgrel = 4
+	pkgrel = 5
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
