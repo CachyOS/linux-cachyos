@@ -3,7 +3,7 @@ find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization-y/_use_au
 ## Enable ZFS
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs-/_build_zfs-y/" {}
 ## Enable Generic v3 
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_processor_opt-/_processor_opt-GENERIC_CPU3/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_processor_opt-/_processor_opt-GENERIC_V3/" {}
 ## Enable NVIDIA module
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia-/_build_nvidia-y/" {}
 ## Enable Open NVIDIA module
@@ -44,7 +44,7 @@ repoctl update -P cachyos-v3
 
 ## GCC v4 Kernel
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-thin/_use_llvm_lto-none/" {}
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_processor_opt-GENERIC_CPU3/_processor_opt-GENERIC_CPU4/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_processor_opt-GENERIC_V3/_processor_opt-GENERIC_V4/" {}
 
 files=$(find . -name "PKGBUILD")
 
