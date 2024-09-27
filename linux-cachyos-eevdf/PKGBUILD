@@ -51,6 +51,9 @@ _NUMAdisable=${_NUMAdisable-}
 # More at this wiki page ---> https://wiki.archlinux.org/index.php/Modprobed-db
 _localmodcfg=${_localmodcfg-}
 
+# Path to the list of used modules
+_localmodcfg_path=${_localmodcfg_path-"$HOME/.config/modprobed.db"}
+
 # Use the current kernel's .config file
 # Enabling this option will use the .config of the RUNNING kernel rather than
 # the ARCH defaults. Useful when the package gets updated and you already went
@@ -60,10 +63,6 @@ _use_current=${_use_current-}
 
 ### Enable KBUILD_CFLAGS -O3
 _cc_harder=${_cc_harder-y}
-
-### Enable KBUILD_CFLAGS -Os
-## DO NOT SET, THIS IS FOR INTERNAL CI USE ONLY.
-_cc_size=${_cc_size-}
 
 ### Set this to your number of threads you have in your machine otherwise it will default to 320
 _nr_cpus=${_nr_cpus-}
@@ -260,7 +259,7 @@ export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER="$pkgbase"
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
 
-_die() { error "$@" ; exit; }
+_die() { error "$@" ; exit 1; }
 
 prepare() {
     cd "$_srcname"
@@ -429,11 +428,20 @@ prepare() {
             -e CC_OPTIMIZE_FOR_PERFORMANCE_O3
     fi
 
-    ### Enable Os
-    if [ -n "$_cc_size" ] && [ -z "$_cc_harder" ]; then
-        echo "Enabling KBUILD_CFLAGS -Os..."
+    ### CI-only stuff
+    if [[ -n "$CI" || -n "$GITHUB_RUN_ID" ]]; then
+        echo "Detected build inside CI"
         scripts/config -d CC_OPTIMIZE_FOR_PERFORMANCE \
-            -e CONFIG_CC_OPTIMIZE_FOR_SIZE
+            -d CC_OPTIMIZE_FOR_PERFORMANCE_O3 \
+            -e CONFIG_CC_OPTIMIZE_FOR_SIZE \
+            -d SLUB_DEBUG \
+            -d PM_DEBUG \
+            -d PM_ADVANCED_DEBUG \
+            -d PM_SLEEP_DEBUG \
+            -d ACPI_DEBUG \
+            -d LATENCYTOP \
+            -d SCHED_DEBUG \
+            -d DEBUG_PREEMPT
     fi
 
     ### Enable bbr3
@@ -479,9 +487,9 @@ prepare() {
     ### Optionally load needed modules for the make localmodconfig
     # See https://aur.archlinux.org/packages/modprobed-db
     if [ -n "$_localmodcfg" ]; then
-        if [ -e "$HOME/.config/modprobed.db" ]; then
+        if [ -e "$_localmodcfg_path" ]; then
             echo "Running Steven Rostedt's make localmodconfig now"
-            make "${BUILD_FLAGS[@]}" LSMOD="$HOME/.config/modprobed.db" localmodconfig
+            make "${BUILD_FLAGS[@]}" LSMOD="${_localmodcfg_path}" localmodconfig
         else
             _die "No modprobed.db data found"
         fi

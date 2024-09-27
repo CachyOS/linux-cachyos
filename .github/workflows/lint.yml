@@ -5,6 +5,7 @@ on:
       - 'linux-cachyos/PKGBUILD'
       - '.github/workflows/lint.yml'
   workflow_dispatch:
+
 jobs:
   linux-cachyos-zfs-gcc:
     runs-on: ubuntu-latest
@@ -15,7 +16,7 @@ jobs:
       id: makepkg
       uses: CachyOS/pkgbuild-action@master
       with:
-        envvars: "_build_zfs=y _use_auto_optimization= _processor_opt=generic _cc_size=y _cc_harder="
+        envvars: "_build_zfs=y _use_auto_optimization= _cc_harder= _localmodcfg=y _localmodcfg_path=/github/workspace/modprobed.db"
         pkgdir: "linux-cachyos"
         namcapExcludeRules: "invalidstartdir"
         makepkgArgs: "--skipchecksums --skippgpcheck --noconfirm -s"
@@ -28,7 +29,7 @@ jobs:
       id: makepkg
       uses: CachyOS/pkgbuild-action@master
       with:
-        envvars: "_build_zfs=y _use_llvm_lto=thin _use_auto_optimization= _processor_opt=generic _cc_size=y _cc_harder="
+        envvars: "CI=1 _build_zfs=y _use_llvm_lto=thin _use_auto_optimization= _cc_harder= _localmodcfg=y _localmodcfg_path=/github/workspace/modprobed.db"
         pkgdir: "linux-cachyos"
         namcapExcludeRules: "invalidstartdir"
         makepkgArgs: "--skipchecksums --skippgpcheck --noconfirm -s"
