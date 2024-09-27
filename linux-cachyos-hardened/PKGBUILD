@@ -268,13 +268,10 @@ prepare() {
     local src
     for src in "${source[@]}"; do
         src="${src%%::*}"
+        # Skip nvidia patches
+        [[ "$src" == "${_patchsource}"/misc/nvidia/*.patch ]] && continue
         src="${src##*/}"
         src="${src%.zst}"
-        [[ $src = 0001-Make-modeset-and-fbdev-default-enabled.patch ]] && continue
-        [[ $src = 0002-Do-not-error-on-unkown-CPU-Type-and-add-Zen5-support.patch ]] && continue
-        [[ $src = 0003-Add-IBT-Support.patch ]] && continue
-        [[ $src = 0004-6.11-Add-fix-for-fbdev.patch ]] && continue
-        [[ $src = 0005-6.12-drm_outpull_pill-changed-check.patch ]] && continue
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
         patch -Np1 < "../$src"
