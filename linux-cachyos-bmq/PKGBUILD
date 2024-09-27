@@ -539,15 +539,14 @@ build() {
     make "${BUILD_FLAGS[@]}" -j"$(nproc)" all
     make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
 
+    local MODULE_FLAGS=(
+       KERNEL_UNAME="${_kernuname}"
+       IGNORE_PREEMPT_RT_PRESENCE=1
+       SYSSRC="${srcdir}/${_srcname}"
+       SYSOUT="${srcdir}/${_srcname}"
+    )
     if [ -n "$_build_nvidia" ]; then
-        local MODULE_FLAGS=(
-           KERNEL_UNAME="${_kernuname}"
-           IGNORE_PREEMPT_RT_PRESENCE=1
-           NV_EXCLUDE_BUILD_MODULES='__EXCLUDE_MODULES'
-           SYSSRC="${srcdir}/${_srcname}"
-           SYSOUT="${srcdir}/${_srcname}"
-        )
-
+        MODULE_FLAGS+=(NV_EXCLUDE_BUILD_MODULES='__EXCLUDE_MODULES')
         cd "${srcdir}/${_nv_pkg}/kernel"
         make "${BUILD_FLAGS[@]}" "${MODULE_FLAGS[@]}" -j"$(nproc)" modules
 
@@ -555,13 +554,7 @@ build() {
 
     if [ -n "$_build_nvidia_open" ]; then
         cd "${srcdir}/${_nv_open_pkg}"
-        local MODULE_FLAGS=(
-           KERNEL_UNAME="${_kernuname}"
-           IGNORE_PREEMPT_RT_PRESENCE=1
-           IGNORE_CC_MISMATCH=yes
-           SYSSRC="${srcdir}/${_srcname}"
-           SYSOUT="${srcdir}/${_srcname}"
-        )
+        MODULE_FLAGS+=(IGNORE_CC_MISMATCH=yes)
         CFLAGS= CXXFLAGS= LDFLAGS= make "${BUILD_FLAGS[@]}" "${MODULE_FLAGS[@]}" -j"$(nproc)" modules
     fi
 
