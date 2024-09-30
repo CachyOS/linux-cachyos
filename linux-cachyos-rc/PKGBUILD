@@ -150,10 +150,10 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     _pkgsuffix=cachyos-rc
     pkgbase="linux-$_pkgsuffix"
 fi
-_major=6.11
+_major=6.12
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc7
+_rcver=rc1
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -218,7 +218,8 @@ fi
 if [ -n "$_build_nvidia" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
              "${_patchsource}/misc/nvidia/0001-Make-modeset-and-fbdev-default-enabled.patch"
-             "${_patchsource}/misc/nvidia/0004-6.11-Add-fix-for-fbdev.patch")
+             "${_patchsource}/misc/nvidia/0004-6.11-Add-fix-for-fbdev.patch"
+             "${_patchsource}/misc/nvidia/0005-6.12-drm_outpull_pill-changed-check.patch")
 fi
 
 if [ -n "$_build_nvidia_open" ]; then
@@ -227,32 +228,26 @@ if [ -n "$_build_nvidia_open" ]; then
              "${_patchsource}/misc/nvidia/0002-Do-not-error-on-unkown-CPU-Type-and-add-Zen5-support.patch"
              "${_patchsource}/misc/nvidia/0003-Add-IBT-Support.patch"
              "${_patchsource}/misc/nvidia/0004-6.11-Add-fix-for-fbdev.patch"
-             "${_patchsource}/misc/nvidia/0005-6.12-drm_outpull_pill-changed-check.patch")
+             "${_patchsource}/misc/nvidia/0005-6.12-drm_outpull_pill-changed-check.patch"
+             "${_patchsource}/misc/nvidia/0006-6.12-drop-swappagecache.patch")
 fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (Sched-ext + BORE + Cachy Sauce)
-        source+=("${_patchsource}/sched/0001-sched-ext.patch"
-                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
-    eevdf) ## 6.12 EEVDF patches
-        source+=("${_patchsource}/sched/0001-eevdf-next.patch");;
     rt) ## EEVDF with RT patches
-        source+=("${_patchsource}/misc/0001-rt.patch"
-                 linux-cachyos-rt.install);;
+        source+=(linux-cachyos-rt.install);;
     rt-bore) ## RT with BORE Scheduler
-        source+=("${_patchsource}/misc/0001-rt.patch"
-                 "${_patchsource}/sched/0001-bore-cachy-rt.patch"
+        source+=("${_patchsource}/sched/0001-bore-cachy-rt.patch"
                  linux-cachyos-rt.install);;
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
-    sched-ext) ## SCHED-EXT
-        source+=("${_patchsource}/sched/0001-sched-ext.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
@@ -313,19 +308,20 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        cachyos) scripts/config -e SCHED_CLASS_EXT -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 1000000;;
-        bore|hardened) scripts/config -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 1000000;;
+        cachyos|bore|hardened) scripts/config -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 1000000;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -d PREEMPT_RT -d PREEMPT_DYNAMIC -e PREEMPT_BUILD -e PREEMPT_BUILD_AUTO -e PREEMPT_AUTO;;
         rt-bore) scripts/config -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 1000000 -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -d PREEMPT_RT -d PREEMPT_DYNAMIC -e PREEMPT_BUILD -e PREEMPT_BUILD_AUTO -e PREEMPT_AUTO;;
-        sched-ext) scripts/config -e SCHED_CLASS_EXT;;
+        sched-ext) ;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
     echo "Selecting ${_cpusched^^} CPU scheduler..."
 
     ### Enable KCFI
+    ### Broken with NVIDIA Driver
+    ### Needs to be reported
     if [ -n "$_use_kcfi" ]; then
         echo "Enabling kCFI"
         scripts/config -e ARCH_SUPPORTS_CFI_CLANG -e CFI_CLANG -e CFI_AUTO_DEFAULT
@@ -530,6 +526,9 @@ prepare() {
         patch -Np1 -i "${srcdir}/0001-Make-modeset-and-fbdev-default-enabled.patch" -d "${srcdir}/${_nv_pkg}/kernel"
         # Fix broken fbdev on 6.11
         patch -Np2 -i "${srcdir}/0004-6.11-Add-fix-for-fbdev.patch" -d "${srcdir}/${_nv_pkg}/kernel"
+        # Fix 6.12 Kernel Compilation
+        patch -Np2 -i "${srcdir}/0005-6.12-drm_outpull_pill-changed-check.patch" -d "${srcdir}/${_nv_pkg}/kernel"
+#        patch -Np2 -i "${srcdir}/0006-6.12-drop-swappagecache.patch" -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 
     if [ -n "$_build_nvidia_open" ]; then
@@ -542,6 +541,7 @@ prepare() {
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0004-6.11-Add-fix-for-fbdev.patch" -d "${srcdir}/${_nv_open_pkg}"
         # Fix for 6.12 Module Compilation
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0005-6.12-drm_outpull_pill-changed-check.patch" -d "${srcdir}/${_nv_open_pkg}"
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0006-6.12-drop-swappagecache.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
 }
 
@@ -773,9 +773,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('847fd50b3e3a464350bfd8cf14b879a3751866e7c591bf7971536898cd8c653b1c8e3bc95cacc10a38f4717e07bd2e38d31f5d4b587c619670545ac4326791c2'
-        'b338ac759eaa3ff4c3fd34bea73fd4dbca1513d35b5a9e44cff1ac8ecb6d29f3db81e85a529fe854a20bc92aff19d215e578a47180242c9951879dd40f79e329'
+b2sums=('957e0b3ab15532aec7d8994fed1085f081220eda231043b344d373b1d5d597021e24444ca4a73e28a29592d6b2f133b558eca7b42f640749c05eb76bddb7247d'
+        'a004e097a7b40862b4ca5a1a44bb19cef5e233b59341650487598c94896b2f15cd344a94e8613b4105db115c3aab45db730a26e4913e2e464d4e86350c4b1107'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '9eb3b415c780a04ceb820531acbf0994df0f626af1f3a3186845e178d39602d132b09668ea2073a11d20abf394f2e479d765b3de06afca3ce22a99738d5c7f32'
-        '1c053768249d608a69144c005d653839a6d56f757ef36ebf6089f6754332a4247d5509bb9e6d2ab4a0518960fac24bf2536c0b817284bd9c9ca5b4732943b365'
-        'ba8cf5f2cca0303a914acbae0f4786b9397d7f0acb2f504c8bdec9411c62050e72be2cc6f5b4a015a05407cc92bfc3df8fcf43b7d50c03e38c3ad5d27ba1cee6')
+        '077cf6ef02ea4a81725f706e5a871f0654251ca6bec4e965ed81e2f7aea174ea2c29621b66da8bb4814f856746ec0402eac1b6e181be45c0d82d2f0138b59f7d'
+        '7364b546e7e6d466655eee161645cbc75debe1834be81c929e72bf27b0cac2148916577999477f5062d7893c30968cdf2ae7ddb79babb790cdba46868a93b73c')
