@@ -21,7 +21,6 @@ _cachy_config=${_cachy_config-y}
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
-# 'echo' - select 'ECHO Scheduler'
 _cpusched=${_cpusched-cachyos}
 
 ### Tweak kernel options prior to a build via nconfig
@@ -152,17 +151,17 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase="linux-$_pkgsuffix"
 fi
 _major=6.11
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce + BORE + Deckify Patches Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -777,12 +776,12 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('e7750c0878d71a56a0ce52d4c4c912199dad5bf5e2e8f872585a6494afbb37cbd852e612a6858936d2dc9b7776a3933818f540db408d57e90d18ea5249bba7ab'
-        '1beedad0f26d9425923d28e740bfdcf33fe853fa522b2970ac65f9b9d7fdac475bb5fd89c5bdf5a69d6054110b185de3fec5b665059336488706c87819cbb2a4'
+b2sums=('ac9927d74542a2d244b9d683920363ec2dbbe851ae0e069b278f1a0ba82c58b00f0f0312104b46f1b8c06585c2e6acb7eb1e63bd28499891f629c00f9a32f6b5'
+        '4fc8946b7a543d1ed47064c568288562bdcf5763ad9ea3f7fb3086bd061689321aab31c3848bee7a63aa967d22ee7e00048f0bf82eee7f91babb13e140afd1f5'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '9eb3b415c780a04ceb820531acbf0994df0f626af1f3a3186845e178d39602d132b09668ea2073a11d20abf394f2e479d765b3de06afca3ce22a99738d5c7f32'
+        'cdefbe6df1fbf6da4b38042e1304996be508ba303d4193bab63f40e94a37755ac7597cda4b25c142d46a88841352d01ced7959bbfc7225e1ae58246df9b174c7'
         '53e125e8838ef6a3b2a7e1828b225888b2a5dac749c71c622009f61109fe3c113373c42e322af4427d636e0ebe9d23b46c6d0a2b342e7d8dabd8cfa198eed63e'
         'be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498'
         'c2217928e78a12d06cf0764115fba6c7915eb9fea24731c72a145a3ca039eaa3da0e853993c6ea9181fb1103bdcb8e9b9328498012e31f7454c06896a7f9225f'
-        '1c053768249d608a69144c005d653839a6d56f757ef36ebf6089f6754332a4247d5509bb9e6d2ab4a0518960fac24bf2536c0b817284bd9c9ca5b4732943b365'
-        'ba8cf5f2cca0303a914acbae0f4786b9397d7f0acb2f504c8bdec9411c62050e72be2cc6f5b4a015a05407cc92bfc3df8fcf43b7d50c03e38c3ad5d27ba1cee6')
+        '3cb2a0ec8795b95b2e6db308ac332c9c8936a6d84c5097bd39d6639eb3cdd0584f8ca113e497701c5e8dccb84a0006345dad63441c8a35ff1d463b3856a3a610'
+        'd0fc3e57b7d5bd8d494a4a446fc15c49071bce15614f6c38ab567996f14799fbf05b7d79f43d5750c4b7d7cf5cefea94cde72577ea540da9c0535899c97726b3')
