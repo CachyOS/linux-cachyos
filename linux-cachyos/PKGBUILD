@@ -286,16 +286,16 @@ prepare() {
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
         MARCH="${_processor_opt^^}"
-        MARCH2=${MARCH}
 
-        if [[ ! "$MARCH" =~ GENERIC* ]]; then
-            MARCH2="M${MARCH}"
-        else
-            MARCH2="${MARCH/V/CPU}"
+        if [ "$MARCH" != "GENERIC" ]; then
+            if [[ "$MARCH" =~ GENERIC_V[1-4] ]]; then
+                X86_64_LEVEL="${MARCH//GENERIC_V}"
+                scripts/config --set-val X86_64_VERSION "${X86_64_LEVEL}"
+            else
+                scripts/config -k -d CONFIG_GENERIC_CPU
+                scripts/config -k -e "CONFIG_M${MARCH}"
+            fi
         fi
-
-        scripts/config -k -d CONFIG_GENERIC_CPU
-        scripts/config -k -e "CONFIG_${MARCH2}"
     fi
 
     ### Use autooptimization
