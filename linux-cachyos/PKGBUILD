@@ -139,6 +139,11 @@ _build_nvidia=${_build_nvidia-}
 # Use this only if you have Turing+ GPU
 _build_nvidia_open=${_build_nvidia_open-}
 
+_is_lto_kernel() {
+    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]
+    return $?
+}
+
 # Build a debug package with non-stripped vmlinux
 _build_debug=${_build_debug-}
 
@@ -192,7 +197,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # LLVM makedepends
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+if _is_lto_kernel; then
     makedepends+=(clang llvm lld)
     source+=("${_patchsource}/misc/dkms-clang.patch")
     BUILD_FLAGS=(
@@ -596,7 +601,7 @@ _package() {
     provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
 
     # Replace LTO kernel with the default kernel
-    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+    if _is_lto_kernel; then
         provides+=(linux-cachyos-lto=$_kernver)
         replaces=(linux-cachyos-lto)
     fi
@@ -626,7 +631,7 @@ _package-headers() {
     depends=('pahole' "${pkgbase}")
 
     # Replace LTO kernel with the default kernel
-    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+    if _is_lto_kernel; then
         provides+=(linux-cachyos-lto-headers=$_kernver)
         replaces=(linux-cachyos-lto-headers)
     fi
@@ -717,7 +722,7 @@ _package-dbg(){
     depends=("${pkgbase}-headers")
 
     # Replace LTO kernel with the default kernel
-    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+    if _is_lto_kernel; then
         provides+=(linux-cachyos-lto-dbg=$_kernver)
         replaces=(linux-cachyos-lto-dbg)
     fi
@@ -734,7 +739,7 @@ _package-zfs(){
     license=('CDDL')
 
     # Replace LTO kernel with the default kernel
-    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+    if _is_lto_kernel; then
         provides+=(linux-cachyos-lto-zfs=$_kernver)
         replaces=(linux-cachyos-lto-zfs)
     fi
@@ -757,7 +762,7 @@ _package-nvidia(){
     license=('custom')
 
     # Replace LTO kernel with the default kernel
-    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+    if _is_lto_kernel; then
         provides+=(linux-cachyos-lto-nvidia=$_kernver)
         replaces=(linux-cachyos-lto-nvidia)
     fi
@@ -780,7 +785,7 @@ _package-nvidia-open(){
     license=('MIT AND GPL-2.0-only')
 
     # Replace LTO kernel with the default kernel
-    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+    if _is_lto_kernel; then
         provides+=(linux-cachyos-lto-nvidia-open=$_kernver)
         replaces=(linux-cachyos-lto-nvidia-open)
     fi
