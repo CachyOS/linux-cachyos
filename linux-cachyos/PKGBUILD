@@ -109,7 +109,7 @@ _use_auto_optimization=${_use_auto_optimization-y}
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 # "none: disable LTO
-_use_llvm_lto=${_use_llvm_lto-none}
+_use_llvm_lto=${_use_llvm_lto-thin}
 
 # Use suffix -lto only when requested by the user
 # Enabled by default.
@@ -143,11 +143,11 @@ _build_nvidia_open=${_build_nvidia_open-}
 _build_debug=${_build_debug-}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
-    _pkgsuffix=cachyos-lto
+    _pkgsuffix=cachyos
     pkgbase="linux-$_pkgsuffix"
 
 elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
-    _pkgsuffix=cachyos
+    _pkgsuffix=cachyos-gcc
     pkgbase="linux-$_pkgsuffix"
 fi
 _major=6.11
@@ -161,7 +161,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=4
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -595,6 +595,12 @@ _package() {
                 'uksmd: Userspace KSM helper daemon')
     provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
 
+    # Replace LTO kernel with the default kernel
+    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+        provides+=(linux-cachyos-lto=$_kernver)
+        replaces=(linux-cachyos-lto)
+    fi
+
     cd "$_srcname"
 
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
@@ -618,6 +624,12 @@ _package() {
 _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
     depends=('pahole' "${pkgbase}")
+
+    # Replace LTO kernel with the default kernel
+    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+        provides+=(linux-cachyos-lto-headers=$_kernver)
+        replaces=(linux-cachyos-lto-headers)
+    fi
 
     cd "${_srcname}"
     local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
@@ -704,6 +716,12 @@ _package-dbg(){
     pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
     depends=("${pkgbase}-headers")
 
+    # Replace LTO kernel with the default kernel
+    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+        provides+=(linux-cachyos-lto-dbg=$_kernver)
+        replaces=(linux-cachyos-lto-dbg)
+    fi
+
     cd "${_srcname}"
     mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
     install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
@@ -714,6 +732,12 @@ _package-zfs(){
     depends=('pahole' "${pkgbase}=${_kernver}")
     provides=('ZFS-MODULE')
     license=('CDDL')
+
+    # Replace LTO kernel with the default kernel
+    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+        provides+=(linux-cachyos-lto-zfs=$_kernver)
+        replaces=(linux-cachyos-lto-zfs)
+    fi
 
     cd "$_srcname"
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
@@ -732,6 +756,12 @@ _package-nvidia(){
     conflicts=("$pkgbase-nvidia-open")
     license=('custom')
 
+    # Replace LTO kernel with the default kernel
+    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+        provides+=(linux-cachyos-lto-nvidia=$_kernver)
+        replaces=(linux-cachyos-lto-nvidia)
+    fi
+
     cd "$_srcname"
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
 
@@ -748,6 +778,12 @@ _package-nvidia-open(){
     provides=('NVIDIA-MODULE')
     conflicts=("$pkgbase-nvidia")
     license=('MIT AND GPL-2.0-only')
+
+    # Replace LTO kernel with the default kernel
+    if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+        provides+=(linux-cachyos-lto-nvidia-open=$_kernver)
+        replaces=(linux-cachyos-lto-nvidia-open)
+    fi
 
     cd "$_srcname"
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"

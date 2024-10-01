@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux SCHED-EXT + BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements
 	pkgver = 6.11.2
-	pkgrel = 2
+	pkgrel = 4
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -15,6 +15,9 @@ pkgbase = linux-cachyos
 	makedepends = tar
 	makedepends = xz
 	makedepends = zstd
+	makedepends = clang
+	makedepends = llvm
+	makedepends = lld
 	options = !strip
 	options = !debug
 	options = !lto
@@ -22,6 +25,7 @@ pkgbase = linux-cachyos
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.11/all/0001-cachyos-base-all.patch
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.11/misc/dkms-clang.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.11/sched/0001-sched-ext.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.11/sched/0001-bore-cachy-ext.patch
 	b2sums = 5720e8dd0bed0247dcfe0bdbce17e36e67bff56811611ae1b04f048b77b6e60c2a48303db73c5a0d4a56c7125cdd695116c4dfd965bd7cb28aa932f427bb3e7d
@@ -45,8 +49,12 @@ pkgname = linux-cachyos
 	provides = WIREGUARD-MODULE
 	provides = KSMBD-MODULE
 	provides = UKSMD-BUILTIN
+	provides = linux-cachyos-lto=6.11.2-4
+	replaces = linux-cachyos-lto
 
 pkgname = linux-cachyos-headers
 	pkgdesc = Headers and scripts for building modules for the Linux SCHED-EXT + BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
 	depends = linux-cachyos
+	provides = linux-cachyos-lto-headers=6.11.2-4
+	replaces = linux-cachyos-lto-headers
