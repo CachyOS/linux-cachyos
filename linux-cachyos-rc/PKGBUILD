@@ -219,8 +219,7 @@ if [ -n "$_build_nvidia" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
              "${_patchsource}/misc/nvidia/0001-Make-modeset-and-fbdev-default-enabled.patch"
              "${_patchsource}/misc/nvidia/0004-6.11-Add-fix-for-fbdev.patch"
-             "${_patchsource}/misc/nvidia/0006-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch"
-             "${_patchsource}/misc/nvidia/0007-6.12-replace-pageswapcache.patch")
+             "${_patchsource}/misc/nvidia/0006-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch")
 fi
 
 if [ -n "$_build_nvidia_open" ]; then
@@ -529,7 +528,6 @@ prepare() {
         patch -Np2 -i "${srcdir}/0004-6.11-Add-fix-for-fbdev.patch" -d "${srcdir}/${_nv_pkg}/kernel"
         # Fix for 6.12
         patch -Np2 -i "${srcdir}/0006-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch" -d "${srcdir}/${_nv_pkg}/kernel"
-        patch -Np2 -i "${srcdir}/0007-6.12-replace-pageswapcache.patch" -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 
     if [ -n "$_build_nvidia_open" ]; then
