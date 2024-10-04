@@ -151,7 +151,7 @@ elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
     pkgbase="linux-$_pkgsuffix"
 fi
 _major=6.10
-_minor=10
+_minor=13
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -161,7 +161,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler and hardened Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -770,7 +770,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('8a15910089d080886046b1fd8d57ef28ce872bf428e67ccbc9d5ca92da794d6dee7ab83cc914a499b40962e2990c3b1e5b11ae7d12c1eff7bec548c9a67df03a'
+b2sums=('ecade921475057a3834fb07ded49f094b5d6c008939554b30463f5fece12b4d1619515e1207ad5fd089a13c0ecd290313a36041df408af922b85c466e0b14e0a'
         '1dd9e05a24b744c4a9a6a8c697ab1edf1cc9acdf9e4a9726343f7cbd24c15b1c93798d707aa863e40449d8222b9b1cfd86d3bee0e5eed411db25ca135e7c0ff0'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
         '57a47335109bd4dad8a64f81ab0880ed5fc41ef35d6d354a3193e93dc5b89fdd28c9bd6f97b795bc53bd5bf141ea22e5099e18eb81fa8e25531a9c6db2dc2033'
