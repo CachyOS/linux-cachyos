@@ -1,0 +1,11 @@
+post_install() {
+    cat << EOF
+Following this update, the default `linux-cachyos` kernel has defaulted to be built with clang + ThinLTO.
+This means that `linux-cachyos-lto` will be obsolete and will be replaced with `linux-cachyos`.
+The GCC-built kernel will now be packaged under `linux-cachyos-gcc`. Install that package if you wish to continue using that kernel.
+EOF
+}
+
+post_upgrade() {
+    post_install
+}
