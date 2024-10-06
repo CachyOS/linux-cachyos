@@ -118,6 +118,10 @@ _use_llvm_lto=${_use_llvm_lto-none}
 # https://github.com/CachyOS/linux-cachyos/issues/36
 _use_lto_suffix=${_use_lto_suffix-y}
 
+# Use suffix -gcc when requested by the user
+# This was added to facilitate https://github.com/CachyOS/linux-cachyos/issues/286
+_use_gcc_suffix=${_use_gcc_suffix-}
+
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
@@ -143,13 +147,14 @@ _build_nvidia_open=${_build_nvidia_open-}
 _build_debug=${_build_debug-}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
-    _pkgsuffix=cachyos-deckify-lto
-    pkgbase="linux-$_pkgsuffix"
-
-elif [ -n "$_use_llvm_lto" ]  ||  [[ "$_use_lto_suffix" = "n" ]]; then
-    _pkgsuffix=cachyos-deckify
-    pkgbase="linux-$_pkgsuffix"
+    _pkgsuffix="cachyos-deckify-lto"
+elif [ "$_use_llvm_lto" = "none" ]  && [ -z "$_use_kcfi" ] && [ "$_use_gcc_suffix" = "y" ]; then
+    _pkgsuffix="cachyos-deckify-gcc"
+else
+    _pkgsuffix="cachyos-deckify"
 fi
+
+pkgbase="linux-$_pkgsuffix"
 _major=6.11
 _minor=2
 #_minorc=$((_minor+1))
