@@ -243,8 +243,7 @@ fi
 case "$_cpusched" in
     cachyos) # CachyOS Scheduler (Sched-ext + BORE + Cachy Sauce)
         source+=("${_patchsource}/sched/0001-sched-ext.patch"
-                 "${_patchsource}/sched/0001-bore-cachy-ext.patch"
-                 linux-cachyos.install);;
+                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
     bmq) ## Project C Scheduler
@@ -252,12 +251,10 @@ case "$_cpusched" in
     eevdf) ## 6.12 EEVDF patches
         source+=("${_patchsource}/sched/0001-eevdf-next.patch");;
     rt) ## EEVDF with RT patches
-        source+=("${_patchsource}/misc/0001-rt.patch"
-                 linux-cachyos-rt.install);;
+        source+=("${_patchsource}/misc/0001-rt.patch");;
     rt-bore) ## RT with BORE Scheduler
         source+=("${_patchsource}/misc/0001-rt.patch"
-                 "${_patchsource}/sched/0001-bore-cachy-rt.patch"
-                 linux-cachyos-rt.install);;
+                 "${_patchsource}/sched/0001-bore-cachy-rt.patch");;
     hardened) ## Hardened Patches with BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch"
                  "${_patchsource}/misc/0001-hardened.patch");;
