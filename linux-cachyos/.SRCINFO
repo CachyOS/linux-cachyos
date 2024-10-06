@@ -28,7 +28,6 @@ pkgbase = linux-cachyos
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.11/misc/dkms-clang.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.11/sched/0001-sched-ext.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.11/sched/0001-bore-cachy-ext.patch
-	source = linux-cachyos.install
 	b2sums = 5720e8dd0bed0247dcfe0bdbce17e36e67bff56811611ae1b04f048b77b6e60c2a48303db73c5a0d4a56c7125cdd695116c4dfd965bd7cb28aa932f427bb3e7d
 	b2sums = 92e635bb3553896146bea23e5e414853723be9843c94750bc6d4bc327a76925bedb2b3b4481f2816a4691d684e417eae0279c1a2019cb37e9e852914696695da
 	b2sums = b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667
