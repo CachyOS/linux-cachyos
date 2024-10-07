@@ -99,28 +99,27 @@ _hugepage=${_hugepage-always}
 # - "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
 # - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
 #
-_processor_opt=${_processor_opt-}
+_processor_opt=${_processor_opt-native_amd}
 
 # This does automatically detect your supported CPU and optimizes for it
-_use_auto_optimization=${_use_auto_optimization-y}
+_use_auto_optimization=${_use_auto_optimization-}
 
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 # "none: disable LTO
-_use_llvm_lto=${_use_llvm_lto-none}
+_use_llvm_lto=${_use_llvm_lto-thin}
 
 # Use suffix -lto only when requested by the user
-# Enabled by default.
 # y - enable -lto suffix
 # n - disable -lto suffix
 # https://github.com/CachyOS/linux-cachyos/issues/36
-_use_lto_suffix=${_use_lto_suffix-y}
+_use_lto_suffix=${_use_lto_suffix-}
 
 # Use suffix -gcc when requested by the user
-# This was added to facilitate https://github.com/CachyOS/linux-cachyos/issues/286
-_use_gcc_suffix=${_use_gcc_suffix-}
+# Enabled by default to show the difference between LTO kernels and GCC kernels
+_use_gcc_suffix=${_use_gcc_suffix-y}
 
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
@@ -143,6 +142,11 @@ _build_nvidia=${_build_nvidia-}
 # Use this only if you have Turing+ GPU
 _build_nvidia_open=${_build_nvidia_open-}
 
+_is_lto_kernel() {
+    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]
+    return $?
+}
+
 # Build a debug package with non-stripped vmlinux
 _build_debug=${_build_debug-}
 
@@ -158,7 +162,7 @@ pkgbase="linux-$_pkgsuffix"
 _major=6.12
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc1
+_rcver=rc2
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -166,7 +170,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -197,7 +201,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # LLVM makedepends
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
+if _is_lto_kernel; then
     makedepends+=(clang llvm lld)
     source+=("${_patchsource}/misc/dkms-clang.patch")
     BUILD_FLAGS=(
@@ -777,8 +781,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('957e0b3ab15532aec7d8994fed1085f081220eda231043b344d373b1d5d597021e24444ca4a73e28a29592d6b2f133b558eca7b42f640749c05eb76bddb7247d'
-        '35244fe940f140f5feeb1f425e07829beb1a0b58d2fe5356e310539b6cfa95affaf6c38164b897191f86b8ebddc2a2168ec979d65b30b3a802815cb02881c740'
+b2sums=('45e9b6cf1d73993ff518183dac2896e13371a0161aa3573734d891c5a5b81808bce596ad1d5c4e2152d628d3af5b62f307633c822970395a0bb861e3d8e0e1b6'
+        '9c4cb538257f1cdabf57c668918fd22944c640bea39830807186cf17d209c951a4cc08ff03b977a1e6c55844be5af89a111699de56bf9afe63c6929123d5365c'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '077cf6ef02ea4a81725f706e5a871f0654251ca6bec4e965ed81e2f7aea174ea2c29621b66da8bb4814f856746ec0402eac1b6e181be45c0d82d2f0138b59f7d'
-        '7364b546e7e6d466655eee161645cbc75debe1834be81c929e72bf27b0cac2148916577999477f5062d7893c30968cdf2ae7ddb79babb790cdba46868a93b73c')
+        '0ead24d27f7813c76e90cb4a6a0c31a5bcce121504005b673b4c672784674e4775b24d8e332111ba3c3038eaf92ded212debc6b80f2ab3d403e0740e4fc06cad'
+        'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
+        '97b59b7976ed5096998229429b067cb1ab945a2353a0b5973bc48c7f014ed684358b3294dfff78fbe464d9bf981e2112de459bb615d980ef1721d2e79ee7dd9f')
