@@ -179,7 +179,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.6
-_minor=54
+_minor=56
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -857,8 +857,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('5fae869d6a24055c16ffc2d92669e3fb2b258e34d36c850bb8cf9def417ecfa0'
-            '258104b251c06c1c53c796504848127127ee12e88256700f75846498c873c84d'
+sha256sums=('f74812f78e88992c416434cb107639e13a551dbaff36bb90d6346ab16ab71a95'
+            '4f8b2f6d883e73cd736c45e1f1fcafd7540717889e9d48e5e6100e7dc77e13d1'
             'a91249420d61edb17b8659ab3feca86d24cf3b1c941b14f232c47064fa4f4ce7'
             '6516e23cf0daed0d565766840342276e00516c732a0e70f996b0e8319221f8c2'
             '8b71209aa8b091dea5fa85921fbd888b5d8a4d351f04ce12d70b9c8d22758389')
