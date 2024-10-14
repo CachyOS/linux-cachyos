@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.12.0-rc2 Kernel Configuration
+# Linux/x86 6.12.0-rc3 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 14.2.1 20240910"
 CONFIG_CC_IS_GCC=y
@@ -9398,6 +9398,7 @@ CONFIG_AMD_PMF=m
 # CONFIG_AMD_PMF_DEBUG is not set
 CONFIG_AMD_PMC=m
 CONFIG_AMD_MP2_STB=y
+CONFIG_AMD_3D_VCACHE=y
 CONFIG_AMD_HSMP=m
 CONFIG_AMD_WBRF=y
 CONFIG_ADV_SWBUTTON=m
