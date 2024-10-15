@@ -20,4 +20,4 @@ done
 
 echo "move kernels to the repo"
 mv */*-x86_64.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64/cachyos/
-repoctl update -P cachyos
+RUST_LOG=trace repo-manage-util -p cachyos update

@@ -24,6 +24,6 @@ done
 
 echo "move kernels to the repo"
 mv */*-x86_64_v4.pkg.tar.zst* /home/ptr1337/.docker/build/nginx/www/repo/x86_64_v4/cachyos-znver4/
-repoctl update -P cachyos-znver4
+RUST_LOG=trace repo-manage-util -p cachyos-znver4 update
 ## Ensure that repo-add/repoctl catches all new packages
-repoctl update -P cachyos-znver4
+RUST_LOG=trace repo-manage-util -p cachyos-znver4 update
