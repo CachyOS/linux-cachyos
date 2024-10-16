@@ -142,11 +142,6 @@ _build_nvidia=${_build_nvidia-}
 # Use this only if you have Turing+ GPU
 _build_nvidia_open=${_build_nvidia_open-}
 
-_is_lto_kernel() {
-    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]
-    return $?
-}
-
 # Build a debug package with non-stripped vmlinux
 _build_debug=${_build_debug-}
 
@@ -201,7 +196,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # LLVM makedepends
-if _is_lto_kernel; then
+if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]; then
     makedepends+=(clang llvm lld)
     source+=("${_patchsource}/misc/dkms-clang.patch")
     BUILD_FLAGS=(
@@ -602,12 +597,6 @@ _package() {
                 'uksmd: Userspace KSM helper daemon')
     provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
 
-    # Replace LTO kernel with the default kernel
-    if _is_lto_kernel; then
-        provides+=(linux-cachyos-lto=$_kernver)
-        replaces=(linux-cachyos-lto)
-    fi
-
     cd "$_srcname"
 
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
@@ -631,12 +620,6 @@ _package() {
 _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
     depends=('pahole' "${pkgbase}")
-
-    # Replace LTO kernel with the default kernel
-    if _is_lto_kernel; then
-        provides+=(linux-cachyos-lto-headers=$_kernver)
-        replaces=(linux-cachyos-lto-headers)
-    fi
 
     cd "${_srcname}"
     local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
@@ -723,12 +706,6 @@ _package-dbg(){
     pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
     depends=("${pkgbase}-headers")
 
-    # Replace LTO kernel with the default kernel
-    if _is_lto_kernel; then
-        provides+=(linux-cachyos-lto-dbg=$_kernver)
-        replaces=(linux-cachyos-lto-dbg)
-    fi
-
     cd "${_srcname}"
     mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
     install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
@@ -739,12 +716,6 @@ _package-zfs(){
     depends=('pahole' "${pkgbase}=${_kernver}")
     provides=('ZFS-MODULE')
     license=('CDDL')
-
-    # Replace LTO kernel with the default kernel
-    if _is_lto_kernel; then
-        provides+=(linux-cachyos-lto-zfs=$_kernver)
-        replaces=(linux-cachyos-lto-zfs)
-    fi
 
     cd "$_srcname"
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
@@ -763,12 +734,6 @@ _package-nvidia(){
     conflicts=("$pkgbase-nvidia-open")
     license=('custom')
 
-    # Replace LTO kernel with the default kernel
-    if _is_lto_kernel; then
-        provides+=(linux-cachyos-lto-nvidia=$_kernver)
-        replaces=(linux-cachyos-lto-nvidia)
-    fi
-
     cd "$_srcname"
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
 
@@ -785,12 +750,6 @@ _package-nvidia-open(){
     provides=('NVIDIA-MODULE')
     conflicts=("$pkgbase-nvidia")
     license=('MIT AND GPL-2.0-only')
-
-    # Replace LTO kernel with the default kernel
-    if _is_lto_kernel; then
-        provides+=(linux-cachyos-lto-nvidia-open=$_kernver)
-        replaces=(linux-cachyos-lto-nvidia-open)
-    fi
 
     cd "$_srcname"
     local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
