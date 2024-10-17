@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-sched-ext
 	pkgdesc = Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements
-	pkgver = 6.11.3
+	pkgver = 6.11.4
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -18,15 +18,15 @@ pkgbase = linux-cachyos-sched-ext
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.11.3.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.11.4.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.11/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.11/sched/0001-sched-ext.patch
-	b2sums = 69582e4745850f3ec004d87859ac88994e3715ed38cd66aff2633fbcb6c20ca2e3be83417cd2c42c2757ab4e084e622c688799b5ad28e15c391adb2afab79a68
-	b2sums = 080302a1061cb4529bda58e1eecb782f0ee79aca547f03c991186dd4a647fc5fb772b32efcf5f895bca02104686a27f06b32eaf4745001e5bcb65b253349084f
+	b2sums = 0c77f514e29881b27b8bf815a55845b65182a25be006815541c0e843c2bbc0d12ee978d2a418d779d296c361bbba2d78ff58a0c13ae78382552afadb1e43aaec
+	b2sums = 362795780f8fba58025621263af15ca06f9240cefcd248ffc8ffe79e2f9a6427d67b95c5bd13d0a861a459ed0ad4931ce4b62bd5d4ab80aa9374a24c5cc7633f
 	b2sums = b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667
-	b2sums = f85ac822b5def33cd8a530bb698d2773d0b3a7c03e242c5ab48add0a084a846c5cb372cd11d2f4008b4205a0641f00a6ac16da9c56adcbbe40f827ccfae71bcf
+	b2sums = a657ccdd799c18bdccbb90db63d0accd2b388da827d8cfc8b758deb94cb003b39e1fd99aecbd7b2605a2938eff334b3a5387ff4848cdde408a0f2bd70d92f394
 	b2sums = 175191b1d38af840c3d087e91c55ff38853ce855731f701e13fad5845beea1702cc4aff49b9331827c72ce1b8008910d35a7c2082c0a37a04323ed499429a28a
 
 pkgname = linux-cachyos-sched-ext
