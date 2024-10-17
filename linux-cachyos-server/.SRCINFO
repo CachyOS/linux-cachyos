@@ -42,6 +42,7 @@ pkgname = linux-cachyos-server
 	provides = WIREGUARD-MODULE
 	provides = KSMBD-MODULE
 	provides = UKSMD-BUILTIN
+	provides = NTSYNC-MODULE
 
 pkgname = linux-cachyos-server-headers
 	pkgdesc = Headers and scripts for building modules for the Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads kernel

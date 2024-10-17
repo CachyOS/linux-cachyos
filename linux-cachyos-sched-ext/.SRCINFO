@@ -43,6 +43,7 @@ pkgname = linux-cachyos-sched-ext
 	provides = WIREGUARD-MODULE
 	provides = KSMBD-MODULE
 	provides = UKSMD-BUILTIN
+	provides = NTSYNC-MODULE
 
 pkgname = linux-cachyos-sched-ext-headers
 	pkgdesc = Headers and scripts for building modules for the Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel

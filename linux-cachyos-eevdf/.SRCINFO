@@ -42,6 +42,7 @@ pkgname = linux-cachyos-eevdf
 	provides = WIREGUARD-MODULE
 	provides = KSMBD-MODULE
 	provides = UKSMD-BUILTIN
+	provides = NTSYNC-MODULE
 
 pkgname = linux-cachyos-eevdf-headers
 	pkgdesc = Headers and scripts for building modules for the Linux EEVDF scheduler + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel

@@ -51,6 +51,7 @@ pkgname = linux-cachyos-deckify
 	provides = WIREGUARD-MODULE
 	provides = KSMBD-MODULE
 	provides = UKSMD-BUILTIN
+	provides = NTSYNC-MODULE
 
 pkgname = linux-cachyos-deckify-headers
 	pkgdesc = Headers and scripts for building modules for the Linux SCHED-EXT + Cachy Sauce + BORE + Deckify Patches Kernel by CachyOS with other patches and improvements kernel
