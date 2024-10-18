@@ -25,15 +25,16 @@ The Schedulers listed below are supported
 
 ## linux-cachyos
 We have provided all these CPU schedulers because each scheduler performs differently depending on usage. We recommend testing each one to determine which best suits your specific requirements.
-- **([BORE](https://github.com/firelzrd))** **Burst-Oriented Response Enhancer** Scheduler by [firelzrd (BORE)](https://github.com/firelzrd/bore-scheduler) `linux-cachyos` / `linux-bore` / `linux-cachyos-bore`
+- **([BORE](https://github.com/firelzrd))** **Burst-Oriented Response Enhancer** Scheduler by [firelzrd](https://github.com/firelzrd/bore-scheduler) `linux-cachyos` / `linux-bore` / `linux-cachyos-bore`
 - **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual Deadline** - `linux-cachyos-eevdf`
 - **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** - `linux-cachyos-sched-ext`
-- **([ECHO](https://github.com/hamadmarri))** **Enhanced CPU Handling Orchestrator** Scheduler by [Hamad Marri](https://github.com/hamadmarri) - `linux-cachyos-echo`
+- **([BMQ](https://gitlab.com/alfredchen/linux-prjc))** **BitMap queue CPU Scheduler** Scheduler by [Alfred Chen](https://gitlab.com/alfredchen) - `linux-cachyos-bmq`
 
 #### CachyOS default kernel
 > - **([SCHED-EXT](https://lwn.net/Articles/922405/))** **BPF extensible scheduler class** + **BORE Scheduler** - `linux-cachyos`
 
 > The CachyOS repositories provide prebuilt kernels in three different march versions: `x86-64`, `x86-64-v3`,`x86-64-v4` and `znver4` . In addition, the repositories also offer LTO-enabled kernels.
+> The default `linux-cachyos` kernel is compiled with Clang and ThinLTO. For this kernel there is a `linux-cachyos-gcc` variant available.
 
 ## Features
 ### :hammer_and_wrench: Advanced building & compiling
@@ -44,8 +45,11 @@ We have provided all these CPU schedulers because each scheduler performs differ
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 
 ### :abacus: CPU enhancements
-- 3 Different scheduler are supported,`SCHED-EXT`,`BORE`,`EEVDF` and `ECHO` scheduler
+- 3 Different scheduler are supported,`SCHED-EXT`,`BORE`,`EEVDF` and `BMQ` scheduler
 - AMD P-State Preferred Core / amd-pstate enhancements and fixes from -next.
+- AMD 3D V-Cache optimizer driver
+- AMD Hardware Feedback Interface
+- Intel Pstate Hybrid CPU Driver
 - SCHED-EXT Schedulers prebuilt in the repository # https://lwn.net/Articles/922405/ - `linux-cachyos` and `linux-cachyos-sched-ext`
 - Cachy Sauce `CONFIG_CACHY`, enables various tweaks for the scheduler and other settings
 - Scheduler patches from `linux-next` in `linux-cachyos-bore` and `linux-cachyos-eevdf`
@@ -54,14 +58,14 @@ We have provided all these CPU schedulers because each scheduler performs differ
 - NVIDIA Module support including patches - Build the nvidia module together with the kernel
 - Latest & improved ZSTD 1.5.6 patch-set
 - UserKSM daemon from pf
-- Improved BFQ Scheduler
-- le9uo # https://github.com/firelzrd/le9uo
+- THP Shrinker - reduces memory usage for transparent hugepages
+- Memory Management Tweaks (LRU, Compaction, Watermark)
 
 ### &#128423; Network
 - BBRv3 tcp_congestion_control
 
 ### :arrow_heading_down: Other features
-- Partial Clear Linux patchset.
+- Cherrypicked ClearLinux patches
 - Back-ported patches from `linux-next`
 - Scheduler patches from linux-next/tip
 - OpenRGB and ACS Override support
@@ -74,10 +78,13 @@ We have provided all these CPU schedulers because each scheduler performs differ
 - NTSync patched and integrated into the kernel (`NTSYNC=y`)
 - T2 Macbook support as default included
 
+### [Explaination of the kernel variants](https://wiki.cachyos.org/features/kernel)
+
 # [CachyOS repositories](https://mirror.cachyos.org/)
 The repositories contain both Arch Linux and CachyOS packages, which have been re-built with flags optimized for performance, stability, and security.
-- `x86-64-v4` - all Arch Linux packages + LTO
-- `x86-64-v3` - all Arch Linux packages + LTO
+- `znver4` - Dedicated Zen4 optimized repository used for Zen 4 and Zen 5 CPUs
+- `x86-64-v4` - all Arch Linux packages with enhanced compilation flags
+- `x86-64-v3` - all Arch Linux packages with enhanced compilation flags
 - `x86-64` - currently only kernel packages
 
 ## How to add CachyOS repositories
@@ -218,38 +225,9 @@ See [CachyOS Wiki](https://wiki.cachyos.org/cachyos_repositories/how_to_add_cach
 
 See [Uninstalling Cachyos Repositories](https://wiki.cachyos.org/cachyos_repositories/how_to_add_cachyos_repo/#uninstalling-cachyos-repositories)
 
-## Install SCX Schedulers
+## SCX Schedulers
 
-If you choose linux-cachyos or linux-cachyos-sched-ext you can install scx-scheds package, which includes external schedulers, which can be started in userspace and detach the kernel scheduler
-
-```
-sudo pacman -S scx-scheds
-# or -git package for latest features and updates
-sudo pacman -S scx-scheds-git
-```
-
-Below is a list of schedulers with their locations:
-
-```
-/usr/bin/scx_central
-/usr/bin/scx_flatcg
-/usr/bin/scx_lavd
-/usr/bin/scx_layered
-/usr/bin/scx_nest
-/usr/bin/scx_pair
-/usr/bin/scx_qmap
-/usr/bin/scx_rlfifo
-/usr/bin/scx_rustland
-/usr/bin/scx_rusty
-/usr/bin/scx_simple
-/usr/bin/scx_userland
-```
-
-To start the scheduler, execute in the console:
-
-```
-sudo scx_NAME
-```
+See [sched-ext Tutorial](https://wiki.cachyos.org/configuration/sched-ext/)
 
 ## Other GNU/Linux distributions
 - Complete patch for simple patching on the kernel
@@ -287,6 +265,6 @@ Just follow this [README](https://github.com/chaotic-cx/nyx#how-to-use-it)
 **LTC:** LgGTwcEBcXqMgNT6XyyNWABMb7dZVtVg9w
 
 ## Valueable Contributors
-[Hamad Marri](https://github.com/hamadmarri) for the TT Scheduler <br />
+[firelzrd](https://github.com/firelzrd/bore-scheduler) for the BORE Scheduler <br />
 [Arch Linux](https://archlinux.org) for the great linux operating system <br />
 [And all other Kernel Developers and Supporters](https://github.com/torvalds/linux) <br />
