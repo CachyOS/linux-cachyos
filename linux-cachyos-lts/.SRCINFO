@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-lts
 	pkgdesc = Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 6.6.57
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -24,10 +24,10 @@ pkgbase = linux-cachyos-lts
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.6/sched/0001-bore-cachy.patch
 	sha256sums = 66ce426ef96f99b8e1ef7ac72e780c730ef8b970f7aa5708501c4274d7abb7b3
-	sha256sums = 4f8b2f6d883e73cd736c45e1f1fcafd7540717889e9d48e5e6100e7dc77e13d1
+	sha256sums = cb63f74e96e631012b61f26ba3e1212099a06455108160971a03ef60e8bea796
 	sha256sums = a91249420d61edb17b8659ab3feca86d24cf3b1c941b14f232c47064fa4f4ce7
-	sha256sums = 6516e23cf0daed0d565766840342276e00516c732a0e70f996b0e8319221f8c2
-	sha256sums = 8b71209aa8b091dea5fa85921fbd888b5d8a4d351f04ce12d70b9c8d22758389
+	sha256sums = 2706d935575e114210892b441671037ab96d5f70f084c391a23b43cd96afaa3e
+	sha256sums = 1fa5b939e589f0297996e8d3178dc316f4a9495a4efdb1a7ab6335a8516ab486
 
 pkgname = linux-cachyos-lts
 	pkgdesc = The Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements kernel and modules
