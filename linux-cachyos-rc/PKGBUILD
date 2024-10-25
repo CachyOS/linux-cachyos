@@ -170,7 +170,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -191,7 +191,7 @@ makedepends=(
 )
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=560.35.03
+_nv_ver=565.57.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="open-gpu-kernel-modules-${_nv_ver}"
 source=(
@@ -227,8 +227,7 @@ fi
 if [ -n "$_build_nvidia" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
              "${_patchsource}/misc/nvidia/0001-Make-modeset-and-fbdev-default-enabled.patch"
-             "${_patchsource}/misc/nvidia/0004-6.11-Add-fix-for-fbdev.patch"
-             "${_patchsource}/misc/nvidia/0006-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch")
+             "${_patchsource}/misc/nvidia/0004-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch")
 fi
 
 if [ -n "$_build_nvidia_open" ]; then
@@ -236,10 +235,8 @@ if [ -n "$_build_nvidia_open" ]; then
              "${_patchsource}/misc/nvidia/0001-Make-modeset-and-fbdev-default-enabled.patch"
              "${_patchsource}/misc/nvidia/0002-Do-not-error-on-unkown-CPU-Type-and-add-Zen5-support.patch"
              "${_patchsource}/misc/nvidia/0003-Add-IBT-Support.patch"
-             "${_patchsource}/misc/nvidia/0004-6.11-Add-fix-for-fbdev.patch"
-             "${_patchsource}/misc/nvidia/0006-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch"
-             "${_patchsource}/misc/nvidia/0007-6.12-replace-pageswapcache.patch"
-             "${_patchsource}/misc/nvidia/0008-silence-event-assert-until-570.patch"
+             "${_patchsource}/misc/nvidia/0004-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch"
+             "${_patchsource}/misc/nvidia/0006-silence-event-assert-until-570.patch"
              "${_patchsource}/misc/nvidia/0009-fix-hdmi-names.patch")
 fi
 
@@ -535,10 +532,8 @@ prepare() {
 
         # Use fbdev and modeset as default
         patch -Np1 -i "${srcdir}/0001-Make-modeset-and-fbdev-default-enabled.patch" -d "${srcdir}/${_nv_pkg}/kernel"
-        # Fix broken fbdev on 6.11
-        patch -Np2 -i "${srcdir}/0004-6.11-Add-fix-for-fbdev.patch" -d "${srcdir}/${_nv_pkg}/kernel"
         # Fix for 6.12
-        patch -Np2 -i "${srcdir}/0006-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch" -d "${srcdir}/${_nv_pkg}/kernel"
+        patch -Np2 -i "${srcdir}/0004-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch" -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 
     if [ -n "$_build_nvidia_open" ]; then
@@ -546,13 +541,11 @@ prepare() {
         # Fix for https://bugs.archlinux.org/task/74886
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0003-Add-IBT-Support.patch" -d "${srcdir}/${_nv_open_pkg}"
         # Fix for Zen5 error print in dmesg
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0004-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch" -d "${srcdir}/${_nv_open_pkg}"
+        # Add fix for 6.12 Display Open issue
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0002-Do-not-error-on-unkown-CPU-Type-and-add-Zen5-support.patch" -d "${srcdir}/${_nv_open_pkg}"
-        # Fix broken fbdev on 6.11
-        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0004-6.11-Add-fix-for-fbdev.patch" -d "${srcdir}/${_nv_open_pkg}"
-        # Fix for 6.12
-        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0006-Fix-for-6.12.0-rc1-drm_mode_config_funcs.output_poll.patch" -d "${srcdir}/${_nv_open_pkg}"
-        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0007-6.12-replace-pageswapcache.patch" -d "${srcdir}/${_nv_open_pkg}"
-        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0008-silence-event-assert-until-570.patch" -d "${srcdir}/${_nv_open_pkg}"
+        # Fix for CS2 dmesg spam
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0006-silence-event-assert-until-570.patch" -d "${srcdir}/${_nv_open_pkg}"
         # Fix for HDMI names
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0009-fix-hdmi-names.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
