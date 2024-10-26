@@ -219,11 +219,14 @@ Enjoy improved system speed with CachyOS packages!
 
 ## Debug packages
 
-See [CachyOS Wiki](https://wiki.cachyos.org/cachyos_repositories/how_to_add_cachyos_repo/)
+This is handled via debuginfod. Just add following file to `/etc/debuginfod/cachyos.urls`
+```
+https://debuginfod.cachyos.org
+```
 
 ## Uninstalling CachyOS repositories
 
-See [Uninstalling Cachyos Repositories](https://wiki.cachyos.org/cachyos_repositories/how_to_add_cachyos_repo/#uninstalling-cachyos-repositories)
+See [Uninstalling Cachyos Repositories](https://wiki.cachyos.org/features/optimized_repos/#uninstalling-cachyos-repositories)
 
 ## SCX Schedulers
 
