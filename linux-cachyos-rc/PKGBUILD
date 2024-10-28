@@ -162,7 +162,7 @@ pkgbase="linux-$_pkgsuffix"
 _major=6.12
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc4
+_rcver=rc5
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -170,7 +170,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -779,9 +779,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('89aee10b780b34766df64e1a899f4df036f726fd23bacfd502f9038d2c19e7ea6c04aef4d91b621c1e1374dac1876d897533aef9224f78d09697c398525c7326'
-        '5c4b8f41bd349c6a9ccecdb87bb6e2f08555a7af41a33c694ebf95b8f575ed2f47d5f9f347b59b11488d53d33902ce91acba9ddd29496da89037a3b4122819aa'
+b2sums=('37d8e45e4a74a365f9393b19425e927a8772b4ce57c53074deec30c50a8c77fc9ca5a6624e98e273bfad379c1799bc44eebc96d1a1a1414a44fa69546d9b5cb8'
+        'e1d06be0cb08f80b48f05a5c400a5b1eeedef3c38e05b26a03a7cd08dd4e9d938ce6aa5c1c5e8d77cf1828231d26ccef1b4bf9bb7ad102516a3b2470a37743fd'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '03f877865d6e797f23e1583cdaa6ef6d15e7f28d0d9c99bb6a547dfc39c681d235b3c6f842a50caf40e2cd4ea498578bb8de28336635f919f05ffebdae535a80'
+        '9e2a36cf762d4b610ad87d48e25aabf975403562780125c291b6403400f7c08ce26eb5a8187097fc2bccaf3e95e38805723645c7cfcb2e32947374589158a710'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
-        '0e6bd40a4ebe934c8121b6deb31c85f429e135adf2ac9cc7c0b5dc917c89b33eea1552d6cbf82a74a13d5929d51b25247df62204de323a7a22ba3144521dfce6')
+        'b9bd73bc4556cc21dcd78680cf10af233663a20c0f865c9c13cab91eef8340c9d02cbb1179838574058a091708dc7bd1c14f908c4b87d0a17eb74581f2af06b4')
