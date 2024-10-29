@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements
 	pkgver = 6.12.rc5
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -28,9 +28,9 @@ pkgbase = linux-cachyos-rc
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/misc/dkms-clang.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/sched/0001-bore-cachy.patch
 	b2sums = 37d8e45e4a74a365f9393b19425e927a8772b4ce57c53074deec30c50a8c77fc9ca5a6624e98e273bfad379c1799bc44eebc96d1a1a1414a44fa69546d9b5cb8
-	b2sums = e1d06be0cb08f80b48f05a5c400a5b1eeedef3c38e05b26a03a7cd08dd4e9d938ce6aa5c1c5e8d77cf1828231d26ccef1b4bf9bb7ad102516a3b2470a37743fd
+	b2sums = a521ff40a77c2ddd859aae00899f3789382c0bceca9576eaa290b0ecf4d3a496ccf2c323e1ed31f82b3644a2fe0554eecd011cdf5545d366a63fa249c059c944
 	b2sums = b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667
-	b2sums = 50ca33d503cd878a547dbc78bf800282b1979e20a2ebea3374eeb708a1ce77f71d3b3da0d2b2028dc60288a78764abcd32483ee7e3cf9fb86c890728c9da4b1a
+	b2sums = 28631ac96f5fe6f555be06b08e3391a7d6d2bc98d22f86fb2d6f43f9dfc419444922cd8fd6540ea680089f8e0408a696c631b9ffa8dd8d7902abace3c5d25080
 	b2sums = c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452
 	b2sums = b9bd73bc4556cc21dcd78680cf10af233663a20c0f865c9c13cab91eef8340c9d02cbb1179838574058a091708dc7bd1c14f908c4b87d0a17eb74581f2af06b4
 
