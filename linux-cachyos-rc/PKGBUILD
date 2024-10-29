@@ -142,13 +142,16 @@ _build_nvidia=${_build_nvidia-}
 # Use this only if you have Turing+ GPU
 _build_nvidia_open=${_build_nvidia_open-}
 
+
+# Build a debug package with non-stripped vmlinux
+_build_debug=${_build_debug-}
+
+
+# ATTENTION: Do not modify after this line
 _is_lto_kernel() {
     [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]
     return $?
 }
-
-# Build a debug package with non-stripped vmlinux
-_build_debug=${_build_debug-}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
     _pkgsuffix="cachyos-rc-lto"
@@ -782,6 +785,6 @@ done
 b2sums=('37d8e45e4a74a365f9393b19425e927a8772b4ce57c53074deec30c50a8c77fc9ca5a6624e98e273bfad379c1799bc44eebc96d1a1a1414a44fa69546d9b5cb8'
         'a521ff40a77c2ddd859aae00899f3789382c0bceca9576eaa290b0ecf4d3a496ccf2c323e1ed31f82b3644a2fe0554eecd011cdf5545d366a63fa249c059c944'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '28631ac96f5fe6f555be06b08e3391a7d6d2bc98d22f86fb2d6f43f9dfc419444922cd8fd6540ea680089f8e0408a696c631b9ffa8dd8d7902abace3c5d25080'
+        '8527d4074da5978ac1e416735229582b50d35c644f6461cba033b771f3df76f9a2c9b9d228d7d00fcf20b7f2aa584d476eaaa7516dd48b43559efed7a8169f69'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
         'b9bd73bc4556cc21dcd78680cf10af233663a20c0f865c9c13cab91eef8340c9d02cbb1179838574058a091708dc7bd1c14f908c4b87d0a17eb74581f2af06b4')
