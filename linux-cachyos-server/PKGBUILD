@@ -156,7 +156,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.11
-_minor=5
+_minor=6
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -166,7 +166,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -773,8 +773,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('8749d9f78cca3d64e97d081b3ededf506c07c7fe894253e7435afb37eb7c86b690a65293fb4b582ecd951229ca61f13679d10197e4629352262db776352b96dc'
-        '86742b3076b0a3b9ca586cb731f2cc2c5834dc3c12339a9ba22aa22c11b49ccb759935fb7483362bc40bbdfd6fd46ff71aac2270e526a0c3b46df2f3a6816ece'
+b2sums=('821eceaa7492122c724ea789a79aa99f61078f06c86fd6f76d08f640b47ea682f7441c47ed7b860ca39fd242b8797bb5bc311dc63dbb9c37bc15917eccafc255'
+        '16967354211884958ce1c69beb34998356cd29994e7fea2644f6969bf9f9b02b66c248f5859902ba284da6ecfc1d2d9c8298819b114b61f4f83902c5fa0cb81d'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        'aaf08bc0ce7c360907be38b62160351cd61e0ad5d11d1004df6ae1db55afaf3c356bf98c97bf53bbd8291a379edc6446a7658b607701301d118b92db04b7dc36'
+        'e33413f3e23ec13fd55eb0e4d1a37b0d5e6bcd2d6e75453591aa9ad3823ab34b78f07f6d23cb03d6f04b4f13253a7d67a41131137262e91b8f3fdbe5a50dc84f'
         '9395aa33dfcd8cd1ac449ce4881bbb179aef92a6423961df09289e0a707741f0fbef5aa8b3b0bb9b185103d01efca4880287ce40d892a587513d0236aee2f959')

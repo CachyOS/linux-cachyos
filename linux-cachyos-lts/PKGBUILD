@@ -179,7 +179,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.6
-_minor=57
+_minor=59
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -189,7 +189,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=3
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -854,7 +854,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('66ce426ef96f99b8e1ef7ac72e780c730ef8b970f7aa5708501c4274d7abb7b3'
+sha256sums=('23616808d8c08f12815ff898f4edb4c11397a2b2843d029ee62452d21833a76d'
             'cb63f74e96e631012b61f26ba3e1212099a06455108160971a03ef60e8bea796'
             'a91249420d61edb17b8659ab3feca86d24cf3b1c941b14f232c47064fa4f4ce7'
             '2706d935575e114210892b441671037ab96d5f70f084c391a23b43cd96afaa3e'
