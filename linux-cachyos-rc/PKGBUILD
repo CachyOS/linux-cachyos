@@ -532,7 +532,7 @@ prepare() {
     diff -u ../config .config || :
 
     ### Prepared version
-    make -s kernelrelease > version
+    make "${BUILD_FLAGS[@]}" -s kernelrelease > version
     echo "Prepared $pkgbase version $(<version)"
 
     ### Running make nconfig
@@ -581,7 +581,7 @@ build() {
     cd "$_srcname"
     make "${BUILD_FLAGS[@]}" -j"$(nproc)" all
 
-    make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
+    make "${BUILD_FLAGS[@]}" -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
 
     local MODULE_FLAGS=(
        KERNEL_UNAME="${_kernuname}"
@@ -635,13 +635,13 @@ _package() {
     echo "Installing boot image..."
     # systemd expects to find the kernel here to allow hibernation
     # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-    install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
+    install -Dm644 "$(make "${BUILD_FLAGS[@]}" -s image_name)" "$modulesdir/vmlinuz"
 
     # Used by mkinitcpio to name the kernel
     echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
     echo "Installing modules..."
-    ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+    ZSTD_CLEVEL=19 make "${BUILD_FLAGS[@]}" INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
         DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
 
     # remove build links
