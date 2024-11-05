@@ -580,8 +580,7 @@ prepare() {
 build() {
     cd "$_srcname"
     make "${BUILD_FLAGS[@]}" -j"$(nproc)" all
-
-    make "${BUILD_FLAGS[@]}" -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
+    make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
 
     local MODULE_FLAGS=(
        KERNEL_UNAME="${_kernuname}"
