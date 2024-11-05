@@ -146,6 +146,19 @@ _build_nvidia_open=${_build_nvidia_open-}
 # Build a debug package with non-stripped vmlinux
 _build_debug=${_build_debug-}
 
+# Enable AUTOFDO_CLANG for the first compilation to create a kernel, which can be used for profiling
+# This only works for Clang compiled kernels, therefore thin or full lto needs to be set in _use_llvm_lto
+# Workflow:
+# https://cachyos.org/blog/2411-kernel-autofdo/
+# 1. Compile Kernel with _autofdo=y
+# 2. Boot the kernel in QEMU or on your system, see Workload
+# 3. Profile the kernel and convert the profile, see Generating the Profile for AutoFDO
+# 4. Put the profile into the sourcedir and name the profile "perf.afdo"
+# 5. Enable _autofdo_use
+_autfodo=${_autofdo-}
+
+# Enable after you have put the profile into the sourcedir
+_autofdo_use=${_autofdo_use-}
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
@@ -153,13 +166,7 @@ _is_lto_kernel() {
     return $?
 }
 
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
-    _pkgsuffix="cachyos-rc-lto"
-elif [ "$_use_llvm_lto" = "none" ]  && [ -z "$_use_kcfi" ] && [ "$_use_gcc_suffix" = "y" ]; then
-    _pkgsuffix="cachyos-rc-gcc"
-else
-    _pkgsuffix="cachyos-rc"
-fi
+_pkgsuffix="cachyos-rc-autofdo"
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.12
@@ -472,6 +479,12 @@ prepare() {
 
     echo "Selecting '$_hugepage' TRANSPARENT_HUGEPAGE config..."
 
+    # Enable Clang AutoFDO
+    # Add additonal check if Thin or Full LTO is enabled otherwise die
+    if [ "$_autofdo" ] || [ -n "$_autofdo_use" ]; then
+        scripts/config -e AUTOFDO_CLANG
+    fi
+
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config -e USER_NS
 
@@ -556,7 +569,16 @@ prepare() {
 
 build() {
     cd "$_srcname"
-    make "${BUILD_FLAGS[@]}" -j"$(nproc)" all
+
+    # Use AutoFDO Profile named perf.afdo
+    # Maybe we can find a way to make this dyamic, but for now keep it hardcoded
+    # As soon LLVM 19 is in arch repository, we can also think about Propellor
+    if [ -n "$_autofdo_use" ]; then
+        make "${BUILD_FLAGS[@]}" CLANG_AUTOFDO_PROFILE=${srcdir}/perf.afdo -j"$(nproc)" all
+    else
+        make "${BUILD_FLAGS[@]}" -j"$(nproc)" all
+    fi
+
     make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
 
     local MODULE_FLAGS=(
