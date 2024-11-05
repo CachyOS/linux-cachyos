@@ -1,4 +1,4 @@
-pkgbase = linux-cachyos-rc
+pkgbase = linux-cachyos-rc-autofdo
 	pkgdesc = Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements
 	pkgver = 6.12.rc6
 	pkgrel = 1
@@ -34,7 +34,7 @@ pkgbase = linux-cachyos-rc
 	b2sums = c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452
 	b2sums = d7a989ccc6021c95f89f1239267f7cd5e452d6f6e9d5dd0c00bf0f67eb6a83ef319ac737007766b0d5e4d0c7421afbeb1ea18f6186289c9205daf6751395a2ef
 
-pkgname = linux-cachyos-rc
+pkgname = linux-cachyos-rc-autofdo
 	pkgdesc = The Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -50,7 +50,7 @@ pkgname = linux-cachyos-rc
 	provides = UKSMD-BUILTIN
 	provides = NTSYNC-MODULE
 
-pkgname = linux-cachyos-rc-headers
+pkgname = linux-cachyos-rc-autofdo-headers
 	pkgdesc = Headers and scripts for building modules for the Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
-	depends = linux-cachyos-rc
+	depends = linux-cachyos-rc-autofdo

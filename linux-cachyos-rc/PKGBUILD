@@ -153,13 +153,14 @@ _build_debug=${_build_debug-}
 # 1. Compile Kernel with _autofdo=y
 # 2. Boot the kernel in QEMU or on your system, see Workload
 # 3. Profile the kernel and convert the profile, see Generating the Profile for AutoFDO
-# 4. Put the profile into the sourcedir and name the profile "perf.afdo"
+# 4. Put the profile into the sourcedir and name the profile "perf.afdo" (You can also change the name in _autofdo_profile_name)
 # 5. Enable _autofdo_use
 _autofdo=${_autofdo-}
 
 # Enable after you have put the profile into the sourcedir
 _autofdo_use=${_autofdo_use-}
 
+# Name for the AutoFDO profile
 _autofdo_profile_name=${_autofdo_profile_name-"perf.afdo"}
 
 
@@ -491,6 +492,9 @@ prepare() {
         scripts/config -e AUTOFDO_CLANG
     fi
 
+    if [ -n "$_autofdo_use" ]; then
+    BUILD_FLAGS+=(CLANG_AUTOFDO_PROFILE="${srcdir}"/$_autofdo_profile_name)
+    fi
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config -e USER_NS
 
@@ -575,15 +579,7 @@ prepare() {
 
 build() {
     cd "$_srcname"
-
-    # Use AutoFDO Profile named perf.afdo
-    # Maybe we can find a way to make this dyamic, but for now keep it hardcoded
-    # As soon LLVM 19 is in arch repository, we can also think about Propellor
-    if [ -n "$_autofdo_use" ]; then
-        make "${BUILD_FLAGS[@]}" CLANG_AUTOFDO_PROFILE=${srcdir}/perf.afdo -j"$(nproc)" all
-    else
-        make "${BUILD_FLAGS[@]}" -j"$(nproc)" all
-    fi
+    make "${BUILD_FLAGS[@]}" -j"$(nproc)" all
 
     make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
 
@@ -815,4 +811,5 @@ b2sums=('2cf8f9fb7dd66528665713a4199d704afcfeca8c1d6214d0bf6e48d83eb09402149591d
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
         '2e3d233f1f41abf22a3d66efd5d47f9381c07e315a4bdc9e2629324c3710afdf46afe1ecf563775db560a56185aa674bb5a8a8aaa3dd43e7dccf62aa01d790a7'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
+        '97a6a02cfcb07b52af273da1a1a00d83e814dfb3ec0e9a7860255b36fef57e816d3eef3a0cdd2ddb8e25bfefea4687348cde6a5fcebea2bb7886417acc52a726'
         'd7a989ccc6021c95f89f1239267f7cd5e452d6f6e9d5dd0c00bf0f67eb6a83ef319ac737007766b0d5e4d0c7421afbeb1ea18f6186289c9205daf6751395a2ef')
