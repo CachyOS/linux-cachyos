@@ -721,7 +721,7 @@ _package-zfs(){
     cd "${srcdir}/zfs"
     install -dm755 "${modulesdir}"
     install -m644 module/*.ko "${modulesdir}"
-    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 {} +
+    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
 
@@ -739,7 +739,7 @@ _package-nvidia(){
     install -dm755 "${modulesdir}"
     install -m644 kernel/*.ko "${modulesdir}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 LICENSE
-    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 {} +
+    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
 }
 
 _package-nvidia-open(){
@@ -757,7 +757,7 @@ _package-nvidia-open(){
     install -m644 kernel-open/*.ko "${modulesdir}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 COPYING
 
-    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 {} +
+    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
 }
 
 pkgname=("$pkgbase")
