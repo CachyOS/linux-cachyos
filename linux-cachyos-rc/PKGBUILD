@@ -155,7 +155,7 @@ _build_debug=${_build_debug-}
 # 3. Profile the kernel and convert the profile, see Generating the Profile for AutoFDO
 # 4. Put the profile into the sourcedir and name the profile "perf.afdo"
 # 5. Enable _autofdo_use
-_autfodo=${_autofdo-}
+_autofdo=${_autofdo-}
 
 # Enable after you have put the profile into the sourcedir
 _autofdo_use=${_autofdo_use-}
