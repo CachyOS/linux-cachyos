@@ -487,7 +487,7 @@ prepare() {
 
     # Enable Clang AutoFDO
     # Add additonal check if Thin or Full LTO is enabled otherwise die
-    if [ "$_autofdo" ] || [ -n "$_autofdo_use" ]; then
+    if [ -n "$_autofdo" ] || [ -n "$_autofdo_use" ]; then
         scripts/config -e AUTOFDO_CLANG
     fi
 
