@@ -493,7 +493,7 @@ prepare() {
     fi
 
     if [ -n "$_autofdo_use" ]; then
-    BUILD_FLAGS+=(CLANG_AUTOFDO_PROFILE="${srcdir}"/$_autofdo_profile_name)
+        BUILD_FLAGS+=(CLANG_AUTOFDO_PROFILE="${srcdir}"/$_autofdo_profile_name)
     fi
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config -e USER_NS
