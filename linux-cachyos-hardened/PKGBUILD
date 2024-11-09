@@ -14,13 +14,13 @@ _cachy_config=${_cachy_config-y}
 ### Selecting the CPU scheduler
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
+# 'bmq' - select 'BMQ Scheduler'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 # 'cachyos' - select 'Sched-Ext Scheduler Framework Variant Scheduler with BORE Scheduler'
 # 'eevdf' - select 'EEVDF Scheduler'
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
-# 'echo' - select 'ECHO Scheduler'
 _cpusched=${_cpusched-hardened}
 
 ### Tweak kernel options prior to a build via nconfig
@@ -155,8 +155,8 @@ else
  fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.10
-_minor=13
+_major=6.11
+_minor=7
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -241,8 +241,10 @@ case "$_cpusched" in
                  "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
     bore) ## BORE Scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    echo) ## ECHO Scheduler
-        source+=("${_patchsource}/sched/0001-echo-cachy.patch");;
+    bmq) ## Project C Scheduler
+        source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
+    eevdf) ## 6.12 EEVDF patches
+        source+=("${_patchsource}/sched/0001-eevdf-next.patch");;
     rt) ## EEVDF with RT patches
         source+=("${_patchsource}/misc/0001-rt.patch");;
     rt-bore) ## RT with BORE Scheduler
@@ -313,12 +315,12 @@ prepare() {
     [ -z "$_cpusched" ] && _die "The value is empty. Choose the correct one again."
 
     case "$_cpusched" in
-        cachyos) scripts/config -e SCHED_CLASS_EXT -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 1000000;;
-        bore|hardened) scripts/config -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 1000000;;
-        echo) scripts/config -e ECHO_SCHED;;
+        cachyos) scripts/config -e SCHED_CLASS_EXT -e SCHED_BORE;;
+        bore|hardened) scripts/config -e SCHED_BORE;;
+        bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -d PREEMPT_RT -d PREEMPT_DYNAMIC -e PREEMPT_BUILD -e PREEMPT_BUILD_AUTO -e PREEMPT_AUTO;;
-        rt-bore) scripts/config -e SCHED_BORE --set-val MIN_BASE_SLICE_NS 1000000 -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -d PREEMPT_RT -d PREEMPT_DYNAMIC -e PREEMPT_BUILD -e PREEMPT_BUILD_AUTO -e PREEMPT_AUTO;;
+        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -d PREEMPT_RT -d PREEMPT_DYNAMIC -e PREEMPT_BUILD -e PREEMPT_BUILD_AUTO -e PREEMPT_AUTO;;
         sched-ext) scripts/config -e SCHED_CLASS_EXT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
@@ -328,8 +330,7 @@ prepare() {
     ### Enable KCFI
     if [ -n "$_use_kcfi" ]; then
         echo "Enabling kCFI"
-        scripts/config -e ARCH_SUPPORTS_CFI_CLANG \
-            -e CFI_CLANG
+        scripts/config -e ARCH_SUPPORTS_CFI_CLANG -e CFI_CLANG -e CFI_AUTO_DEFAULT
     fi
 
     ### Select LLVM level
@@ -591,7 +592,7 @@ _package() {
                 'linux-firmware: firmware images needed for some devices'
                 'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
                 'uksmd: Userspace KSM helper daemon')
-    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
+    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN NTSYNC-MODULE)
 
     cd "$_srcname"
 
@@ -626,6 +627,7 @@ _package-headers() {
     install -Dt "$builddir/kernel" -m644 kernel/Makefile
     install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
     cp -t "$builddir" -a scripts
+    ln -srt "$builddir" "$builddir/scripts/gdb/vmlinux-gdb.py"
 
     # required when STACK_VALIDATION is enabled
     install -Dt "$builddir/tools/objtool" tools/objtool/objtool
@@ -770,9 +772,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('ecade921475057a3834fb07ded49f094b5d6c008939554b30463f5fece12b4d1619515e1207ad5fd089a13c0ecd290313a36041df408af922b85c466e0b14e0a'
-        '1ebe0aaa0fc962549110cb7bb07bc17479164748323436c71d533766d7e38151bdd987def9e9f9dc6710574f51a5797fb4fd128c4fc1bd9f9531572361d6a90f'
+b2sums=('4d1aec68c93f3159099ac02a6d4bbc46f207383079ea3117102b9d657964132d946b9579e4e8582a0cf9c79170de0b7a0c5fac2b6e1b36aabd5e66340bec3c18'
+        '695787544efcc1866b0f1fb5ddc12bc2a873032708c2dfde9eb16a6d38c4864f0e1b2c1c53519079a956b67a987c3ce7eeecde6bd4d43125bb22f619b2d4ef39'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '7f81f0efbac83be4a036bf5ca2443798a8327431dfc5e4082d8b44ccbcdeb862aff246e68868853223ff5d4d80a218cdda5dde24b34ed6d15c179a5d43b1db8b'
-        'b66e6e1da6f203b2a3d2a7cd0544e767c8ed6427f4806936fe64016d5f92c464a200f2939f735bcbdc7694f21e25fd12aaaa9b06d83a7949f2af2bad33a49426'
-        '490baaf3751bb83a77595c43b1f2cc4678d320dcfa9beb0dfa34f3dcb7dc5b8cd903da1339efe2659dd46a33b28cfd48da8e0d0b9ed9c6a855f8646f4e550361')
+        'c6acf9e0129ee17094cfe9b816260386e1a8536d40c736c324db8b341fb2292c14100c3016ced9e306f76765e0ff96b5f28f0bc22a38a330f859b82d1541f466'
+        'fcaa167830bb9558668ad7be808511be8c877e74c2c29326f0b1eaa0f50bf56bae47cab61cb11087d9863d0ad790fdfee76d3fbce4e570f673f6c22322ca749d'
+        '85386fcc3af2bc166b3f902d4738cef2bc49b39772e0b7fd49c3febf929019d2773d1d6f76af40310d1e94be4536e1d380c2e66283a4c8af058a5c7680361917')
