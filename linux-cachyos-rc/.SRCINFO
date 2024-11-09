@@ -1,7 +1,7 @@
-pkgbase = linux-cachyos-rc-autofdo
+pkgbase = linux-cachyos-autofdo
 	pkgdesc = Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements
 	pkgver = 6.12.rc6
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -32,9 +32,10 @@ pkgbase = linux-cachyos-rc-autofdo
 	b2sums = b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667
 	b2sums = 2e3d233f1f41abf22a3d66efd5d47f9381c07e315a4bdc9e2629324c3710afdf46afe1ecf563775db560a56185aa674bb5a8a8aaa3dd43e7dccf62aa01d790a7
 	b2sums = c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452
+	b2sums = 97a6a02cfcb07b52af273da1a1a00d83e814dfb3ec0e9a7860255b36fef57e816d3eef3a0cdd2ddb8e25bfefea4687348cde6a5fcebea2bb7886417acc52a726
 	b2sums = d7a989ccc6021c95f89f1239267f7cd5e452d6f6e9d5dd0c00bf0f67eb6a83ef319ac737007766b0d5e4d0c7421afbeb1ea18f6186289c9205daf6751395a2ef
 
-pkgname = linux-cachyos-rc-autofdo
+pkgname = linux-cachyos-autofdo
 	pkgdesc = The Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel and modules
 	depends = coreutils
 	depends = kmod
@@ -50,7 +51,7 @@ pkgname = linux-cachyos-rc-autofdo
 	provides = UKSMD-BUILTIN
 	provides = NTSYNC-MODULE
 
-pkgname = linux-cachyos-rc-autofdo-headers
+pkgname = linux-cachyos-autofdo-headers
 	pkgdesc = Headers and scripts for building modules for the Linux SCHED-EXT + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
-	depends = linux-cachyos-rc-autofdo
+	depends = linux-cachyos-autofdo
