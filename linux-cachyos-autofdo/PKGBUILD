@@ -165,7 +165,7 @@ _autofdo_profile_name=${_autofdo_profile_name-"perf.afdo"}
 
 
 # ATTENTION: Do not modify after this line
-_is_lto_kernel() {
+_is_clang_kernel() {
     [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]
     return $?
 }
@@ -215,7 +215,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # LLVM makedepends
-if _is_lto_kernel; then
+if _is_clang_kernel; then
     makedepends+=(clang llvm lld)
     source+=("${_patchsource}/misc/dkms-clang.patch")
     BUILD_FLAGS=(
