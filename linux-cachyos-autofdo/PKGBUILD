@@ -99,10 +99,10 @@ _hugepage=${_hugepage-always}
 # - "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
 # - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
 #
-_processor_opt=${_processor_opt-zen4}
+_processor_opt=${_processor_opt-}
 
 # This does automatically detect your supported CPU and optimizes for it
-_use_auto_optimization=${_use_auto_optimization-}
+_use_auto_optimization=${_use_auto_optimization-y}
 
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
