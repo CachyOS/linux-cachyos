@@ -166,7 +166,7 @@ _autofdo_profile_name=${_autofdo_profile_name-"perf.afdo"}
 
 # ATTENTION: Do not modify after this line
 _is_clang_kernel() {
-    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]
+    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ] || [ -n "$_autofdo" ] || [ -n "$_autofdo_use" ]
     return $?
 }
 
