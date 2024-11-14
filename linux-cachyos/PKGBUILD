@@ -99,10 +99,10 @@ _hugepage=${_hugepage-always}
 # - "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
 # - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
 #
-_processor_opt=${_processor_opt-}
+_processor_opt=${_processor_opt-zen4}
 
 # This does automatically detect your supported CPU and optimizes for it
-_use_auto_optimization=${_use_auto_optimization-y}
+_use_auto_optimization=${_use_auto_optimization-}
 
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
@@ -155,7 +155,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.11
-_minor=7
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -772,10 +772,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('4d1aec68c93f3159099ac02a6d4bbc46f207383079ea3117102b9d657964132d946b9579e4e8582a0cf9c79170de0b7a0c5fac2b6e1b36aabd5e66340bec3c18'
-        '16967354211884958ce1c69beb34998356cd29994e7fea2644f6969bf9f9b02b66c248f5859902ba284da6ecfc1d2d9c8298819b114b61f4f83902c5fa0cb81d'
+b2sums=('2d3b56bf4fa3a3d20c5379856c9e2d2ce7220bc05320859e123053d08138dd380f9aa7a9d11df3a8fbe07583a28bafffc0ffd3ed9cf28ebf09d6af7e97a0ed5f'
+        '274c2c0808bdb6923f42a1635bd9be161852338a511293922aa7e79c070707cd44ddd9ccc73e20bb4c4bbbc58f8996af16468831a1fae9d3fe936a699992d5e5'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        'c6acf9e0129ee17094cfe9b816260386e1a8536d40c736c324db8b341fb2292c14100c3016ced9e306f76765e0ff96b5f28f0bc22a38a330f859b82d1541f466'
+        'ed28d9569e2ae0aec561a3141ed7eb9d4eb16d5e9afebc35335143d9a97381199b676eaae6ea31a627787ccce93c81de8d6c44a7183e733bcb25e1421d80e85d'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
         '175191b1d38af840c3d087e91c55ff38853ce855731f701e13fad5845beea1702cc4aff49b9331827c72ce1b8008910d35a7c2082c0a37a04323ed499429a28a'
         '464d86b70ae12b87f4803970163db0ed7487e54163776aafc7a3773de016d90b5cbdff2cba63b4063fcc63a44fc3ac0c14a89fce21a3302cf1755475fe2fdee9')
