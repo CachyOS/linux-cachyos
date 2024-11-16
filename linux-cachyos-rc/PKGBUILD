@@ -316,8 +316,8 @@ prepare() {
         cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
-        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -d PREEMPT_RT -d PREEMPT_DYNAMIC -e PREEMPT_BUILD -e PREEMPT_BUILD_AUTO -e PREEMPT_AUTO;;
-        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -d PREEMPT_RT -d PREEMPT_DYNAMIC -e PREEMPT_BUILD -e PREEMPT_BUILD_AUTO -e PREEMPT_AUTO;;
+        rt) scripts/config -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
+        rt-bore) scripts/config -e SCHED_BORE -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
