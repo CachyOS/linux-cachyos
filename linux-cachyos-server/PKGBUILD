@@ -79,8 +79,8 @@ _HZ_ticks=${_HZ_ticks-300}
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 _tickrate=${_tickrate-idle}
 
-## Choose between full(low-latency), voluntary or server
-_preempt=${_preempt-server}
+## Choose between full(low-latency), voluntary, server or lazy
+_preempt=${_preempt-lazy}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -199,7 +199,8 @@ source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
     "auto-cpu-optimization.sh"
-    "${_patchsource}/all/0001-cachyos-base-all.patch")
+    "${_patchsource}/all/0001-cachyos-base-all.patch"
+    "${_patchsource}/misc/0001-preempt-lazy.patch")
 
 # LLVM makedepends
 if _is_clang_kernel; then
@@ -411,7 +412,8 @@ prepare() {
         case "$_preempt" in
             full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
             voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-            server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+            none) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+            lazy) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT_LAZY -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
             *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
         esac
 
