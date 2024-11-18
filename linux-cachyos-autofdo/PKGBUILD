@@ -175,11 +175,11 @@ pkgbase="linux-$_pkgsuffix"
 _major=6.12
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc7
-pkgver=${_major}.${_rcver}
+#_rcver=rc7
+pkgver=${_major}.${_minor}
 #_stable=${_major}.${_minor}
-#_stable=${_major}
-_stable=${_major}-${_rcver}
+_stable=${_major}
+#_stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + LTO + AutoFDO + Cachy Sauce Kernel by CachyOS with other patches and improvements (AutoFDO Optimized)'
@@ -208,7 +208,7 @@ _nv_ver=565.57.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="open-gpu-kernel-modules-${_nv_ver}"
 source=(
-    "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
+    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
     "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
@@ -745,7 +745,7 @@ _package-zfs(){
     cd "${srcdir}/zfs"
     install -dm755 "${modulesdir}"
     install -m644 module/*.ko "${modulesdir}"
-    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 {} +
+    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
 
@@ -763,7 +763,7 @@ _package-nvidia(){
     install -dm755 "${modulesdir}"
     install -m644 kernel/*.ko "${modulesdir}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 LICENSE
-    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 {} +
+    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
 }
 
 _package-nvidia-open(){
@@ -781,7 +781,7 @@ _package-nvidia-open(){
     install -m644 kernel-open/*.ko "${modulesdir}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 COPYING
 
-    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 {} +
+    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
 }
 
 pkgname=("$pkgbase")
