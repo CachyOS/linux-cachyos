@@ -63,9 +63,6 @@ _use_current=${_use_current-}
 ### Enable KBUILD_CFLAGS -O3
 _cc_harder=${_cc_harder-y}
 
-### Set this to your number of threads you have in your machine otherwise it will default to 320
-_nr_cpus=${_nr_cpus-}
-
 ### Set performance governor as default
 _per_gov=${_per_gov-}
 
@@ -141,10 +138,8 @@ _build_nvidia=${_build_nvidia-}
 # Use this only if you have Turing+ GPU
 _build_nvidia_open=${_build_nvidia_open-}
 
-
 # Build a debug package with non-stripped vmlinux
 _build_debug=${_build_debug-}
-
 
 # ATTENTION: Do not modify after this line
 _is_clang_kernel() {
@@ -370,17 +365,6 @@ prepare() {
             -d NEED_MULTIPLE_NODES \
             -d NUMA_BALANCING \
             -d NUMA_BALANCING_DEFAULT_ENABLED
-    fi
-
-    ### Setting NR_CPUS
-    if [[ "$_nr_cpus" -ge 2 && "$_nr_cpus" -le 512 ]]; then
-        echo "Setting custom NR_CPUS..."
-        scripts/config --set-val NR_CPUS "$_nr_cpus"
-    elif [ -z "$_nr_cpus" ]; then
-        echo "Setting default NR_CPUS..."
-        scripts/config --set-val NR_CPUS 320
-    else
-        _die "The value '$_nr_cpus' is invalid. Please select a numerical value from 2 to 512..."
     fi
 
     ### Select performance governor
@@ -772,8 +756,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('fb767fa467f6c42af06f025970957acfe57dd09ec7119a16f2b503ec563870d9c40a5f128faa9ebb6d5ec05555b66fa0175168007d44b2e25ea410439a4a1193'
-        '07b0fd947b811352141ac940f7fc3d91b4dc5fabbf1c9dd2360fb8ddd52ed73e07401b9b294e4e38573b3d96850c46f9dfe7cb2734461136ab685aa0db4702df'
+b2sums=('5d07710734f85e703df0d03987724c4fad6eb1bc992a7688f22dfa54ff4b9fcc28713624e0a3c82d6c34f6006ce2de9e0a3b4c8813634fb968531e7929baebd1'
+        'd5f647e8517b423cb3dec37b5b3a65c90c8dcedf36187fb5024a650dfb1817f6cde5f1b0a588a96c374e4b4e78dd7d534b6aa273ed28510e5c0900b96fc48049'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
         'eb40c22ca0f424c575e1360948e972d5b0265436ec7a27d1312e5840207e98927556a24eb65cb2ff30d059a10299feec2a572f2dda88072e0f5b533713c1255e'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'

@@ -63,9 +63,6 @@ _use_current=${_use_current-}
 ### Enable KBUILD_CFLAGS -O3
 _cc_harder=${_cc_harder-y}
 
-### Set this to your number of threads you have in your machine otherwise it will default to 320
-_nr_cpus=${_nr_cpus-}
-
 ### Set performance governor as default
 _per_gov=${_per_gov-}
 
@@ -367,17 +364,6 @@ prepare() {
             -d NEED_MULTIPLE_NODES \
             -d NUMA_BALANCING \
             -d NUMA_BALANCING_DEFAULT_ENABLED
-    fi
-
-    ### Setting NR_CPUS
-    if [[ "$_nr_cpus" -ge 2 && "$_nr_cpus" -le 512 ]]; then
-        echo "Setting custom NR_CPUS..."
-        scripts/config --set-val NR_CPUS "$_nr_cpus"
-    elif [ -z "$_nr_cpus" ]; then
-        echo "Setting default NR_CPUS..."
-        scripts/config --set-val NR_CPUS 320
-    else
-        _die "The value '$_nr_cpus' is invalid. Please select a numerical value from 2 to 512..."
     fi
 
     ### Select performance governor
@@ -769,7 +755,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('b2ec2fc69218cacabbbe49f78384a5d259ca581b717617c12b000b16f4a4c59ee348ea886b37147f5f70fb9a7a01c1e2c8f19021078f6b23f5bc62d1c48d5e5e'
-        '62c6d3bb71a0d16b42e37958c46363d086964705e98c2e117af0913d71529b4973cf8e95cd20bed058857da15a00d0cb3d3f57fa5bf3ed89ca89d664af521578'
+b2sums=('ba1aa5902aa7eb3fb85bd3637190312ac5534bc1dfe4d5b71ab9b69e5ac5f53945375a1c0aeb1db417e486f665d355f5dd1415716163421232cb05688f79ec91'
+        'd5f647e8517b423cb3dec37b5b3a65c90c8dcedf36187fb5024a650dfb1817f6cde5f1b0a588a96c374e4b4e78dd7d534b6aa273ed28510e5c0900b96fc48049'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
         'eb40c22ca0f424c575e1360948e972d5b0265436ec7a27d1312e5840207e98927556a24eb65cb2ff30d059a10299feec2a572f2dda88072e0f5b533713c1255e')
