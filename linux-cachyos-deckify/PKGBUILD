@@ -572,11 +572,12 @@ build() {
 
 _package() {
     pkgdesc="The $pkgdesc kernel and modules"
-    depends=('coreutils' 'kmod' 'initramfs' 'scx-scheds')
+    depends=('coreutils' 'kmod' 'initramfs')
     optdepends=('wireless-regdb: to set the correct wireless channels of your country'
                 'linux-firmware: firmware images needed for some devices'
                 'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
-                'uksmd: Userspace KSM helper daemon')
+                'uksmd: Userspace KSM helper daemon'
+                'scx-scheds: to use sched-ext schedulers')
     provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN NTSYNC-MODULE)
 
     cd "$_srcname"
