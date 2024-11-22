@@ -157,17 +157,17 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.12
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + LTO + Cachy Sauce Kernel by CachyOS with other patches and improvements.'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -754,9 +754,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('b2ec2fc69218cacabbbe49f78384a5d259ca581b717617c12b000b16f4a4c59ee348ea886b37147f5f70fb9a7a01c1e2c8f19021078f6b23f5bc62d1c48d5e5e'
+b2sums=('de3f4dec2fc7e36711c68683d6564d0c3ce6fe728ffa6a629604e2fa9e489dbab45fd6676343f6e68bafbd202a3e814e82a1448b46844e34046b9f82f819b8f4'
         'd5f647e8517b423cb3dec37b5b3a65c90c8dcedf36187fb5024a650dfb1817f6cde5f1b0a588a96c374e4b4e78dd7d534b6aa273ed28510e5c0900b96fc48049'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '661f9db267a57fa4af49879d17350820fd1cb0bd167eab92a6c54652df6a1f32e33a21a6bc69b07a9be5d2409aeb17cad4b6efac311774e5e93f9d17f812cbda'
+        '158349b76cd1a08fd1ca2eaa6cce1573fa39eab4641b69baaafbdf4cad1890377762bdd6c76a4731c4ddce8b98b4ed6fd302df02b93b59e17ebfa50265cedce7'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
         'a1bad436ffcaf36266949471ed025b889cf88fe7ecf8174ab73783f3f83630df90911e0b962386c964056b79ab0ec50babe0a3a81b83904216b0eec65f80eb2d')
