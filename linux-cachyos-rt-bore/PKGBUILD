@@ -246,6 +246,10 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
     hardened) ## Hardened Patches
         source+=("${_patchsource}/misc/0001-hardened.patch");;
+    rt) ## EEVDF with RT patches
+        source+=("${_patchsource}/misc/0001-rt.patch");;
+    rt-bore) ## RT with BORE Scheduler
+        source+=("${_patchsource}/misc/0001-rt.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
@@ -759,4 +763,5 @@ b2sums=('de3f4dec2fc7e36711c68683d6564d0c3ce6fe728ffa6a629604e2fa9e489dbab45fd66
         'd5f647e8517b423cb3dec37b5b3a65c90c8dcedf36187fb5024a650dfb1817f6cde5f1b0a588a96c374e4b4e78dd7d534b6aa273ed28510e5c0900b96fc48049'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
         '158349b76cd1a08fd1ca2eaa6cce1573fa39eab4641b69baaafbdf4cad1890377762bdd6c76a4731c4ddce8b98b4ed6fd302df02b93b59e17ebfa50265cedce7'
-        'a1bad436ffcaf36266949471ed025b889cf88fe7ecf8174ab73783f3f83630df90911e0b962386c964056b79ab0ec50babe0a3a81b83904216b0eec65f80eb2d')
+        'a1bad436ffcaf36266949471ed025b889cf88fe7ecf8174ab73783f3f83630df90911e0b962386c964056b79ab0ec50babe0a3a81b83904216b0eec65f80eb2d'
+        '34cf9743ef45ab498afff80f14ee9f0e74906b475db451f183309413c04ffd5b12cb6f6371e04f80b1a6f9e48d1db6713465f1b7529d7db3d1815962acf9855a')
