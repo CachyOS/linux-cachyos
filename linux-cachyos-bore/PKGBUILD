@@ -446,7 +446,11 @@ prepare() {
             -d DEFAULT_CUBIC \
             -e TCP_CONG_BBR \
             -e DEFAULT_BBR \
-            --set-str DEFAULT_TCP_CONG bbr
+            --set-str DEFAULT_TCP_CONG bbr \
+            -m NET_SCH_FQ_CODEL \
+            -e NET_SCH_FQ \
+            -d CONFIG_DEFAULT_FQ_CODEL \
+            -e CONFIG_DEFAULT_FQ
     fi
 
     ### Select THP
