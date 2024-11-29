@@ -13,7 +13,7 @@ check_gcc() {
 check_gcc
 
 # Get CPU type from GCC and convert to uppercase
-MARCH=$(gcc -Q -march=native --help=target|grep -m1 march=)
+MARCH=$(gcc -Q -march=native --help=target|grep -m1 march=|awk '{print $2}')
 
 # Sync with 0005-cachy.patch using
 # sed -E '/= -march=/!d;/^[+]/!d;/CONFIG_GENERIC_CPU/d;/-march=native/d;s/.+CONFIG_M([^)]+).+-march=([^ ]+).*/\2) MARCH=\1;;/g' 0005-cachy.patch
