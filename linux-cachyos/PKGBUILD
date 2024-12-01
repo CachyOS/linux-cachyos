@@ -149,11 +149,7 @@ _build_debug=${_build_debug-}
 # 2. Boot the kernel in QEMU or on your system, see Workload
 # 3. Profile the kernel and convert the profile, see Generating the Profile for AutoFDO
 # 4. Put the profile into the sourcedir and name the profile "perf.afdo" (You can also change the name in _autofdo_profile_name)
-# 5. Enable _autofdo_use
 _autofdo=${_autofdo-}
-
-# Enable after you have put the profile into the sourcedir
-_autofdo_use=${_autofdo_use-}
 
 # Name for the AutoFDO profile
 _autofdo_profile_name=${_autofdo_profile_name-"perf.afdo"}
@@ -255,8 +251,8 @@ if [ -n "$_build_nvidia_open" ]; then
              "${_patchsource}/misc/nvidia/0006-nvidia-drm-Set-FOP_UNSIGNED_OFFSET-for-nv_drm_fops.f.patch")
 fi
 
-# AutoFDO Profile
-if [ -n "$_autofdo_use" ]; then
+# Use generated AutoFDO Profile
+if [ -n "$_autofdo" ] && [ -e "$_autofdo_profile_name" ]; then
     source+=("$_autofdo_profile_name")
 fi
 
@@ -477,13 +473,15 @@ prepare() {
 
     # Enable Clang AutoFDO
     # Add additonal check if Thin or Full LTO is enabled otherwise die
-    if [ -n "$_autofdo" ] || [ -n "$_autofdo_use" ]; then
+    if [ -n "$_autofdo" ]; then
         scripts/config -e AUTOFDO_CLANG
     fi
 
-    if [ -n "$_autofdo_use" ]; then
-        BUILD_FLAGS+=(CLANG_AUTOFDO_PROFILE="${srcdir}"/$_autofdo_profile_name)
+    if [ -n "$_autofdo" ] && [ -e "$_autofdo_profile_name" ]; then
+        echo "AutoFDO profile has been found..."
+        BUILD_FLAGS+=(CLANG_AUTOFDO_PROFILE="${srcdir}/${_autofdo_profile_name}")
     fi
+
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config -e USER_NS
 
