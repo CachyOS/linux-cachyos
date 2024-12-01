@@ -148,11 +148,12 @@ _build_debug=${_build_debug-}
 # 1. Compile Kernel with _autofdo=y and _build_debug
 # 2. Boot the kernel in QEMU or on your system, see Workload
 # 3. Profile the kernel and convert the profile, see Generating the Profile for AutoFDO
-# 4. Put the profile into the sourcedir and name the profile "perf.afdo" (You can also change the name in _autofdo_profile_name)
+# 4. Put the profile into the sourcedir
+# 5. Run kernel build again with the _autofdo_profile_name path to profile specified
 _autofdo=${_autofdo-}
 
 # Name for the AutoFDO profile
-_autofdo_profile_name=${_autofdo_profile_name-"perf.afdo"}
+_autofdo_profile_name=${_autofdo_profile_name-}
 
 
 # ATTENTION: Do not modify after this line
@@ -252,8 +253,12 @@ if [ -n "$_build_nvidia_open" ]; then
 fi
 
 # Use generated AutoFDO Profile
-if [ -n "$_autofdo" ] && [ -e "$_autofdo_profile_name" ]; then
-    source+=("$_autofdo_profile_name")
+if [ -n "$_autofdo" ] && [ -n "$_autofdo_profile_name" ]; then
+    if [ -e "$_autofdo_profile_name" ]; then
+        source+=("$_autofdo_profile_name")
+    else
+        _die "You have specified _autofdo_profile_name, but file it refers to doesn't exist."
+    fi
 fi
 
 ## List of CachyOS schedulers
@@ -477,7 +482,7 @@ prepare() {
         scripts/config -e AUTOFDO_CLANG
     fi
 
-    if [ -n "$_autofdo" ] && [ -e "$_autofdo_profile_name" ]; then
+    if [ -n "$_autofdo" ] && [ -e "$_autofdo_profile_name" ] && [ -n "$_autofdo_profile_name" ]; then
         echo "AutoFDO profile has been found..."
         BUILD_FLAGS+=(CLANG_AUTOFDO_PROFILE="${srcdir}/${_autofdo_profile_name}")
     fi
