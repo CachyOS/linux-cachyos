@@ -142,10 +142,9 @@ _build_nvidia_open=${_build_nvidia_open-}
 _build_debug=${_build_debug-}
 
 # Enable AUTOFDO_CLANG for the first compilation to create a kernel, which can be used for profiling
-# This only works for Clang compiled kernels, therefore thin or full lto needs to be set in _use_llvm_lto
 # Workflow:
 # https://cachyos.org/blog/2411-kernel-autofdo/
-# 1. Compile Kernel with _autofdo=y and _build_debug
+# 1. Compile Kernel with _autofdo=y and _build_debug=y
 # 2. Boot the kernel in QEMU or on your system, see Workload
 # 3. Profile the kernel and convert the profile, see Generating the Profile for AutoFDO
 # 4. Put the profile into the sourcedir
@@ -158,7 +157,7 @@ _autofdo_profile_name=${_autofdo_profile_name-}
 
 # ATTENTION: Do not modify after this line
 _is_clang_kernel() {
-    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ] || [ -n "$_autofdo" ] || [ -n "$_autofdo_use" ]
+    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ] || [ -n "$_autofdo" ]
     return $?
 }
 
@@ -257,7 +256,7 @@ if [ -n "$_autofdo" ] && [ -n "$_autofdo_profile_name" ]; then
     if [ -e "$_autofdo_profile_name" ]; then
         source+=("$_autofdo_profile_name")
     else
-        _die "You have specified _autofdo_profile_name, but file it refers to doesn't exist."
+        _die "Failed to find file ${_autofdo_profile_name}"
     fi
 fi
 
@@ -482,7 +481,7 @@ prepare() {
         scripts/config -e AUTOFDO_CLANG
     fi
 
-    if [ -n "$_autofdo" ] && [ -e "$_autofdo_profile_name" ] && [ -n "$_autofdo_profile_name" ]; then
+    if [ -n "$_autofdo" ] && [ -n "$_autofdo_profile_name" ]; then
         echo "AutoFDO profile has been found..."
         BUILD_FLAGS+=(CLANG_AUTOFDO_PROFILE="${srcdir}/${_autofdo_profile_name}")
     fi
