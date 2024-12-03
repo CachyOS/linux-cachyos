@@ -38,7 +38,6 @@ Deadline** - `linux-cachyos-eevdf`
 Scheduler** Scheduler by [Alfred Chen](https://gitlab.com/alfredchen) -
 `linux-cachyos-bmq`
 
-#### CachyOS default kernel
 
 > [!NOTE]
 > The CachyOS repositories provide prebuilt kernels in three different
