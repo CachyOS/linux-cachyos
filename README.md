@@ -59,7 +59,6 @@ optimization. See more: https://cachyos.org/blog/2411-kernel-autofdo/
 
 - 3 different scheduler are supported: `BORE`, `EEVDF` and `BMQ` scheduler
 - AMD P-State Preferred Core / amd-pstate enhancements and fixes from `linux-next`.
-- Back-ported scheduler patches from `linux-next`.
 - AMD 3D V-Cache optimizer driver
 - Support for RT kernel builds with BORE
 - Cachy Sauce `CONFIG_CACHY`, enables various tweaks for the scheduler and other settings
