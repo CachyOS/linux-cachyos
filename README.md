@@ -21,10 +21,7 @@
  - [Support](#support)
 
 # General Information about kernels
-
-The Schedulers listed below are supported
-
-## linux-cachyos
+## Scheduler Support
 
 We have provided all these CPU schedulers because each scheduler performs
 differently depending on usage. We recommend testing each one to determine
