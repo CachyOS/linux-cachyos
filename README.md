@@ -39,11 +39,10 @@ Scheduler** Scheduler by [Alfred Chen](https://gitlab.com/alfredchen) -
 `linux-cachyos-bmq`
 
 
-> [!NOTE]
-> The CachyOS repositories provide prebuilt kernels in three different
+> [!NOTE] The CachyOS repositories provide prebuilt kernels in three different
 > march versions: `x86-64`, `x86-64-v3`,`x86-64-v4` and `znver4`. The default
-> `linux-cachyos` kernel is compiled with Clang and Thin LTO. For this kernel
-> there is a `linux-cachyos-gcc` variant available.
+> `linux-cachyos` kernel is compiled with Clang, Thin LTO and uses our AutoFDO
+> profile. For this kernel there is a `linux-cachyos-gcc` variant available.
 
 ## Features
 ### :hammer_and_wrench: Advanced building & compiling
@@ -53,7 +52,8 @@ Scheduler** Scheduler by [Alfred Chen](https://gitlab.com/alfredchen) -
 - Support for building with GCC or Clang.
 - Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 1000Hz
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
-- AutoFDO support
+- Support for generating and using AutoFDO profiles, which is a PGO-like
+optimization. See more: https://cachyos.org/blog/2411-kernel-autofdo/
 
 ### :abacus: CPU enhancements
 
