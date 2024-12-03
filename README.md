@@ -135,9 +135,9 @@ sudo ./cachyos-repo.sh
 
 #### Behaviour of script
 
-1. Script will auto-detect CPU architecture, if CPU has `x86-64-v4` or
-   `x86-64-v3` support, script will automatically use the repositories which
-are optimized with this flag > and some other flags.
+1. Script will auto-detect CPU architecture, if CPU has `x86-64-v4` or `x86-64-v3`
+support, script will automatically use the repositories, which are optimized
+with this flag and some other flags.
 
 2. Script will backup your old `pacman.conf`.
 
@@ -146,7 +146,8 @@ join our [Discord](https://discord.gg/cachyos-862292009423470592) community.
 
 ### Option 2: Manual Installation
 
-1. Install the cachyos keyring
+1. Add CachyOS signing keys
+
 ```
 sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
 sudo pacman-key --lsign-key F3B607488DB35A47
@@ -155,13 +156,13 @@ sudo pacman-key --lsign-key F3B607488DB35A47
 2. Install required packages
 
 > [!CAUTION]
->  Installing the CachyOS Pacman, will install a forked pacman with
->  features added from CachyOS, like "INSTALLED_FROM" and an automatic
->  architecture check.
+> Installing the CachyOS Pacman, will install a forked pacman with
+> features added from CachyOS, like "INSTALLED_FROM" and an automatic
+> architecture check.
 >
->  Pacman 6.1 added a feature validation feature, which could lead when using the
->  Arch Linux pacman into warnings. We are working with Arch Linux to provide a
->  proper compatibility again.
+> Pacman 6.1 added a feature validation feature, which could lead when using the
+> Arch Linux pacman into warnings. We are working with Arch Linux to provide a
+> proper compatibility again.
 >
 > If you want to avoid this, don't add the "cachyos" repository, which contains
 > the customized pacman. All other repositories like cachyos-v3, cachyos-v4,
@@ -188,7 +189,8 @@ sudo find /var/lib/pacman/local/ -type f -name "desc" -exec sed -i '/^%INSTALLED
 If you want to add our repositories manually, you must check the compatibility
 of the CPU with cachyos repositories.
 
-> If you are using the script above to add cachyos repositories, you can skip
+> [!NOTE]
+> If you are using the script above to add CachyOS repositories, you can skip
 > the check.
 
 #### 1. Check support by running the following the command
