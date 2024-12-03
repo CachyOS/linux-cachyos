@@ -62,6 +62,7 @@ optimization. See more: https://cachyos.org/blog/2411-kernel-autofdo/
 - AMD 3D V-Cache optimizer driver
 - Support for RT kernel builds with BORE
 - Cachy Sauce `CONFIG_CACHY`, enables various tweaks for the scheduler and other settings
+- Includes patches to improve performance of CRC32 and AES128 crypto.
 
 ### :bookmark_tabs: Filesystem & memory
 
@@ -83,7 +84,7 @@ binary kernel builds can be found in the repository.
 - v4l2loopback modules as default included
 - HDR support enabled
 - Various GCC Optimization flags applied (`-fivopts -fmodulo-sched`)
-- NTSync patched and integrated into the kernel (`NTSYNC=y`)
+- NTSync module support (`NTSYNC=m`)
 - T2 Macbook support as default included
 
 ### [Explaination of the kernel variants](https://wiki.cachyos.org/features/kernel)
