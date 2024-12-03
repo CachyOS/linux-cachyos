@@ -73,10 +73,6 @@ binary kernel builds can be found in the repository.
 - KSM patch for proper working of uksmd daemon from pf
 - Memory management tweaks from zen-kernel (MGLRU, Compaction, Watermark)
 
-### &#128423; Network
-
-- Using BBRv3 as the default TCP congestion control algorithm
-
 ### :arrow_heading_down: Other features
 
 - Cherry-picked Clear Linux patches
