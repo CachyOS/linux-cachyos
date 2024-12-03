@@ -82,7 +82,7 @@ binary kernel builds can be found in the repository.
 
 - Cherry-picked Clear Linux patches
 - Back-ported patches from `linux-next`
-- OpenRGB and ACS Override support
+ACS Override support
 - AMDGPU: Allow override of min_powercap with `amdgpu_ignore_min_pcap`
 - Steam Deck Patches included - Audio, HW Quirks, HID
 - Rog Ally patches included
