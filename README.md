@@ -65,7 +65,6 @@ Scheduler** Scheduler by [Alfred Chen](https://gitlab.com/alfredchen) -
 - AMD P-State Preferred Core / amd-pstate enhancements and fixes from `linux-next`.
 - Back-ported scheduler patches from `linux-next`.
 - AMD 3D V-Cache optimizer driver
-- AMD Hardware Feedback Interface
 - Support for RT kernel builds with BORE
 - Cachy Sauce `CONFIG_CACHY`, enables various tweaks for the scheduler and other settings
 
