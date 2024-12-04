@@ -22,12 +22,10 @@ pkgbase = linux-cachyos-server
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/all/0001-cachyos-base-all.patch
-	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/misc/0001-preempt-lazy.patch
 	b2sums = de3f4dec2fc7e36711c68683d6564d0c3ce6fe728ffa6a629604e2fa9e489dbab45fd6676343f6e68bafbd202a3e814e82a1448b46844e34046b9f82f819b8f4
 	b2sums = d5f647e8517b423cb3dec37b5b3a65c90c8dcedf36187fb5024a650dfb1817f6cde5f1b0a588a96c374e4b4e78dd7d534b6aa273ed28510e5c0900b96fc48049
 	b2sums = b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667
 	b2sums = 158349b76cd1a08fd1ca2eaa6cce1573fa39eab4641b69baaafbdf4cad1890377762bdd6c76a4731c4ddce8b98b4ed6fd302df02b93b59e17ebfa50265cedce7
-	b2sums = b76ae29d820d1be66e10c80b2333649f4e28e5ad7103796dc34a878903136ad9df764ad881f2a9dec95f42ff7e4c7c96e357829caaa2851d8c783e6670fc92ba
 
 pkgname = linux-cachyos-server
 	pkgdesc = The Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads kernel and modules
