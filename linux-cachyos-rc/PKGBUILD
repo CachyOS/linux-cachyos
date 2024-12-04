@@ -76,7 +76,7 @@ _HZ_ticks=${_HZ_ticks-1000}
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 _tickrate=${_tickrate-full}
 
-## Choose between full(low-latency), voluntary or server
+## Choose between full(low-latency), lazy, voluntary or none
 _preempt=${_preempt-full}
 
 ### Transparent Hugepages
@@ -333,8 +333,8 @@ prepare() {
         cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
-        rt) scripts/config -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
-        rt-bore) scripts/config -e SCHED_BORE -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
+        rt) scripts/config -d PREEMPT -e PREEMPT_RT;;
+        rt-bore) scripts/config -e SCHED_BORE -d PREEMPT -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -418,9 +418,10 @@ prepare() {
         [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
         case "$_preempt" in
-            full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
-            voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-            server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+            full) scripts/config -e PREEMPT_DYNAMIC -e PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
+            lazy) scripts/config -e PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -e PREEMPT_LAZY -d PREEMPT_NONE;;
+            voluntary) scripts/config -d PREEMPT_DYNAMIC -e PREEMPT_VOLUNTARY_BUILD -d PREEMPT -e PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
+            none) scripts/config -d PREEMPT_DYNAMIC -e PREEMPT_NONE_BUILD -d PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -e PREEMPT_NONE;;
             *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
         esac
 
@@ -800,8 +801,8 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('0e17a46b6de4138a252643beaaf6fc8e4e2ce6b8f3cc7becbba6b90fc7336959b0a4f5f04d7805c3baa59198042664b672c2d0612d7ff4b607c8b49fb2976c78'
-        'cf28325c80bd4e642d8b51d111b72f3c3c5aec37c515a5e38c3de3d4ee72e68c832f4dcb71c7962e76546353d7ad479902ee03c214d555b9bddf67562b8fca59'
+        'ec86c7024cf1b209c217d10d0f3db0052871308177d4e56922bf1629cecee2a5dfef3c456cec55d566afcfd915e631fba9b26fa2ebacf829f000944060c41210'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
         '42ad9bbddc7c395650254bb75232750f7ec145ba7bd4eff8f56b188706c61d498c4d326a8d96d9abee1fd3f7344a2a29c0afa55fb7fd70a4525769924a6af0c0'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
-        'e03ff296488ca4f613ebe6df4c6ae0073864f012db520c36a4b508b8959abf1dcb7dec6782b524a025c9eb3d7e4656e42a6484004ff2c4b09c924eac413fa714')
+        '85d4c6c80e0e4d4eaf9fd04228782e5c81d5680ac1925a70adaf1037d56ae8283797250f222f86099e20cbadceb941e3d1b5842a13e02b0ed6ab21a4702815d2')

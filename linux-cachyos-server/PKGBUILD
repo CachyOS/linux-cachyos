@@ -76,8 +76,8 @@ _HZ_ticks=${_HZ_ticks-300}
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 _tickrate=${_tickrate-idle}
 
-## Choose between full(low-latency), voluntary, server or lazy
-_preempt=${_preempt-lazy}
+## Choose between full(low-latency), voluntary, server
+_preempt=${_preempt-server}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -196,8 +196,7 @@ source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
     "auto-cpu-optimization.sh"
-    "${_patchsource}/all/0001-cachyos-base-all.patch"
-    "${_patchsource}/misc/0001-preempt-lazy.patch")
+    "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # LLVM makedepends
 if _is_clang_kernel; then
@@ -397,9 +396,9 @@ prepare() {
         [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
 
         case "$_preempt" in
-            full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
-            voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-            server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+            full) scripts/config -e PREEMPT_DYNAMIC -e PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_NONE;;
+            voluntary) scripts/config -d PREEMPT_DYNAMIC -e PREEMPT_VOLUNTARY_BUILD -d PREEMPT -e PREEMPT_VOLUNTARY -d PREEMPT_NONE;;
+            server) scripts/config -d PREEMPT_DYNAMIC -e PREEMPT_NONE_BUILD -d PREEMPT -d PREEMPT_VOLUNTARY -e PREEMPT_NONE;;
             *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
         esac
 
@@ -763,5 +762,4 @@ done
 b2sums=('de3f4dec2fc7e36711c68683d6564d0c3ce6fe728ffa6a629604e2fa9e489dbab45fd6676343f6e68bafbd202a3e814e82a1448b46844e34046b9f82f819b8f4'
         'd5f647e8517b423cb3dec37b5b3a65c90c8dcedf36187fb5024a650dfb1817f6cde5f1b0a588a96c374e4b4e78dd7d534b6aa273ed28510e5c0900b96fc48049'
         'b1e964389424d43c398a76e7cee16a643ac027722b91fe59022afacb19956db5856b2808ca0dd484f6d0dfc170482982678d7a9a00779d98cd62d5105200a667'
-        '158349b76cd1a08fd1ca2eaa6cce1573fa39eab4641b69baaafbdf4cad1890377762bdd6c76a4731c4ddce8b98b4ed6fd302df02b93b59e17ebfa50265cedce7'
-        'b76ae29d820d1be66e10c80b2333649f4e28e5ad7103796dc34a878903136ad9df764ad881f2a9dec95f42ff7e4c7c96e357829caaa2851d8c783e6670fc92ba')
+        '158349b76cd1a08fd1ca2eaa6cce1573fa39eab4641b69baaafbdf4cad1890377762bdd6c76a4731c4ddce8b98b4ed6fd302df02b93b59e17ebfa50265cedce7')
