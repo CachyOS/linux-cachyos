@@ -640,6 +640,10 @@ _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
     depends=('pahole' "${pkgbase}")
 
+    if _is_lto_kernel; then
+        depends+=(clang llvm lld)
+    fi
+
     cd "${_srcname}"
     local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 

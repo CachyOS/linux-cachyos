@@ -53,3 +53,6 @@ pkgname = linux-cachyos-rc-headers
 	pkgdesc = Headers and scripts for building modules for the Linux BORE + LTO + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate kernel
 	depends = pahole
 	depends = linux-cachyos-rc
+	depends = clang
+	depends = llvm
+	depends = lld
