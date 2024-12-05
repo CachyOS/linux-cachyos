@@ -163,7 +163,7 @@ _is_clang_kernel() {
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
     _pkgsuffix=cachyos-lto
-elif [ "$_use_llvm_lto" = "none" ]  && [ -z "$_use_kcfi" ] && [ "$_use_gcc_suffix" = "y" ]; then
+elif [ "$_use_llvm_lto" = "none" ]  && [ -z "$_use_kcfi" ] && [ "$_use_gcc_suffix" = "y" ] && [ -z "$_autofdo" ]; then
     _pkgsuffix=cachyos-gcc
 else
     _pkgsuffix=cachyos
