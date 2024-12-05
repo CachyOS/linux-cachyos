@@ -6,6 +6,8 @@ find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs-/_build_zfs-y/" {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia-/_build_nvidia-y/" {}
 ## Enable Open NVIDIA module
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia_open-/_build_nvidia_open-y/" {}
+## Force autofdo off to ensure that kernels are being compiled with GCC
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_autofdo-y/_autofdo-/" {}
 
 files=$(find . -name "PKGBUILD")
 
