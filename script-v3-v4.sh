@@ -10,6 +10,8 @@ find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia-/_build_nvidia-y/"
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia_open-/_build_nvidia_open-y/" {}
 ## Disable clang-LTO
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-thin/_use_llvm_lto-none/" {}
+## Force autofdo off to ensure that kernels are being compiled with GCC
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_autofdo-y/_autofdo-/" {}
 
 ## GCC v3 Kernel
 
@@ -26,6 +28,7 @@ done
 
 ## LLVM ThinLTO v3 Kernel
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-thin/" {}
+find linux-cachyos linux-cachyos-rc -name "PKGBUILD" | xargs -I {} sed -i "s/_autofdo-/_autofdo-y/" {}
 
 files=$(find . -name "PKGBUILD")
 
@@ -47,6 +50,7 @@ RUST_LOG=trace repo-manage-util -p cachyos-v3 update
 ## GCC v4 Kernel
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-thin/_use_llvm_lto-none/" {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_processor_opt-GENERIC_V3/_processor_opt-GENERIC_V4/" {}
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_autofdo-y/_autofdo-/" {}
 
 files=$(find . -name "PKGBUILD")
 
@@ -61,6 +65,7 @@ done
 
 ## LLVM ThinLTO v4 Kernel
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto-none/_use_llvm_lto-thin/" {}
+find linux-cachyos linux-cachyos-rc -name "PKGBUILD" | xargs -I {} sed -i "s/_autofdo-/_autofdo-y/" {}
 
 files=$(find . -name "PKGBUILD")
 
