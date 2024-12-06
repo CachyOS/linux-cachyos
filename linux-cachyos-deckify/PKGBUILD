@@ -142,14 +142,14 @@ _build_nvidia_open=${_build_nvidia_open-}
 _build_debug=${_build_debug-}
 
 # ATTENTION: Do not modify after this line
-_is_clang_kernel() {
-    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ -n "$_use_kcfi" ]
+_is_lto_kernel() {
+    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]]
     return $?
 }
 
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "y"  ]; then
+if _is_lto_kernel && [ "$_use_lto_suffix" = "y"  ]; then
     _pkgsuffix="cachyos-deckify-lto"
-elif [ "$_use_llvm_lto" = "none" ]  && [ -z "$_use_kcfi" ] && [ "$_use_gcc_suffix" = "y" ]; then
+elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "y" ]; then
     _pkgsuffix="cachyos-deckify-gcc"
 else
     _pkgsuffix="cachyos-deckify"
@@ -201,7 +201,7 @@ source=(
     "${_patchsource}/misc/0001-handheld.patch")
 
 # LLVM makedepends
-if _is_clang_kernel; then
+if _is_lto_kernel; then
     makedepends+=(clang llvm lld)
     source+=("${_patchsource}/misc/dkms-clang.patch")
     BUILD_FLAGS=(
