@@ -70,7 +70,7 @@ _nr_cpus=${_nr_cpus-}
 _per_gov=${_per_gov-}
 
 ### Enable TCP_CONG_BBR3
-_tcp_bbr3=${_tcp_bbr3-y}
+_tcp_bbr3=${_tcp_bbr3-}
 
 ### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-1000}
@@ -859,7 +859,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('d1054ab4803413efe2850f50f1a84349c091631ec50a1cf9e891d1b1f9061835'
-            'cb63f74e96e631012b61f26ba3e1212099a06455108160971a03ef60e8bea796'
+            'f4ddfbc0c375af5d8d9ca07f87513b874e019e4b84d9e05460fec05a667e6430'
             '1a7747d5b4ccd427d643e3f548cd99c09d0f05b108fc530a581e28a41c5533c9'
             '2706d935575e114210892b441671037ab96d5f70f084c391a23b43cd96afaa3e'
             '8b6a5ed6abb44346ef5f435d1e67a1f6c679eb15c4283015f81578622c4a1514')
