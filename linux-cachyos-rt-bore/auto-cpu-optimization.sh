@@ -13,40 +13,59 @@ check_gcc() {
 check_gcc
 
 # Get CPU type from GCC and convert to uppercase
-MARCH=$(gcc -Q -march=native --help=target|grep -m1 march=|awk '{print toupper($2)}')
+MARCH=$(gcc -Q -march=native --help=target|grep -m1 march=|awk '{print $2}')
+
+# Sync with 0005-cachy.patch using
+# sed -E '/= -march=/!d;/^[+]/!d;/CONFIG_GENERIC_CPU/d;/-march=native/d;s/.+CONFIG_M([^)]+).+-march=([^ ]+).*/\2) MARCH=\1;;/g' 0005-cachy.patch
 
 # Check for specific CPU types and set MARCH variable accordingly
 case $MARCH in
-  ZNVER1) MARCH="ZEN";;
-  ZNVER2) MARCH="ZEN2";;
-  ZNVER3) MARCH="ZEN3";;
-  ZNVER4) MARCH="ZEN4";;
-  ZNVER5) MARCH="ZEN5";;
-  BDVER1) MARCH="BULLDOZER";;
-  BDVER2) MARCH="PILEDRIVER";;
-  BDVER3) MARCH="STEAMROLLER";;
-  BDVER4) MARCH="EXCAVATOR";;
-  BTVER1) MARCH="BOBCAT";;
-  BTVER2) MARCH="JAGUAR";;
-  AMDFAM10) MARCH="MK10";;
-  K8-SSE3) MARCH="K8SSE3";;
-  BONNELL) MARCH="ATOM";;
-  GOLDMONT-PLUS) MARCH="GOLDMONTPLUS";;
-  SKYLAKE-AVX512) MARCH="SKYLAKEX";;
-  MIVYBRIDGE)
-    scripts/config --disable CONFIG_AGP_AMD64 
-    scripts/config --disable CONFIG_MICROCODE_AMD
-    MARCH="MIVYBRIDGE";;
-  ICELAKE-CLIENT) MARCH="ICELAKE";;
+  bonnell) MARCH=ATOM;;
+  k8-sse3) MARCH=K8SSE3;;
+  amdfam10) MARCH=K10;;
+  barcelona) MARCH=BARCELONA;;
+  btver1) MARCH=BOBCAT;;
+  btver2) MARCH=JAGUAR;;
+  bdver1) MARCH=BULLDOZER;;
+  bdver2) MARCH=PILEDRIVER;;
+  bdver3) MARCH=STEAMROLLER;;
+  bdver4) MARCH=EXCAVATOR;;
+  znver1) MARCH=ZEN;;
+  znver2) MARCH=ZEN2;;
+  znver3) MARCH=ZEN3;;
+  znver4) MARCH=ZEN4;;
+  znver5) MARCH=ZEN5;;
+  nehalem) MARCH=NEHALEM;;
+  westmere) MARCH=WESTMERE;;
+  silvermont) MARCH=SILVERMONT;;
+  goldmont) MARCH=GOLDMONT;;
+  goldmont-plus) MARCH=GOLDMONTPLUS;;
+  sandybridge) MARCH=SANDYBRIDGE;;
+  ivybridge) MARCH=IVYBRIDGE;;
+  haswell) MARCH=HASWELL;;
+  broadwell) MARCH=BROADWELL;;
+  skylake) MARCH=SKYLAKE;;
+  skylake-avx512) MARCH=SKYLAKEX;;
+  cannonlake) MARCH=CANNONLAKE;;
+  icelake-server) MARCH=ICELAKE_SERVER;;
+  icelake-client) MARCH=ICELAKE_CLIENT;;
+  cascadelake) MARCH=CASCADELAKE;;
+  cooperlake) MARCH=COOPERLAKE;;
+  tigerlake) MARCH=TIGERLAKE;;
+  sapphirerapids) MARCH=SAPPHIRERAPIDS;;
+  rocketlake) MARCH=ROCKETLAKE;;
+  alderlake) MARCH=ALDERLAKE;;
+  raptorlake) MARCH=RAPTORLAKE;;
+  meteorlake) MARCH=METEORLAKE;;
+  emeraldrapids) MARCH=EMERALDRAPIDS;;
 esac
 
-# Add "M" prefix to MARCH variable
-MARCH2=M${MARCH}
+# If doesn't match, re-use the arch name (uppercased) 
 
 # Display detected CPU and apply optimization
 echo "----------------------------------"
 echo "| APPLYING AUTO-CPU-OPTIMIZATION |"
 echo "----------------------------------"
-echo "[*] DETECTED CPU (MARCH) : ${MARCH2}"
+echo "[*] DETECTED CPU (MARCH) : ${MARCH}"
 scripts/config -k --disable CONFIG_GENERIC_CPU
-scripts/config -k --enable CONFIG_${MARCH2}
+scripts/config -k --enable CONFIG_M${MARCH^^}
