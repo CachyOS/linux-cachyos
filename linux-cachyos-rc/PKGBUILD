@@ -67,7 +67,7 @@ _cc_harder=${_cc_harder-y}
 _per_gov=${_per_gov-}
 
 ### Enable TCP_CONG_BBR3
-_tcp_bbr3=${_tcp_bbr3-y}
+_tcp_bbr3=${_tcp_bbr3-}
 
 ### Running with a 1000HZ, 750Hz, 625Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 _HZ_ticks=${_HZ_ticks-1000}
@@ -801,7 +801,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('58c0a37b87c906c4c151a714ad69fdb019a64efcceb7eec52335270e592d1db031eb371086405efb19d9a18ab06c722c98d936669183900d5c2785de6e4caa2c'
-        'ec86c7024cf1b209c217d10d0f3db0052871308177d4e56922bf1629cecee2a5dfef3c456cec55d566afcfd915e631fba9b26fa2ebacf829f000944060c41210'
+        '8f49a29130454356d996901b3328169dd4abe717092cdd7c73574f8626ba0e034a05fb672cf39395609d1f6a9bc2db3686d4eecdc41b2542572b01563b2f9272'
         '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
         'd4e154bf7dcdf18ef986a745807cfb8437dc11ec5af399c0b355d29fb5500f8e403d582e95183fa564a3ffa0daece78af935999086406d7851b79fcf20ce70fd'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
