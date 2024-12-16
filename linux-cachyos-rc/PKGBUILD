@@ -508,6 +508,9 @@ prepare() {
     fi
 
     # Propeller Optimization
+    if [ -n "$_propeller" ]; then
+        scripts/config -e PROPELLER_CLANG
+    fi
     if [ -n "$_propeller" ] && [ -n "$_propeller_prefix" ]; then
         echo "Propeller profile has been found..."
         BUILD_FLAGS+=(CLANG_PROPELLER_PROFILE_PREFIX="${srcdir}/_propeller_prefix")
