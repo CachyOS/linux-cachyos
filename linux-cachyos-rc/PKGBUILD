@@ -154,6 +154,18 @@ _autofdo=${_autofdo-}
 # Name for the AutoFDO profile
 _autofdo_profile_name=${_autofdo_profile_name-}
 
+# Propeller should be applied, after the kernel is optimized with AutoFDO
+# Workflow:
+# 1. Proceed with above AutoFDO Optimization, but enable at the final compilation also _propeller
+# 2. Boot into the AutoFDO Kernel and profile it
+# 3. Convert the profile into the propeller profile, example:
+# create_llvm_prof --binary=/usr/src/debug/linux-cachyos-rc/vmlinux --profile=propeller.data --format=propeller --propeller_output_module_name --out=/home/ptr1337/bench/propeller_cc_profile.txt --propeller_symorder=/home/ptr1337/bench/propeller_ld_profile.txt
+# 4. Place the propeller_cc_profile.txt and propeller_ld_profile.txt into the sourcedir
+# 5. Enable _propeller_prefix
+_propeller=${_propeller-}
+
+# Enable for final compilation with name "propeller"
+_propeller_prefix=${_propeller_prefix-propeller}
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
@@ -258,6 +270,15 @@ if [ -n "$_autofdo" ] && [ -n "$_autofdo_profile_name" ]; then
         source+=("$_autofdo_profile_name")
     else
         _die "Failed to find file ${_autofdo_profile_name}"
+    fi
+fi
+
+# Use generated Propeller Profile
+if [ -n "$_propeller" ] && [ -n "$_propeller_prefix" ]; then
+    if [ -e "$_autofdo_profile_name" ]; then
+        source+=("$_propeller_prefix")
+    else
+        _die "Failed to find file ${_propeller_prefix}"
     fi
 fi
 
@@ -484,6 +505,12 @@ prepare() {
     if [ -n "$_autofdo" ] && [ -n "$_autofdo_profile_name" ]; then
         echo "AutoFDO profile has been found..."
         BUILD_FLAGS+=(CLANG_AUTOFDO_PROFILE="${srcdir}/${_autofdo_profile_name}")
+    fi
+
+    # Propeller Optimization
+    if [ -n "$_propeller" ] && [ -n "$_propeller_prefix" ]; then
+        echo "Propeller profile has been found..."
+        BUILD_FLAGS+=(CLANG_PROPELLER_PROFILE_PREFIX="${srcdir}/_propeller_prefix")
     fi
 
     echo "Enable USER_NS_UNPRIVILEGED"
