@@ -9,7 +9,7 @@
 # Set these variables to ANYTHING that is not null or choose proper variable to enable them
 
 ### Selecting CachyOS config
-_cachy_config=${_cachy_config-y}
+: "${_cachy_config:=y}"
 
 ### Selecting the CPU scheduler
 # ATTENTION - only one of the following values can be selected:
@@ -20,25 +20,25 @@ _cachy_config=${_cachy_config-y}
 # 'eevdf' - select 'EEVDF Scheduler'
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
-_cpusched=${_cpusched-cachyos}
+: "${_cpusched:=cachyos}"
 
 ### Tweak kernel options prior to a build via nconfig
-_makenconfig=${_makenconfig-}
+: "${_makenconfig:=}"
 
 ### Tweak kernel options prior to a build via menuconfig
-_makemenuconfig=${_makemenuconfig-}
+: "${_makemenuconfig:=}"
 
 ### Tweak kernel options prior to a build via xconfig
-_makexconfig=${_makexconfig-}
+: "${_makexconfig:=}"
 
 ### Tweak kernel options prior to a build via gconfig
-_makegconfig=${_makegconfig-}
+: "${_makegconfig:=}"
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
 # See, https://bugs.archlinux.org/task/31187
 # It seems that in 2023 this is not really a huge regression anymore
-_NUMAdisable=${_NUMAdisable-}
+: "${_NUMAdisable:=}"
 
 # Compile ONLY used modules to VASTLYreduce the number of modules built
 # and the build time.
@@ -48,36 +48,36 @@ _NUMAdisable=${_NUMAdisable-}
 # This PKGBUILD read the database kept if it exists
 #
 # More at this wiki page ---> https://wiki.archlinux.org/index.php/Modprobed-db
-_localmodcfg=${_localmodcfg-}
+: "${_localmodcfg:=}"
 
 # Path to the list of used modules
-_localmodcfg_path=${_localmodcfg_path-"$HOME/.config/modprobed.db"}
+: "${_localmodcfg_path:="$HOME/.config/modprobed.db"}"
 
 # Use the current kernel's .config file
 # Enabling this option will use the .config of the RUNNING kernel rather than
 # the ARCH defaults. Useful when the package gets updated and you already went
 # through the trouble of customizing your config options.  NOT recommended when
 # a new kernel is released, but again, convenient for package bumps.
-_use_current=${_use_current-}
+: "${_use_current:=}"
 
 ### Enable KBUILD_CFLAGS -O3
-_cc_harder=${_cc_harder-y}
+: "${_cc_harder:=y}"
 
 ### Set performance governor as default
-_per_gov=${_per_gov-}
+: "${_per_gov:=}"
 
 ### Enable TCP_CONG_BBR3
-_tcp_bbr3=${_tcp_bbr3-}
+: "${_tcp_bbr3:=}"
 
 ### Running with a 1000HZ, 750Hz, 625Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
-_HZ_ticks=${_HZ_ticks-1000}
+: "${_HZ_ticks:=1000}"
 
 ## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
-_tickrate=${_tickrate-full}
+: "${_tickrate:=full}"
 
 ## Choose between full(low-latency), voluntary or server
-_preempt=${_preempt-full}
+: "${_preempt:=full}"
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -85,7 +85,7 @@ _preempt=${_preempt-full}
 # 'madvise' - madvise, prevent applications from allocating more memory resources than necessary
 # More infos here:
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
-_hugepage=${_hugepage-always}
+: "${_hugepage:=always}"
 
 # CPU compiler optimizations - Defaults to prompt at kernel config if left empty
 # AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" "zen4"
@@ -95,51 +95,51 @@ _hugepage=${_hugepage-always}
 # - "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
 # - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
 #
-_processor_opt=${_processor_opt-}
+: "${_processor_opt:=}"
 
 # This does automatically detect your supported CPU and optimizes for it
-_use_auto_optimization=${_use_auto_optimization-y}
+: "${_use_auto_optimization:=y}"
 
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 # "none: disable LTO
-_use_llvm_lto=${_use_llvm_lto-none}
+: "${_use_llvm_lto:=none}"
 
 # Use suffix -lto only when requested by the user
 # y - enable -lto suffix
 # n - disable -lto suffix
 # https://github.com/CachyOS/linux-cachyos/issues/36
-_use_lto_suffix=${_use_lto_suffix-y}
+: "${_use_lto_suffix:=y}"
 
 # Use suffix -gcc when requested by the user
 # This was added to facilitate https://github.com/CachyOS/linux-cachyos/issues/286
-_use_gcc_suffix=${_use_gcc_suffix-}
+: "${_use_gcc_suffix:=}"
 
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-_use_kcfi=${_use_kcfi-}
+: "${_use_kcfi:=}"
 
 # Build the zfs module in to the kernel
 # WARNING: The ZFS module doesn't build with selected RT sched due to licensing issues.
 # If you use ZFS, refrain from building the RT kernel
-_build_zfs=${_build_zfs-}
+: "${_build_zfs:=}"
 
 # Builds the nvidia module and package it into a own base
 # This does replace the requirement of nvidia-dkms
-_build_nvidia=${_build_nvidia-}
+: "${_build_nvidia:=}"
 
 # Builds the open nvidia module and package it into a own base
 # This does replace the requirement of nvidia-open-dkms
 # Use this only if you have Turing+ GPU
-_build_nvidia_open=${_build_nvidia_open-}
+: "${_build_nvidia_open:=}"
 
 # Build a debug package with non-stripped vmlinux
-_build_debug=${_build_debug-}
+: "${_build_debug:=}"
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
