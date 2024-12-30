@@ -18,8 +18,6 @@ _cachy_config=${_cachy_config-y}
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 # 'cachyos' - select 'CachyOS Default Scheduler (BORE)'
 # 'eevdf' - select 'EEVDF Scheduler'
-# 'rt' - select EEVDF, but includes a series of realtime patches
-# 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 _cpusched=${_cpusched-cachyos}
 
 ### Tweak kernel options prior to a build via nconfig
@@ -76,7 +74,7 @@ _HZ_ticks=${_HZ_ticks-1000}
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 _tickrate=${_tickrate-full}
 
-## Choose between full(low-latency), lazy, voluntary or none
+## Choose between rt(realtime), full(low-latency), lazy, voluntary or none
 _preempt=${_preempt-full}
 
 ### Transparent Hugepages
@@ -224,8 +222,10 @@ if _is_lto_kernel; then
 fi
 
 # WARNING The ZFS module doesn't build with selected RT sched due to licensing issues.
-if [[ "$_cpusched" = "rt" || "$_cpusched" = "rt-bore" ]]; then
+if [ "$_preempt" = "rt" ]; then
     unset _build_zfs
+    # Uncomment this when the patch exists
+    #source+=("${_patchsource}/misc/0001-rt.patch")
 fi
 
 # ZFS support
@@ -263,7 +263,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+    cachyos|bore|hardened) # CachyOS Scheduler (BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
@@ -332,8 +332,6 @@ prepare() {
         cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
-        rt) scripts/config -d PREEMPT -e PREEMPT_RT;;
-        rt-bore) scripts/config -e SCHED_BORE -d PREEMPT -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -411,12 +409,8 @@ prepare() {
     echo "Selecting '$_tickrate' tick type..."
 
     ### Select preempt type
-
-    # We should not set up the PREEMPT for RT kernels
-    if [[ "$_cpusched" != "rt" || "$_cpusched" != "rt-bore" ]]; then
-        [ -z "$_preempt" ] && _die "The value is empty. Choose the correct one again."
-
         case "$_preempt" in
+            rt) scripts/config -e PREEMPT_DYNAMIC -e PREEMPT -e PREEMPT_RT;;
             full) scripts/config -e PREEMPT_DYNAMIC -e PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
             lazy) scripts/config -e PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -e PREEMPT_LAZY -d PREEMPT_NONE;;
             voluntary) scripts/config -d PREEMPT_DYNAMIC -e PREEMPT_VOLUNTARY_BUILD -d PREEMPT -e PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
