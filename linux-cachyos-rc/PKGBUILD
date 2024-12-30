@@ -15,6 +15,7 @@ _cachy_config=${_cachy_config-y}
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'bmq' - select 'BMQ Scheduler'
+# 'pds' - select 'PDS scheduler'
 # 'eevdf' - select 'EEVDF Scheduler'
 _cpusched=${_cpusched-bore}
 
@@ -263,7 +264,7 @@ fi
 case "$_cpusched" in
     bore) # CachyOS Scheduler (BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    bmq) ## Project C Scheduler
+    bmq|pds) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
 esac
 
@@ -327,6 +328,7 @@ prepare() {
     case "$_cpusched" in
         bore) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
+        pds) scripts/config -e SCHED_ALT -e SCHED_PDS;;
         eevdf) ;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
