@@ -17,6 +17,7 @@ _cachy_config=${_cachy_config-y}
 # 'bmq' - select 'BMQ Scheduler'
 # 'cachyos' - select 'CachyOS Default Scheduler (BORE)'
 # 'eevdf' - select 'EEVDF Scheduler'
+# 'pds' - select 'PDS scheduler'
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 _cpusched=${_cpusched-cachyos}
@@ -264,7 +265,7 @@ fi
 case "$_cpusched" in
     cachyos|bore|rt-bore) # CachyOS Scheduler (BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
-    bmq) ## Project C Scheduler
+    bmq|pds) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
 esac
 
@@ -328,6 +329,7 @@ prepare() {
     case "$_cpusched" in
         cachyos|bore) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
+        pds) scripts/config -e SCHED_ALT -e SCHED_PDS;;
         eevdf) ;;
         rt) scripts/config -d PREEMPT -e PREEMPT_RT;;
         rt-bore) scripts/config -e SCHED_BORE -d PREEMPT -e PREEMPT_RT;;
