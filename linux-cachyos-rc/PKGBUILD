@@ -423,7 +423,7 @@ prepare() {
 
         case "$_preempt" in
             full) scripts/config -e PREEMPT_DYNAMIC -e PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
-            lazy) scripts/config -e PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -e PREEMPT_LAZY -d PREEMPT_NONE;;
+            lazy) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -e PREEMPT_LAZY -d PREEMPT_NONE;;
             voluntary) scripts/config -d PREEMPT_DYNAMIC -e PREEMPT_VOLUNTARY_BUILD -d PREEMPT -e PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
             none) scripts/config -d PREEMPT_DYNAMIC -e PREEMPT_NONE_BUILD -d PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -e PREEMPT_NONE;;
             *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
@@ -832,7 +832,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('e82921a5852d76802004fa3764f60a916b5a2382d81ec593b63421bdfd09a2222c8afe91905abcbb1d9a4bbb270808cb247ca7f63f1db70abba39c7507133834'
-        '9f099de709e971acfb9463ac96810a0ddfbd669dd8af891c7301e9ae463130a0ece65ce0c6ec35af62fcb4ed921e15870ec9db29f74b7f9d9017ff268b43d2d5'
+        'a25adc740f32d32708fc4d608656d62ce8cbfd4503c58c602927eb63d4ccdda09d49def4be718c220209c30cefebf33c3759e13c5fa4ccc862b15e416877c3e7'
         '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
         '4bb8bbbaea6669663e2b4d4879dba05d352fd3fb5b8d9b9889d0c3ffcb8c46a6d5f63a167c64470ea6ea17e1046c7d297c7139edc8da0df2ae7636d20e311619'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
