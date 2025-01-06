@@ -77,7 +77,7 @@ _HZ_ticks=${_HZ_ticks-1000}
 _tickrate=${_tickrate-full}
 
 ## Choose between full(low-latency), lazy, voluntary or none
-_preempt=${_preempt-full}
+_preempt=${_preempt-lazy}
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
