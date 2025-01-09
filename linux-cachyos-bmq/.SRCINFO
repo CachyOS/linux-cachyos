@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-bmq
 	pkgdesc = Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.12.8
+	pkgver = 6.12.9
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -18,15 +18,15 @@ pkgbase = linux-cachyos-bmq
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.8.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.9.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/sched/0001-prjc-cachy.patch
-	b2sums = 62a3f435bbe7d24bea361f2545ba50f8b36030a98bd28d0979b86052d8af34dc7a4c27f7ca2890daba5e5bb51f5848e6b21cd5df4dbbd19919867bf67d38790d
+	b2sums = 2584e35822a429b6825bf8d99c073848d5ba83d45b382ab82d1caa36ccbf2529036b31d4687dafb29650c87f4b63489caa2cb67a85d05183c572dcad75a35ba8
 	b2sums = a2747236876de1e02c7bde58be26b18656e619c8271402827c2e62df694d32798fb02f2217590a16ea9ab310fb602331913a5e109534a5ce2afc76603a3fc144
 	b2sums = 390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab
-	b2sums = ce48ae8fdb4616d9bf6fca271f251bbebf67b5ddf94c55370e1ee33b11f44c5f96062fd8d894b2b2c3876cc1e28c3640f1315ee0099fcfa54ee5cacbd2eea982
+	b2sums = cc197827aeca2961121f3235fd690db3e0ffde1d3abe2fda02ff21f7e31165e6e565969634565f8605eccaf269fc3741bf9d7004c566edd5d310592e6a89568c
 	b2sums = 807922244c2b4d07a1f12c381bf6ddc623dcc440b204c106476ec7f75e5ea3f5ee13316e2cdc9013db1301ce2aa7d01491048e95b6bca5dff890d3df91449e43
 
 pkgname = linux-cachyos-bmq
