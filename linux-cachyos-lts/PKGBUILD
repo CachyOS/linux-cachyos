@@ -189,7 +189,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver=$pkgver-$pkgrel
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -859,7 +859,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 sha256sums=('84d23ee07fb26febbcb6d1295ba15efdc67ac382b4137b2c8853146c10fd2f97'
-            'f4ddfbc0c375af5d8d9ca07f87513b874e019e4b84d9e05460fec05a667e6430'
+            'ef6c30c39066fa6d2fc0f5cb5a8cfe7a8b7ab7706826871f2bed2ec29d6bb153'
             '1a7747d5b4ccd427d643e3f548cd99c09d0f05b108fc530a581e28a41c5533c9'
             '2706d935575e114210892b441671037ab96d5f70f084c391a23b43cd96afaa3e'
             '8b6a5ed6abb44346ef5f435d1e67a1f6c679eb15c4283015f81578622c4a1514')
