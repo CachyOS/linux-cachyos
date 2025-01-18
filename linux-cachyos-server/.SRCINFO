@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-server
 	pkgdesc = Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads
-	pkgver = 6.12.9
+	pkgver = 6.12.10
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -18,14 +18,26 @@ pkgbase = linux-cachyos-server
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.9.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.10.tar.xz
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/all/0001-cachyos-base-all.patch
-	b2sums = 2584e35822a429b6825bf8d99c073848d5ba83d45b382ab82d1caa36ccbf2529036b31d4687dafb29650c87f4b63489caa2cb67a85d05183c572dcad75a35ba8
+	source = nvidia-open-565.77.tar.gz::https://github.com/NVIDIA/open-gpu-kernel-modules/archive/refs/tags/565.77.tar.gz
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/misc/nvidia/0001-Make-modeset-and-fbdev-default-enabled.patch
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/misc/nvidia/0002-Do-not-error-on-unkown-CPU-Type-and-add-Zen5-support.patch
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/misc/nvidia/0003-Add-IBT-Support.patch
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/misc/nvidia/0004-silence-event-assert-until-570.patch
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.12/misc/nvidia/0005-nvkms-Sanitize-trim-ELD-product-name-strings.patch
+	b2sums = 3146bbc9075b84db4c6ad3a64cbb91e3c379d0b8e9e90029eaf6a5bd37ea2b8a0a4ac1227e73d0e8acd20cab392841e046e148523bdb206302ea6c37a934b451
 	b2sums = a2747236876de1e02c7bde58be26b18656e619c8271402827c2e62df694d32798fb02f2217590a16ea9ab310fb602331913a5e109534a5ce2afc76603a3fc144
 	b2sums = 390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab
-	b2sums = cc197827aeca2961121f3235fd690db3e0ffde1d3abe2fda02ff21f7e31165e6e565969634565f8605eccaf269fc3741bf9d7004c566edd5d310592e6a89568c
+	b2sums = edfafc06fd1e93f5e4c1b341dc978eae439440ea584e53b4d81600461f2e189656e9dcaff61209ba4b093455c955a84f436e136160687b0d23bfbed433e15bfd
+	b2sums = dcc205a94bfe0509384b2d5a5de421e62e5d09f5acc8f950f667a35b151f57b0329f3172637edd6345d4b0f7f84e1142cb13146d60b93e032cf11e3781365402
+	b2sums = 5d3a31aead32f1d9cae47b8641711058ad09c16004708d2281214e985bbb5a74da4fdfd7056545e990f00e8c3bad380285bfbe1d63e68eaa29080bf0368c2378
+	b2sums = befc3b3b81949280ab7b7bd716f23ce40e8b47aaa781a65711f7fcdd3a60d3fba450fa3fbaf6f6068a95f1444deed656c3838753c55abf799cc999888d12e96a
+	b2sums = c97069fd0a80d4cdb956d22ed52bd5c247570ec97506fb6aee1ab5004c40d978ab6b858f319dfd52559d240d40de3f80debec6b39bc8b2486cdd9f1c8bc09f20
+	b2sums = 8d568c154710e2dff08fbd273c170f4b694d4fd3da436502e6c5b046dc8ee9223f282e97dcb042811212f7ae73be62acf3b8eeb174e0de400c0d8c8903a96f8f
+	b2sums = caeb3f32b7f9ad4c0e33af6dbaad487e7c4e537a63062f0ccc66579b6fa244068c607de06c0221e91935f42561e7894e91146681aa470752b1a6d1d27a588652
 
 pkgname = linux-cachyos-server
 	pkgdesc = The Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads kernel and modules
@@ -42,7 +54,20 @@ pkgname = linux-cachyos-server
 	provides = UKSMD-BUILTIN
 	provides = NTSYNC-MODULE
 
+pkgname = linux-cachyos-server-dbg
+	pkgdesc = Non-stripped vmlinux file for the Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads kernel
+	depends = linux-cachyos-server-headers
+
 pkgname = linux-cachyos-server-headers
 	pkgdesc = Headers and scripts for building modules for the Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads kernel
 	depends = pahole
 	depends = linux-cachyos-server
+
+pkgname = linux-cachyos-server-nvidia-open
+	pkgdesc = nvidia open modules of 565.77 driver for the linux-cachyos-server kernel
+	license = MIT AND GPL-2.0-only
+	depends = linux-cachyos-server=6.12.10-1
+	depends = nvidia-utils=565.77
+	depends = libglvnd
+	provides = NVIDIA-MODULE
+	conflicts = linux-cachyos-server-nvidia

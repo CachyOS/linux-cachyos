@@ -179,7 +179,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.6
-_minor=70
+_minor=72
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -189,7 +189,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver=$pkgver-$pkgrel
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -239,7 +239,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=e65f69e41f4a276d7d0d1800a2878308a0ba84a6")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=76745cf5b86540f80e8e5faea85f8685a1b76caa")
 fi
 
 # NVIDIA pre-build module support
@@ -838,7 +838,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('84d23ee07fb26febbcb6d1295ba15efdc67ac382b4137b2c8853146c10fd2f97'
+sha256sums=('feb9e514930d5968daa0b8b5486d3295d1fb2b34accf876207641884d4baef39'
             'ef6c30c39066fa6d2fc0f5cb5a8cfe7a8b7ab7706826871f2bed2ec29d6bb153'
             '1a7747d5b4ccd427d643e3f548cd99c09d0f05b108fc530a581e28a41c5533c9'
             '2706d935575e114210892b441671037ab96d5f70f084c391a23b43cd96afaa3e'
