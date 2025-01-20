@@ -14,12 +14,12 @@
 ### Selecting the CPU scheduler
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
+# 'bmq' - select 'BMQ Scheduler'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select 'EEVDF-BORE Variant Scheduler'
+# 'cachyos' - select 'CachyOS Default Scheduler (BORE)'
 # 'eevdf' - select 'EEVDF Scheduler'
 # 'rt' - select EEVDF, but includes a series of realtime patches
 # 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
-# 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
 : "${_cpusched:=cachyos}"
 
 ### Tweak kernel options prior to a build via nconfig
@@ -63,9 +63,6 @@
 ### Enable KBUILD_CFLAGS -O3
 : "${_cc_harder:=yes}"
 
-### Set this to your number of threads you have in your machine otherwise it will default to 320
-: "${_nr_cpus:=320}"
-
 ### Set performance governor as default
 : "${_per_gov:=no}"
 
@@ -79,22 +76,8 @@
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 : "${_tickrate:=full}"
 
-## Choose between full(low-latency), voluntary or server
+## Choose between full(low-latency), voluntary or none
 : "${_preempt:=full}"
-
-### Enable multigenerational LRU
-# ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable multigenerational LRU
-# 'stats' - enable multigenerational LRU with stats
-# 'none' - disable multigenerational LRU
-: "${_lru_config:=standard}"
-
-### Enable per-VMA locking
-# ATTENTION - one of three predefined values should be selected!
-# 'standard' - enable per-VMA locking
-# 'stats' - enable per-VMA locking with stats
-# 'none' - disable per-VMA locking
-: "${_vma_config:=standard}"
 
 ### Transparent Hugepages
 # ATTENTION - one of two predefined values should be selected!
@@ -103,9 +86,6 @@
 # More infos here:
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
 : "${_hugepage:=always}"
-
-## Enable DAMON
-: "${_damon:=no}"
 
 # CPU compiler optimizations - Defaults to prompt at kernel config if left empty
 # AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" "zen4"
@@ -118,10 +98,8 @@
 # Or use the _use_auto_optimization with _use_auto_optimization=y
 : "${_processor_opt:=}"
 
+# This does automatically detect your supported CPU and optimizes for it
 : "${_use_auto_optimization:=yes}"
-
-# disable debug to lower the size of the kernel
-: "${_disable_debug:=no}"
 
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
@@ -146,7 +124,6 @@
 # scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
 # alter function references to point to a jump table, and won't break
 # function address equality.
-# ATTENTION!: kCFI is only available in llvm 16
 : "${_use_kcfi:=no}"
 
 # Build the zfs module in to the kernel
@@ -163,23 +140,26 @@
 # Use this only if you have Turing+ GPU
 : "${_build_nvidia_open:=no}"
 
-# Enable bcachefs
-: "${_bcachefs:=no}"
-
 # Build a debug package with non-stripped vmlinux
 : "${_build_debug:=no}"
 
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ "$_use_lto_suffix" = "yes"  ]; then
+# ATTENTION: Do not modify after this line
+_is_lto_kernel() {
+    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]]
+    return $?
+}
+
+if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
     _pkgsuffix="cachyos-lts-lto"
-elif [ "$_use_llvm_lto" = "none" ]  && [ "$_use_kcfi" != "yes" ] && [ "$_use_gcc_suffix" = "yes" ]; then
+elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
     _pkgsuffix="cachyos-lts-gcc"
 else
     _pkgsuffix="cachyos-lts"
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.6
-_minor=72
+_major=6.12
+_minor=10
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -188,9 +168,9 @@ _stable=${_major}.${_minor}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux EEVDF-BORE scheduler Kernel by CachyOS with other patches and improvements'
+pkgdesc='Linux BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service'
 pkgrel=1
-_kernver=$pkgver-$pkgrel
+_kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
 url="https://github.com/CachyOS/linux-cachyos"
@@ -220,7 +200,7 @@ source=(
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # LLVM makedepends
-if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] || [ "$_use_kcfi" = "yes" ]; then
+if _is_lto_kernel; then
     makedepends+=(clang llvm lld)
     source+=("${_patchsource}/misc/dkms-clang.patch")
     BUILD_FLAGS=(
@@ -253,34 +233,21 @@ if [ "$_build_nvidia_open" = "yes" ]; then
              "${_patchsource}/misc/nvidia/0001-Make-modeset-and-fbdev-default-enabled.patch"
              "${_patchsource}/misc/nvidia/0002-Do-not-error-on-unkown-CPU-Type-and-add-Zen5-support.patch"
              "${_patchsource}/misc/nvidia/0003-Add-IBT-Support.patch"
-             "${_patchsource}/misc/nvidia/0006-silence-event-assert-until-570.patch"
-             "${_patchsource}/misc/nvidia/0009-fix-hdmi-names.patch")
+             "${_patchsource}/misc/nvidia/0004-silence-event-assert-until-570.patch"
+             "${_patchsource}/misc/nvidia/0005-nvkms-Sanitize-trim-ELD-product-name-strings.patch")
 fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos) # CachyOS Scheduler (EEVDF + BORE)
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    bore) ## BORE Scheduler
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;
-    rt) ## EEVDF with RT patches
+    cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+        source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
+    bmq) ## Project C Scheduler
+        source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
+    hardened) ## Hardened Patches
+        source+=("${_patchsource}/misc/0001-hardened.patch");;
+    rt|rt-bore) ## RT Patches
         source+=("${_patchsource}/misc/0001-rt.patch");;
-    rt-bore) ## RT with BORE Scheduler
-        source+=("${_patchsource}/misc/0001-rt.patch"
-                 "${_patchsource}/sched/0001-bore-cachy-rt.patch");;
-    hardened) ## Hardened Patches with BORE Scheduler
-        source+=("${_patchsource}/sched/0001-bore-cachy.patch"
-                 "${_patchsource}/misc/0001-hardened.patch");;
-    sched-ext) ## Sched-ext with BORE
-        source+=("${_patchsource}/sched/0001-sched-ext.patch"
-                 "${_patchsource}/sched/0001-bore-cachy-ext.patch");;
 esac
-
-## bcachefs Support
-if [ "$_bcachefs" = "yes" ]; then
-    source+=("${_patchsource}/misc/0001-bcachefs.patch")
-fi
-
 
 export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER="$pkgbase"
@@ -338,11 +305,11 @@ prepare() {
 
     ### Selecting the CPU scheduler
     case "$_cpusched" in
-        bore|hardened|cachyos) scripts/config -e SCHED_BORE;;
+        cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
+        bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
-        rt) scripts/config -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
-        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPT_NONE -e PREEMPT_RT -d PREEMPT_DYNAMIC -d PREEMPT_BUILD;;
-        sched-ext) scripts/config -e SCHED_BORE -e SCHED_CLASS_EXT;;
+        rt) scripts/config -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
+        rt-bore) scripts/config -e SCHED_BORE -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -351,8 +318,7 @@ prepare() {
     ### Enable KCFI
     if [ "$_use_kcfi" = "yes" ]; then
         echo "Enabling kCFI"
-        scripts/config -e ARCH_SUPPORTS_CFI_CLANG \
-            -e CFI_CLANG
+        scripts/config -e ARCH_SUPPORTS_CFI_CLANG -e CFI_CLANG -e CFI_AUTO_DEFAULT
     fi
 
     ### Select LLVM level
@@ -395,14 +361,6 @@ prepare() {
             -d NUMA_BALANCING_DEFAULT_ENABLED
     fi
 
-    ### Setting NR_CPUS
-    if [[ "$_nr_cpus" -ge 2 && "$_nr_cpus" -le 512 ]]; then
-        echo "Setting NR_CPUS..."
-        scripts/config --set-val NR_CPUS "$_nr_cpus"
-    else
-        _die "The value '$_nr_cpus' is invalid. Please select a numerical value from 2 to 512..."
-    fi
-
     ### Select performance governor
     if [ "$_per_gov" = "yes" ]; then
         echo "Setting performance governor..."
@@ -425,9 +383,9 @@ prepare() {
     # We should not set up the PREEMPT for RT kernels
     if [[ "$_cpusched" != "rt" || "$_cpusched" != "rt-bore" ]]; then
         case "$_preempt" in
-            full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
-            voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-            server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+            full) scripts/config -e PREEMPT_DYNAMIC -e PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
+            voluntary) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -e PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
+            none) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -e PREEMPT_NONE;;
             *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
         esac
 
@@ -471,26 +429,6 @@ prepare() {
             -e CONFIG_DEFAULT_FQ
     fi
 
-    ### Select LRU config
-    case "$_lru_config" in
-        standard) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -d LRU_GEN_STATS;;
-        stats) scripts/config -e LRU_GEN -e LRU_GEN_ENABLED -e LRU_GEN_STATS;;
-        none) scripts/config -d LRU_GEN;;
-        *) _die "The value '$_lru_config' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_lru_config' LRU_GEN config..."
-
-    ### Select VMA config
-    case "$_vma_config" in
-        standard) scripts/config -e PER_VMA_LOCK -d PER_VMA_LOCK_STATS;;
-        stats) scripts/config -e PER_VMA_LOCK -e PER_VMA_LOCK_STATS;;
-        none) scripts/config -d PER_VMA_LOCK;;
-        *) _die "The value '$_vma_config' is invalid. Choose the correct one again.";;
-    esac
-
-    echo "Selecting '$_vma_config' PER_VMA_LOCK config..."
-
     ### Select THP
     case "$_hugepage" in
         always) scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE -e TRANSPARENT_HUGEPAGE_ALWAYS;;
@@ -499,40 +437,6 @@ prepare() {
     esac
 
     echo "Selecting '$_hugepage' TRANSPARENT_HUGEPAGE config..."
-
-    ### Enable DAMON
-    if [ "$_damon" = "yes" ]; then
-        echo "Enabling DAMON..."
-        scripts/config -e DAMON \
-            -e DAMON_VADDR \
-            -e DAMON_DBGFS \
-            -e DAMON_SYSFS \
-            -e DAMON_PADDR \
-            -e DAMON_RECLAIM \
-            -e DAMON_LRU_SORT
-    fi
-
-
-
-    ### Disable DEBUG
-    # Doesn't work with sched-ext
-    # More infos here: https://github.com/CachyOS/linux-cachyos/issues/187
-    if [[ "$_cpusched" != "sched-ext" && "$_disable_debug" = "yes" ]]; then
-        scripts/config -d DEBUG_INFO \
-            -d DEBUG_INFO_BTF \
-            -d DEBUG_INFO_DWARF4 \
-            -d DEBUG_INFO_DWARF5 \
-            -d PAHOLE_HAS_SPLIT_BTF \
-            -d DEBUG_INFO_BTF_MODULES \
-            -d SLUB_DEBUG \
-            -d PM_DEBUG \
-            -d PM_ADVANCED_DEBUG \
-            -d PM_SLEEP_DEBUG \
-            -d ACPI_DEBUG \
-            -d SCHED_DEBUG \
-            -d LATENCYTOP \
-            -d DEBUG_PREEMPT
-    fi
 
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config -e USER_NS
@@ -605,9 +509,9 @@ prepare() {
         # Fix for Zen5 error print in dmesg
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0002-Do-not-error-on-unkown-CPU-Type-and-add-Zen5-support.patch" -d "${srcdir}/${_nv_open_pkg}"
         # Fix for CS2 dmesg spam
-        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0006-silence-event-assert-until-570.patch" -d "${srcdir}/${_nv_open_pkg}"
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0004-silence-event-assert-until-570.patch" -d "${srcdir}/${_nv_open_pkg}"
         # Fix for HDMI names
-        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0009-fix-hdmi-names.patch" -d "${srcdir}/${_nv_open_pkg}"
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0005-nvkms-Sanitize-trim-ELD-product-name-strings.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
 }
 
@@ -658,8 +562,8 @@ _package() {
     optdepends=('wireless-regdb: to set the correct wireless channels of your country'
                 'linux-firmware: firmware images needed for some devices'
                 'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
-                'uksmd: Userspace KSM helper daemon')
-    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN)
+                'scx-scheds: to use sched-ext schedulers')
+    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN NTSYNC-MODULE)
 
     cd "$_srcname"
 
@@ -694,6 +598,7 @@ _package-headers() {
     install -Dt "$builddir/kernel" -m644 kernel/Makefile
     install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
     cp -t "$builddir" -a scripts
+    ln -srt "$builddir" "$builddir/scripts/gdb/vmlinux-gdb.py"
 
     # required when STACK_VALIDATION is enabled
     install -Dt "$builddir/tools/objtool" tools/objtool/objtool
@@ -838,8 +743,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-sha256sums=('feb9e514930d5968daa0b8b5486d3295d1fb2b34accf876207641884d4baef39'
-            'ef6c30c39066fa6d2fc0f5cb5a8cfe7a8b7ab7706826871f2bed2ec29d6bb153'
-            '1a7747d5b4ccd427d643e3f548cd99c09d0f05b108fc530a581e28a41c5533c9'
-            '2706d935575e114210892b441671037ab96d5f70f084c391a23b43cd96afaa3e'
-            '8b6a5ed6abb44346ef5f435d1e67a1f6c679eb15c4283015f81578622c4a1514')
+b2sums=('3146bbc9075b84db4c6ad3a64cbb91e3c379d0b8e9e90029eaf6a5bd37ea2b8a0a4ac1227e73d0e8acd20cab392841e046e148523bdb206302ea6c37a934b451'
+        'a2747236876de1e02c7bde58be26b18656e619c8271402827c2e62df694d32798fb02f2217590a16ea9ab310fb602331913a5e109534a5ce2afc76603a3fc144'
+        '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
+        'edfafc06fd1e93f5e4c1b341dc978eae439440ea584e53b4d81600461f2e189656e9dcaff61209ba4b093455c955a84f436e136160687b0d23bfbed433e15bfd'
+        'b8007db21488fcd281dde293aba0dfc7afcf556e19d6f397ea7e017e4254b6c3c97e96be9680868d2c03c3500d7b4cdc6493b2896d819d9cf7debf5ebf2ea964')

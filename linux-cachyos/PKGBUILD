@@ -69,14 +69,14 @@
 ### Enable TCP_CONG_BBR3
 : "${_tcp_bbr3:=no}"
 
-### Running with a 1000HZ, 750Hz, 625Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
+### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 : "${_HZ_ticks:=1000}"
 
 ## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 : "${_tickrate:=full}"
 
-## Choose between full(low-latency), voluntary or server
+## Choose between full(low-latency), lazy, voluntary or none
 : "${_preempt:=full}"
 
 ### Transparent Hugepages
@@ -154,6 +154,19 @@
 # Name for the AutoFDO profile
 : "${_autofdo_profile_name:=}"
 
+# Propeller should be applied, after the kernel is optimized with AutoFDO
+# Workflow:
+# 1. Proceed with above AutoFDO Optimization, but enable at the final compilation also _propeller
+# 2. Boot into the AutoFDO Kernel and profile it
+# 3. Convert the profile into the propeller profile, example:
+# create_llvm_prof --binary=/usr/src/debug/linux-cachyos-rc/vmlinux --profile=propeller.data --format=propeller --propeller_output_module_name --out=propeller_cc_profile.txt --propeller_symorder=propeller_ld_profile.txt
+# 4. Place the propeller_cc_profile.txt and propeller_ld_profile.txt into the srcdir
+# 5. Enable _propeller_prefix
+: "${_propeller:=no}"
+
+# Enable this after the profiles have been generated
+: "${_propeller_profiles:=no}"
+
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
@@ -170,13 +183,13 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.12
-_minor=10
+_major=6.13
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -237,7 +250,10 @@ fi
 # NVIDIA pre-build module support
 if [ "$_build_nvidia" = "yes" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
-             "${_patchsource}/misc/nvidia/0001-Make-modeset-and-fbdev-default-enabled.patch")
+             "${_patchsource}/misc/nvidia/0001-Make-modeset-and-fbdev-default-enabled.patch"
+             "${_patchsource}/misc/nvidia/0008-Kbuild-Use-absolute-paths-for-symbolic-links.patch"
+             "${_patchsource}/misc/nvidia/0009-FROM-AOSC-Use-linux-aperture.c-for-removing-conflict.patch"
+             "${_patchsource}/misc/nvidia/0010-FROM-AOSC-TTM-fbdev-emulation-for-Linux-6.13.patch")
 fi
 
 if [ "$_build_nvidia_open" = "yes" ]; then
@@ -246,7 +262,12 @@ if [ "$_build_nvidia_open" = "yes" ]; then
              "${_patchsource}/misc/nvidia/0002-Do-not-error-on-unkown-CPU-Type-and-add-Zen5-support.patch"
              "${_patchsource}/misc/nvidia/0003-Add-IBT-Support.patch"
              "${_patchsource}/misc/nvidia/0004-silence-event-assert-until-570.patch"
-             "${_patchsource}/misc/nvidia/0005-nvkms-Sanitize-trim-ELD-product-name-strings.patch")
+             "${_patchsource}/misc/nvidia/0005-nvkms-Sanitize-trim-ELD-product-name-strings.patch"
+             "${_patchsource}/misc/nvidia/0006-crypto-Add-fix-for-6.13-Module-compilation.patch"
+             "${_patchsource}/misc/nvidia/0007-nvidia-nv-Convert-symbol-namespace-to-string-literal.patch"
+             "${_patchsource}/misc/nvidia/0008-Kbuild-Use-absolute-paths-for-symbolic-links.patch"
+             "${_patchsource}/misc/nvidia/0009-FROM-AOSC-Use-linux-aperture.c-for-removing-conflict.patch"
+             "${_patchsource}/misc/nvidia/0010-FROM-AOSC-TTM-fbdev-emulation-for-Linux-6.13.patch")
 fi
 
 # Use generated AutoFDO Profile
@@ -258,6 +279,12 @@ if [ "$_autofdo" = "yes" ] && [ -n "$_autofdo_profile_name" ]; then
     fi
 fi
 
+# Use generated Propeller Profile
+if [ "$_propeller" = "yes" ] && [ "$_propeller_profiles" = "yes" ]; then
+    source+=(propeller_cc_profile.txt
+             propeller_ld_profile.txt)
+fi
+
 ## List of CachyOS schedulers
 case "$_cpusched" in
     cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
@@ -266,10 +293,8 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
     hardened) ## Hardened Patches
         source+=("${_patchsource}/misc/0001-hardened.patch");;
-    rt) ## EEVDF with RT patches
-        source+=("${_patchsource}/misc/0001-rt.patch");;
-    rt-bore) ## RT with BORE Scheduler
-        source+=("${_patchsource}/misc/0001-rt.patch");;
+    rt|rt-bore) ## RT patches
+        source+=("${_patchsource}/misc/0001-rt-i915.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
@@ -331,8 +356,8 @@ prepare() {
         cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
-        rt) scripts/config -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
-        rt-bore) scripts/config -e SCHED_BORE -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
+        rt) scripts/config -e PREEMPT_RT;;
+        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -346,8 +371,8 @@ prepare() {
 
     ### Select LLVM level
     case "$_use_llvm_lto" in
-        thin) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -d LTO_CLANG_FULL -e LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
-        full) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -e LTO_CLANG_FULL -d LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
+        thin) scripts/config -e LTO_CLANG_THIN;;
+        full) scripts/config -e LTO_CLANG_FULL;;
         none) scripts/config -e LTO_NONE;;
         *) _die "The value '$_use_llvm_lto' is invalid. Choose the correct one again.";;
     esac
@@ -356,7 +381,7 @@ prepare() {
 
     ### Select tick rate
     case "$_HZ_ticks" in
-        100|250|500|600|625|750|1000)
+        100|250|500|600|750|1000)
             scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ "${_HZ_ticks}";;
         300)
             scripts/config -e HZ_300 --set-val HZ 300;;
@@ -406,9 +431,10 @@ prepare() {
     # We should not set up the PREEMPT for RT kernels
     if [[ "$_cpusched" != "rt" || "$_cpusched" != "rt-bore" ]]; then
         case "$_preempt" in
-            full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
-            voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-            server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+            full) scripts/config -e PREEMPT_DYNAMIC -e PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
+            lazy) scripts/config -e PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -e PREEMPT_LAZY -d PREEMPT_NONE;;
+            voluntary) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -e PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
+            none) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -e PREEMPT_NONE;;
             *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
         esac
 
@@ -470,6 +496,16 @@ prepare() {
     if [ "$_autofdo" = "yes" ] && [ -n "$_autofdo_profile_name" ]; then
         echo "AutoFDO profile has been found..."
         BUILD_FLAGS+=(CLANG_AUTOFDO_PROFILE="${srcdir}/${_autofdo_profile_name}")
+    fi
+
+    # Propeller Optimization
+    if [ "$_propeller" = "yes" ]; then
+        scripts/config -e PROPELLER_CLANG
+    fi
+
+    if [ "$_propeller" = "yes" ] && [ "$_propeller_profiles" = "yes" ]; then
+        echo "Propeller profile has been found..."
+        BUILD_FLAGS+=(CLANG_PROPELLER_PROFILE_PREFIX="${srcdir}/propeller")
     fi
 
     echo "Enable USER_NS_UNPRIVILEGED"
@@ -534,18 +570,48 @@ prepare() {
 
         # Use fbdev and modeset as default
         patch -Np1 -i "${srcdir}/0001-Make-modeset-and-fbdev-default-enabled.patch" -d "${srcdir}/${_nv_pkg}/kernel"
+
+        # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/747
+        patch -Np2 -i "${srcdir}/0008-Kbuild-Use-absolute-paths-for-symbolic-links.patch" -d "${srcdir}/${_nv_pkg}/kernel"
+
+        # Fixes fbdev on 6.13+
+        # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/749
+        # https://gist.github.com/xtexChooser/da92d9df902788b75f746f348552ae80
+        patch -Np2 -i "${srcdir}/0009-FROM-AOSC-Use-linux-aperture.c-for-removing-conflict.patch" -d "${srcdir}/${_nv_pkg}/kernel"
+        patch -Np2 -i "${srcdir}/0010-FROM-AOSC-TTM-fbdev-emulation-for-Linux-6.13.patch" -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 
     if [ "$_build_nvidia_open" = "yes" ]; then
+        # Use fbdev and modeset as default
         patch -Np1 -i "${srcdir}/0001-Make-modeset-and-fbdev-default-enabled.patch" -d "${srcdir}/${_nv_open_pkg}/kernel-open"
+
         # Fix for Zen5 error print in dmesg
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0002-Do-not-error-on-unkown-CPU-Type-and-add-Zen5-support.patch" -d "${srcdir}/${_nv_open_pkg}"
+
         # Fix for https://bugs.archlinux.org/task/74886
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0003-Add-IBT-Support.patch" -d "${srcdir}/${_nv_open_pkg}"
+
         # Fix for CS2 dmesg spam
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0004-silence-event-assert-until-570.patch" -d "${srcdir}/${_nv_open_pkg}"
+
         # Fix for HDMI names
         patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0005-nvkms-Sanitize-trim-ELD-product-name-strings.patch" -d "${srcdir}/${_nv_open_pkg}"
+
+        # Fix build errors on 6.13+
+        # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/746
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0006-crypto-Add-fix-for-6.13-Module-compilation.patch" -d "${srcdir}/${_nv_open_pkg}"
+
+        # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/751
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0007-nvidia-nv-Convert-symbol-namespace-to-string-literal.patch" -d "${srcdir}/${_nv_open_pkg}"
+
+        # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/747
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0008-Kbuild-Use-absolute-paths-for-symbolic-links.patch" -d "${srcdir}/${_nv_open_pkg}"
+
+        # Fixes fbdev on 6.13+
+        # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/749
+        # https://gist.github.com/xtexChooser/da92d9df902788b75f746f348552ae80
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0009-FROM-AOSC-Use-linux-aperture.c-for-removing-conflict.patch" -d "${srcdir}/${_nv_open_pkg}"
+        patch -Np1 --no-backup-if-mismatch -i "${srcdir}/0010-FROM-AOSC-TTM-fbdev-emulation-for-Linux-6.13.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
 }
 
@@ -781,9 +847,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('3146bbc9075b84db4c6ad3a64cbb91e3c379d0b8e9e90029eaf6a5bd37ea2b8a0a4ac1227e73d0e8acd20cab392841e046e148523bdb206302ea6c37a934b451'
-        'a2747236876de1e02c7bde58be26b18656e619c8271402827c2e62df694d32798fb02f2217590a16ea9ab310fb602331913a5e109534a5ce2afc76603a3fc144'
+b2sums=('9f617ecb3f2393b57ba03c654fea62a7213f24c835989f333a1ef29492af551bfa7d9ad786d5ef1484854adc77c7c6af38fb09a72d994d305695f512c325e77f'
+        'e14bfa4e92fe8b49a01173263af1318d12c04d4963f4bd0352008c32d536663d6f014b171bd4f6cf777bcc10d46d353a5d3fea0f9865bb5ef92fb9972e4c9024'
         '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
-        'edfafc06fd1e93f5e4c1b341dc978eae439440ea584e53b4d81600461f2e189656e9dcaff61209ba4b093455c955a84f436e136160687b0d23bfbed433e15bfd'
+        'baa73536b5b824670221ff8b750f65eb2fba67f8d2f4c7db79f64f682fe360bb19492545fa96738b4dbeb35951c88e988b28a0314d1b5c8c6bfe12ab0ee5449c'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
-        'b8007db21488fcd281dde293aba0dfc7afcf556e19d6f397ea7e017e4254b6c3c97e96be9680868d2c03c3500d7b4cdc6493b2896d819d9cf7debf5ebf2ea964')
+        '3ae7a58a83c5f36d02a7b5822628fea9a5513ec41e66966678fe17ef9a96af9356b21da4cf5e492188af19747b142e532fe79582062132901e3b8cc80bc5cdd3')

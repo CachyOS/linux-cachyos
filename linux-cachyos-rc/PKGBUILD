@@ -69,7 +69,7 @@
 ### Enable TCP_CONG_BBR3
 : "${_tcp_bbr3:=no}"
 
-### Running with a 1000HZ, 750Hz, 625Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
+### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 : "${_HZ_ticks:=1000}"
 
 ## Choose between perodic, idle or full
@@ -353,8 +353,8 @@ prepare() {
         cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
-        rt) scripts/config -d PREEMPT -e PREEMPT_RT;;
-        rt-bore) scripts/config -e SCHED_BORE -d PREEMPT -e PREEMPT_RT;;
+        rt) scripts/config -e PREEMPT_RT;;
+        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -370,8 +370,8 @@ prepare() {
 
     ### Select LLVM level
     case "$_use_llvm_lto" in
-        thin) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -d LTO_CLANG_FULL -e LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
-        full) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -e LTO_CLANG_FULL -d LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
+        thin) scripts/config -e LTO_CLANG_THIN;;
+        full) scripts/config -e LTO_CLANG_FULL;;
         none) scripts/config -e LTO_NONE;;
         *) _die "The value '$_use_llvm_lto' is invalid. Choose the correct one again.";;
     esac
@@ -380,7 +380,7 @@ prepare() {
 
     ### Select tick rate
     case "$_HZ_ticks" in
-        100|250|500|600|625|750|1000)
+        100|250|500|600|750|1000)
             scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ "${_HZ_ticks}";;
         300)
             scripts/config -e HZ_300 --set-val HZ 300;;
@@ -432,8 +432,8 @@ prepare() {
         case "$_preempt" in
             full) scripts/config -e PREEMPT_DYNAMIC -e PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
             lazy) scripts/config -e PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -e PREEMPT_LAZY -d PREEMPT_NONE;;
-            voluntary) scripts/config -d PREEMPT_DYNAMIC -e PREEMPT_VOLUNTARY_BUILD -d PREEMPT -e PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
-            none) scripts/config -d PREEMPT_DYNAMIC -e PREEMPT_NONE_BUILD -d PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -e PREEMPT_NONE;;
+            voluntary) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -e PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
+            none) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -e PREEMPT_NONE;;
             *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
         esac
 
@@ -847,8 +847,8 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('ce975f0916407a2c5c1661ae704d453559e01e3dcb0faaed98c717b1b676617f31beaedde16a6e784ea0b81d88483cd8da85c8f48a4f2ba455dfb0cc1fdca530'
-        '9f099de709e971acfb9463ac96810a0ddfbd669dd8af891c7301e9ae463130a0ece65ce0c6ec35af62fcb4ed921e15870ec9db29f74b7f9d9017ff268b43d2d5'
+        'e14bfa4e92fe8b49a01173263af1318d12c04d4963f4bd0352008c32d536663d6f014b171bd4f6cf777bcc10d46d353a5d3fea0f9865bb5ef92fb9972e4c9024'
         '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
-        '25a7fe2fb073cf425c5f478b33219dcd5afd354663e42bbccb8e3a19afa99951c1997816a4d635915dfce8e0eeb0f6d7a0a9ae1f11db1c1f9b5e9aea7cc1262d'
+        'baa73536b5b824670221ff8b750f65eb2fba67f8d2f4c7db79f64f682fe360bb19492545fa96738b4dbeb35951c88e988b28a0314d1b5c8c6bfe12ab0ee5449c'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
-        'd376480bcb5c468b431be29e252fbf25b350d2742d24e9e41fb113bb4ccc33045566d5ff76005ba167ca58bebde211e93a918c7a7c88da86fb29a28c273a30da')
+        '3ae7a58a83c5f36d02a7b5822628fea9a5513ec41e66966678fe17ef9a96af9356b21da4cf5e492188af19747b142e532fe79582062132901e3b8cc80bc5cdd3')
