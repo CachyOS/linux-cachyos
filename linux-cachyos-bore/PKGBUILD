@@ -116,7 +116,7 @@
 
 # Use suffix -gcc when requested by the user
 # This was added to facilitate https://github.com/CachyOS/linux-cachyos/issues/286
-: "${_use_gcc_suffix:=}"
+: "${_use_gcc_suffix:=no}"
 
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
