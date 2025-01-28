@@ -28,12 +28,6 @@
 ### Tweak kernel options prior to a build via xconfig
 : "${_makexconfig:=no}"
 
-# NUMA is optimized for multi-socket motherboards.
-# A single multi-core CPU actually runs slower with NUMA enabled.
-# See, https://bugs.archlinux.org/task/31187
-# It seems that in 2023 this is not really a huge regression anymore
-: "${_NUMAdisable:=no}"
-
 # Compile ONLY used modules to VASTLYreduce the number of modules built
 # and the build time.
 #
@@ -336,24 +330,6 @@ prepare() {
     esac
 
     echo "Setting tick rate to ${_HZ_ticks}Hz..."
-
-    ### Disable NUMA
-    if [ "$_NUMAdisable" = "yes" ]; then
-        echo "Disabling NUMA from kernel config..."
-        scripts/config -d NUMA \
-            -d AMD_NUMA \
-            -d X86_64_ACPI_NUMA \
-            -d NODES_SPAN_OTHER_NODES \
-            -d NUMA_EMU \
-            -d USE_PERCPU_NUMA_NODE_ID \
-            -d ACPI_NUMA \
-            -d ARCH_SUPPORTS_NUMA_BALANCING \
-            -d NODES_SHIFT \
-            -u NODES_SHIFT \
-            -d NEED_MULTIPLE_NODES \
-            -d NUMA_BALANCING \
-            -d NUMA_BALANCING_DEFAULT_ENABLED
-    fi
 
     ### Select performance governor
     if [ "$_per_gov" = "yes" ]; then
