@@ -25,14 +25,8 @@
 ### Tweak kernel options prior to a build via nconfig
 : "${_makenconfig:=no}"
 
-### Tweak kernel options prior to a build via menuconfig
-: "${_makemenuconfig:=no}"
-
 ### Tweak kernel options prior to a build via xconfig
 : "${_makexconfig:=no}"
-
-### Tweak kernel options prior to a build via gconfig
-: "${_makegconfig:=no}"
 
 # NUMA is optimized for multi-socket motherboards.
 # A single multi-core CPU actually runs slower with NUMA enabled.
@@ -488,14 +482,8 @@ prepare() {
     ### Running make nconfig
     [ "$_makenconfig" = "yes" ] && make "${BUILD_FLAGS[@]}" nconfig
 
-    ### Running make menuconfig
-    [ "$_makemenuconfig" = "yes" ] &&  make "${BUILD_FLAGS[@]}" menuconfig
-
     ### Running make xconfig
     [ "$_makexconfig" = "yes" ] &&  make "${BUILD_FLAGS[@]}" xconfig
-
-    ### Running make gconfig
-    [ "$_makegconfig" = "yes" ] &&  make "${BUILD_FLAGS[@]}" gconfig
 
     ### Save configuration for later reuse
     echo "Save configuration for later reuse..."
