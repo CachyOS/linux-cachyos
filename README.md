@@ -39,10 +39,11 @@ Scheduler** Scheduler by [Alfred Chen](https://gitlab.com/alfredchen) -
 `linux-cachyos-bmq`
 
 
-> [!NOTE] The CachyOS repositories provide prebuilt kernels in three different
+> [!NOTE]
+> The CachyOS repositories provide prebuilt kernels in three different
 > march versions: `x86-64`, `x86-64-v3`,`x86-64-v4` and `znver4`. The default
-> `linux-cachyos` kernel is compiled with Clang, Thin LTO and uses our AutoFDO
-> profile. For this kernel there is a `linux-cachyos-gcc` variant available.
+> `linux-cachyos` kernel is compiled with Clang, Thin LTO and uses our AutoFDO + Propeller profile.
+> For this kernel there is a `linux-cachyos-gcc` variant available.
 
 ## Features
 ### :hammer_and_wrench: Advanced building & compiling
@@ -59,7 +60,6 @@ optimization. See more: https://cachyos.org/blog/2411-kernel-autofdo/
 
 - 3 different scheduler are supported: `BORE`, `EEVDF` and `BMQ` scheduler
 - AMD P-State Preferred Core / amd-pstate enhancements and fixes from `linux-next`.
-- AMD 3D V-Cache optimizer driver
 - Support for RT kernel builds with BORE
 - Cachy Sauce `CONFIG_CACHY`, enables various tweaks for the scheduler and other settings
 - Includes patches to improve performance of CRC32 and AES128 crypto.
@@ -71,7 +71,7 @@ optimization. See more: https://cachyos.org/blog/2411-kernel-autofdo/
 binary kernel builds can be found in the repository.
 - Latest & improved ZSTD 1.5.6 patch-set
 - KSM patch for proper working of uksmd daemon from pf
-- Memory management tweaks from zen-kernel (MGLRU, Compaction, Watermark)
+- Memory management tweaks from zen-kernel (compaction, watermark)
 
 ### :arrow_heading_down: Other features
 
