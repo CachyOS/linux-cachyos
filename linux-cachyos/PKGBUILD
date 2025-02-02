@@ -149,7 +149,7 @@
 # 3. Profile the kernel and convert the profile, see Generating the Profile for AutoFDO
 # 4. Put the profile into the sourcedir
 # 5. Run kernel build again with the _autofdo_profile_name path to profile specified
-: "${_autofdo:=no}"
+: "${_autofdo:=}"
 
 # Name for the AutoFDO profile
 : "${_autofdo_profile_name:=}"
@@ -184,17 +184,17 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.13
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux BORE + LTO + AutoFDO Cachy Sauce Kernel by CachyOS with other patches and improvements.'
-pkgrel=2
+pkgdesc='Linux BORE + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -801,9 +801,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('9f617ecb3f2393b57ba03c654fea62a7213f24c835989f333a1ef29492af551bfa7d9ad786d5ef1484854adc77c7c6af38fb09a72d994d305695f512c325e77f'
-        'a0e5c4aeb9f2b7dbff9a907a85f21187108f417301963c7bf7af082d768dfc8495c3fb4eb6c3f61f32289f652a54e89b448c189ef997ca60159b238f34c727a2'
+b2sums=('995981373f283f606a35ce4f5add4a44c9baa4dbf4caefbedc9037d1c736efbb9af43a48787d8a8515aaef59926962a076a87f0504d8733956f321c8bb241cfc'
+        'e91e4a6548289040d764ebd450c5449ff2896945276a0895ed9819bde4e1cbc8315e44b53fbe289c10e8bc199c17e0c731f5f6e261021829095b1d85323728bc'
         '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
-        '31a981030bfab628f50a73242c48c6beb92fe265df8365af4b77afa43931846678856f46b71cfca861b941f798a6978382ed6fd5f835f5bbd1e4e11f5ec34e20'
+        'f8bc2690854b156e2609e23e7b81bafcb6b4609b9288b64866d8d8fde230a2aaeb5482bb2b6c2c6236ecd731f004ca944e0fc10119e75a32b60e7bd098a23705'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
         '3ae7a58a83c5f36d02a7b5822628fea9a5513ec41e66966678fe17ef9a96af9356b21da4cf5e492188af19747b142e532fe79582062132901e3b8cc80bc5cdd3')

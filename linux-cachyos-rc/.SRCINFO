@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux BORE + LTO + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate
 	pkgver = 6.13.rc7
-	pkgrel = 2
+	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -30,7 +30,7 @@ pkgbase = linux-cachyos-rc
 	b2sums = ce975f0916407a2c5c1661ae704d453559e01e3dcb0faaed98c717b1b676617f31beaedde16a6e784ea0b81d88483cd8da85c8f48a4f2ba455dfb0cc1fdca530
 	b2sums = a0e5c4aeb9f2b7dbff9a907a85f21187108f417301963c7bf7af082d768dfc8495c3fb4eb6c3f61f32289f652a54e89b448c189ef997ca60159b238f34c727a2
 	b2sums = 390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab
-	b2sums = 31a981030bfab628f50a73242c48c6beb92fe265df8365af4b77afa43931846678856f46b71cfca861b941f798a6978382ed6fd5f835f5bbd1e4e11f5ec34e20
+	b2sums = f8bc2690854b156e2609e23e7b81bafcb6b4609b9288b64866d8d8fde230a2aaeb5482bb2b6c2c6236ecd731f004ca944e0fc10119e75a32b60e7bd098a23705
 	b2sums = c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452
 	b2sums = 3ae7a58a83c5f36d02a7b5822628fea9a5513ec41e66966678fe17ef9a96af9356b21da4cf5e492188af19747b142e532fe79582062132901e3b8cc80bc5cdd3
 
