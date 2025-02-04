@@ -15,8 +15,10 @@ jobs:
     - name: Build (GCC)
       id: makepkg
       uses: CachyOS/pkgbuild-action@master
+      env:
+        _build_zfs: yes
+        _use_llvm_lto: none
       with:
-        envvars: "_build_zfs=y _use_auto_optimization= _cc_harder= _localmodcfg=y _localmodcfg_path=/github/workspace/modprobed.db"
         pkgdir: "linux-cachyos"
         namcapExcludeRules: "invalidstartdir"
         makepkgArgs: "--skipchecksums --skippgpcheck --noconfirm -s"
@@ -28,8 +30,9 @@ jobs:
     - name: Build (LLVM)
       id: makepkg
       uses: CachyOS/pkgbuild-action@master
+      env:
+        _build_zfs: yes
       with:
-        envvars: "CI=1 _build_zfs=y _use_llvm_lto=thin _use_auto_optimization= _cc_harder= _localmodcfg=y _localmodcfg_path=/github/workspace/modprobed.db"
         pkgdir: "linux-cachyos"
         namcapExcludeRules: "invalidstartdir"
         makepkgArgs: "--skipchecksums --skippgpcheck --noconfirm -s"
