@@ -13,7 +13,7 @@
   - [How to add CachyOS repositories](#how-to-add-cachyos-repositories)
   - [Check CPU compatibility](#check-cpu-compatibility)
   - [Uninstalling CachyOS repositories](#uninstalling-cachyos-repositories)
-  - [Install SCX schedulers - only for linux-cachyos-sched-ext](#install-scx-schedulers)
+  - [Install SCX schedulers](#install-scx-schedulers)
 - [Other GNU/Linux distributions](#other-gnulinux-distributions)
   - [Gentoo](#gentoo)
   - [Fedora](#fedora)
