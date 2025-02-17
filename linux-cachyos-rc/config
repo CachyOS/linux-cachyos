@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.14.0-rc2 Kernel Configuration
+# Linux/x86 6.14.0-rc3 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 14.2.1 20250207"
 CONFIG_CC_IS_GCC=y
@@ -8286,14 +8286,6 @@ CONFIG_HID_MCP2221=m
 CONFIG_HID_BPF=y
 # end of HID-BPF support
 
-#
-# USB HID support
-#
-CONFIG_USB_HID=m
-CONFIG_HID_PID=y
-CONFIG_USB_HIDDEV=y
-# end of USB HID support
-
 CONFIG_I2C_HID=m
 CONFIG_I2C_HID_ACPI=m
 CONFIG_I2C_HID_OF=m
@@ -8328,6 +8320,14 @@ CONFIG_INTEL_THC_HID=m
 CONFIG_INTEL_QUICKSPI=m
 CONFIG_INTEL_QUICKI2C=m
 # end of Intel THC HID Support
+
+#
+# USB HID support
+#
+CONFIG_USB_HID=m
+CONFIG_HID_PID=y
+CONFIG_USB_HIDDEV=y
+# end of USB HID support
 
 CONFIG_USB_OHCI_LITTLE_ENDIAN=y
 CONFIG_USB_SUPPORT=y
