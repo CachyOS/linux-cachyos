@@ -173,14 +173,14 @@ pkgbase="linux-$_pkgsuffix"
 _major=6.14
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc3
+_rcver=rc4
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
 _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux BORE + LTO + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate'
+pkgdesc='Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate'
 pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
@@ -584,7 +584,7 @@ _package() {
                 'linux-firmware: firmware images needed for some devices'
                 'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
                 'scx-scheds: to use sched-ext schedulers')
-    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE NTSYNC-MODULE VHBA-MODULE)
+    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN NTSYNC-MODULE VHBA-MODULE ADIOS-MODULE)
 
     cd "$_srcname"
 
@@ -768,9 +768,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('3def393ef6a674fb9b8fa73c26e20f7b39c28c73dda19dfa7d87c3a7a1207e5bc848f2a1f6da01f36b6bb0a9a8bbb2d4467c4796c0b5228f564e0c0a1e8c1684'
-        'a98afcb83a282750ee9d724201e20f0f6448fcac3ca7d7edbb9aa0957cc26588ab30bfe8240980287f753e0f0ed6b09dee63cfa237f4fc2d4a665a1d2b0bbc6e'
+b2sums=('67a0d3782f039d413fbfebdbd5d27e40664c4bce91b787d3d8f276501c4c0bef09dd77c59c7acb73695d278fa1d21312b44b10c2edc1780c8370d569ffa8fc23'
+        'f71cada3c609e3dad22798ab0f279b2f8f7af4bd7f067973c70946bb4f4f216fe253ff185035d2b4d2b3e3fac3c81f8e877f797154dd6418e76044828280828e'
         '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
-        'a046d8476b72ab4cbd8636952220bfa672e63e33755ca9e7d9745862ef61203b05f0cd73ef0d7d40a049c81d49a39b552fbc44dbb0faea698398975c87366f24'
+        '2022d29784605f8f3f883d6c6ad88e268402e7b5e705c35a34a1ee6b4be7ec21b1a313290e37df0cdefa225dcc174d51c983ff230f4f9677fc2d540d1b7d1741'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
         'b8b3feb90888363c4eab359db05e120572d3ac25c18eb27fef5714d609c7cb895243d45585a150438fec0a2d595931b10966322cd956818dbd3a9b3ef412d1e8')
