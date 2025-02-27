@@ -137,7 +137,7 @@
 # 3. Profile the kernel and convert the profile, see Generating the Profile for AutoFDO
 # 4. Put the profile into the sourcedir
 # 5. Run kernel build again with the _autofdo_profile_name path to profile specified
-: "${_autofdo:=}"
+: "${_autofdo:=no}"
 
 # Name for the AutoFDO profile
 : "${_autofdo_profile_name:=}"
@@ -154,7 +154,6 @@
 
 # Enable this after the profiles have been generated
 : "${_propeller_profiles:=no}"
-
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
@@ -203,7 +202,7 @@ makedepends=(
 )
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=570.86.16
+_nv_ver=570.124.04
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="open-gpu-kernel-modules-${_nv_ver}"
 source=(
