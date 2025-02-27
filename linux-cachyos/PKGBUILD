@@ -172,7 +172,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.13
-_minor=4
+_minor=5
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -581,7 +581,7 @@ _package() {
                 'linux-firmware: firmware images needed for some devices'
                 'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
                 'scx-scheds: to use sched-ext schedulers')
-    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN NTSYNC-MODULE VHBA-MODULE)
+    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN NTSYNC-MODULE VHBA-MODULE ADIOS-MODULE)
 
     cd "$_srcname"
 
@@ -765,9 +765,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('2fe8e972e7de458fba6fbb18a08a01f17b49e4a2d31aa1368e50895a2698c6e1aaaf5137d0c0018860de3fe598e4ba425d6126ade7387ba227f690137111a66d'
-        'eb39906b8a7501c290f1778e98d5cc3ab7f89e7ee58d6195d70380059591381882f6c9199c475e579dd3078df5d6a93ff51bc7ead3b5fe83e68c7c3a977d83de'
+b2sums=('f8d57680d657c57bfc02a7981133e1e0dff9718f9ffdaff99be89861582cc8922884a4c8ce76acf8cc97bf407dc77b91d6c0d0cab59b210d5fa485d27eac1999'
+        'fb8d096a70bff5891ab02b144a87040a53afc0587896848dc2c39ac68da46654d6227e581a3ec7ee5bf1c8f491f0e15c7425f2b68e4e86afd0d7f58c5633b094'
         '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
-        '0d00c79b91621b90897e6c553f8adca3441061f4303a9dd0c0da63448477cf3574749889584e3597e49b9b3ec6097ee1d17bedc06eaadb788473122fae96c545'
+        '49c151e51e2161d0c3627e39844dfe456f07478e051ba33584acedac5ffc17e3951641a838a022dafb070992c577f566de3c3bfa473a89b8826e560443f0f8e9'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
         '3ae7a58a83c5f36d02a7b5822628fea9a5513ec41e66966678fe17ef9a96af9356b21da4cf5e492188af19747b142e532fe79582062132901e3b8cc80bc5cdd3')
