@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.14.0-rc5 Kernel Configuration
+# Linux/x86 6.14.0-rc6 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 14.2.1 20250207"
 CONFIG_CC_IS_GCC=y
@@ -7169,8 +7169,8 @@ CONFIG_DRM_ANALOGIX_DP=m
 # end of Display Interface Bridges
 
 # CONFIG_DRM_ETNAVIV is not set
-CONFIG_DRM_APPLETBDRM=m
 # CONFIG_DRM_HISI_HIBMC is not set
+CONFIG_DRM_APPLETBDRM=m
 CONFIG_DRM_BOCHS=m
 CONFIG_DRM_CIRRUS_QEMU=m
 CONFIG_DRM_GM12U320=m
