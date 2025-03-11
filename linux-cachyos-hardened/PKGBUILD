@@ -57,14 +57,14 @@
 ### Enable TCP_CONG_BBR3
 : "${_tcp_bbr3:=no}"
 
-### Running with a 1000HZ, 750Hz, 625Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
+### Running with a 1000HZ, 750Hz, 600 Hz, 500Hz, 300Hz, 250Hz and 100Hz tick rate
 : "${_HZ_ticks:=1000}"
 
 ## Choose between perodic, idle or full
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 : "${_tickrate:=full}"
 
-## Choose between full(low-latency), voluntary or server
+## Choose between full(low-latency), lazy, voluntary or none
 : "${_preempt:=full}"
 
 ### Transparent Hugepages
@@ -136,9 +136,8 @@ _is_lto_kernel() {
     return $?
 }
 
-
 if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
-     _pkgsuffix="cachyos-${_cpusched}-lto"
+    _pkgsuffix="cachyos-${_cpusched}-lto"
 elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
     _pkgsuffix="cachyos-${_cpusched}-gcc"
 else
@@ -146,8 +145,8 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.12
-_minor=18
+_major=6.13
+_minor=6
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -230,10 +229,8 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
     hardened) ## Hardened Patches
         source+=("${_patchsource}/misc/0001-hardened.patch");;
-    rt) ## EEVDF with RT patches
-        source+=("${_patchsource}/misc/0001-rt.patch");;
-    rt-bore) ## RT with BORE Scheduler
-        source+=("${_patchsource}/misc/0001-rt.patch");;
+    rt|rt-bore) ## RT patches
+        source+=("${_patchsource}/misc/0001-rt-i915.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
@@ -295,8 +292,8 @@ prepare() {
         cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
-        rt) scripts/config -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
-        rt-bore) scripts/config -e SCHED_BORE -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
+        rt) scripts/config -e PREEMPT_RT;;
+        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -310,8 +307,8 @@ prepare() {
 
     ### Select LLVM level
     case "$_use_llvm_lto" in
-        thin) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -d LTO_CLANG_FULL -e LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
-        full) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -e LTO_CLANG_FULL -d LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
+        thin) scripts/config -e LTO_CLANG_THIN;;
+        full) scripts/config -e LTO_CLANG_FULL;;
         none) scripts/config -e LTO_NONE;;
         *) _die "The value '$_use_llvm_lto' is invalid. Choose the correct one again.";;
     esac
@@ -320,7 +317,7 @@ prepare() {
 
     ### Select tick rate
     case "$_HZ_ticks" in
-        100|250|500|600|625|750|1000)
+        100|250|500|600|750|1000)
             scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ "${_HZ_ticks}";;
         300)
             scripts/config -e HZ_300 --set-val HZ 300;;
@@ -352,9 +349,10 @@ prepare() {
     # We should not set up the PREEMPT for RT kernels
     if [[ "$_cpusched" != "rt" || "$_cpusched" != "rt-bore" ]]; then
         case "$_preempt" in
-            full) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT -e PREEMPT_COUNT -e PREEMPTION -e PREEMPT_DYNAMIC;;
-            voluntary) scripts/config -e PREEMPT_BUILD -d PREEMPT_NONE -e PREEMPT_VOLUNTARY -d PREEMPT -e PREEMPT_COUNT -e PREEMPTION -d PREEMPT_DYNAMIC;;
-            server) scripts/config -e PREEMPT_NONE_BUILD -e PREEMPT_NONE -d PREEMPT_VOLUNTARY -d PREEMPT -d PREEMPTION -d PREEMPT_DYNAMIC;;
+            full) scripts/config -e PREEMPT_DYNAMIC -e PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
+            lazy) scripts/config -e PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -e PREEMPT_LAZY -d PREEMPT_NONE;;
+            voluntary) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -e PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
+            none) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -e PREEMPT_NONE;;
             *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
         esac
 
@@ -518,8 +516,9 @@ _package() {
     depends=('coreutils' 'kmod' 'initramfs')
     optdepends=('wireless-regdb: to set the correct wireless channels of your country'
                 'linux-firmware: firmware images needed for some devices'
-                'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig')
-    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN NTSYNC-MODULE VHBA-MODULE)
+                'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
+                'scx-scheds: to use sched-ext schedulers')
+    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE UKSMD-BUILTIN NTSYNC-MODULE VHBA-MODULE ADIOS-MODULE)
 
     cd "$_srcname"
 
@@ -699,9 +698,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('d6c751915032c43c7558d85295c106d9ec4e5b93c828bc44058fe953de7c82b68fde2b6f295054f69fd1db3ae889a90de21cafc42099def3a87f41d977ffb48b'
-        'e197432e92b1f29dfb89e108e332137a3f5348302a102d92535ba23bc6bc1fab13aef55a8218ecc5d35db8f77e1c30d110b4d64874d18bb7a0b8ecd86fd278dd'
+b2sums=('5a216c56c77efaee1a3f5c9198ade9180e4640ffcde39662ccf85c2a5945a08c5f362220fb0906369c72a3ea8bdc16fdd24d3e1dbc0f51fc831f3f724ed73300'
+        'e7a57d3b1d1240f296c28de442b382614cf351a47e737a100c8db08530637c665fb3e3f5956038b6072efc90eaca153c22e79f6784ffbd8095cafc263fcb2a45'
         '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
-        'ca014c2570ef63f11e162a015293225e1e4103513cefe2f3c20e01444fe2d6b7cbc7c993b5d77db97c84142fb6cb6cc401df419b2d9de1610b5539832c013cd8'
-        'b8007db21488fcd281dde293aba0dfc7afcf556e19d6f397ea7e017e4254b6c3c97e96be9680868d2c03c3500d7b4cdc6493b2896d819d9cf7debf5ebf2ea964'
-        'dfc178e56b6c5dbea55e5cec3cf6a7087121b3fc552a66c53ca1da4f395154502e60e3d5e7541ed15bcf717847583b4c6ccc75d4f49b7afefd8b40ddc4e84210')
+        '214a3102c010e182e9afde359aa3e419518af9746711f63b957545ce7d1f321c312bc732b0a3a7784f58866d5b8774af55c61fb7862d8c5ec3b549084aa7c90d'
+        '3ae7a58a83c5f36d02a7b5822628fea9a5513ec41e66966678fe17ef9a96af9356b21da4cf5e492188af19747b142e532fe79582062132901e3b8cc80bc5cdd3'
+        '8bc9a3b4aeaafb6b2a10001249acac5c67d5579c0b85846aae56d8835684c1f50b1493d369b848c4fb229f7db65e4ddcc778ad3a66d7a725d0424bd09fc0ddd6')
