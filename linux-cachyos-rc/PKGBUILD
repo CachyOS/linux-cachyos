@@ -529,7 +529,7 @@ prepare() {
         patch -Np1 -i "${srcdir}/0001-Enable-atomic-kernel-modesetting-by-default.patch" \
             -d "${srcdir}/${_nv_open_pkg}/kernel-open"
         # Fix for https://bugs.archlinux.org/task/74886
-        patch -Np1 -i "${srcdir}/0002-Add-IBT-support.patch" -d "${srcdir}/${srcdir}/${_nv_open_pkg}"
+        patch -Np1 -i "${srcdir}/0002-Add-IBT-support.patch" -d "${srcdir}/${_nv_open_pkg}"
     fi
 }
 
