@@ -126,13 +126,10 @@
 # Use this only if you have Turing+ GPU
 : "${_build_nvidia_open:=no}"
 
-# Build a debug package with non-stripped vmlinux
-: "${_build_debug:=no}"
-
 # Enable AUTOFDO_CLANG for the first compilation to create a kernel, which can be used for profiling
 # Workflow:
 # https://cachyos.org/blog/2411-kernel-autofdo/
-# 1. Compile Kernel with _autofdo=yes and _build_debug=yes
+# 1. Compile Kernel with _autofdo=yes and add debug option in your makepkg.conf
 # 2. Boot the kernel in QEMU or on your system, see Workload
 # 3. Profile the kernel and convert the profile, see Generating the Profile for AutoFDO
 # 4. Put the profile into the sourcedir
@@ -187,7 +184,7 @@ _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
 url="https://github.com/CachyOS/linux-cachyos"
 license=('GPL-2.0-only')
-options=('!strip' '!debug' '!lto')
+options=('!lto' 'zipkmod')
 makedepends=(
   bc
   cpio
@@ -669,36 +666,9 @@ _package-headers() {
     echo "Removing loose objects..."
     find "$builddir" -type f -name '*.o' -printf 'Removing %P\n' -delete
 
-    echo "Stripping build tools..."
-    local file
-    while read -rd '' file; do
-        case "$(file -Sib "$file")" in
-            application/x-sharedlib\;*)      # Libraries (.so)
-                strip -v $STRIP_SHARED "$file" ;;
-            application/x-archive\;*)        # Libraries (.a)
-                strip -v $STRIP_STATIC "$file" ;;
-            application/x-executable\;*)     # Binaries
-                strip -v $STRIP_BINARIES "$file" ;;
-            application/x-pie-executable\;*) # Relocatable binaries
-                strip -v $STRIP_SHARED "$file" ;;
-        esac
-    done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
-
-    echo "Stripping vmlinux..."
-    strip -v $STRIP_STATIC "$builddir/vmlinux"
-
     echo "Adding symlink..."
     mkdir -p "$pkgdir/usr/src"
     ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
-}
-
-_package-dbg(){
-    pkgdesc="Non-stripped vmlinux file for the $pkgdesc kernel"
-    depends=("${pkgbase}-headers")
-
-    cd "${_srcname}"
-    mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
-    install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
 }
 
 _package-zfs(){
@@ -753,7 +723,6 @@ _package-nvidia-open(){
 }
 
 pkgname=("$pkgbase")
-[ "$_build_debug" = "yes" ] && pkgname+=("$pkgbase-dbg")
 pkgname+=("$pkgbase-headers")
 [ "$_build_zfs" = "yes" ] && pkgname+=("$pkgbase-zfs")
 [ "$_build_nvidia" = "yes" ] && pkgname+=("$pkgbase-nvidia")
