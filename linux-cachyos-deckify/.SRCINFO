@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-deckify
 	pkgdesc = Linux BORE + Cachy Sauce + Handheld Kernel by CachyOS with other patches and improvements.
 	pkgver = 6.14.0
-	pkgrel = 2
+	pkgrel = 3
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -28,7 +28,7 @@ pkgbase = linux-cachyos-deckify
 	b2sums = 11835719804b406fe281ea1c276a84dc0cbaa808552ddcca9233d3eaeb1c001d0455c7205379b02de8e8db758c1bae6fe7ceb6697e63e3cf9ae7187dc7a9715e
 	b2sums = f35c2d9b4fce4bb94ac5e6dda23a1272d959a8797e07e4dafcbb2791fc4e3a419afb2b4cff491e75ed38c82275ab10c36dfc8cd99a1ae8bbccb4982b1f4838e2
 	b2sums = 390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab
-	b2sums = 83460f7c8da099f97cbee7dd7c724eec7be1b8e72640209a6a00c860d0c780b6672a8fa574270c0048f7f2da886ce4b8aacd2a433d871fcdbbaac07a48857312
+	b2sums = 42052b073f6e5a678e97456c0ccb85b62b6aba123ecffe1c78b69162c55c677815fe490fa58aacf1f1f5ea8b610df44e36e7e0dc9eea7a2bd4602525d27e6005
 	b2sums = be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498
 	b2sums = 6c32d391cf62a810f9f3bc3fb6d14e4e1cc5368d97a9e2133972faf2f8425fadde6b32fadc834ae3db1ffd067ed799f8b3d23b9d731bcd126c8de63cbd2d1893
 	b2sums = b8b3feb90888363c4eab359db05e120572d3ac25c18eb27fef5714d609c7cb895243d45585a150438fec0a2d595931b10966322cd956818dbd3a9b3ef412d1e8
