@@ -221,6 +221,8 @@ if [[ "$_cpusched" = "rt" || "$_cpusched" = "rt-bore" ]]; then
 fi
 
 unset _build_zfs
+# Disable till fixed
+unset _build_nvidia
 
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
@@ -530,10 +532,10 @@ prepare() {
             -d "${srcdir}/${_nv_pkg}/kernel"
         patch -Np2 -i "${srcdir}/0006-nvidia-uvm-Use-__iowrite64_hi_lo.patch" \
             -d "${srcdir}/${_nv_pkg}/kernel"
-        patch -Np2 -i "${srcdir}/0007-nvidia-uvm-Use-page_pgmap.patch" \
-            -d "${srcdir}/${_nv_pkg}/kernel"
-        patch -Np2 -i "${srcdir}/0008-nvidia-uvm-Convert-make_device_exclusive_range-to-ma.patch" \
-            -d "${srcdir}/${_nv_pkg}/kernel"
+#        patch -Np2 -i "${srcdir}/0007-nvidia-uvm-Use-page_pgmap.patch" \
+#            -d "${srcdir}/${_nv_pkg}/kernel"
+#        patch -Np2 -i "${srcdir}/0008-nvidia-uvm-Convert-make_device_exclusive_range-to-ma.patch" \
+#            -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 
     if [ "$_build_nvidia_open" = "yes" ]; then
