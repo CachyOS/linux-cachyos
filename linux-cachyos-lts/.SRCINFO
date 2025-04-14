@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-lts
 	pkgdesc = Linux BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service
 	pkgver = 6.12.23
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -27,7 +27,7 @@ pkgbase = linux-cachyos-lts
 	b2sums = fa3bbedc0804fcf4b9908bb6b8f13f45a63d9a6ec19978028449841cf7ca026053254a7fc53085dc7ffa24c6756301d37d3a1f9e167bb7f9eb5605d33749b0b2
 	b2sums = 390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab
 	b2sums = ca014c2570ef63f11e162a015293225e1e4103513cefe2f3c20e01444fe2d6b7cbc7c993b5d77db97c84142fb6cb6cc401df419b2d9de1610b5539832c013cd8
-	b2sums = eedbf8ebaa86e61b56e39cf05bad59cb283c3527c2e40253ea8228ed6ecc5629d5d7ad7ce721acda9641940180480dcc6b16099191ecebdc6a962c05b34ca0f2
+	b2sums = 00394190f5d3d4e0ca993254de544120b65c006b307b8bdc8bd9060a01aedfae441e8081eff2eb98041bdce67fb5dd3ab160cfca0046f30a072f2e2d4557b240
 
 pkgname = linux-cachyos-lts
 	pkgdesc = The Linux BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service kernel and modules

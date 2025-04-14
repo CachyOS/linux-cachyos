@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.15.0-rc1 Kernel Configuration
+# Linux/x86 6.15.0-rc2 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 14.2.1 20250207"
 CONFIG_CC_IS_GCC=y
@@ -9266,7 +9266,7 @@ CONFIG_QAT_VFIO_PCI=m
 # end of VFIO support for PCI devices
 
 CONFIG_VFIO_MDEV=m
-CONFIG_IRQ_BYPASS_MANAGER=y
+CONFIG_IRQ_BYPASS_MANAGER=m
 CONFIG_VIRT_DRIVERS=y
 CONFIG_VMGENID=y
 CONFIG_VBOXGUEST=m
