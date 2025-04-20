@@ -225,7 +225,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+    cachyos|bore|rt-bore) # CachyOS Scheduler (BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
