@@ -22,13 +22,11 @@ pkgbase = linux-cachyos-hardened
 	source = config
 	source = auto-cpu-optimization.sh
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.13/all/0001-cachyos-base-all.patch
-	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.13/sched/0001-bore-cachy.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.13/misc/0001-hardened.patch
 	b2sums = c48911f0bdabdb2534fdfb2c85c74702bdfce1befbb4085c8e931544b746c5f1b1ee48b156df3544ed1e2ee53064c7fe2dd2199879450eb0aa046a59ac51c4a0
 	b2sums = 3fe04dada0a49bcb83313a7c8d33ed0319c8864a7c2ecb0e44192f99913505673c7b41e3c00834608c51c2e023e0dd0bc17649d80ab242a7f286d62670d3c0f6
 	b2sums = 390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab
 	b2sums = db921e5ddb46aa972b1b84fedbd74d76e4bc5e0ffb42598bad613bc1f9598058ed3794e1e2e5edc57de46bda13a4f63e7abc8a337999fc184a7db5b03faf10f8
-	b2sums = 3ae7a58a83c5f36d02a7b5822628fea9a5513ec41e66966678fe17ef9a96af9356b21da4cf5e492188af19747b142e532fe79582062132901e3b8cc80bc5cdd3
 	b2sums = f02dc8303e5788b10ae8d11f79ab330cc386f94f803076381445382b0f10c3d4786b483351cbb88c0bd256444e306761d4137ea8a1aacb09ee7284da035a97ca
 
 pkgname = linux-cachyos-hardened
