@@ -93,7 +93,7 @@
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 # "none: disable LTO
-: "${_use_llvm_lto:=thin}"
+: "${_use_llvm_lto:=none}"
 
 # Use suffix -lto only when requested by the user
 # yes - enable -lto suffix
