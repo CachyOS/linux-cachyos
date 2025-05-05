@@ -166,7 +166,7 @@ pkgbase="linux-$_pkgsuffix"
 _major=6.15
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc4
+_rcver=rc5
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -174,7 +174,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -220,12 +220,10 @@ if [[ "$_cpusched" = "rt" || "$_cpusched" = "rt-bore" ]]; then
     unset _build_zfs
 fi
 
-unset _build_zfs
-
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=9c85bf180cf4747ff27d8fc0ee3409ffb0cbf3b4")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=963a89a2cfef4cc5d0f2d8b938375bd7e6e0e1e9")
 fi
 
 # NVIDIA pre-build module support
@@ -761,8 +759,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('62e3ea6de4a257fe3d6cf2eac055d7130b619b066b7836f6ba90c249d2b46059a83a15be707ab1bb803c54ec80a4a67097b6901057c7f08af9b778a496b64e82'
-        'e2a6fabca01d3d775e872cb80558f758600db5b473c72219181f78d635d0b5a7940c2029e46041eac9a01c48da042eae3393454890de2a6acd6fc4141fe6c479'
-        'f39bcb9951c8032ddd6fca30e37bb97d7d59adbd53d796f396be08b66e8865bfcff801b6901232276c37ab6b4a35eb721369318beb0856f00171e093ece0ea38'
+b2sums=('bb5079c48dfdeb2fa55d39bbeb232ea8605ff7c1f93d5cf55c04dc360b291b4692249a7b610c947562678cb87e03ac506bb4ea27c3bbda94011d559d8ded34f7'
+        'ba28eb0ccec620ddcdcf74223196aef1a14419282ce1921deea0c05b89cdb1ea1a7cb2966ba815c21a9bf2678034c900b7ca5876f5f20df73b5bbb8d8413a8c0'
+        '4b596150b915052faa21dbacde0b94f682a7c5ee4a361503a555679b563d66a9f62d2f49425e289d72892ecc2be0f6058a1ffb4184dc459b90dc3fc972412b6f'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
         '162130c38d315b06fdb9f0b08d1df6b63c1cc44ee140df044665ff693ab3cde4f55117eed12253504184ccd379fc7f9142aa91c5334dff1a42dbd009f43d8897')
