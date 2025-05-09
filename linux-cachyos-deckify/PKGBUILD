@@ -145,7 +145,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.14
-_minor=5
+_minor=6
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -155,7 +155,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + Cachy Sauce + Handheld Kernel by CachyOS with other patches and improvements.'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -705,10 +705,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('872d0b8817c7e02b5e826238c3f548488d26c1d50bd334420ac2f4feb0cf5e1f11cac7f666982b2ccdc3c816aec428e4d57139080bb0510247e9631796bdab0a'
+b2sums=('dedcadc0b7506f620da3ac849446539e83d694f0955d5417e063b6680d53ef8993eeef40562ae8dae9249a21bea9746093f8873a360dd74f6b139fbafdd7b9ac'
         'fac734da9950eadf114647eabe9540b69636ab1ca401c55d434b3a957b8e0027f2d54939e7a2fe154aec36f09f023a5268de47c0ff3edd033ef85cdc1a82459f'
         '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
-        '7779ea9233cec0daa350ba8d9c73d86429c5d9beb2af526ea0cb997d440188a2ccaec55c7f4166afb4f323825dc7e005b32d141378753bf271a26b71588ce3e6'
+        '676a7c55054cb8c6a29a8999a01ec7de22e76118333d5d2349e63c00f126cb69851fff3ca1c180f69a7e272ae0d47308be25cc1cdc95f50974cc9f97f05d9e26'
         'be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498'
-        'd30ed3d8fcd94ce6c756a04892daecc36966c044ee6345d83683c95155fa2b7abe0126c499d5b94db3f69d96891f64711072b33cdc0609645a2a03902e95d143'
+        'fe0677cf278424c09bfbc05e5a8e48e6b683112dca649a10c4dc7c1101a013dd943559dd600932fc5df956d500d3487ffb7f0018f173534767762000c1e9219a'
         'd684dd248a32c12befddfed7355a4b008ceb5ed1b37d992d91654eb1924e513495bfd681dc8e518e145184e021e3aabae8b8a9d2e4444cc12454c08edc5b770e')
