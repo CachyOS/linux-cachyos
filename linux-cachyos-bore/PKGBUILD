@@ -164,6 +164,9 @@ makedepends=(
   pahole
   perl
   python
+  rust
+  rust-bindgen
+  rust-src
   tar
   xz
   zstd
@@ -301,6 +304,13 @@ prepare() {
     esac
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
+
+    if ! _is_lto_kernel; then
+        echo "Enabling QR Code Panic for GCC Kernels"
+        scripts/config --set-str DRM_PANIC_SCREEN qr-code -e DRM_PANIC_SCREEN_QR_CODE \
+            --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
+            --set-val CONFIG_DRM_PANIC_SCREEN_QR_VERSION 40
+    fi
 
     ### Select tick rate
     case "$_HZ_ticks" in
@@ -570,6 +580,12 @@ _package-headers() {
 
     echo "Installing KConfig files..."
     find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
+
+    if ! _is_lto_kernel; then
+        echo "Installing Rust files..."
+        install -Dt "$builddir/rust" -m644 rust/*.rmeta
+        install -Dt "$builddir/rust" rust/*.so
+    fi
 
     echo "Installing unstripped VDSO..."
     make INSTALL_MOD_PATH="$pkgdir/usr" vdso_install \
