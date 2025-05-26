@@ -75,18 +75,11 @@
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
 : "${_hugepage:=always}"
 
-# CPU compiler optimizations - Defaults to prompt at kernel config if left empty
-# AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" "zen4"
-# Intel CPUs : "mpsc"(P4 & older Netburst based Xeon) "atom" "core2" "nehalem" "westmere" "silvermont" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "skylakex" "cannonlake" "icelake" "goldmont" "goldmontplus" "cascadelake" "cooperlake" "tigerlake" "sapphirerapids" "rocketlake" "alderlake"
-# Other options :
-# - "native_amd" (use compiler autodetection - Selecting your arch manually in the list above is recommended instead of this option)
-# - "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
+# CPU compiler optimizations - Defaults to native if left empty
+# - "native" (use compiler autodetection)
+# - "zen4" (Use znver4 compiler optimizations)
 # - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
-#
 : "${_processor_opt:=}"
-
-# This does automatically detect your supported CPU and optimizes for it
-: "${_use_auto_optimization:=yes}"
 
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
@@ -97,7 +90,7 @@
 
 # Use suffix -lto only when requested by the user
 # yes - enable -lto suffix
-# nno - disable -lto suffix
+# no - disable -lto suffix
 # https://github.com/CachyOS/linux-cachyos/issues/36
 : "${_use_lto_suffix:=no}"
 
@@ -170,13 +163,13 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.14
-_minor=8
+_major=6.15
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -196,6 +189,9 @@ makedepends=(
   pahole
   perl
   python
+  rust
+  rust-bindgen
+  rust-src
   tar
   xz
   zstd
@@ -208,7 +204,6 @@ _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
-    "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # LLVM makedepends
@@ -231,7 +226,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=92f430b00f42964b63aee373fbf6598a20f6c0cc")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=782aa343af935fa23b16ea849c63cc023aac3363")
 fi
 
 # NVIDIA pre-build module support
@@ -243,7 +238,8 @@ fi
 if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0001-Enable-atomic-kernel-modesetting-by-default.patch"
-             "${_patchsource}/misc/nvidia/0002-Add-IBT-support.patch")
+             "${_patchsource}/misc/nvidia/0002-Add-IBT-support.patch"
+             "${_patchsource}/misc/nvidia/0003-Workaround-nv_vm_flags_-calling-GPL-only-code.patch")
 fi
 
 # Use generated AutoFDO Profile
@@ -305,20 +301,14 @@ prepare() {
     if [ -n "$_processor_opt" ]; then
         MARCH="${_processor_opt^^}"
 
-        if [ "$MARCH" != "GENERIC" ]; then
-            if [[ "$MARCH" =~ GENERIC_V[1-4] ]]; then
-                X86_64_LEVEL="${MARCH//GENERIC_V}"
-                scripts/config --set-val X86_64_VERSION "${X86_64_LEVEL}"
-            else
-                scripts/config -k -d CONFIG_GENERIC_CPU
-                scripts/config -k -e "CONFIG_M${MARCH}"
-            fi
-        fi
-    fi
-
-    ### Use autooptimization
-    if [ "$_use_auto_optimization" = "yes" ]; then
-        "${srcdir}"/auto-cpu-optimization.sh
+        case "$MARCH" in
+            GENERIC_V[1-4]) scripts/config -e GENERIC_CPU -d MZEN4 -d X86_NATIVE_CPU \
+                --set-val X86_64_VERSION "${MARCH//GENERIC_V}";;
+            ZEN4) scripts/config -d GENERIC_CPU -e MZEN4 -d X86_NATIVE_CPU;;
+            NATIVE) scripts/config -d GENERIC_CPU -d MZEN4 -e X86_NATIVE_CPU;;
+        esac
+    else
+        scripts/config -d GENERIC_CPU -d MZEN4 -e X86_NATIVE_CPU
     fi
 
     ### Selecting CachyOS config
@@ -354,6 +344,13 @@ prepare() {
     esac
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
+
+    if ! _is_lto_kernel; then
+        echo "Enabling QR Code Panic for GCC Kernels"
+        scripts/config --set-str DRM_PANIC_SCREEN qr-code -e DRM_PANIC_SCREEN_QR_CODE \
+            --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
+            --set-val CONFIG_DRM_PANIC_SCREEN_QR_VERSION 40
+    fi
 
     ### Select tick rate
     case "$_HZ_ticks" in
@@ -649,6 +646,12 @@ _package-headers() {
     echo "Installing KConfig files..."
     find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
 
+    if ! _is_lto_kernel; then
+        echo "Installing Rust files..."
+        install -Dt "$builddir/rust" -m644 rust/*.rmeta
+        install -Dt "$builddir/rust" rust/*.so
+    fi
+
     echo "Installing unstripped VDSO..."
     make INSTALL_MOD_PATH="$pkgdir/usr" vdso_install \
       link=  # Suppress build-id symlinks
@@ -766,9 +769,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('7a9336a015011fd502f31f17fff4ee6826724b4401650092fabaa93a68df14bc0dbd6e43c03f85cdac622ea28c4cd57d6ab1bcb808ce0b9ddf0ec03179f1b3e2'
-        '7364b8ae5ba619f9d093e44f8616c495a3dd3ed88d6bfa17518be107d9421bead6c40196061ec43e02808fb3f559fe6cb32eb2a0df1af034e1a4e589008a2e4a'
-        '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
-        '458990e31ac67bf54d41098fad9a17c977a2185bcbf05fc70b7ca77af4f4f7e41e925be09af8cd360a56601a7b527e37a015464d77b8048cca3b9a495bbcb74a'
+b2sums=('465596c6dc053ff3a3966302a906d3edb4f7ee1ef82f8c20b96360196d3414f5b1deeafa67b8340fcdecd3617280ba9b756d7073ad15c707865e256397b4af53'
+        '314fc1f56f6c812592b4b74a42bd7ba48a8b2c4a3d0a36c21486023b5fec907ff9ce97c6e8e0f73ede2ea6743750b912f2c236fe2788e36980c160ad23838258'
+        '9547fe59559c2d620054e9170db21edbda60cb68fc9363a87c41a907f39f817c3f974e06702779212f5f9c6dea0743cb6f7da16ae763e866df49721ff22a26b9'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
-        'd684dd248a32c12befddfed7355a4b008ceb5ed1b37d992d91654eb1924e513495bfd681dc8e518e145184e021e3aabae8b8a9d2e4444cc12454c08edc5b770e')
+        '162130c38d315b06fdb9f0b08d1df6b63c1cc44ee140df044665ff693ab3cde4f55117eed12253504184ccd379fc7f9142aa91c5334dff1a42dbd009f43d8897')
