@@ -49,12 +49,11 @@ Scheduler** Scheduler by [Alfred Chen](https://gitlab.com/alfredchen) -
 ### :hammer_and_wrench: Advanced building & compiling
 
 - Very customizable PKGBUILD with many features and improvements.
-- Auto detection of CPU architecture and setting the appropriate compiler flags.
 - Support for building with GCC or Clang.
 - Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 1000Hz
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 - Support for generating and using AutoFDO profiles, which is a PGO-like
-optimization. See more: https://cachyos.org/blog/2411-kernel-autofdo/
+optimization. See for details: https://cachyos.org/blog/2411-kernel-autofdo/
 
 ### :abacus: CPU enhancements
 
@@ -62,29 +61,30 @@ optimization. See more: https://cachyos.org/blog/2411-kernel-autofdo/
 - AMD P-State Preferred Core / amd-pstate enhancements and fixes from `linux-next`.
 - Support for RT kernel builds with BORE
 - Cachy Sauce `CONFIG_CACHY`, enables various tweaks for the scheduler and other settings
-- Includes patches to improve performance of CRC32 and AES128 crypto.
 
 ### :bookmark_tabs: Filesystem & memory
 
 - ZFS Filesystem support and pre-built modules for our kernels in the repository
 - Support for building NVIDIA modules with some patches. Ready modules for
 binary kernel builds can be found in the repository.
-- Latest & improved ZSTD 1.5.6 patch-set
-- KSM patch for proper working of uksmd daemon from pf
+- Performance improvements for bfq and mq-deadline I/O schedulers.
+- Support for alternative [ADIOS](https://github.com/firelzrd/adios) I/O scheduler
+- Support for [le9uo](https://github.com/firelzrd/le9uo) patch to prevent page thrashing under memory pressure
 - Memory management tweaks from zen-kernel (compaction, watermark)
 
 ### :arrow_heading_down: Other features
 
+- Async shutdown patches
+- ASUS patches included to support for more hardware
 - Cherry-picked Clear Linux patches
 - Back-ported patches from `linux-next`
 - ACS Override support
 - AMDGPU: Allow override of min_powercap with `amdgpu_ignore_min_pcap`
 - Steam Deck Patches included - Audio, HW Quirks, HID
-- Rog Ally patches included
+- ROG Ally patches included
 - v4l2loopback modules as default included
 - HDR support enabled
 - Various GCC Optimization flags applied (`-fivopts -fmodulo-sched`)
-- NTSync module support (`NTSYNC=m`)
 - T2 Macbook support as default included
 
 ### [Explaination of the kernel variants](https://wiki.cachyos.org/features/kernel)
@@ -305,10 +305,10 @@ Nyx does provide a precompiled CachyOS Kernel and a bunch of other interesting p
 Just follow this [README](https://github.com/chaotic-cx/nyx#how-to-use-it)
 
 ## Support
+
 **Discord:** <https://discord.gg/cachyos-862292009423470592> <br />
 **Forum:** <https://discuss.cachyos.org> <br />
 **Telegram:** <https://t.me/+zCzPX4cAFjk1MTYy> <br />
-**Matrix:** <https://matrix.cachyos.org> <br />
 
 ## Donations appreciated for maintaining repositories and build server. Thank you for your support!
 **PayPal:** <https://paypal.me/pttrr> <br />
@@ -318,6 +318,7 @@ Just follow this [README](https://github.com/chaotic-cx/nyx#how-to-use-it)
 **LTC:** LgGTwcEBcXqMgNT6XyyNWABMb7dZVtVg9w
 
 ## Valueable Contributors
+
 [firelzrd](https://github.com/firelzrd/bore-scheduler) for the BORE Scheduler <br />
 [Arch Linux](https://archlinux.org) for the great linux operating system <br />
 [And all other Kernel Developers and Supporters](https://github.com/torvalds/linux) <br />
