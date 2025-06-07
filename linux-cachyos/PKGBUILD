@@ -87,17 +87,18 @@
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
 # "thin-dist: Similar to thin, but uses a distributed model rather than in-process: https://discourse.llvm.org/t/rfc-distributed-thinlto-build-for-kernel/85934"
 # "none: disable LTO
-: "${_use_llvm_lto:=thin}"
+: "${_use_llvm_lto:=none}"
 
 # Use suffix -lto only when requested by the user
+# Enabled by default.
 # yes - enable -lto suffix
 # no - disable -lto suffix
 # https://github.com/CachyOS/linux-cachyos/issues/36
-: "${_use_lto_suffix:=no}"
+: "${_use_lto_suffix:=yes}"
 
 # Use suffix -gcc when requested by the user
-# Enabled by default to show the difference between LTO kernels and GCC kernels
-: "${_use_gcc_suffix:=yes}"
+# This was added to facilitate https://github.com/CachyOS/linux-cachyos/issues/286
+: "${_use_gcc_suffix:=no}"
 
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
