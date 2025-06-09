@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization:=yes/_use_auto_optimization:=no/" {}
 ## Enable ZFS
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs:=no/_build_zfs:=yes/" {}
 ## Enable Zen 4
