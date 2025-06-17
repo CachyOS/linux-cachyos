@@ -176,7 +176,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate'
-pkgrel=1
+pkgrel=2
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -200,7 +200,7 @@ makedepends=(
 )
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=575.57.08
+_nv_ver=575.64
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
@@ -234,8 +234,7 @@ fi
 # NVIDIA pre-build module support
 if [ "$_build_nvidia" = "yes" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_ver}/${_nv_pkg}.run"
-             "${_patchsource}/misc/nvidia/0001-Enable-atomic-kernel-modesetting-by-default.patch"
-             "${_patchsource}/misc/nvidia/0003-Workaround-nv_vm_flags_-calling-GPL-only-code.patch")
+             "${_patchsource}/misc/nvidia/0001-Enable-atomic-kernel-modesetting-by-default.patch")
 fi
 
 if [ "$_build_nvidia_open" = "yes" ]; then
@@ -524,7 +523,6 @@ prepare() {
 
         # Use fbdev and modeset as default
         patch -Np1 -i "${srcdir}/0001-Enable-atomic-kernel-modesetting-by-default.patch" -d "${srcdir}/${_nv_pkg}/kernel"
-        patch -Np1 -i "${srcdir}/0003-Workaround-nv_vm_flags_-calling-GPL-only-code.patch" -d "${srcdir}/${_nv_pkg}/kernel"
     fi
 
     if [ "$_build_nvidia_open" = "yes" ]; then
@@ -777,7 +775,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('19c36c0ebbb7e8ebf975ebbbb980fc24262c94f4d6e5c910e4b6818286bd6db16bafc07532fe00dab0b74ecd64071bda3dd359ff82dc8497aed98b6d395b3a33'
+b2sums=('92ce9cd6eee860cfc9b3756cb13c05c0ffb6e5736a8b6b53bbb2344ce0d15d150cdc5f73a65708da701bf62f039a7de1b8dbd1542254503f3320ad0421a04422'
         '7c5fceaf9d6bf75b51a0a75eb842c31fc32c02b22981ef30ba5a6749e1ae40c00be4e0f8ebaf2315df5a7d2af6d424c921cafec63867350aa77926aa58730fe7'
         'fac85a36c93136b6c3687370f4e569c6f42f850aeabc045f91278a6786fc219bf1a56c7b9ffdf8041fb5e8fb108ccf5e75fac473730789ced64a9e817288d4af'
         '162130c38d315b06fdb9f0b08d1df6b63c1cc44ee140df044665ff693ab3cde4f55117eed12253504184ccd379fc7f9142aa91c5334dff1a42dbd009f43d8897')
