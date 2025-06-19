@@ -176,7 +176,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate'
-pkgrel=2
+pkgrel=3
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -228,7 +228,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=782aa343af935fa23b16ea849c63cc023aac3363")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=725d591cf34aca2a4b1f19f2a733def2c8c8dc41")
 fi
 
 # NVIDIA pre-build module support

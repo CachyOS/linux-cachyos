@@ -147,7 +147,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.12
-_minor=33
+_minor=34
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -157,7 +157,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -207,7 +207,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=92f430b00f42964b63aee373fbf6598a20f6c0cc")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=725d591cf34aca2a4b1f19f2a733def2c8c8dc41")
 fi
 
 # NVIDIA pre-build module support
@@ -701,7 +701,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('988ce7b77ea3c39986de31e4e31cefc43857bc10399262a4b7dffdeec4b615dbed29642930709f26c05421d95ab2e2fa60ca2962abc51c41cac7bb5dc9e33ac7'
+b2sums=('a1527edf5ea06d55ad4468341d2e8cc44406df1edfe1a619ece86692e42afe7f5919ee051942fc9e70c47d79bcd4f0fc2e54ae32c79392702d8493596dca1a83'
         '812287e8db62dc76aa7b60b027680d567e654d331381c637d76f7247719e74a7368e7991d5573ea8d14f09c38c116e88af79d55d7a41f06ff377068477518a28'
         '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
         'c004fdc9b021cd1932076ba72d495f67670ccb60f4136a49a57a3c58e785091227349a72507e786667ba0bda2fe2f3435238549f883aff8590e825a6d76f16b4'
