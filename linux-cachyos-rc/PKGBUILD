@@ -110,7 +110,7 @@
 # Build the zfs module in to the kernel
 # WARNING: The ZFS module doesn't build with selected RT sched due to licensing issues.
 # If you use ZFS, refrain from building the RT kernel
-: "${_build_zfs:=n}"
+: "${_build_zfs:=no}"
 
 # Builds the nvidia module and package it into a own base
 # This does replace the requirement of nvidia-dkms
