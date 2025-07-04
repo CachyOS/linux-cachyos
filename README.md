@@ -50,7 +50,7 @@ Scheduler** Scheduler by [Alfred Chen](https://gitlab.com/alfredchen) -
 
 - Very customizable PKGBUILD with many features and improvements.
 - Support for building with GCC or Clang.
-- Choose between 300Hz, 500Hz, 600 Hz ,750Hz and 1000Hz. Defaults to 1000Hz
+- Choose between 300Hz, 500Hz, 600 Hz, 750Hz and 1000Hz. Defaults to 1000Hz
 - Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
 - Support for generating and using AutoFDO profiles, which is a PGO-like
 optimization. See for details: https://cachyos.org/blog/2411-kernel-autofdo/
