@@ -176,7 +176,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate'
-pkgrel=1
+pkgrel=2
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -778,4 +778,4 @@ done
 b2sums=('b3fd7239db3b9f147e1b2394f8307433077059f01dad1b70359b5e1ca3ce00f961a2d24ca13f54ff1fed7fb8c9026c7684c0a506295c0c8052825e824a0e293b'
         'ee574961ecab0c20667d665cf8428d843bb449cbf46b9ad860edc0a6f28cc77695834e97fad7d177db49d3190591c7e35cf960bcb68236ec48ce774a9832dd74'
         '4039c6781aff9dd1f2dde131e327ec143d94abcf6a918bdf6178e265808c0e56f3581d52e45876702b4c440787c87fe5b846ede1c0e035b230c3f851dfce3c9c'
-        '162130c38d315b06fdb9f0b08d1df6b63c1cc44ee140df044665ff693ab3cde4f55117eed12253504184ccd379fc7f9142aa91c5334dff1a42dbd009f43d8897')
+        '573aa7c201a2cac7b440e1399672c0a2614d9ad8c474c6f839dc3168895417416551a9814d9e3926bb2b7ae4e97798468fb8a7c90143215cb99486b9dfdb8f7e')
