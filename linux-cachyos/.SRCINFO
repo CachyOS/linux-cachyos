@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux BORE + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.
 	pkgver = 6.15.7
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
