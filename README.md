@@ -128,8 +128,8 @@ Our [repositories](https://mirror.cachyos.org/) contain optimized Arch Linux and
 | Repository | Target CPUs | Package Coverage | Optimization Level |
 |------------|-------------|------------------|--------------------|
 | `znver4` | AMD Zen 4 & Zen 5 | Full package set | Zen4-specific optimizations |
-| `x86-64-v4` | Intel Haswell+ / AMD Excavator+ | Full package set | AVX2, BMI1/2, FMA |
-| `x86-64-v3` | Intel Nehalem+ / AMD Bulldozer+ | Full package set | AVX, SSE4.2, SSSE3 |
+| `x86-64-v4` | Intel Haswell+ / AMD Excavator+ | Full package set | AVX, AVX2, AVX512, SSE4.2, SSSE3 |
+| `x86-64-v3` | Intel Nehalem+ / AMD Bulldozer+ | Full package set | AVX, AVX2, SSE4.2, SSSE3 |
 | `x86-64` | All x86-64 CPUs | Kernels only | Basic optimizations |
 
 ### Quick Installation
