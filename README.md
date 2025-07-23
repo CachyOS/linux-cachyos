@@ -1,230 +1,244 @@
 <div align="center">
   <img src="https://github.com/CachyOS/calamares-config/blob/grub-3.2/etc/calamares/branding/cachyos/logo.png" width="64" alt="CachyOS logo"></img>
   <br/>
-  <h1 align="center">CachyOS</h1>
-  <p align="center">CachyOS provides enhanced kernels that offer improved performance and other benefits.</p>
+  <h1 align="center">CachyOS Linux Kernels</h1>
+  <p align="center">Enhanced Linux kernels with improved performance, multiple CPU schedulers, and advanced optimizations.</p>
 </div>
 
+## Table of Contents
 
-- [General Information about kernels](#general-information-about-kernels)
-  - [linux-cachyos](#linux-cachyos)
-  - [Features](#features)
-- [CachyOS repositories](#cachyos-repositories)
-  - [How to add CachyOS repositories](#how-to-add-cachyos-repositories)
-  - [Check CPU compatibility](#check-cpu-compatibility)
-  - [Uninstalling CachyOS repositories](#uninstalling-cachyos-repositories)
-  - [Install SCX schedulers](#install-scx-schedulers)
-- [Other GNU/Linux distributions](#other-gnulinux-distributions)
-  - [Gentoo](#gentoo)
-  - [Fedora](#fedora)
-  - [NixOS](#NixOS)
- - [Support](#support)
+- [Overview](#overview)
+- [Kernel Variants & Schedulers](#kernel-variants--schedulers)
+- [Features](#features)
+  - [Performance Optimizations](#performance-optimizations)
+  - [CPU Enhancements](#cpu-enhancements)
+  - [Filesystem & Memory](#filesystem--memory)
+  - [Additional Features](#additional-features)
+- [CachyOS Repositories](#cachyos-repositories)
+  - [Quick Installation](#quick-installation)
+  - [Manual Installation](#manual-installation)
+  - [CPU Compatibility Check](#cpu-compatibility-check)
+  - [Repository Configuration](#repository-configuration)
+- [SCX Schedulers](#scx-schedulers)
+- [Other Distributions](#other-distributions)
+- [Support & Community](#support--community)
+- [Contributors](#contributors)
 
-# General Information about kernels
-## Scheduler Support
+## Overview
 
-We have provided all these CPU schedulers because each scheduler performs
-differently depending on usage. We recommend testing each one to determine
-which best suits your specific requirements.
-
-- **([BORE](https://github.com/firelzrd))** **Burst-Oriented Response
-Enhancer** Scheduler by [firelzrd](https://github.com/firelzrd/bore-scheduler)
-`linux-cachyos` / `linux-cachyos-bore`
-
-- **([EEVDF](https://lwn.net/Articles/927530/))** **Earliest Eligible Virtual
-Deadline** - `linux-cachyos-eevdf`
-
-- **([BMQ](https://gitlab.com/alfredchen/linux-prjc))** **BitMap queue CPU
-Scheduler** Scheduler by [Alfred Chen](https://gitlab.com/alfredchen) -
-`linux-cachyos-bmq`
-
+CachyOS provides a collection of enhanced Linux kernels designed for improved performance across different workloads. Our kernels feature multiple CPU schedulers, advanced compiler optimizations, and carefully selected patches to deliver better responsiveness and throughput.
 
 > [!NOTE]
-> The CachyOS repositories provide prebuilt kernels in three different
-> march versions: `x86-64`, `x86-64-v3`,`x86-64-v4` and `znver4`. The default
-> `linux-cachyos` kernel is compiled with Clang, Thin LTO and uses our AutoFDO + Propeller profile.
-> For this kernel there is a `linux-cachyos-gcc` variant available.
+> All CachyOS kernels are available in multiple architecture optimizations: `x86-64`, `x86-64-v3`, `x86-64-v4`, and `znver4`. The default `linux-cachyos` kernel is compiled with Clang and Thin LTO, utilizing AutoFDO + Propeller profiling for optimal performance.
+
+## Kernel Variants & Schedulers
+
+Each scheduler is optimized for different use cases. We recommend testing each one to find the best fit for your specific requirements:
+
+### Available Schedulers
+
+- **[BORE](https://github.com/firelzrd/bore-scheduler)** - **Burst-Oriented Response Enhancer**
+  - Packages: `linux-cachyos`, `linux-cachyos-bore`
+  - Best for: Interactive workloads and gaming
+  - Developer: [firelzrd](https://github.com/firelzrd)
+
+- **[EEVDF](https://lwn.net/Articles/927530/)** - **Earliest Eligible Virtual Deadline First**
+  - Package: `linux-cachyos-eevdf`
+  - Best for: General-purpose computing with fair scheduling
+  - Status: Upstream Linux scheduler
+
+- **[BMQ](https://gitlab.com/alfredchen/linux-prjc)** - **BitMap Queue CPU Scheduler**
+  - Package: `linux-cachyos-bmq`
+  - Best for: Low-latency applications
+  - Developer: [Alfred Chen](https://gitlab.com/alfredchen)
+
+### Specialized Variants
+
+- **`linux-cachyos-hardened`** - Security-focused kernel with hardening patches
+- **`linux-cachyos-lts`** - Long Term Support version for stability
+- **`linux-cachyos-rt-bore`** - Real-time kernel with BORE scheduler
+- **`linux-cachyos-server`** - Server-optimized configuration
+- **`linux-cachyos-deckify`** - Steam Deck optimized variant
+
+### Compiler Variants
+
+- **`linux-cachyos`** - Default Clang-compiled kernel with Thin LTO
+- **`linux-cachyos-gcc`** - GCC-compiled variant for compatibility
+
+> [!TIP]
+> For detailed explanations of each kernel variant, visit our [Kernel Wiki](https://wiki.cachyos.org/features/kernel).
 
 ## Features
-### :hammer_and_wrench: Advanced building & compiling
 
-- Very customizable PKGBUILD with many features and improvements.
-- Support for building with GCC or Clang.
-- Choose between 300Hz, 500Hz, 600 Hz, 750Hz and 1000Hz. Defaults to 1000Hz
-- Kernel Control Flow Integrity (kCFI) selectable when using `LLVM`
-- Support for generating and using AutoFDO profiles, which is a PGO-like
-optimization. See for details: https://cachyos.org/blog/2411-kernel-autofdo/
+### Performance Optimizations
 
-### :abacus: CPU enhancements
+- **Advanced Compilation**: Highly customizable PKGBUILD with support for both GCC and Clang compilers
+- **Link Time Optimization (LTO)**: Thin LTO enabled by default for better performance
+- **Profile-Guided Optimization**: AutoFDO + Propeller profiling for optimal code generation ([Learn more](https://cachyos.org/blog/2411-kernel-autofdo/))
+- **Kernel Control Flow Integrity (kCFI)**: Available when using LLVM for enhanced security
+- **Timer Frequency Options**: Configurable between 300Hz, 500Hz, 600Hz, 750Hz, and 1000Hz (default: 1000Hz)
+- **Architecture Optimizations**: Support for x86-64-v3, x86-64-v4, and AMD Zen4 specific builds
+- **Compiler Optimizations**: Advanced GCC flags including `-fivopts` and `-fmodulo-sched`
 
-- 3 different scheduler are supported: `BORE`, `EEVDF` and `BMQ` scheduler
-- AMD P-State Preferred Core / amd-pstate enhancements and fixes from `linux-next`.
-- Support for RT kernel builds with BORE
-- Cachy Sauce `CONFIG_CACHY`, enables various tweaks for the scheduler and other settings
+### CPU Enhancements
 
-### :bookmark_tabs: Filesystem & memory
+- **Multiple Schedulers**: BORE, EEVDF, and BMQ schedulers for different workload optimization
+- **AMD P-State Enhancements**: Preferred Core support and latest amd-pstate improvements from linux-next
+- **Real-Time Support**: RT kernel builds available with BORE scheduler integration
+- **CachyOS Sauce**: Custom `CONFIG_CACHY` configuration with scheduler and system tweaks
+- **Low-Latency Optimizations**: Patches for improved responsiveness and reduced jitter
 
-- ZFS Filesystem support and pre-built modules for our kernels in the repository
-- Support for building NVIDIA modules with some patches. Ready modules for
-binary kernel builds can be found in the repository.
-- Performance improvements for bfq and mq-deadline I/O schedulers.
-- Support for alternative [ADIOS](https://github.com/firelzrd/adios) I/O scheduler
-- Support for [le9uo](https://github.com/firelzrd/le9uo) patch to prevent page thrashing under memory pressure
-- Memory management tweaks from zen-kernel (compaction, watermark)
+### Filesystem & Memory
 
-### :arrow_heading_down: Other features
+- **ZFS Support**: Built-in ZFS filesystem support with pre-compiled modules
+- **NVIDIA Integration**: 
+  - Proprietary NVIDIA driver modules with patches
+  - Open-source NVIDIA driver support
+  - Ready-to-use modules in repository
+- **I/O Scheduler Improvements**:
+  - Enhanced BFQ and mq-deadline performance
+  - Alternative [ADIOS](https://github.com/firelzrd/adios) I/O scheduler support
+- **Memory Management**:
+  - [le9uo](https://github.com/firelzrd/le9uo) patch for preventing page thrashing under memory pressure
+  - Zen-kernel memory management tweaks (compaction, watermark optimization)
 
-- Async shutdown patches
-- ASUS patches included to support for more hardware
-- Cherry-picked Clear Linux patches
-- Back-ported patches from `linux-next`
-- ACS Override support
-- AMDGPU: Allow override of min_powercap with `amdgpu_ignore_min_pcap`
-- Steam Deck Patches included - Audio, HW Quirks, HID
-- ROG Ally patches included
-- v4l2loopback modules as default included
-- HDR support enabled
-- Various GCC Optimization flags applied (`-fivopts -fmodulo-sched`)
-- T2 Macbook support as default included
+### Additional Features
 
-### [Explaination of the kernel variants](https://wiki.cachyos.org/features/kernel)
+#### Hardware Support
+- **Gaming Hardware**: Steam Deck patches (Audio, HW Quirks, HID) and ROG Ally support
+- **Apple Hardware**: T2 MacBook support included by default
+- **ASUS Hardware**: Extended ASUS hardware compatibility patches
+- **Graphics**: HDR support enabled, AMDGPU min_powercap override (`amdgpu_ignore_min_pcap`)
 
-# [CachyOS repositories](https://mirror.cachyos.org/)
+#### System Enhancements
+- **Boot & Shutdown**: Async shutdown patches for faster system operations
+- **Multimedia**: v4l2loopback modules included by default
+- **Virtualization**: ACS Override support for VFIO/GPU passthrough
+- **Upstream Integration**: Cherry-picked patches from Clear Linux and linux-next
 
-The repositories contain both Arch Linux and CachyOS packages, which have been
-re-built with flags optimized for performance, stability, and security.
+> [!INFO]
+> For comprehensive details about each kernel variant and their specific optimizations, visit our [Kernel Documentation](https://wiki.cachyos.org/features/kernel).
 
-- `znver4` - Dedicated Zen4 optimized repository used for Zen 4 and Zen 5 CPUs
-- `x86-64-v4` - all Arch Linux packages with enhanced compilation flags
-- `x86-64-v3` - all Arch Linux packages with enhanced compilation flags
-- `x86-64` - currently only kernel packages
+## CachyOS Repositories
 
-## How to add CachyOS repositories
+Our [repositories](https://mirror.cachyos.org/) contain optimized Arch Linux and CachyOS packages rebuilt with performance, stability, and security enhancements.
 
-### Option 1: Automated Installation of CachyOS repositories
+### Available Repository Tiers
 
-We've made it easy for you! Simply run the following commands to use our helper
-script that does all the work for you.  😉
+| Repository | Target CPUs | Package Coverage | Optimization Level |
+|------------|-------------|------------------|--------------------|
+| `znver4` | AMD Zen 4 & Zen 5 | Full package set | Zen4-specific optimizations |
+| `x86-64-v4` | Intel Haswell+ / AMD Excavator+ | Full package set | AVX2, BMI1/2, FMA |
+| `x86-64-v3` | Intel Nehalem+ / AMD Bulldozer+ | Full package set | AVX, SSE4.2, SSSE3 |
+| `x86-64` | All x86-64 CPUs | Kernels only | Basic optimizations |
 
-Run the following commands:
+### Quick Installation
 
-1. Get archive with script
+**Automated Setup (Recommended)**
 
-```
+Our installation script automatically detects your CPU and configures the optimal repositories:
+
+```bash
+# Download and extract the installer
 curl -O https://mirror.cachyos.org/cachyos-repo.tar.xz
-```
-
-2. Extract and enter into the archive
-```
 tar xvf cachyos-repo.tar.xz && cd cachyos-repo
-```
 
-3. Run script with sudo
-```
+# Run the automated installer
 sudo ./cachyos-repo.sh
 ```
 
-#### Behaviour of script
+**What the script does:**
+- Auto-detects your CPU architecture support
+- Configures appropriate repository tiers
+- Backs up your existing `pacman.conf`
+- Sets up GPG keys and mirrors
 
-1. Script will auto-detect CPU architecture, if CPU has `x86-64-v4` or `x86-64-v3`
-support, script will automatically use the repositories, which are optimized
-with this flag and some other flags.
+For more information, visit our [GitHub](https://github.com/cachyos) or join our [Discord](https://discord.gg/cachyos-862292009423470592) community.
 
-2. Script will backup your old `pacman.conf`.
+### Manual Installation
 
-For more information, check out our [GitHub](https://github.com/cachyos) or
-join our [Discord](https://discord.gg/cachyos-862292009423470592) community.
+**Step 1: Add CachyOS Signing Keys**
 
-### Option 2: Manual Installation
-
-1. Add CachyOS signing keys
-
-```
+```bash
 sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
 sudo pacman-key --lsign-key F3B607488DB35A47
 ```
 
-2. Install required packages
+**Step 2: Install Required Packages**
 
-> [!CAUTION]
-> Installing the CachyOS Pacman, will install a forked pacman with
-> features added from CachyOS, like "INSTALLED_FROM" and an automatic
-> architecture check.
->
-> Pacman 6.1 added a feature validation feature, which could lead when using the
-> Arch Linux pacman into warnings. We are working with Arch Linux to provide a
-> proper compatibility again.
->
-> If you want to avoid this, don't add the "cachyos" repository, which contains
-> the customized pacman. All other repositories like cachyos-v3, cachyos-v4,
-> cachyos-extra/core-v3/4 are fine to add.
-
-```
-sudo pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
+```bash
+sudo pacman -U \
+    'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
     'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-22-1-any.pkg.tar.zst' \
     'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-22-1-any.pkg.tar.zst' \
     'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-22-1-any.pkg.tar.zst' \
     'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-7.0.0.r7.g1f38429-1-x86_64.pkg.tar.zst'
 ```
 
-If you want to go back to the Arch Linux repositories and had our version of
-pacman installed, you will need to run the following command after the rollback
-to avoid getting ``%INSTALLED_DB%`` warnings:
+> [!CAUTION]
+> **About CachyOS Pacman**: This installs a forked version of pacman with CachyOS-specific features like `INSTALLED_FROM` tracking and automatic architecture detection. While this provides enhanced functionality, it may cause compatibility warnings with standard Arch Linux workflows.
+>
+> **Alternative**: If you prefer to avoid the custom pacman, skip the `cachyos` repository and only use the optimized package repositories (`cachyos-v3`, `cachyos-v4`, `cachyos-extra`, etc.).
 
-```
+**Rollback Instructions**
+
+If you need to revert to standard Arch repositories after using CachyOS pacman:
+
+```bash
 sudo find /var/lib/pacman/local/ -type f -name "desc" -exec sed -i '/^%INSTALLED_DB%$/,+2d' {} \;
 ```
 
-## Check CPU compatibility
+### CPU Compatibility Check
 
-If you want to add our repositories manually, you must check the compatibility
-of the CPU with cachyos repositories.
+Before manually configuring repositories, verify your CPU's instruction set support.
 
 > [!NOTE]
-> If you are using the script above to add CachyOS repositories, you can skip
-> the check.
+> Skip this step if using the automated installation script—it handles detection automatically.
 
-#### 1. Check support by running the following the command
+**Check Your CPU Support**
 
-```
+```bash
 /lib/ld-linux-x86-64.so.2 --help | grep supported
 ```
 
-#### 2. Understanding of command output
+**Understanding the Output**
 
-Pay attention to the following text with brackets. **(supported, searched)**
+Look for the `(supported, searched)` indicators:
 
-- If you see `x86-64-v4 (supported, searched)`, that means the **CPU is
-compatible** and can use **x86-64-v4** instruction set.
+- ✅ **`x86-64-v4 (supported, searched)`** = CPU supports v4 instruction set
+- ❌ **`x86-64-v4`** (without parentheses) = CPU does NOT support v4
 
-- If you see `x86-64-v4`, that means the **CPU is incompatible** and can't use
-**x86-64-v4** instruction set.
-
-#### Example of CPU compatible with x86-64-v4 instruction set
+**Example Output for Compatible CPU:**
 ```
-> /lib/ld-linux-x86-64.so.2 --help | grep supported
+$ /lib/ld-linux-x86-64.so.2 --help | grep supported
   x86-64-v4 (supported, searched)
   x86-64-v3 (supported, searched)
   x86-64-v2 (supported, searched)
 ```
 
-### 3. Adding cachyos repositories
-You need to edit `pacman.conf` and add repositories.
-```
+**Instruction Set Requirements:**
+- **x86-64-v4**: Intel Haswell (2013+) / AMD Excavator (2015+)
+- **x86-64-v3**: Intel Nehalem (2008+) / AMD Bulldozer (2011+)
+- **x86-64-v2**: Intel Core 2 (2006+) / AMD K8 (2003+)
+
+### Repository Configuration
+
+Edit your pacman configuration to add the appropriate repositories:
+
+```bash
 sudo nano /etc/pacman.conf
 ```
 
-#### if your CPU supports `x86-64`, then add only `[cachyos]` repositories
-```
-# cachyos repos
+**For x86-64 (Basic) Support:**
+```ini
+# CachyOS repositories
 [cachyos]
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-#### if your CPU supports `x86-64-v3`, then add `[cachyos-v3]`,`[cachyos-core-v3]`,`[cachyos-extra-v3]` and `[cachyos]`
-```
-# cachyos repos
-## Only add if your CPU does v3 architecture
+**For x86-64-v3 Support:**
+```ini
+# CachyOS repositories (add in this order)
 [cachyos-v3]
 Include = /etc/pacman.d/cachyos-v3-mirrorlist
 [cachyos-core-v3]
@@ -235,10 +249,9 @@ Include = /etc/pacman.d/cachyos-v3-mirrorlist
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-#### if your CPU supports `x86-64-v4`, then add `[cachyos-v4]`, `[cachyos-core-v4]`, `[cachyos-extra-v4]` and `[cachyos]`
-```
-# cachyos repos
-## Only add if your CPU does support x86-64-v4 architecture
+**For x86-64-v4 Support:**
+```ini
+# CachyOS repositories (add in this order)
 [cachyos-v4]
 Include = /etc/pacman.d/cachyos-v4-mirrorlist
 [cachyos-core-v4]
@@ -249,76 +262,102 @@ Include = /etc/pacman.d/cachyos-v4-mirrorlist
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-Finally, update your system with CachyOS packages:
-
+**For AMD Zen4 CPUs:**
+```ini
+# CachyOS repositories (Zen4 optimized)
+[cachyos-znver4]
+Include = /etc/pacman.d/cachyos-znver4-mirrorlist
+[cachyos]
+Include = /etc/pacman.d/cachyos-mirrorlist
 ```
+
+**Finalize Installation:**
+
+```bash
+# Update package databases and system
 sudo pacman -Syu
 ```
-Enjoy improved system speed with CachyOS packages!
 
-## Debug packages
+🎉 **Congratulations!** Your system is now optimized with CachyOS packages.
 
-This is handled via debuginfod. Just add following file to
-`/etc/debuginfod/cachyos.urls`
+### Debug Packages
 
+Debug symbols are available through debuginfod. Configure it by creating:
+
+```bash
+# Create debuginfod configuration
+sudo mkdir -p /etc/debuginfod
+echo "https://debuginfod.cachyos.org" | sudo tee /etc/debuginfod/cachyos.urls
 ```
-https://debuginfod.cachyos.org
-```
 
-## Uninstalling CachyOS repositories
+### Uninstalling CachyOS Repositories
 
-See [Uninstalling Cachyos Repositories](https://wiki.cachyos.org/features/optimized_repos/#uninstalling-cachyos-repositories)
+For complete removal instructions, see our [Uninstallation Guide](https://wiki.cachyos.org/features/optimized_repos/#uninstalling-cachyos-repositories).
 
 ## SCX Schedulers
 
-See [sched-ext Tutorial](https://wiki.cachyos.org/configuration/sched-ext/)
+CachyOS supports the new sched-ext (SCX) framework for userspace schedulers. For setup and configuration, see our [sched-ext Tutorial](https://wiki.cachyos.org/configuration/sched-ext/).
 
 > [!WARNING]
-> Using sched-ext schedulers is not available when using the
-> ``linux-cachyos-bmq`` kernel.
+> SCX schedulers are **not compatible** with the `linux-cachyos-bmq` kernel variant.
 
-## Other GNU/Linux distributions
+## Other Distributions
 
-- Complete patch for simple patching on the kernel
+CachyOS kernels are available for other Linux distributions through community efforts:
 
-- It is planned to implement into our kernel builder from cachyos buildsystem,
-which works also on other distributions.
+### Gentoo Linux
 
-### Gentoo
+Community-maintained ebuilds for dynamic kernel building:
 
-Its a community maintained ebuild from a user, which can be used for a dynamic
-building right [here](https://github.com/Szowisz/CachyOS-kernels)
-
-Or simply run:
-```
+```bash
+# Add the CachyOS kernels overlay
 eselect repository add CachyOS-kernels git https://github.com/Szowisz/CachyOS-kernels
 emaint sync -r CachyOS-kernels
 ```
-### Fedora
-[Port](https://github.com/CachyOS/copr-linux-cachyos/) of kernel linux-cachyos-bore, linux-cachyos-rt-bore, linux-cachyos-bore-lto and linux-cachyos-lts by [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
 
-Visit the [COPR page](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/) for installation instructions and the latest announcements.
+**Repository:** [Szowisz/CachyOS-kernels](https://github.com/Szowisz/CachyOS-kernels)
+
+### Fedora Linux
+
+COPR repository with multiple kernel variants:
+
+- `linux-cachyos-bore`
+- `linux-cachyos-rt-bore` 
+- `linux-cachyos-bore-lto`
+- `linux-cachyos-lts`
+
+**Maintainer:** [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)  
+**Installation:** Visit the [COPR page](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/) for setup instructions
 
 ### NixOS
 
-Nyx does provide a precompiled CachyOS Kernel and a bunch of other interesting packages. This repository is maintained by [chaotic-aur](https://github.com/chaotic-cx)
-Just follow this [README](https://github.com/chaotic-cx/nyx#how-to-use-it)
+Precompiled kernels available through the Chaotic-AUR Nyx repository:
 
-## Support
+**Repository:** [chaotic-cx/nyx](https://github.com/chaotic-cx/nyx)  
+**Setup:** Follow the [installation guide](https://github.com/chaotic-cx/nyx#how-to-use-it)
 
-**Discord:** <https://discord.gg/cachyos-862292009423470592> <br />
-**Forum:** <https://discuss.cachyos.org> <br />
-**Telegram:** <https://t.me/+zCzPX4cAFjk1MTYy> <br />
+## Support & Community
 
-## Donations appreciated for maintaining repositories and build server. Thank you for your support!
-**PayPal:** <https://paypal.me/pttrr> <br />
-**Patreon:** <https://www.patreon.com/CachyOS> <br />
-**BTC:** bc1qmwglfchlc335du6pcu6w64cexu7cck0mzhyw42 <br />
-**ETH:** 0xc2dc77327F78A7B85Db3941Eb49e74F41E961649 <br />
-**LTC:** LgGTwcEBcXqMgNT6XyyNWABMb7dZVtVg9w
+### Get Help
+- **Discord:** [CachyOS Community](https://discord.gg/cachyos-862292009423470592)
+- **Forum:** [discuss.cachyos.org](https://discuss.cachyos.org)
+- **Telegram:** [CachyOS Group](https://t.me/+zCzPX4cAFjk1MTYy)
 
-## Valueable Contributors
+### Support Development
 
-[firelzrd](https://github.com/firelzrd/bore-scheduler) for the BORE Scheduler <br />
-[Arch Linux](https://archlinux.org) for the great linux operating system <br />
-[And all other Kernel Developers and Supporters](https://github.com/torvalds/linux) <br />
+Help us maintain repositories and build infrastructure:
+
+- **PayPal:** [paypal.me/pttrr](https://paypal.me/pttrr)
+- **Patreon:** [patreon.com/CachyOS](https://www.patreon.com/CachyOS)
+- **BTC:** `bc1qmwglfchlc335du6pcu6w64cexu7cck0mzhyw42`
+- **ETH:** `0xc2dc77327F78A7B85Db3941Eb49e74F41E961649`
+- **LTC:** `LgGTwcEBcXqMgNT6XyyNWABMb7dZVtVg9w`
+
+## Contributors
+
+Special thanks to our key contributors:
+
+- **[firelzrd](https://github.com/firelzrd/bore-scheduler)** - BORE Scheduler developer
+- **[Arch Linux](https://archlinux.org)** - Foundation distribution
+- **[Linux Kernel Community](https://github.com/torvalds/linux)** - Upstream kernel development
+- **All CachyOS contributors and community members**
