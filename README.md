@@ -29,7 +29,7 @@
 CachyOS provides a collection of enhanced Linux kernels designed for improved performance across different workloads. Our kernels feature multiple CPU schedulers, advanced compiler optimizations, and carefully selected patches to deliver better responsiveness and throughput.
 
 > [!NOTE]
-> All CachyOS kernels are available in multiple architecture optimizations: `x86-64`, `x86-64-v3`, `x86-64-v4`, and `znver4`. The default `linux-cachyos` kernel is compiled with Clang and Thin LTO, utilizing AutoFDO + Propeller profiling for optimal performance.
+> All CachyOS kernels are available in multiple architecture optimizations: `x86-64`, `x86-64-v3`, `x86-64-v4`, and `znver4`. The default `linux-cachyos` kernel is compiled with GCC due a bug at the NVIDIA Driver.
 
 ## Kernel Variants & Schedulers
 
@@ -45,11 +45,9 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 - **[EEVDF](https://lwn.net/Articles/927530/)** - **Earliest Eligible Virtual Deadline First**
   - Package: `linux-cachyos-eevdf`
   - Best for: General-purpose computing with fair scheduling
-  - Status: Upstream Linux scheduler
 
 - **[BMQ](https://gitlab.com/alfredchen/linux-prjc)** - **BitMap Queue CPU Scheduler**
   - Package: `linux-cachyos-bmq`
-  - Best for: Low-latency applications
   - Developer: [Alfred Chen](https://gitlab.com/alfredchen)
 
 ### Specialized Variants
@@ -62,8 +60,8 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 
 ### Compiler Variants
 
-- **`linux-cachyos`** - Default Clang-compiled kernel with Thin LTO
-- **`linux-cachyos-gcc`** - GCC-compiled variant for compatibility
+- **`linux-cachyos`** - Default GCC-compiled kernel with Thin LTO
+- **`linux-cachyos-lto`** - Clang and Thin LTO, utilizing AutoFDO + Propeller profiling for optimal performance.
 
 > [!TIP]
 > For detailed explanations of each kernel variant, visit our [Kernel Wiki](https://wiki.cachyos.org/features/kernel).
@@ -111,7 +109,6 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 - **Graphics**: HDR support enabled, AMDGPU min_powercap override (`amdgpu_ignore_min_pcap`)
 
 #### System Enhancements
-- **Boot & Shutdown**: Async shutdown patches for faster system operations
 - **Multimedia**: v4l2loopback modules included by default
 - **Virtualization**: ACS Override support for VFIO/GPU passthrough
 - **Upstream Integration**: Cherry-picked patches from Clear Linux and linux-next
