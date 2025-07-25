@@ -33,7 +33,7 @@ CachyOS provides a collection of enhanced Linux kernels designed for improved pe
 
 ## Kernel Variants & Schedulers
 
-Each scheduler is optimized for different use cases. We recommend testing each one to find the best fit for your specific requirements:
+Each scheduler is optimized for different use cases. We recommend testing each one to find the best fit for your specific requirements.
 
 ### Available Schedulers
 
