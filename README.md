@@ -263,7 +263,11 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 ```ini
 # CachyOS repositories (Zen4 optimized)
 [cachyos-znver4]
-Include = /etc/pacman.d/cachyos-znver4-mirrorlist
+Include = /etc/pacman.d/cachyos-v4-mirrorlist
+[cachyos-core-znver4]
+Include = /etc/pacman.d/cachyos-v4-mirrorlist
+[cachyos-extra-znver4]
+Include = /etc/pacman.d/cachyos-v4-mirrorlist
 [cachyos]
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
