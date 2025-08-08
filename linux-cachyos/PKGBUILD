@@ -555,14 +555,12 @@ build() {
         MODULE_FLAGS+=(NV_EXCLUDE_BUILD_MODULES='__EXCLUDE_MODULES')
         cd "${srcdir}/${_nv_pkg}/kernel"
         make "${BUILD_FLAGS[@]}" "${MODULE_FLAGS[@]}" -j"$(nproc)" modules
-        _sign_modules "${srcdir}/${_nv_pkg}/kernel"
     fi
 
     if [ "$_build_nvidia_open" = "yes" ]; then
         cd "${srcdir}/${_nv_open_pkg}"
         MODULE_FLAGS+=(IGNORE_CC_MISMATCH=yes)
         CFLAGS= CXXFLAGS= LDFLAGS= make "${BUILD_FLAGS[@]}" "${MODULE_FLAGS[@]}" -j"$(nproc)" modules
-        _sign_modules "${srcdir}/${_nv_open_pkg}/kernel-open"
     fi
 
     if [ "$_build_zfs" = "yes" ]; then
@@ -578,7 +576,6 @@ build() {
             --with-udevdir=/lib/udev --libexecdir=/usr/lib/zfs --with-config=kernel \
             --with-linux="${srcdir}/$_srcname"
         make "${BUILD_FLAGS[@]}"
-        _sign_modules "${srcdir}/zfs/module"
     fi
 
 }
@@ -736,6 +733,8 @@ _package-zfs(){
     cd "${srcdir}/zfs"
     install -dm755 "${modulesdir}"
     install -m644 module/*.ko "${modulesdir}"
+
+    _sign_modules "${modulesdir}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
     #  sed -i -e "s/EXTRAMODULES='.*'/EXTRAMODULES='${pkgver}-${pkgbase}'/" "$startdir/zfs.install"
 }
@@ -754,6 +753,8 @@ _package-nvidia(){
     install -dm755 "${modulesdir}"
     install -m644 kernel/*.ko "${modulesdir}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 LICENSE
+
+    _sign_modules "${modulesdir}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
 }
 
@@ -772,6 +773,7 @@ _package-nvidia-open(){
     install -m644 kernel-open/*.ko "${modulesdir}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 COPYING
 
+    _sign_modules "${modulesdir}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
 }
 
