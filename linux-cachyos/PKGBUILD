@@ -536,7 +536,7 @@ _sign_modules() {
     local sign_cert="$(echo "$sign_key" | sed 's/\.pem$/.x509/')"
     local hash_algo="$(grep -Po 'CONFIG_MODULE_SIG_HASH="\K[^"]*' "${srcdir}/${_srcname}/.config")"
 
-    find "$1" -maxdepth 1 -type f -name '*.ko' -print -exec \
+    find "$1" -type f -name '*.ko' -print -exec \
         "${sign_script}" "${hash_algo}" "${sign_key}" "${sign_cert}" '{}' \;
 }
 
