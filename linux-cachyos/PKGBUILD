@@ -532,12 +532,11 @@ prepare() {
 _sign_modules() {
     msg2 "Signing modules in $1"
     local sign_script="${srcdir}/${_srcname}/scripts/sign-file"
-    local sign_key="${srcdir}/${_srcname}/certs/signing_key.pem"
-    local sign_cert="${srcdir}/${_srcname}/certs/signing_key.x509"
-    local hash_algo
-    hash_algo=$(grep -Po 'CONFIG_MODULE_SIG_HASH="\K[^"]*' "${srcdir}/${_srcname}/.config")
+    local sign_key="$(grep -Po 'CONFIG_MODULE_SIG_KEY="\K[^"]*' "${srcdir}/${_srcname}/.config")"
+    local sign_cert="$(echo "$sign_key" | sed 's/\.pem$/.x509/')"
+    local hash_algo="$(grep -Po 'CONFIG_MODULE_SIG_HASH="\K[^"]*' "${srcdir}/${_srcname}/.config")"
 
-    find "$1" -name '*.ko' -print -exec \
+    find -maxdepth 1 "$1" -type f -name '*.ko' -print -exec \
         "${sign_script}" "${hash_algo}" "${sign_key}" "${sign_cert}" '{}' \;
 }
 
@@ -563,7 +562,7 @@ build() {
         cd "${srcdir}/${_nv_open_pkg}"
         MODULE_FLAGS+=(IGNORE_CC_MISMATCH=yes)
         CFLAGS= CXXFLAGS= LDFLAGS= make "${BUILD_FLAGS[@]}" "${MODULE_FLAGS[@]}" -j"$(nproc)" modules
-        _sign_modules "${srcdir}/${_nv_open_pkg}"
+        _sign_modules "${srcdir}/${_nv_open_pkg}/kernel-open"
     fi
 
     if [ "$_build_zfs" = "yes" ]; then
