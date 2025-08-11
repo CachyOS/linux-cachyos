@@ -260,8 +260,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-#    cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE), disable bore till rebased
-    bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+    cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
@@ -793,4 +792,5 @@ done
 
 b2sums=('8216e091a2db8ac92b9d11c63afa281263def1d54f1ceaf30eb5b493493add1d0b484143555e18144110afce9168a61967c3e6829b81a012aeaf3ab24fb80a10'
         '8e08d62b744fbdaf237d9f0a7c7e6b55c5af7acbe1db4813ccce0fc3b7bcf114ba5dea4728b17afd1c21251e0e216703ddbf6e292ba7df3b09c7f86013f77e52'
-        '61aa5ced5736b410b59128098c6b8739c0bfea0cc497305259505fda122dee9b9759b0d2c3b538c7661ccdc34015e014d1e8e4c9ae7b206f8357c8d9a674bd56')
+        '61aa5ced5736b410b59128098c6b8739c0bfea0cc497305259505fda122dee9b9759b0d2c3b538c7661ccdc34015e014d1e8e4c9ae7b206f8357c8d9a674bd56'
+        '996c06283942ea40f204c1c2a5de33dd1021485c8fb9658918a5d4681d35d17f13bc2d540f410adaa943cb856b846bcfb31dc716545ef3d1e4fcec5aecc104f7')

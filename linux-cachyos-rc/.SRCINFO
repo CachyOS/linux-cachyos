@@ -24,9 +24,11 @@ pkgbase = linux-cachyos-rc
 	source = https://github.com/torvalds/linux/archive/refs/tags/v6.17-rc1.tar.gz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.17/all/0001-cachyos-base-all.patch
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.17/sched/0001-bore-cachy.patch
 	b2sums = 8216e091a2db8ac92b9d11c63afa281263def1d54f1ceaf30eb5b493493add1d0b484143555e18144110afce9168a61967c3e6829b81a012aeaf3ab24fb80a10
 	b2sums = 8e08d62b744fbdaf237d9f0a7c7e6b55c5af7acbe1db4813ccce0fc3b7bcf114ba5dea4728b17afd1c21251e0e216703ddbf6e292ba7df3b09c7f86013f77e52
 	b2sums = 61aa5ced5736b410b59128098c6b8739c0bfea0cc497305259505fda122dee9b9759b0d2c3b538c7661ccdc34015e014d1e8e4c9ae7b206f8357c8d9a674bd56
+	b2sums = 996c06283942ea40f204c1c2a5de33dd1021485c8fb9658918a5d4681d35d17f13bc2d540f410adaa943cb856b846bcfb31dc716545ef3d1e4fcec5aecc104f7
 
 pkgname = linux-cachyos-rc
 	pkgdesc = The Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate kernel and modules
