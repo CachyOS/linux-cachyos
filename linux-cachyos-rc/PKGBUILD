@@ -166,7 +166,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.17
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 _rcver=rc1
 pkgver=${_major}.${_rcver}
