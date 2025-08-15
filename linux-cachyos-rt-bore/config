@@ -7118,9 +7118,9 @@ CONFIG_DRM_SCHED=m
 # Drivers for system framebuffers
 #
 CONFIG_DRM_SYSFB_HELPER=y
-CONFIG_DRM_EFIDRM=y
+CONFIG_DRM_EFIDRM=m
 CONFIG_DRM_SIMPLEDRM=y
-CONFIG_DRM_VESADRM=y
+CONFIG_DRM_VESADRM=m
 # end of Drivers for system framebuffers
 
 #
