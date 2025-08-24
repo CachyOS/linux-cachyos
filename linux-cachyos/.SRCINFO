@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux BORE + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.
-	pkgver = 6.16.2
+	pkgver = 6.16.3
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,12 +21,12 @@ pkgbase = linux-cachyos
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.16.2.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.16.3.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.16/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.16/sched/0001-bore-cachy.patch
-	b2sums = 9585d9abd085707cf5b7f3917ee41ff234083b941863fc5fa9eb7e81ed486da5fc58cd756020359f8784d29fcdac96720cc1dec2c10bef9a5c061cd2222f1680
-	b2sums = 08e0162b75c1b78f523efb71afbc06f2d37e5b8e73731517c5eec2b3663e5cf48a1ad4577304e7bf2eee270e5a9ee381cab8209c3104c8598653dce9cbcbb056
+	b2sums = 3053226fdec6b69c3bb0a4c9cae0a2595c05a74e99a78d5a0fd9f5d016d192a3b057e72b8cb8471e5f4d021d7a1887bcd7713d33b00ba02ea7eee5f6a981db19
+	b2sums = d337d07f1bb4f144f1ce18d8a349c482fc241e301d73ed53dda0beb2495789161ba664cce54ac013bf41c1779b4fee0220d4605ceb23f282766414789bce5b86
 	b2sums = ec8dae237d7c05f331cf41b0e484c94698a91aa57d913e4899b7acffbbe67551c1e40a2d6e871498fc8992e74484f1bd85114a9535e2cc199bd5a6cf642f20b0
 	b2sums = 9cd868f95e189c9cee66500bf47e3b5b215f036ffb08b8fa9b9d979728d3757c88d1c4e00feb25a18afcfe92b9e64e87b9ae8fe0d27ef432813cc00541f1c37b
 
