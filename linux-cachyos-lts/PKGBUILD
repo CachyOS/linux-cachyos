@@ -207,7 +207,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=725d591cf34aca2a4b1f19f2a733def2c8c8dc41")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=3b64a9619f8f724ecac3e280a235f6b56d20ee1c")
 fi
 
 # NVIDIA pre-build module support
