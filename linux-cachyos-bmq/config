@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.16.3 Kernel Configuration
+# Linux/x86 6.16.4 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 15.2.1 20250813"
 CONFIG_CC_IS_GCC=y
@@ -7118,9 +7118,7 @@ CONFIG_DRM_SCHED=m
 # Drivers for system framebuffers
 #
 CONFIG_DRM_SYSFB_HELPER=y
-# CONFIG_DRM_EFIDRM is not set
 CONFIG_DRM_SIMPLEDRM=y
-# CONFIG_DRM_VESADRM is not set
 # end of Drivers for system framebuffers
 
 #
