@@ -165,7 +165,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.16
-_minor=4
+_minor=5
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -175,7 +175,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -799,8 +799,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('251feef2f995c155850eac2fce5b89f37f39e9f13b6a4e6873370fdc69654692c6bf6c92f04ca7c0b5fd6088d74442afb68db71d2cc18691e23c61b0be714f34'
+b2sums=('028506d4e77f7be28f44cc5d11ec8f02311955ce77619056854fe1403ba77e164835295898104ce5b3b9d8d918ad4e890264da1f3fea23a41401f401bdd4e9d2'
         'ca08c1ad172af846ccf78e3694713a68191fec6e59fba5e0a6c90ba228fac5eab77fb8603f35190586d77f6acbf6f87fdb3a1c835d2d68e635c5e1e4d7e7ebe8'
-        '10333c7ee4e2a30fc109d138e4d9b09ae49cd0396e0e72a5379ba7ab344dfddf4f26b00788a497c67b151ca3cfd56ef50c4cf99c9928214ca9215a2a1f6025e7'
+        'c492c907fe0d2a0faadcfee76b2e197cd6e48492088f7d0ee55fd3192242eb7f3bdf7137213ca3432d205311b1d807358ab2d0bf5ea36e9caed8fc0810941d9d'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452'
         'c7f5b2e6c1f95ec961666c338057501a41f3e8de584f0985021b4c5c0ce5ddf738b56f2c50fe33d879a9cddd2236c26fb995c03445cab93580379d2e2c4669cc')
