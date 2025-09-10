@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux BORE + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.
 	pkgver = 6.16.6
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -51,7 +51,7 @@ pkgname = linux-cachyos
 	provides = NTSYNC-MODULE
 	provides = VHBA-MODULE
 	provides = ADIOS-MODULE
-	provides = linux-cachyos-lto=6.16.6-1
+	provides = linux-cachyos-lto=6.16.6-2
 	replaces = linux-cachyos-lto
 
 pkgname = linux-cachyos-headers
@@ -61,5 +61,5 @@ pkgname = linux-cachyos-headers
 	depends = clang
 	depends = llvm
 	depends = lld
-	provides = linux-cachyos-lto-headers=6.16.6-1
+	provides = linux-cachyos-lto-headers=6.16.6-2
 	replaces = linux-cachyos-lto-headers

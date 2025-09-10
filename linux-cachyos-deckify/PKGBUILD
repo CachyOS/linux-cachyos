@@ -149,7 +149,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + Cachy Sauce + Handheld Kernel by CachyOS with other patches and improvements.'
-pkgrel=1
+pkgrel=2
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -173,7 +173,7 @@ makedepends=(
 )
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=580.82.07
+_nv_ver=580.82.09
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
@@ -729,7 +729,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('2167916414ccabd98e91c7abe9e570eb852281e66483d50b1c8b00eeb27fffa757150d4c9310a8e750337d42afac7d9ba51682ae414525e79428f6bde767e53b'
-        '5cfd5439fb2d8829e295851e30a55878ff7de22929529ac110a7d37fd6d8a86b0f04d824de6e7f12637594af6f441a8f533772e5c2a2ed85acc3e53a49972468'
+        'c13c9ad1bfcd7228aeb9e14d588612cc0c0079f4529b534f17b5d03abf1683938509a71edad0137ff41d9fe6a8ad43c80c8d3913365bb5793a726b28a8a33e31'
         '776cd6368077a6504e781b2a5db3c9b82b1b0fa496bef9f24ba417dfea0d192bf9664f0dcce9822050f6bf064f991ea3883683536f74a808c3b76d4bfa364028'
         'be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498'
         'e6c9da19d7f5dd45671a068edfa0b32fc6980203f6741c389e8b0287ce4676bd1affa86c00c02157c5701026ac6b7760dd1ca353e769d11b8813cd9daf9477c7'
