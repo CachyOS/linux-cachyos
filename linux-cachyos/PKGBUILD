@@ -165,12 +165,12 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.17
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -799,7 +799,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('0edb2324be5638aa75984128aafdba3e50824187d2fcdff8794eab99d85c10c3a17d1e840053c2c83df5ee11fdf69f1c9452c57ecc9dae01c4af38180fe7821a'
-        'eed81db2b3b273b38d4326b90c26510700fd2a9efb377cfb1be1fd20b05a0506de3d2eb4f34480099c742409af24c052f17cbcd93eb54834cdf8c26c98f4f76d'
+b2sums=('44fa5ec3e5471d33171830e8890f41118daa27f10eedb8dd0fe57250463a596a6fdefbc0ee68d8afab252e7635c9ca9eb3009b1849442e3f6de6231f47d1d7df'
+        'edd7bc06d5c2677e99f75b4a768e164dca8213925d6057f34376c0c6fb9039b8b77ed8314bdae404183ae702dcf2a3cc965cd8977ca9a36fa1ca657020dca729'
         '2eb84d4c45d9b8de6f7f8cae7ef527e4b5b26c12f462cfd41604f74cda83a7b1147c1957cadeddbe0db0db0de70e158b063946a29ba5a2b3ffc5593e5915a1ac'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452')
