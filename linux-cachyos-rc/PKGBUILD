@@ -165,10 +165,10 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.17
+_major=6.18
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc7
+_rcver=rc1
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -176,7 +176,7 @@ _stable=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -240,7 +240,8 @@ fi
 if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0001-Enable-atomic-kernel-modesetting-by-default.patch"
-             "${_patchsource}/misc/nvidia/0002-Add-IBT-support.patch")
+             "${_patchsource}/misc/nvidia/0002-Add-IBT-support.patch"
+             "${_patchsource}/misc/nvidia/0003-nvidia-uvm-Remove-unused-get_devmap_page-parameter.patch")
 fi
 
 # Use generated AutoFDO Profile
@@ -526,6 +527,7 @@ prepare() {
     if [ "$_build_nvidia_open" = "yes" ]; then
         patch -Np1 -i "${srcdir}/0001-Enable-atomic-kernel-modesetting-by-default.patch" -d "${srcdir}/${_nv_open_pkg}/kernel-open"
         patch -Np1 -i "${srcdir}/0002-Add-IBT-support.patch" -d "${srcdir}/${_nv_open_pkg}/"
+        patch -Np1 -i "${srcdir}/0003-nvidia-uvm-Remove-unused-get_devmap_page-parameter.patch" -d "${srcdir}/${_nv_open_pkg}/"
     fi
 }
 
@@ -793,7 +795,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('bfb45b5f794ab9726f7237afef4832aedf32d164f1aa08feb842652be9f6134c14204832511dd2bcfbd8af7c9069a212adddf24d107e8409eb21b390e3caf3e0'
-        'aaf7ad22ac8555d22e41b00f3ecb4d279d85e4be5228d0c070791e8aab6a639c0451719cbbf335cceaaf08041451289ba2e9696491bc77b6f1dac6e02178ebd8'
-        '2eb84d4c45d9b8de6f7f8cae7ef527e4b5b26c12f462cfd41604f74cda83a7b1147c1957cadeddbe0db0db0de70e158b063946a29ba5a2b3ffc5593e5915a1ac'
-        '0c71dafb75e3ec09472f9a3a054048770334506f74a5744ad86a062fea6a2e0f2fd6a393653e058110f836192fc6f965e57036c05e9a4198d9dbbd071b4d07d3')
+b2sums=('d851ea7bf6e5f42152314d440cb258ca7e75e6b0b9d96c79d42afed19f24f056df7ca13dd8ccda2f4cd470c991a1eecce031e51d9cb4d6e59e64c0772c302f2e'
+        'f15b3e410888c11df220d48c4f874aaba3cd95345825cffca457cecdc93f5a86b37cae489952c945840df39c3048d482698c7dfdca8bfe02f2f2fbb21f7ea975'
+        '3cb438e9247bd78d0b8b2b2495b131bc111e554512e3e6369fefc366a466384009fdc62dfa354eb82c7e5495b370c54fe9cfd15dfa2974cb3585d1d42a4e341b'
+        'daa9c4eb22f7906729e6023e0e1ef36e0b904d76ac6022cdd47dd79ac764c0000dceda31b16bbdd808250a53b0b59f92f425fcc097fe1212168c5e39edc6d61c')
