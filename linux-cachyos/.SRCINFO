@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux BORE + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.
-	pkgver = 6.17.1
+	pkgver = 6.17.3
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -24,13 +24,13 @@ pkgbase = linux-cachyos
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.17.1.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.17.3.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.17/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.17/misc/dkms-clang.patch
-	b2sums = 44fa5ec3e5471d33171830e8890f41118daa27f10eedb8dd0fe57250463a596a6fdefbc0ee68d8afab252e7635c9ca9eb3009b1849442e3f6de6231f47d1d7df
+	b2sums = 9a685512a3b48f05785a66759e8f2bf8cf19b395a8200b0b35627bbaa52174b72fb9c7297a13a44318fdd665bb4810b3befceafcd1946b7d486220490661b869
 	b2sums = edd7bc06d5c2677e99f75b4a768e164dca8213925d6057f34376c0c6fb9039b8b77ed8314bdae404183ae702dcf2a3cc965cd8977ca9a36fa1ca657020dca729
-	b2sums = 2eb84d4c45d9b8de6f7f8cae7ef527e4b5b26c12f462cfd41604f74cda83a7b1147c1957cadeddbe0db0db0de70e158b063946a29ba5a2b3ffc5593e5915a1ac
+	b2sums = 043eabebe31a4f404b1e0bb8c0e3a504ff07a41b4a5a412c174ec3c99ddbd5f3d9d9beda6b91dd4e8bda4ef4e6e26f264ccd9bda0dc5aaca311c36da4856befc
 	b2sums = c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452
 
 pkgname = linux-cachyos
@@ -49,7 +49,7 @@ pkgname = linux-cachyos
 	provides = NTSYNC-MODULE
 	provides = VHBA-MODULE
 	provides = ADIOS-MODULE
-	provides = linux-cachyos-lto=6.17.1-1
+	provides = linux-cachyos-lto=6.17.3-1
 	replaces = linux-cachyos-lto
 
 pkgname = linux-cachyos-headers
@@ -59,5 +59,5 @@ pkgname = linux-cachyos-headers
 	depends = clang
 	depends = llvm
 	depends = lld
-	provides = linux-cachyos-lto-headers=6.17.1-1
+	provides = linux-cachyos-lto-headers=6.17.3-1
 	replaces = linux-cachyos-lto-headers
