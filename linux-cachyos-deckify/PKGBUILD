@@ -407,6 +407,9 @@ prepare() {
     echo "Enable USER_NS_UNPRIVILEGED"
     scripts/config -e USER_NS
 
+    echo "Enabling handheld configs"
+    scripts/config -d RCU_LAZY_DEFAULT_OFF -e AMD_PRIVATE_COLOR
+
     ### Optionally use running kernel's config
     # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
     if [ "$_use_current" = "yes" ]; then
