@@ -150,7 +150,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements'
-pkgrel=1
+pkgrel=2
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -729,5 +729,5 @@ done
 
 b2sums=('9a685512a3b48f05785a66759e8f2bf8cf19b395a8200b0b35627bbaa52174b72fb9c7297a13a44318fdd665bb4810b3befceafcd1946b7d486220490661b869'
         'edd7bc06d5c2677e99f75b4a768e164dca8213925d6057f34376c0c6fb9039b8b77ed8314bdae404183ae702dcf2a3cc965cd8977ca9a36fa1ca657020dca729'
-        '043eabebe31a4f404b1e0bb8c0e3a504ff07a41b4a5a412c174ec3c99ddbd5f3d9d9beda6b91dd4e8bda4ef4e6e26f264ccd9bda0dc5aaca311c36da4856befc'
+        '2c477e4f620e428e58fe20f5229c5c349cf993dd1122d779a5ee30f49875c536d33c500e3c752082320b9cfaf336cfcc59581f21036ade75ff4b40ed44d377e5'
         'd6059a9c1c8d70ca1f5adca6d03c623e296ebccfbee2898c6b5b92023629a6f2bcf20d41d039e1cba647ff76f4959c5426f740d9ad097d2a1a6a918d4ccc5eba')
