@@ -140,7 +140,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.17
-_minor=3
+_minor=4
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -150,7 +150,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux EEVDF scheduler + Cachy Sauce Kernel by CachyOS with other patches and improvements'
-pkgrel=2
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -727,6 +727,6 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('9a685512a3b48f05785a66759e8f2bf8cf19b395a8200b0b35627bbaa52174b72fb9c7297a13a44318fdd665bb4810b3befceafcd1946b7d486220490661b869'
+b2sums=('4999251820375def8ab39ea74fd62f08ca190a048b1cc431ec5dbe048d7f61f5af2d0b6264636d240f32bae64def9249287b6ebd31bf89ca047a75d193b5198d'
         'edd7bc06d5c2677e99f75b4a768e164dca8213925d6057f34376c0c6fb9039b8b77ed8314bdae404183ae702dcf2a3cc965cd8977ca9a36fa1ca657020dca729'
-        '2c477e4f620e428e58fe20f5229c5c349cf993dd1122d779a5ee30f49875c536d33c500e3c752082320b9cfaf336cfcc59581f21036ade75ff4b40ed44d377e5')
+        'f0fb9a672719e268cbc4995e43ee04eee31c916e15c52c619174464a11363fb9911b489b9d09147f57f20de85ba68d9f801cbfc7dcd2c92679f745653982be63')
