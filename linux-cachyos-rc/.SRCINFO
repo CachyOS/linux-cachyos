@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate
-	pkgver = 6.18.rc2
+	pkgver = 6.18.rc3
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,14 +21,14 @@ pkgbase = linux-cachyos-rc
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/torvalds/linux/archive/refs/tags/v6.18-rc2.tar.gz
+	source = https://github.com/torvalds/linux/archive/refs/tags/v6.18-rc3.tar.gz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.18/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.18/sched/0001-bore-cachy.patch
-	b2sums = c4170f276c33391f2994687c20617e279c55d173252bfec7f3bf5d166f23f4cd791a71ef422836118a0735becb6dc816d4a0957b38268e66a6a36e323c89c8a3
-	b2sums = a8bcf7047c1cccde2e6fcb42feb80cbefd765dfc8cd5b1b7def802b37f7408b659c0def1e6f29458700df38c960dad7e019e2a347dc4570f6528a28970586e24
-	b2sums = 0a1be894482335ce3498c957e8f7cf3a1287d2b6dafe490185bd289b4786aa9f2e9acd661f9c476e27a9826030d0307a337f1a09929fca69525468d51ad6a9fb
-	b2sums = daa9c4eb22f7906729e6023e0e1ef36e0b904d76ac6022cdd47dd79ac764c0000dceda31b16bbdd808250a53b0b59f92f425fcc097fe1212168c5e39edc6d61c
+	b2sums = 4033770952e055a4633cf0d52ebe4856af1d203f26417edbdef4d87faed9ea7960fac3f3a9c0668042f18fe7e44eea13c97cd3f6e911037b2cda9e86b8edfee5
+	b2sums = 54f17175efc5b3e8f43a0babc71190079e31893752e1db45ba6029296f9390c3c9cc351a6fbef925cb1b03b124d7680612f9486e69ed69a36d0bc7cb60aae3e7
+	b2sums = 9616947dfcdb0a551ce04c37d354e2bc562c7d2a5f79ec9869f1185d953f8a15c86fd3eb12502e5315743ab0c884538c91be9e329552cc8238168a62b300d29e
+	b2sums = 6a7e038901eacd16c736ff4d8a448a7b48d57c2c8904162bfdec86d1ba7a14858115f152019d8810abd96d3a27829cb5327de36cb2b462cf326b8a6644bf0204
 
 pkgname = linux-cachyos-rc
 	pkgdesc = The Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate kernel and modules
