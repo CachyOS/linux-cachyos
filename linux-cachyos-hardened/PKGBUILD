@@ -139,8 +139,8 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.15
-_minor=11
+_major=6.16
+_minor=12
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -150,7 +150,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE scheduler and hardened Kernel by CachyOS with other patches and improvements'
-pkgrel=3
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -202,7 +202,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=34f96a15c73eab27dd6ad17bb5f1263bf26e37d7")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=7e331239953e9fbe39491092361b0e73030ba49b")
 fi
 
 # NVIDIA pre-build module support
@@ -726,8 +726,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('8b2d96a3d76dbb0359c68b045d92f92274ec86df7bfc8c553a62194d9967e61995eed45c6765c0beae44df066c80b42ed1ec6ffee8aa89367864dadf50a43e43'
-        '7d193badad516131a6315c39f443a95344914d22462d6bd30837aba2fee6bff5fc7c1c94d65d3ef66bead0f6c354d24dbcb6b71a600c29b9b835292bd090facb'
-        '711c6cf6927d5accc717ab61639340425d318e9333c9b85fc8c2b41647b09fe27deea683522e5a2caf7caced0b470ab9b47bc327406d0e768719409600740133'
-        '27829c4a1d26d04fa62a0e69950d8e9c7fb1646c7be39476af85a5f63e4a964b9bea6278a8ff4308b2893c21b82173774a000f309d1fe36a06ce8a377666c158'
-        'c42214611eafd627537e67fa4f22aefd2cfaa63f5a7a6c6536ec2454e32c1649ced2b7c64ead9fe6d08d6a6c1ee89cb18205f12d8aee30ed4253eb79df16872c')
+b2sums=('86d30cc03b13e13291c4f5e2da1087c5e6e4ef75513b26f89a1e2a4ed63c4d25fdb406b887ba1222a446f62b16fe2cccf7f4fa98778d5741e069b03a0d88d1fd'
+        'de4ba49e7a6f1b1889a9d8e4fda16ec3316a32a57b5ce8b5fddc16e55bae87b41aa10f80ead0d9cd049b5901758829179dce6b32eaee2676adcad8114f5ab33a'
+        'eb85b23e0c629994452c7ae3493508e07432206371be4413b153de1b5bb7c865608a89d4a88c09f9e4998dc60aafafabeb7d3ff6705dd8fa0d09996438b9e8f2'
+        '032384c26aab85ff40d9e51a995d7670ddb40f34342163e162f14c9c0fd521b6405585087666666defe30b170615f9c4cb8523f0ae81ef6cacf71349bb710710'
+        '33a5d312ae891df521131af5eb1e47e6e446ae47d92802317230bc203543d71adcb5ca4af5cea84d92418e3d662f12305b63aecad784d8ae0f3c727484042840')

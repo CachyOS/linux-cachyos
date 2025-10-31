@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-eevdf
 	pkgdesc = Linux EEVDF scheduler + Cachy Sauce Kernel by CachyOS with other patches and improvements
-	pkgver = 6.17.5
+	pkgver = 6.17.6
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,12 +21,12 @@ pkgbase = linux-cachyos-eevdf
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.17.5.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.17.6.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.17/all/0001-cachyos-base-all.patch
-	b2sums = 972f684c9b03535affc20e9c082b1ef7ebd1590f42024e524d60080e8badcc68bce73c56b3ed03df2bb016145708abc080943e1f51c7b9bce3ed9650cc4d9f06
-	b2sums = 500d97bb42e4c76c7aa68f51140e26f478931f16805c3bb01351ae3e632a59869fa613a8525f2dd10d871f1e4a2222edc4325df647d6456da2d3896d85f1814d
-	b2sums = ea303caec2f6a1dd69e594133c4af587415c4236d8cdb24f95b42c6d82bb3da3c1f0bef3008cdefe53e859836933e327dcb1544526c04410bb32a2db20c0ea54
+	b2sums = 00861fe396f5024c50aa62d0cb235281726061200aa32aa27ae7aeeda13928c5d92cab8a27687884ae7c317f0e682ea2c779ab0ce2ebec19dc0b1f4740e2d143
+	b2sums = bc863600b02ccb6404e95e85f31b1cbc1293c663e0dd96eb0b7f42277b937849f156f509e688862d6926711e2297712bce4fdbfc04231b104b2608b1fc1ba34b
+	b2sums = d48fcde9c0c93b0a501c6e414c5dc9dd80eabc42207c8c28edbd313330658b5e74b2987bcd67438417bd14880bba278d51b92b90e1dbe27fa4bbdf68f1fcca49
 
 pkgname = linux-cachyos-eevdf
 	pkgdesc = The Linux EEVDF scheduler + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel and modules
