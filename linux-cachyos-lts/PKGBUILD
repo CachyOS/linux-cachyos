@@ -657,7 +657,7 @@ _package-zfs(){
     license=('CDDL')
 
     cd "$_srcname"
-    local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
+    local modulesdir="$pkgdir/usr/lib/modules/$(<version)/extramodules"
 
     cd "${srcdir}/zfs"
     install -dm755 "${modulesdir}"
@@ -676,7 +676,7 @@ _package-nvidia(){
     license=('custom')
 
     cd "$_srcname"
-    local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
+    local modulesdir="$pkgdir/usr/lib/modules/$(<version)/extramodules"
 
     cd "${srcdir}/${_nv_pkg}"
     install -dm755 "${modulesdir}"
@@ -695,7 +695,7 @@ _package-nvidia-open(){
     license=('MIT AND GPL-2.0-only')
 
     cd "$_srcname"
-    local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
+    local modulesdir="$pkgdir/usr/lib/modules/$(<version)/extramodules"
 
     cd "${srcdir}/${_nv_open_pkg}"
     install -dm755 "${modulesdir}"
