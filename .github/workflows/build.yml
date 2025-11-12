@@ -1,0 +1,30 @@
+name: Build and lint
+on:
+  push:
+    paths:
+      - 'linux-cachyos/PKGBUILD'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: linux-cachyos
+    strategy:
+      matrix:
+        toolchain: [GCC, LLVM]
+
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Build (${{ matrix.toolchain }})
+      id: makepkg
+      uses: CachyOS/pkgbuild-action@master
+      env:
+        _build_zfs: yes
+        _use_llvm_lto: ${{ matrix.toolchain == 'GCC' && 'none' || 'thin' }}
+      with:
+        pkgdir: "linux-cachyos"
+        namcapExcludeRules: "invalidstartdir"
+        makepkgArgs: "--skipchecksums --skippgpcheck --noconfirm -s"
