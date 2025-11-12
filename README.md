@@ -36,19 +36,11 @@ CachyOS provides a collection of enhanced Linux kernels designed for improved pe
 Each scheduler is optimized for different use cases. We recommend testing each one to find the best fit for your specific requirements.
 
 ### Available Schedulers
-
-- **[BORE](https://github.com/firelzrd/bore-scheduler)** - **Burst-Oriented Response Enhancer**
-  - Packages: `linux-cachyos`, `linux-cachyos-bore`
-  - Best for: Interactive workloads and gaming
-  - Developer: [firelzrd](https://github.com/firelzrd)
-
-- **[EEVDF](https://lwn.net/Articles/927530/)** - **Earliest Eligible Virtual Deadline First**
-  - Package: `linux-cachyos-eevdf`
-  - Best for: General-purpose computing with fair scheduling
-
-- **[BMQ](https://gitlab.com/alfredchen/linux-prjc)** - **BitMap Queue CPU Scheduler**
-  - Package: `linux-cachyos-bmq`
-  - Developer: [Alfred Chen](https://gitlab.com/alfredchen)
+| Scheduler | Full Name | Package(s) | Best for... | Developer |
+| :--- | :--- | :--- | :--- | :--- |
+| **[BORE](https://github.com/firelzrd/bore-scheduler)** | **B**urst-**O**riented **R**esponse **E**nhancer | `linux-cachyos`, `linux-cachyos-bore` | Interactive workloads & gaming | [firelzrd](https://github.com/firelzrd) |
+| **[EEVDF](https://lwn.net/Articles/927530/)** | **E**arliest **E**ligible **V**irtual **D**eadline **F**irst | `linux-cachyos-eevdf` | General-purpose computing | Peter Zijlstra |
+| **[BMQ](https://gitlab.com/alfredchen/linux-prjc)** | **B**it**M**ap **Q**ueue CPU Scheduler | `linux-cachyos-bmq` | N/A | [Alfred Chen](https://gitlab.com/alfredchen) |
 
 ### Specialized Variants
 
