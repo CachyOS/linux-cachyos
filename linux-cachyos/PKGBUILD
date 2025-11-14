@@ -165,7 +165,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.17
-_minor=7
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -175,7 +175,7 @@ _stable=${_major}.${_minor}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
-pkgrel=3
+pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -526,6 +526,7 @@ prepare() {
     if [ "$_build_nvidia_open" = "yes" ]; then
         patch -Np1 -i "${srcdir}/0001-Enable-atomic-kernel-modesetting-by-default.patch" -d "${srcdir}/${_nv_open_pkg}/kernel-open"
         patch -Np1 -i "${srcdir}/0002-Add-IBT-support.patch" -d "${srcdir}/${_nv_open_pkg}/"
+        patch -Np1 -i "${srcdir}/0006-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch" -d "${srcdir}/${_nv_open_pkg}/"
     fi
 }
 
@@ -800,7 +801,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('7338c33e209a87d2acdc80cb30066b719a1924ac38db0ac4087c4cb2ae6d510d75fbc97eeadac9bbc070afe09f29e65fd7ab18383fe677adcf993c17d4407535'
+b2sums=('1476969a9ad9252f97c16edb3c9fb37d75de3c00280af42057a2704666aa4945ac50d458e61d1e2b751e224ec38c99789b80f23636bc93f79f5b5e51a163980b'
         'bc863600b02ccb6404e95e85f31b1cbc1293c663e0dd96eb0b7f42277b937849f156f509e688862d6926711e2297712bce4fdbfc04231b104b2608b1fc1ba34b'
-        'd48fcde9c0c93b0a501c6e414c5dc9dd80eabc42207c8c28edbd313330658b5e74b2987bcd67438417bd14880bba278d51b92b90e1dbe27fa4bbdf68f1fcca49'
+        'cc2b9d95a75cdd08cdc1616258351a2e1f09057c7dde071214d3edea00cae312544c1a267558690a27da296e1f5a0729dcab4b413c0b59dee0fcbeffd877e5fc'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452')
