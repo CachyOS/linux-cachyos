@@ -155,6 +155,11 @@ _is_lto_kernel() {
     return $?
 }
 
+_is_ci_build() {
+    [[ -n "$CI" || -n "$GITHUB_RUN_ID" ]]
+    return $?
+}
+
 if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
     _pkgsuffix=cachyos-lto
 elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
@@ -407,19 +412,14 @@ prepare() {
     fi
 
     ### CI-only stuff
-    if [[ -n "$CI" || -n "$GITHUB_RUN_ID" ]]; then
+    if _is_ci_build; then
         echo "Detected build inside CI"
-        scripts/config -d CC_OPTIMIZE_FOR_PERFORMANCE \
+
+        scripts/config \
             -d CC_OPTIMIZE_FOR_PERFORMANCE_O3 \
-            -e CONFIG_CC_OPTIMIZE_FOR_SIZE \
-            -d SLUB_DEBUG \
-            -d PM_DEBUG \
-            -d PM_ADVANCED_DEBUG \
-            -d PM_SLEEP_DEBUG \
-            -d ACPI_DEBUG \
-            -d LATENCYTOP \
-            -d SCHED_DEBUG \
-            -d DEBUG_PREEMPT
+            -e CC_OPTIMIZE_FOR_SIZE \
+            -d DEBUG_KERNEL \
+            -e DEBUG_INFO_REDUCED
     fi
 
     ### Enable bbr3
@@ -549,7 +549,10 @@ _sign_modules() {
 build() {
     cd "$_srcname"
     make "${BUILD_FLAGS[@]}" -j"$(nproc)" all
-    make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
+
+    if ! _is_ci_build; then
+        make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
+    fi
 
     local MODULE_FLAGS=(
        KERNEL_UNAME="${_kernuname}"
@@ -635,7 +638,12 @@ _package-headers() {
 
     echo "Installing build files..."
     install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
-        localversion.* version vmlinux tools/bpf/bpftool/vmlinux.h
+        localversion.* version vmlinux
+
+    if ! _is_ci_build; then
+        install -Dt "$builddir" -m644 tools/bpf/bpftool/vmlinux.h
+    fi
+
     install -Dt "$builddir/kernel" -m644 kernel/Makefile
     install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
     cp -t "$builddir" -a scripts
