@@ -130,6 +130,11 @@ _is_lto_kernel() {
     return $?
 }
 
+_is_ci_build() {
+    [[ -n "$CI" || -n "$GITHUB_RUN_ID" ]]
+    return $?
+}
+
 if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
     _pkgsuffix="cachyos-${_cpusched}-lto"
 elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
@@ -366,19 +371,14 @@ prepare() {
     fi
 
     ### CI-only stuff
-    if [[ -n "$CI" || -n "$GITHUB_RUN_ID" ]]; then
+    if _is_ci_build; then
         echo "Detected build inside CI"
-        scripts/config -d CC_OPTIMIZE_FOR_PERFORMANCE \
+
+        scripts/config \
             -d CC_OPTIMIZE_FOR_PERFORMANCE_O3 \
-            -e CONFIG_CC_OPTIMIZE_FOR_SIZE \
-            -d SLUB_DEBUG \
-            -d PM_DEBUG \
-            -d PM_ADVANCED_DEBUG \
-            -d PM_SLEEP_DEBUG \
-            -d ACPI_DEBUG \
-            -d LATENCYTOP \
-            -d SCHED_DEBUG \
-            -d DEBUG_PREEMPT
+            -e CC_OPTIMIZE_FOR_SIZE \
+            -d DEBUG_KERNEL \
+            -e DEBUG_INFO_REDUCED
     fi
 
     ### Enable bbr3
