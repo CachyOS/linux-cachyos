@@ -126,7 +126,7 @@
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
-    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]]
+    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full"  || "$_use_llvm_lto" = "thin-dist" ]]
     return $?
 }
 
@@ -139,8 +139,8 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.16
-_minor=12
+_major=6.17
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -214,7 +214,8 @@ fi
 if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0001-Enable-atomic-kernel-modesetting-by-default.patch"
-             "${_patchsource}/misc/nvidia/0002-Add-IBT-support.patch")
+             "${_patchsource}/misc/nvidia/0002-Add-IBT-support.patch"
+             "${_patchsource}/misc/nvidia/0006-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch")
 fi
 
 ## List of CachyOS schedulers
@@ -464,6 +465,7 @@ prepare() {
     if [ "$_build_nvidia_open" = "yes" ]; then
         patch -Np1 -i "${srcdir}/0001-Enable-atomic-kernel-modesetting-by-default.patch" -d "${srcdir}/${_nv_open_pkg}/kernel-open"
         patch -Np1 -i "${srcdir}/0002-Add-IBT-support.patch" -d "${srcdir}/${_nv_open_pkg}/"
+        patch -Np1 -i "${srcdir}/0006-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch" -d "${srcdir}/${_nv_open_pkg}/"
     fi
 }
 
@@ -726,8 +728,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('86d30cc03b13e13291c4f5e2da1087c5e6e4ef75513b26f89a1e2a4ed63c4d25fdb406b887ba1222a446f62b16fe2cccf7f4fa98778d5741e069b03a0d88d1fd'
-        'de4ba49e7a6f1b1889a9d8e4fda16ec3316a32a57b5ce8b5fddc16e55bae87b41aa10f80ead0d9cd049b5901758829179dce6b32eaee2676adcad8114f5ab33a'
-        'eb85b23e0c629994452c7ae3493508e07432206371be4413b153de1b5bb7c865608a89d4a88c09f9e4998dc60aafafabeb7d3ff6705dd8fa0d09996438b9e8f2'
-        '032384c26aab85ff40d9e51a995d7670ddb40f34342163e162f14c9c0fd521b6405585087666666defe30b170615f9c4cb8523f0ae81ef6cacf71349bb710710'
-        '33a5d312ae891df521131af5eb1e47e6e446ae47d92802317230bc203543d71adcb5ca4af5cea84d92418e3d662f12305b63aecad784d8ae0f3c727484042840')
+b2sums=('1476969a9ad9252f97c16edb3c9fb37d75de3c00280af42057a2704666aa4945ac50d458e61d1e2b751e224ec38c99789b80f23636bc93f79f5b5e51a163980b'
+        '93e0bd13bbf3791c94f92da102039dbca8c4e53f55f2cc2e9d1b4f75bcdf2d9472350be25e5b4ddfed987f78b18c2e77195657552441410f34bd00387beb5097'
+        'cc2b9d95a75cdd08cdc1616258351a2e1f09057c7dde071214d3edea00cae312544c1a267558690a27da296e1f5a0729dcab4b413c0b59dee0fcbeffd877e5fc'
+        '966b8059310169dd0806bfad95d01b8587258113962064e3f0d7ee429bc010e62aaf201666a0c6ab7feb5f50b5aabe08b9e99cbac033c29140799bc5cb6178be'
+        '21c0b8c538d602a3bf4ef2e0ff8538430522b2cb11fc3bc42ee20c99d23c44a8921cece50a3147e6993c0be325883fd0e4e309e0ba31ca95d5244b28510b59c8')
