@@ -140,7 +140,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.17
-_minor=8
+_minor=9
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -202,7 +202,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=7e331239953e9fbe39491092361b0e73030ba49b")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=fe5ed524c72e0b2e2cd4c47ee5bc987290e89666")
 fi
 
 # NVIDIA pre-build module support
@@ -728,8 +728,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('1476969a9ad9252f97c16edb3c9fb37d75de3c00280af42057a2704666aa4945ac50d458e61d1e2b751e224ec38c99789b80f23636bc93f79f5b5e51a163980b'
+b2sums=('1e8e226364a85f3fd66e51495a99a76e377389aa48c708953aaa28b6ec669f05aab6d240365965eec5643e2fa6aee15796005b2873e8fea748e432b1d799eabc'
         '93e0bd13bbf3791c94f92da102039dbca8c4e53f55f2cc2e9d1b4f75bcdf2d9472350be25e5b4ddfed987f78b18c2e77195657552441410f34bd00387beb5097'
-        'cc2b9d95a75cdd08cdc1616258351a2e1f09057c7dde071214d3edea00cae312544c1a267558690a27da296e1f5a0729dcab4b413c0b59dee0fcbeffd877e5fc'
+        '39b60319ce157ad58d655c220d34ede65275ec5638e5fad4602d89aa9a93aaa17e2c2f00c0c978aa2b42056f5ea04e3319b44484cd8eeda16637c6cd0ed9c5d4'
         '966b8059310169dd0806bfad95d01b8587258113962064e3f0d7ee429bc010e62aaf201666a0c6ab7feb5f50b5aabe08b9e99cbac033c29140799bc5cb6178be'
         '21c0b8c538d602a3bf4ef2e0ff8538430522b2cb11fc3bc42ee20c99d23c44a8921cece50a3147e6993c0be325883fd0e4e309e0ba31ca95d5244b28510b59c8')
