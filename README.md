@@ -39,7 +39,7 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 | Scheduler | Full Name | Package(s) | Best for... | Developer |
 | :--- | :--- | :--- | :--- | :--- |
 | **[BORE](https://github.com/firelzrd/bore-scheduler)** | **B**urst-**O**riented **R**esponse **E**nhancer | `linux-cachyos-bore` | Interactive workloads & gaming | [firelzrd](https://github.com/firelzrd) |
-| **[EEVDF](https://lwn.net/Articles/927530/)** | **E**arliest **E**ligible **V**irtual **D**eadline **F**irst | `linux-cachyos-eevdf` | General-purpose computing | Peter Zijlstra |
+| **[EEVDF](https://lwn.net/Articles/927530/)** | **E**arliest **E**ligible **V**irtual **D**eadline **F**irst | `linux-cachyos`, `linux-cachyos-eevdf` | General-purpose computing | Peter Zijlstra |
 | **[BMQ](https://gitlab.com/alfredchen/linux-prjc)** | **B**it**M**ap **Q**ueue CPU Scheduler | `linux-cachyos-bmq` | N/A | [Alfred Chen](https://gitlab.com/alfredchen) |
 
 ### Specialized Variants
