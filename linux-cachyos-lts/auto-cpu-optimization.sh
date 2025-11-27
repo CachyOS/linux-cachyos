@@ -60,7 +60,7 @@ case $MARCH in
   emeraldrapids) MARCH=EMERALDRAPIDS;;
 esac
 
-# If doesn't match, re-use the arch name (uppercased) 
+# If doesn't match, reuse the arch name (uppercased)
 
 # Display detected CPU and apply optimization
 echo "----------------------------------"
