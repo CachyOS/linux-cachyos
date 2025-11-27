@@ -81,7 +81,7 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 ### Filesystem & Memory
 
 - **ZFS Support**: Built-in ZFS filesystem support with pre-compiled modules
-- **NVIDIA Integration**: 
+- **NVIDIA Integration**:
   - Proprietary NVIDIA driver modules with patches
   - Open-source NVIDIA driver support
   - Ready-to-use modules in repository
@@ -315,18 +315,18 @@ emaint sync -r CachyOS-kernels
 COPR repository with multiple kernel variants:
 
 - `linux-cachyos-bore`
-- `linux-cachyos-rt-bore` 
+- `linux-cachyos-rt-bore`
 - `linux-cachyos-bore-lto`
 - `linux-cachyos-lts`
 
-**Maintainer:** [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)  
+**Maintainer:** [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)
 **Installation:** Visit the [COPR page](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/) for setup instructions
 
 ### NixOS
 
 Precompiled kernels available through the Chaotic-AUR Nyx repository:
 
-**Repository:** [chaotic-cx/nyx](https://github.com/chaotic-cx/nyx)  
+**Repository:** [chaotic-cx/nyx](https://github.com/chaotic-cx/nyx)
 **Setup:** Follow the [installation guide](https://github.com/chaotic-cx/nyx#how-to-use-it)
 
 ## Support & Community

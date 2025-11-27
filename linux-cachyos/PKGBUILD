@@ -445,7 +445,7 @@ prepare() {
     echo "Selecting '$_hugepage' TRANSPARENT_HUGEPAGE config..."
 
     # Enable Clang AutoFDO
-    # Add additonal check if Thin or Full LTO is enabled otherwise die
+    # Add additional check if Thin or Full LTO is enabled otherwise die
     if [ "$_autofdo" = "yes" ]; then
         scripts/config -e AUTOFDO_CLANG
     fi
@@ -612,7 +612,7 @@ _package() {
 
     echo "Installing modules..."
     ZSTD_CLEVEL=19 make "${BUILD_FLAGS[@]}" INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
-        DEPMOD=/doesnt/exist  modules_install  # Suppress depmod
+        DEPMOD=/does-not/exist  modules_install  # Suppress depmod
 
     # remove build links
     rm "$modulesdir"/build
