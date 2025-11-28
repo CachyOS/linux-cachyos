@@ -11,20 +11,39 @@ jobs:
     name: linux-cachyos
     strategy:
       matrix:
-        toolchain: [GCC, LLVM]
+        toolchain: [gcc, clang]
 
     runs-on: ubuntu-latest
     container: archlinux:base-devel
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Build (${{ matrix.toolchain }})
+    - name: Setup build environment
+      run: |
+          # Use CachyOS repository
+          cat << 'EOF' >> /etc/pacman.conf
+          [cachyos]
+          Server = https://mirror.cachyos.org/repo/x86_64/cachyos
+          EOF
+
+          pacman-key --init
+          pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
+          pacman-key --lsign-key F3B607488DB35A47
+          pacman -Syu --noconfirm
+
+          # Setup builder user
+          useradd builder -m
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+          chmod -R a+rw .
+
+          # Use all threads for building
+          sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc) -l$(nproc)"/g' /etc/makepkg.conf
+    - name: Build package (${{ matrix.toolchain }})
       id: makepkg
-      uses: CachyOS/pkgbuild-action@master
       env:
         _build_zfs: yes
-        _use_llvm_lto: ${{ matrix.toolchain == 'GCC' && 'none' || 'thin' }}
-      with:
-        pkgdir: "linux-cachyos"
-        namcapExcludeRules: "invalidstartdir"
-        makepkgArgs: "--skipchecksums --skippgpcheck --noconfirm -s"
+        _build_nvidia: yes
+        _use_llvm_lto: ${{ matrix.toolchain == 'gcc' && 'none' || 'thin' }}
+      run: |
+          cd "linux-cachyos"
+          sudo -H -E -u builder makepkg --skipchecksums --syncdeps --noconfirm
