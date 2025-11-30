@@ -179,6 +179,13 @@ _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
+    "${_patchsource}/isp4/0001-amd-isp4.patch"
+    "${_patchsource}/isp4/0002-amd-isp4.patch"
+    "${_patchsource}/isp4/0003-amd-isp4.patch"
+    "${_patchsource}/isp4/0004-amd-isp4.patch"
+    "${_patchsource}/isp4/0005-amd-isp4.patch"
+    "${_patchsource}/isp4/0006-amd-isp4.patch"
+    "${_patchsource}/isp4/0007-amd-isp4.patch"
     "${_patchsource}/all/0001-cachyos-base-all.patch"
     "${_patchsource}/misc/0001-acpi-call.patch"
     "${_patchsource}/misc/0001-handheld.patch")
@@ -258,6 +265,10 @@ prepare() {
 
     echo "Setting config..."
     cp ../config .config
+
+    ### Enable AMD ISP4 Driver
+    echo "Enabling AMD ISP4 Driver..."
+    scripts/config -m AMD_ISP4
 
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
@@ -735,6 +746,13 @@ done
 
 b2sums=('1e8e226364a85f3fd66e51495a99a76e377389aa48c708953aaa28b6ec669f05aab6d240365965eec5643e2fa6aee15796005b2873e8fea748e432b1d799eabc'
         '9661bd2574e911f4fe3f365d849fb9d3ea2bc0ceaa13015aaa7e266ef105c7e1617acf375e72f72bb95f9a4589c6779bf03f833df66ed1cca3b9f6662e0ee5c8'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
         '39b60319ce157ad58d655c220d34ede65275ec5638e5fad4602d89aa9a93aaa17e2c2f00c0c978aa2b42056f5ea04e3319b44484cd8eeda16637c6cd0ed9c5d4'
         'be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498'
         'b6687df66d03a4ae56e32b119f93df7d8133faa3da0d5ca54c9a9da53e39b60d8f3c24c0d6b2d716366b555613b081c6fbd74ad6cc6d9ef692a9991236c6884f'

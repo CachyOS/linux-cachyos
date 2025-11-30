@@ -206,6 +206,13 @@ _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
     "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
     "config"
+    "${_patchsource}/isp4/0001-amd-isp4.patch"
+    "${_patchsource}/isp4/0002-amd-isp4.patch"
+    "${_patchsource}/isp4/0003-amd-isp4.patch"
+    "${_patchsource}/isp4/0004-amd-isp4.patch"
+    "${_patchsource}/isp4/0005-amd-isp4.patch"
+    "${_patchsource}/isp4/0006-amd-isp4.patch"
+    "${_patchsource}/isp4/0007-amd-isp4.patch"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # LLVM makedepends
@@ -299,6 +306,10 @@ prepare() {
 
     echo "Setting config..."
     cp ../config .config
+
+    ### Enable AMD ISP4 Driver
+    echo "Enabling AMD ISP4 Driver..."
+    scripts/config -m AMD_ISP4
 
     ### Select CPU optimization
     if [ -n "$_processor_opt" ]; then
@@ -799,5 +810,12 @@ done
 
 b2sums=('6b17389bf23dc88f21cec0c7727427882cdb5df87d34c60d839f620b6fc05e449d584fbd03c8623f080d07203d6e475a8d6b4ef11c8cde9bd1ca18d013063cad'
         'b8383d11c153967b13a58f36981c8c6041ba1ec24651f5472f2dddede8da6ebe0516d718b37440bd38a46c2e50cde295d82103d1e88d23b6fdbdf1f01c1bda48'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
         'd14fe243ba5b5349c4f51fe36c5d986ba176f96c99ffa1f3ad4f9c879ffbc2e6ae038214333010accef5434b4ffee3549f37cda4eb84c962196891de6afad6db'
         'ace0a9f6e0b204ee2a013fd9d4cae4b4d6a3f2fd8aea890788ff46102ca4c54396ec05b5c2375b743c257ae56a2db40d8fdcc0cc9f24c3f168ee28368fe81042')
