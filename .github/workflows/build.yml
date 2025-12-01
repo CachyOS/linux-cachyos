@@ -38,6 +38,9 @@ jobs:
 
           # Use all threads for building
           sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc) -l$(nproc)"/g' /etc/makepkg.conf
+
+          # Setup a packager name to indicate that kernel has built with CI
+          sed -i 's/#PACKAGER=".*"/PACKAGER="CachyOS GitHub Actions"/g' /etc/makepkg.conf
     - name: Build package (${{ matrix.toolchain }})
       id: makepkg
       env:
@@ -47,3 +50,9 @@ jobs:
       run: |
           cd "linux-cachyos"
           sudo -H -E -u builder makepkg --skipchecksums --syncdeps --noconfirm
+    - name: Upload package to artifacts
+      id: upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-cachyos-${{ matrix.toolchain }}
+        path: linux-cachyos/*.pkg.tar.zst*
