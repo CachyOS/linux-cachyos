@@ -164,17 +164,17 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.17
-_minor=9
+_major=6.18
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
-pkgdesc='Linux BORE + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
+pkgdesc='Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
 pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
@@ -227,7 +227,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=fe5ed524c72e0b2e2cd4c47ee5bc987290e89666")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=7de9800e5ce45d03c797be57a3e959fc914b2adb")
 fi
 
 # NVIDIA pre-build module support
@@ -240,7 +240,8 @@ if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0001-Enable-atomic-kernel-modesetting-by-default.patch"
              "${_patchsource}/misc/nvidia/0002-Add-IBT-support.patch"
-             "${_patchsource}/misc/nvidia/0006-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch")
+             "${_patchsource}/misc/nvidia/0003-nvidia-uvm-Remove-unused-get_devmap_page-parameter.patch"
+             "${_patchsource}/misc/nvidia/0004-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch")
 fi
 
 # Use generated AutoFDO Profile
@@ -526,7 +527,8 @@ prepare() {
     if [ "$_build_nvidia_open" = "yes" ]; then
         patch -Np1 -i "${srcdir}/0001-Enable-atomic-kernel-modesetting-by-default.patch" -d "${srcdir}/${_nv_open_pkg}/kernel-open"
         patch -Np1 -i "${srcdir}/0002-Add-IBT-support.patch" -d "${srcdir}/${_nv_open_pkg}/"
-        patch -Np1 -i "${srcdir}/0006-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch" -d "${srcdir}/${_nv_open_pkg}/"
+        patch -Np1 -i "${srcdir}/0003-nvidia-uvm-Remove-unused-get_devmap_page-parameter.patch" -d "${srcdir}/${_nv_open_pkg}/"
+        patch -Np1 -i "${srcdir}/0004-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch" -d "${srcdir}/${_nv_open_pkg}/"
     fi
 }
 
@@ -801,7 +803,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('1e8e226364a85f3fd66e51495a99a76e377389aa48c708953aaa28b6ec669f05aab6d240365965eec5643e2fa6aee15796005b2873e8fea748e432b1d799eabc'
-        'bc863600b02ccb6404e95e85f31b1cbc1293c663e0dd96eb0b7f42277b937849f156f509e688862d6926711e2297712bce4fdbfc04231b104b2608b1fc1ba34b'
-        '39b60319ce157ad58d655c220d34ede65275ec5638e5fad4602d89aa9a93aaa17e2c2f00c0c978aa2b42056f5ea04e3319b44484cd8eeda16637c6cd0ed9c5d4'
+b2sums=('b94b7b9bf18aca0c3e50baf79b009a1448fc6cd9c3ee019f641cc247dcf53a4abef4274ee0608ad8cd4943af69854363a95d26e117ff23620bb07dccb158859f'
+        'e39b09a43f94c626b7788d437fb1e26dfcd719c184581405e91546bd9231bb9de2b97bc6d8b2c0ce017ed67d946a16ab146ffbdd87fc0161426b8ecde0027469'
+        'bf61130d27b16f3ac7129dc57095103efba918d6468d2726d0ed73982c99967e05c7ca2e62e269f9e2e7433c416a231cb7f8af2afc507e336da39cbb82202977'
         'c7294a689f70b2a44b0c4e9f00c61dbd59dd7063ecbe18655c4e7f12e21ed7c5bb4f5169f5aa8623b1c59de7b2667facb024913ecb9f4c650dabce4e8a7e5452')

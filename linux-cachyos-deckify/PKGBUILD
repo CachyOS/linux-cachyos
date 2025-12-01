@@ -138,13 +138,13 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.17
-_minor=9
+_major=6.18
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -203,7 +203,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=fe5ed524c72e0b2e2cd4c47ee5bc987290e89666")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=7de9800e5ce45d03c797be57a3e959fc914b2adb")
 fi
 
 # NVIDIA pre-build module support
@@ -216,9 +216,9 @@ if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0001-Enable-atomic-kernel-modesetting-by-default.patch"
              "${_patchsource}/misc/nvidia/0002-Add-IBT-support.patch"
-             "${_patchsource}/misc/nvidia/0006-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch")
+             "${_patchsource}/misc/nvidia/0003-nvidia-uvm-Remove-unused-get_devmap_page-parameter.patch"
+             "${_patchsource}/misc/nvidia/0004-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch")
 fi
-
 ## List of CachyOS schedulers
 case "$_cpusched" in
     cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
@@ -469,7 +469,8 @@ prepare() {
     if [ "$_build_nvidia_open" = "yes" ]; then
         patch -Np1 -i "${srcdir}/0001-Enable-atomic-kernel-modesetting-by-default.patch" -d "${srcdir}/${_nv_open_pkg}/kernel-open"
         patch -Np1 -i "${srcdir}/0002-Add-IBT-support.patch" -d "${srcdir}/${_nv_open_pkg}/"
-        patch -Np1 -i "${srcdir}/0006-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch" -d "${srcdir}/${_nv_open_pkg}/"
+        patch -Np1 -i "${srcdir}/0003-nvidia-uvm-Remove-unused-get_devmap_page-parameter.patch" -d "${srcdir}/${_nv_open_pkg}/"
+        patch -Np1 -i "${srcdir}/0004-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch" -d "${srcdir}/${_nv_open_pkg}/"
     fi
 }
 
@@ -733,9 +734,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('1e8e226364a85f3fd66e51495a99a76e377389aa48c708953aaa28b6ec669f05aab6d240365965eec5643e2fa6aee15796005b2873e8fea748e432b1d799eabc'
-        '9661bd2574e911f4fe3f365d849fb9d3ea2bc0ceaa13015aaa7e266ef105c7e1617acf375e72f72bb95f9a4589c6779bf03f833df66ed1cca3b9f6662e0ee5c8'
-        '39b60319ce157ad58d655c220d34ede65275ec5638e5fad4602d89aa9a93aaa17e2c2f00c0c978aa2b42056f5ea04e3319b44484cd8eeda16637c6cd0ed9c5d4'
+b2sums=('b94b7b9bf18aca0c3e50baf79b009a1448fc6cd9c3ee019f641cc247dcf53a4abef4274ee0608ad8cd4943af69854363a95d26e117ff23620bb07dccb158859f'
+        '0d87f3b16f378ebae05f887c916e4e5de6e5dc82cd34558dae15fb74c2dd38f933ca65310a4264c5e84e6f76d4b678f0d5ecd88d5c8c2544a878e76c18b3cd05'
+        'bf61130d27b16f3ac7129dc57095103efba918d6468d2726d0ed73982c99967e05c7ca2e62e269f9e2e7433c416a231cb7f8af2afc507e336da39cbb82202977'
         'be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498'
-        'b6687df66d03a4ae56e32b119f93df7d8133faa3da0d5ca54c9a9da53e39b60d8f3c24c0d6b2d716366b555613b081c6fbd74ad6cc6d9ef692a9991236c6884f'
-        '966b8059310169dd0806bfad95d01b8587258113962064e3f0d7ee429bc010e62aaf201666a0c6ab7feb5f50b5aabe08b9e99cbac033c29140799bc5cb6178be')
+        'a6297e640a5c7c78e51b1f823c4cca8c3320317d8d7d262dfbaa46c047d042315a2331b93b7e9d863b8d8060f13e728f6c8c777b12662a020f172e38eb4f75b1'
+        'bfd5d4cdfe8f2c2e7466d7095befe40f95049ef8190e2ba01d7ba853903741d6ccb54087e8af72f4dad1790faf6d341d7b55b14eb00405d54bd4f62c772b880d')
