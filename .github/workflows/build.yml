@@ -6,6 +6,9 @@ on:
       - '.github/workflows/build.yml'
   workflow_dispatch:
 
+env:
+  CCACHE_DIR: /home/builder/.ccache
+
 jobs:
   build:
     name: linux-cachyos
@@ -29,7 +32,7 @@ jobs:
           pacman-key --init
           pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
           pacman-key --lsign-key F3B607488DB35A47
-          pacman -Syu --noconfirm
+          pacman -Syu --noconfirm --needed ccache
 
           # Setup builder user
           useradd builder -m
@@ -41,6 +44,18 @@ jobs:
 
           # Setup a packager name to indicate that kernel has built with CI
           sed -i 's/#PACKAGER=".*"/PACKAGER="CachyOS GitHub Actions"/g' /etc/makepkg.conf
+
+          # Setup ccache
+          sed -i 's|!ccache|ccache|' /etc/makepkg.conf
+          sudo -u builder mkdir -p ${{ env.CCACHE_DIR }}
+    - name: Setup ccache
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.CCACHE_DIR }}
+        key: ccache-${{ matrix.toolchain }}-${{ github.run_id }}
+        restore-keys: |
+          ccache-${{ matrix.toolchain }}
     - name: Build package (${{ matrix.toolchain }})
       id: makepkg
       env:
