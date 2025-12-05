@@ -26,7 +26,7 @@ pkgbase = linux-cachyos-eevdf
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.18/all/0001-cachyos-base-all.patch
 	b2sums = b94b7b9bf18aca0c3e50baf79b009a1448fc6cd9c3ee019f641cc247dcf53a4abef4274ee0608ad8cd4943af69854363a95d26e117ff23620bb07dccb158859f
 	b2sums = 4193034f32392fe6c551080b2afab61d7efbb3a7205daf73490a102d2649b1fa54e0e91dcd3b99afd29795dbf11c1d1a17e0f9b7fd9747b90d296977f2a7bb77
-	b2sums = fc18269244c92ffb33a8dc32f8b7ea6d49692a330af1f0e3efa903309721defb0e4427a3876af3d7b9a24f61873db07f96dda6fdb03fbab14d57a1854da7d6ac
+	b2sums = a654067abc42135eaabb8a4414edb3a7f5c7707b92f997c868860b89caf0819fefbe96f751ca22bbbebb365431c54650d07a31dfd1b7485b029d0b8e0903d178
 
 pkgname = linux-cachyos-eevdf
 	pkgdesc = The Linux EEVDF scheduler + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel and modules
