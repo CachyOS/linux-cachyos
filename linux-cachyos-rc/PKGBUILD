@@ -204,7 +204,7 @@ _nv_ver=580.105.08
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
+    https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz
     "config"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
