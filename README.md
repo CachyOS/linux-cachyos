@@ -322,13 +322,6 @@ COPR repository with multiple kernel variants:
 **Maintainer:** [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)  
 **Installation:** Visit the [COPR page](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/) for setup instructions
 
-### NixOS
-
-Precompiled kernels available through the Chaotic-AUR Nyx repository:
-
-**Repository:** [chaotic-cx/nyx](https://github.com/chaotic-cx/nyx)  
-**Setup:** Follow the [installation guide](https://github.com/chaotic-cx/nyx#how-to-use-it)
-
 ## Support & Community
 
 ### Get Help
