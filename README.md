@@ -322,6 +322,13 @@ COPR repository with multiple kernel variants:
 **Maintainer:** [bieszczaders](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/)  
 **Installation:** Visit the [COPR page](https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/) for setup instructions
 
+### NixOS
+
+Precompiled kernels available through the xddxdd/nix-cachyos-kernel repository:
+
+**Repository:** [xddxdd/nix-cachyos-kernel](https://github.com/xddxdd/nix-cachyos-kernel)  
+**Setup:** Follow the [installation guide](https://github.com/xddxdd/nix-cachyos-kernel#readme)
+
 ## Support & Community
 
 ### Get Help
