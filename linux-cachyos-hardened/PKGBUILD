@@ -130,6 +130,11 @@ _is_lto_kernel() {
     return $?
 }
 
+_is_ci_build() {
+    [[ -n "$CI" || -n "$GITHUB_RUN_ID" ]]
+    return $?
+}
+
 if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
     _pkgsuffix="cachyos-${_cpusched}-lto"
 elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
@@ -174,7 +179,7 @@ makedepends=(
 )
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=580.105.08
+_nv_ver=580.119.02
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
@@ -218,8 +223,7 @@ fi
 if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0001-Enable-atomic-kernel-modesetting-by-default.patch"
-             "${_patchsource}/misc/nvidia/0002-Add-IBT-support.patch"
-             "${_patchsource}/misc/nvidia/0006-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch")
+             "${_patchsource}/misc/nvidia/0002-Add-IBT-support.patch")
 fi
 
 ## List of CachyOS schedulers
@@ -370,19 +374,14 @@ prepare() {
     fi
 
     ### CI-only stuff
-    if [[ -n "$CI" || -n "$GITHUB_RUN_ID" ]]; then
+    if _is_ci_build; then
         echo "Detected build inside CI"
-        scripts/config -d CC_OPTIMIZE_FOR_PERFORMANCE \
+
+        scripts/config \
             -d CC_OPTIMIZE_FOR_PERFORMANCE_O3 \
-            -e CONFIG_CC_OPTIMIZE_FOR_SIZE \
-            -d SLUB_DEBUG \
-            -d PM_DEBUG \
-            -d PM_ADVANCED_DEBUG \
-            -d PM_SLEEP_DEBUG \
-            -d ACPI_DEBUG \
-            -d LATENCYTOP \
-            -d SCHED_DEBUG \
-            -d DEBUG_PREEMPT
+            -e CC_OPTIMIZE_FOR_SIZE \
+            -d DEBUG_KERNEL \
+            -e DEBUG_INFO_REDUCED
     fi
 
     ### Enable bbr3
@@ -469,7 +468,6 @@ prepare() {
     if [ "$_build_nvidia_open" = "yes" ]; then
         patch -Np1 -i "${srcdir}/0001-Enable-atomic-kernel-modesetting-by-default.patch" -d "${srcdir}/${_nv_open_pkg}/kernel-open"
         patch -Np1 -i "${srcdir}/0002-Add-IBT-support.patch" -d "${srcdir}/${_nv_open_pkg}/"
-        patch -Np1 -i "${srcdir}/0006-nvkms-Limit-default-maximum-TMDS-character-rate-to-3.patch" -d "${srcdir}/${_nv_open_pkg}/"
     fi
 }
 
