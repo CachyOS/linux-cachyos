@@ -144,12 +144,12 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.18
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-#_stable=${_major}.${_minor}
-_stable=${_major}
+_stable=${_major}.${_minor}
+#_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srcname=linux-${_stable}
 #_srcname=linux-${_major}
@@ -738,9 +738,9 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('b94b7b9bf18aca0c3e50baf79b009a1448fc6cd9c3ee019f641cc247dcf53a4abef4274ee0608ad8cd4943af69854363a95d26e117ff23620bb07dccb158859f'
+b2sums=('6ea6a7235ee59f876b015c6fda0f2772980c6ea58240689ce581182262387cbef3aed3c95ced66cdb56479cbd83961fbcbdfdff09f049941c3daf047710adb61'
         '0d87f3b16f378ebae05f887c916e4e5de6e5dc82cd34558dae15fb74c2dd38f933ca65310a4264c5e84e6f76d4b678f0d5ecd88d5c8c2544a878e76c18b3cd05'
-        'a654067abc42135eaabb8a4414edb3a7f5c7707b92f997c868860b89caf0819fefbe96f751ca22bbbebb365431c54650d07a31dfd1b7485b029d0b8e0903d178'
+        '7b839b9a94345b95a782c380394536e492de16716649e6913ddde6cf82b857873994f88aecb78d3164c87684519fbda69c1a49ce76449baee36c50e9071e0feb'
         'be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498'
-        'a6297e640a5c7c78e51b1f823c4cca8c3320317d8d7d262dfbaa46c047d042315a2331b93b7e9d863b8d8060f13e728f6c8c777b12662a020f172e38eb4f75b1'
+        '6672b75b046d7734ed721447ae130f34ae07c7d60e32e41796fff1070d130e73cbaaa10ed7e130a9c28d66fab282e296f0e4c75bc225f711a0464e40a3e4fcf0'
         'bfd5d4cdfe8f2c2e7466d7095befe40f95049ef8190e2ba01d7ba853903741d6ccb54087e8af72f4dad1790faf6d341d7b55b14eb00405d54bd4f62c772b880d')
