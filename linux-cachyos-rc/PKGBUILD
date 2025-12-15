@@ -156,6 +156,11 @@ _is_lto_kernel() {
     return $?
 }
 
+_is_ci_build() {
+    [[ -n "$CI" || -n "$GITHUB_RUN_ID" ]]
+    return $?
+}
+
 if _is_lto_kernel && [ "$_use_lto_suffix" = "yes" ]; then
     _pkgsuffix="cachyos-rc-lto"
 elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
