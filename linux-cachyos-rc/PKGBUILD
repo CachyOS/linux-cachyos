@@ -169,7 +169,7 @@ pkgbase="linux-$_pkgsuffix"
 _major=6.19
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc1
+_rcver=rc2
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -257,7 +257,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+    cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
@@ -761,6 +761,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('3e03007705e94018c45aa08affce77b146dda0435fc4baf8a4646b2445c456d1416e965d4582fef7016eb30bbb308663386ddb5fb94e50923b0b59ef55694acb'
-        'b83c435e7b206a2d53cda5f265c81335c191a00471c2a025046cd61e075096706453dd938957a7b730610c2ab5d7e7452a86d34b9835123eaaaee83c2fc7d6e1'
-        '9a3e36bdcdf028b2bb83536183b44309ae901ca6f96318f7be645202ad5c51ef8fd1e373d5bde0b2ceb740665f247067683ead4489c6507e38619b73f34cb628')
+b2sums=('ae3cfc5ee5f00acc7f5373e1818b6606b8d1a75346f62bba2a669111a0ffc877f82c191281204acd637d24b036a4a3309459f350ce88c9fa38bdc3f5dc1ee51a'
+        '959334ff724db11c71a153dee2c4d308f70ac79f737670b720ccdc7736d2bd50e310da163cdb8430eab930cd8b4ef6eef4de85e56f7fd9a9039e912d4d9ee2aa'
+        'f0949f0ada314d04971c2fc4aaff73edd1dcae8ad01a238ce53fae535d37e1db0437d890fb3abbffd841d1526cdf8c65f322b553724fa9fbc0e6ca74d9205154'
+        '3b5cd9589b318a848af2f53aad0ea8ae56932900346ae1f884e9667f85f9bd09389726cd4902c54fcb094de278222199b079cafaec9c620ea91f47cc91c7fe3b')
