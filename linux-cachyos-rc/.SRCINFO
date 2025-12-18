@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate
-	pkgver = 6.18.rc7
+	pkgver = 6.19.rc1
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,14 +21,12 @@ pkgbase = linux-cachyos-rc
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/torvalds/linux/archive/refs/tags/v6.18-rc7.tar.gz
+	source = https://github.com/torvalds/linux/archive/refs/tags/v6.19-rc1.tar.gz
 	source = config
-	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.18/all/0001-cachyos-base-all.patch
-	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.18/sched/0001-bore-cachy.patch
-	b2sums = 6b17389bf23dc88f21cec0c7727427882cdb5df87d34c60d839f620b6fc05e449d584fbd03c8623f080d07203d6e475a8d6b4ef11c8cde9bd1ca18d013063cad
-	b2sums = 4193034f32392fe6c551080b2afab61d7efbb3a7205daf73490a102d2649b1fa54e0e91dcd3b99afd29795dbf11c1d1a17e0f9b7fd9747b90d296977f2a7bb77
-	b2sums = 7b839b9a94345b95a782c380394536e492de16716649e6913ddde6cf82b857873994f88aecb78d3164c87684519fbda69c1a49ce76449baee36c50e9071e0feb
-	b2sums = bfd5d4cdfe8f2c2e7466d7095befe40f95049ef8190e2ba01d7ba853903741d6ccb54087e8af72f4dad1790faf6d341d7b55b14eb00405d54bd4f62c772b880d
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/all/0001-cachyos-base-all.patch
+	b2sums = 3e03007705e94018c45aa08affce77b146dda0435fc4baf8a4646b2445c456d1416e965d4582fef7016eb30bbb308663386ddb5fb94e50923b0b59ef55694acb
+	b2sums = b83c435e7b206a2d53cda5f265c81335c191a00471c2a025046cd61e075096706453dd938957a7b730610c2ab5d7e7452a86d34b9835123eaaaee83c2fc7d6e1
+	b2sums = 9a3e36bdcdf028b2bb83536183b44309ae901ca6f96318f7be645202ad5c51ef8fd1e373d5bde0b2ceb740665f247067683ead4489c6507e38619b73f34cb628
 
 pkgname = linux-cachyos-rc
 	pkgdesc = The Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate kernel and modules
