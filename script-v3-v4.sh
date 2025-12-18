@@ -4,8 +4,6 @@ find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs:=no/_build_zfs:=yes/"
 ## Enable Generic v3
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_processor_opt:=/_processor_opt:=GENERIC_V3/" {}
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization:=yes/_use_auto_optimization:=no/" {}
-## Enable NVIDIA module
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia:=no/_build_nvidia:=yes/" {}
 ## Enable Open NVIDIA module
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia_open:=no/_build_nvidia_open:=yes/" {}
 ## Disable clang-LTO
