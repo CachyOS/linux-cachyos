@@ -60,7 +60,7 @@ jobs:
       id: makepkg
       env:
         _build_zfs: yes
-        _build_nvidia: yes
+        _build_nvidia_open: yes
         _use_llvm_lto: ${{ matrix.toolchain == 'gcc' && 'none' || 'thin' }}
       run: |
           cd "linux-cachyos"
