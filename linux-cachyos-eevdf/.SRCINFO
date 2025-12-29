@@ -22,9 +22,13 @@ pkgbase = linux-cachyos-eevdf
 	options = !debug
 	options = !lto
 	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.5.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.5.tar.sign
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.18/all/0001-cachyos-base-all.patch
+	validpgpkeys = ABAF11C65A2970B130ABE3C479BE3E4300411886
+	validpgpkeys = 647F28654894E3BD457199BE38DBBDC86092693E
 	b2sums = 9294ae977d7b8b929c476e649cbb116969a674d3923e5a4cddf8615ee5ba373761630f1a6397045d9ebe7eeaa87a3fffae3628aebc1ca4c7db5561b1c4513289
+	b2sums = SKIP
 	b2sums = 81fafd3adcaf3b690d8d4791693e68c7ae921d103ebfd70e8d0ae15cd05ecde5e6672ae43c3a7875686d883c1f5b82d2c8b37b40aee8dcb0563913f9dd6469b6
 	b2sums = 84b3aea4df9b05f25b21ae51157f5897ad8698879ec7140ba96505ca2e559281d2588e71c0e7d8f15b8525188d58650a2eb53dce58f5780c90cc32d858046909
 
