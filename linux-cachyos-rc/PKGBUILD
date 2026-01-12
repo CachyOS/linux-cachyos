@@ -169,7 +169,7 @@ pkgbase="linux-$_pkgsuffix"
 _major=6.19
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc4
+_rcver=rc5
 pkgver=${_major}.${_rcver}
 #_stable=${_major}.${_minor}
 #_stable=${_major}
@@ -761,7 +761,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('440ad9999cefa51b55ed85327198bae64ab5c8e24be6d5071d6a0f8a7bc80345791c9d3ac892af516ee80f1784e990307061f674f2d1dc264a3e7539921fc458'
+b2sums=('477b330e6c6bd23be67d91baa689ffa07ad2ca6fcd742d2e96a727cdc511aaab2dc886f237e61690ce422a981317b198f8e315815798a6396fbd16fda3c503a1'
         '959334ff724db11c71a153dee2c4d308f70ac79f737670b720ccdc7736d2bd50e310da163cdb8430eab930cd8b4ef6eef4de85e56f7fd9a9039e912d4d9ee2aa'
-        '7fbd67e39aa118328950d91bef0aafc89bb0ec23b5111e1b1e4949f05667654b4ea221d2da6fd1e7816835949caf076e87beebbe4e582743f57dfe23b754db75'
+        'db857ab94121eb1ef5a5a37880c8c24852d9cda230ba6a68e88bd1c6026d24b44dc4fd3063630ffd990de6766ecb9f51517bdbb2d39ab2345ed6c8ad03fca176'
         '3b5cd9589b318a848af2f53aad0ea8ae56932900346ae1f884e9667f85f9bd09389726cd4902c54fcb094de278222199b079cafaec9c620ea91f47cc91c7fe3b')
