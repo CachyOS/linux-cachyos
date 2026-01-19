@@ -178,11 +178,15 @@ _nv_ver=590.48.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
+    https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.{xz,sign}
     "config"
     "${_patchsource}/all/0001-cachyos-base-all.patch"
     "${_patchsource}/misc/0001-acpi-call.patch"
     "${_patchsource}/misc/0001-handheld.patch")
+validpgpkeys=(
+    'ABAF11C65A2970B130ABE3C479BE3E4300411886' # Linus Torvalds
+    '647F28654894E3BD457199BE38DBBDC86092693E' # Greg Kroah-Hartman
+)
 
 # LLVM makedepends
 if _is_lto_kernel; then
@@ -698,6 +702,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('f56b4894cef3fdc24d963985d4f497d8a1fd80cae48197aabcf58038132c3c03da74537b47411aebc158483f08bad8200544103f31647b711acb59c4d652e387'
+        'SKIP'
         '56cfa827335eda49721bda91223f0b4758c938d3f0a489221959278489c7ebfc44f5c38acaee0ffbabf5489fe95a0c9bc59c2e65fbdd65e486b145cf0719df12'
         'd0e92ad722e1880e68d52743d6908f0fa68337f7b711342af9bbec706a3d9759224bca81053cec8ca3cf5999b22c33af1e75ac0a2a2fed27142858ba254d011f'
         'be844475f453f79f5d892c2cc2a6843b32501e2a7c57dd0859ec0cba2262d9fa9a95fff77b6e3718dff449c0f3b428fce03bc35d8332081427feedd461388498'

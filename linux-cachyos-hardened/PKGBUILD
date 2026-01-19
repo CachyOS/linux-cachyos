@@ -179,9 +179,13 @@ _nv_ver=590.48.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
+    https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.{xz,sign}
     "config"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
+validpgpkeys=(
+    'ABAF11C65A2970B130ABE3C479BE3E4300411886' # Linus Torvalds
+    '647F28654894E3BD457199BE38DBBDC86092693E' # Greg Kroah-Hartman
+)
 
 # LLVM makedepends
 if _is_lto_kernel; then
@@ -685,6 +689,7 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('96a9975fa0541b2225cd6f4422691ed2f145f4e41772be64b062022b0faf005e04ec94d966a015f5cab85f71aeac809b68cc0c1fc3d8d02cdd62699874938859'
+        'SKIP'
         '93e0bd13bbf3791c94f92da102039dbca8c4e53f55f2cc2e9d1b4f75bcdf2d9472350be25e5b4ddfed987f78b18c2e77195657552441410f34bd00387beb5097'
         '7ba41d1a6974cf293c627052863358d1722eb627d81cb9c8167f1ec7ec875fc1c83a607feef0a438796e72af538bfd809009f585350adb065aa489ab69b22c94'
         '966b8059310169dd0806bfad95d01b8587258113962064e3f0d7ee429bc010e62aaf201666a0c6ab7feb5f50b5aabe08b9e99cbac033c29140799bc5cb6178be'
