@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate
-	pkgver = 6.19.rc6
+	pkgver = 6.19.rc7
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,13 +21,13 @@ pkgbase = linux-cachyos-rc
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/torvalds/linux/archive/refs/tags/v6.19-rc6.tar.gz
+	source = https://github.com/torvalds/linux/archive/refs/tags/v6.19-rc7.tar.gz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/sched/0001-bore-cachy.patch
-	b2sums = 536754b09ed4460b138eb18c3c524b58500cc73b1ba4ce557fc18eccab289b5e010f952e8fe112edd18d77d1b7bfc85ffbda969c1c0c130ebd9ffc514e737bf8
+	b2sums = a4530306e94463307ece329e0cf3571a0c28a2b601595e07747e87c9831553fb1fd181bf83086ebe7a15676dd2dbad32cc203995df1f86b0fcd40d10389e2030
 	b2sums = 823b738621a81fa74ed94795004c19ca9e3a17c77ba18f7d83ac3801c2688725c3d8576c83cee99d42e178b95f54c8b4932b321cb15c8209ea965d914600b488
-	b2sums = 88cf195c604d7b9b398037990dbf02474c3326e31aed45514aa003c6b3d3d5b788a41ac0f670a12721a041067531e98c3583d3b49192bdd9cc04a99495fcf2a3
+	b2sums = d04c9fc5339c051c81e08efe933ee4db855f686844f4e6e6385de377728c0e47cc1a4427c23a9620727987bb81a86f945e2cc146301e2dcd9d9aa1a044220c02
 	b2sums = 3b5cd9589b318a848af2f53aad0ea8ae56932900346ae1f884e9667f85f9bd09389726cd4902c54fcb094de278222199b079cafaec9c620ea91f47cc91c7fe3b
 
 pkgname = linux-cachyos-rc
