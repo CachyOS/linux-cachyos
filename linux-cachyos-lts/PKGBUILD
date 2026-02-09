@@ -64,7 +64,7 @@
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 : "${_tickrate:=full}"
 
-## Choose between full(low-latency), voluntary or none
+## Choose between full(low-latency), lazy, voluntary or none
 : "${_preempt:=full}"
 
 ### Transparent Hugepages
@@ -75,24 +75,17 @@
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-configuring_transparent_huge_pages
 : "${_hugepage:=always}"
 
-# CPU compiler optimizations - Defaults to prompt at kernel config if left empty
-# AMD CPUs : "k8" "k8sse3" "k10" "barcelona" "bobcat" "jaguar" "bulldozer" "piledriver" "steamroller" "excavator" "zen" "zen2" "zen3" "zen4"
-# Intel CPUs : "mpsc"(P4 & older Netburst based Xeon) "atom" "core2" "nehalem" "westmere" "silvermont" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "skylakex" "cannonlake" "icelake" "goldmont" "goldmontplus" "cascadelake" "cooperlake" "tigerlake" "sapphirerapids" "rocketlake" "alderlake"
-# Other options :
-# - "native_amd" (use compiler autodetection - Selecting your arch manually in the list above is recommended instead of this option)
-# - "native_intel" (use compiler autodetection and will prompt for P6_NOPS - Selecting your arch manually in the list above is recommended instead of this option)
+# CPU compiler optimizations - Defaults to native if left empty
+# - "native" (use compiler autodetection)
+# - "zen4" (Use znver4 compiler optimizations)
 # - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
-#
-# Or use the _use_auto_optimization with _use_auto_optimization=y
 : "${_processor_opt:=}"
-
-# This does automatically detect your supported CPU and optimizes for it
-: "${_use_auto_optimization:=yes}"
 
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
 # "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
 # "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
+# "thin-dist: Similar to thin, but uses a distributed model rather than in-process: https://discourse.llvm.org/t/rfc-distributed-thinlto-build-for-kernel/85934"
 # "none: disable LTO
 : "${_use_llvm_lto:=none}"
 
@@ -101,10 +94,10 @@
 # yes - enable -lto suffix
 # no - disable -lto suffix
 # https://github.com/CachyOS/linux-cachyos/issues/36
-: "${_use_lto_suffix:=yes}"
+: "${_use_lto_suffix:=no}"
 
 # Use suffix -gcc when requested by the user
-# This was added to facilitate https://github.com/CachyOS/linux-cachyos/issues/286
+# Enabled by default to show the difference between LTO kernels and GCC kernels
 : "${_use_gcc_suffix:=no}"
 
 # KCFI is a proposed forward-edge control-flow integrity scheme for
@@ -129,7 +122,7 @@
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
-    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]]
+    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full"  || "$_use_llvm_lto" = "thin-dist" ]]
     return $?
 }
 
@@ -147,8 +140,8 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.12
-_minor=69
+_major=6.18
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -173,6 +166,9 @@ makedepends=(
   pahole
   perl
   python
+  rust
+  rust-bindgen
+  rust-src
   tar
   xz
   zstd
@@ -185,7 +181,6 @@ _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
     "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
     "config"
-    "auto-cpu-optimization.sh"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
 # LLVM makedepends
@@ -220,14 +215,14 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+    bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
     hardened) ## Hardened Patches
         source+=("${_patchsource}/misc/0001-hardened.patch");;
-    rt|rt-bore) ## RT Patches
-        source+=("${_patchsource}/misc/0001-rt.patch");;
+    rt|rt-bore) ## RT patches
+        source+=("${_patchsource}/misc/0001-rt-i915.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
@@ -262,20 +257,14 @@ prepare() {
     if [ -n "$_processor_opt" ]; then
         MARCH="${_processor_opt^^}"
 
-        if [ "$MARCH" != "GENERIC" ]; then
-            if [[ "$MARCH" =~ GENERIC_V[1-4] ]]; then
-                X86_64_LEVEL="${MARCH//GENERIC_V}"
-                scripts/config --set-val X86_64_VERSION "${X86_64_LEVEL}"
-            else
-                scripts/config -k -d CONFIG_GENERIC_CPU
-                scripts/config -k -e "CONFIG_M${MARCH}"
-            fi
-        fi
-    fi
-
-    ### Use autooptimization
-    if [ "$_use_auto_optimization" = "yes" ]; then
-        "${srcdir}"/auto-cpu-optimization.sh
+        case "$MARCH" in
+            GENERIC_V[1-4]) scripts/config -e GENERIC_CPU -d MZEN4 -d X86_NATIVE_CPU \
+                --set-val X86_64_VERSION "${MARCH//GENERIC_V}";;
+            ZEN4) scripts/config -d GENERIC_CPU -e MZEN4 -d X86_NATIVE_CPU;;
+            NATIVE) scripts/config -d GENERIC_CPU -d MZEN4 -e X86_NATIVE_CPU;;
+        esac
+    else
+        scripts/config -d GENERIC_CPU -d MZEN4 -e X86_NATIVE_CPU
     fi
 
     ### Selecting CachyOS config
@@ -289,8 +278,8 @@ prepare() {
         cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
-        rt) scripts/config -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
-        rt-bore) scripts/config -e SCHED_BORE -d PREEMPT -d PREEMPT_DYNAMIC -e PREEMPT_RT;;
+        rt) scripts/config -e PREEMPT_RT;;
+        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -304,13 +293,21 @@ prepare() {
 
     ### Select LLVM level
     case "$_use_llvm_lto" in
-        thin) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -d LTO_CLANG_FULL -e LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
-        full) scripts/config -e LTO -e LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG -e ARCH_SUPPORTS_LTO_CLANG_THIN -d LTO_NONE -e HAS_LTO_CLANG -e LTO_CLANG_FULL -d LTO_CLANG_THIN -e HAVE_GCC_PLUGINS;;
+        thin) scripts/config -e LTO_CLANG_THIN;;
+        thin-dist) scripts/config -e LTO_CLANG_THIN_DIST;;
+        full) scripts/config -e LTO_CLANG_FULL;;
         none) scripts/config -e LTO_NONE;;
         *) _die "The value '$_use_llvm_lto' is invalid. Choose the correct one again.";;
     esac
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
+
+    if ! _is_lto_kernel; then
+        echo "Enabling QR Code Panic for GCC Kernels"
+        scripts/config --set-str DRM_PANIC_SCREEN qr_code -e DRM_PANIC_SCREEN_QR_CODE \
+            --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
+            --set-val CONFIG_DRM_PANIC_SCREEN_QR_VERSION 40
+    fi
 
     ### Select tick rate
     case "$_HZ_ticks" in
@@ -347,6 +344,7 @@ prepare() {
     if [[ "$_cpusched" != "rt" && "$_cpusched" != "rt-bore" ]]; then
         case "$_preempt" in
             full) scripts/config -e PREEMPT_DYNAMIC -e PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
+            lazy) scripts/config -e PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -e PREEMPT_LAZY -d PREEMPT_NONE;;
             voluntary) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -e PREEMPT_VOLUNTARY -d PREEMPT_LAZY -d PREEMPT_NONE;;
             none) scripts/config -d PREEMPT_DYNAMIC -d PREEMPT -d PREEMPT_VOLUNTARY -d PREEMPT_LAZY -e PREEMPT_NONE;;
             *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
@@ -583,6 +581,16 @@ _package-headers() {
     echo "Installing KConfig files..."
     find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
 
+    # Install .rmeta files if they exist
+    if compgen -G "rust/*.rmeta" 1>/dev/null; then
+        install -Dt "$builddir/rust" -m644 rust/*.rmeta
+    fi
+
+    # Install .so files if they exist
+    if compgen -G "rust/*.so" 1>/dev/null; then
+        install -Dt "$builddir/rust" rust/*.so
+    fi
+
     echo "Installing unstripped VDSO..."
     make INSTALL_MOD_PATH="$pkgdir/usr" vdso_install \
       link=  # Suppress build-id symlinks
@@ -685,8 +693,6 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('1b5e827c351e5b1edccc167d7f5e2d145b1a6f4890ba207c4c913e3b38609d30ae23596990a15eade55742b8af4f9d85ee8516223959aa0eae8690d7c2444bdc'
-        'a3c64898a65d8f3dbc97456cd89d99bf639b86bc924a2a5faa85fb709566200ed2ac12bac8b394b3b5a42dd2c2ac1aeb1d662e48c3b12c535754f39ea74f94e0'
-        '390c7b80608e9017f752b18660cc18ad1ec69f0aab41a2edfcfc26621dcccf5c7051c9d233d9bdf1df63d5f1589549ee0ba3a30e43148509d27dafa9102c19ab'
-        '14d0cc9c68af30adbd159af81227ab93b25bc654b8720e054782d092d9ffcadf30f57b54ba1b2b198b6cd0e6f985ead279a2f7398ca959b1f0620f5f66222c83'
-        '05a83239cada205fe45a9550eabf19c566786e84152761d37e96f433cd764f917f5cd95bbbac181e1444251363260bf92ca4c078729faaba464a1d535d77d3fd')
+b2sums=('9434b32e65e42c8663233d6ca4a7fe4fcbcc8fe2f5b0ba1c3a0bf602c0156009ecce4aef8cb6ed9435bc9b4f14cb4f5be8b5b8ea80f64b1dc2c9d4ad0faf5b4e'
+        '81fafd3adcaf3b690d8d4791693e68c7ae921d103ebfd70e8d0ae15cd05ecde5e6672ae43c3a7875686d883c1f5b82d2c8b37b40aee8dcb0563913f9dd6469b6'
+        'e8c3431da432a8cd84f4629bacde651ee820782c988671f7554d3cc15b8a3af8e19d244c78e430d03f7a03374030f8c660d7ddcc9a19a7f739b58cd72a3e6477')
