@@ -204,7 +204,7 @@ _nv_ver=590.48.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "https://github.com/torvalds/linux/archive/refs/tags/v${_major}-${_rcver}.tar.gz"
+    "https://github.com/torvalds/linux/archive/refs/tags/v${_stable}.tar.gz"
     "config"
     "${_patchsource}/all/0001-cachyos-base-all.patch")
 
@@ -228,7 +228,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=540cd8029042327a37fd2a3614f8e623cbb87a22")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=3bf17cf5387fa5e0044a6321e663aead38b45969")
 fi
 
 
@@ -762,6 +762,6 @@ done
 
 b2sums=('2c7ae476c66a4bf7df5175f548b091c786f00e06f4745dce657d4c417d9fb92625a8e022b4e62c99bd5d435b2eef1b040ea23963439cab5a95e0063aa92a916f'
         '823b738621a81fa74ed94795004c19ca9e3a17c77ba18f7d83ac3801c2688725c3d8576c83cee99d42e178b95f54c8b4932b321cb15c8209ea965d914600b488'
-        '54f1c63a1d2701e7f9bc9de97ffa4507595ffed44626111123b7e0d056a281f908f4bbcdbb9150dcf73a065ad48cfe35f44d46f65b2b9ef935f5072618edd5c7'
+        '329acf47c6a13f4a7cd820544dfe15bb4293244a1cccb48e1809ffe99ecd9656848befc0c9f3e4a4429e7476412f45027b7c2dbfbeccd403ac884c450903bc3d'
         'ea26c88950fc06b6ffab93b30e3beacc7d26571a70262334ca8b001dc7899bf96b47d703fbaa7f4e47765c3dafccc23c58a4d4da2169b8ee50012afcb7a1dd96'
-        '3c6fa704dcac18817207b3ccf93479e27e25731473482bd8288de2d215db8ee63131bd1157a3d42bf92550f7be716196c6555f61730772866bd00cc96cfd3d77')
+        '226c64dd989ec0c4c444d048707e5d56be4a7ffa59ada31f197015c65a87e7935c8a0a1d6a9d35947e60f90505e5cffb3df9824aec71b2f188bcaa2e89403e0b')
