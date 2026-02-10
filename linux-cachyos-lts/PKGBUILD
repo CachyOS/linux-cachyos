@@ -149,13 +149,14 @@ _minor=13
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
+pkgrel=1
 _stable=${_major}.${_minor}
 #_stable=${_major}
 #_stablerc=${_major}-${_rcver}
-_srcname=linux-${_stable}
+_srctag=cachyos-${_major}.${_minor}-${pkgrel}
+_srcname=linux
 #_srcname=linux-${_major}
 pkgdesc='Linux BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service'
-pkgrel=1
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -166,6 +167,7 @@ makedepends=(
   bc
   cpio
   gettext
+  git
   libelf
   pahole
   perl
@@ -183,9 +185,8 @@ _nv_ver=590.48.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
-    "config"
-    "${_patchsource}/all/0001-cachyos-base-all.patch")
+    "git+https://github.com/CachyOS/linux.git#tag=${_srctag}"
+    "config")
 
 # LLVM makedepends
 if _is_lto_kernel; then
@@ -734,6 +735,5 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('1b97badce04dcc6a9e674a646e1eec5b2fa31a442856af748de730946113b2549d31ccf24417d0702142bdbde6636d874db7dd6f274f513f973c97e0866a3c34'
-        '81fafd3adcaf3b690d8d4791693e68c7ae921d103ebfd70e8d0ae15cd05ecde5e6672ae43c3a7875686d883c1f5b82d2c8b37b40aee8dcb0563913f9dd6469b6'
-        'f8b35beeb3a02cb9712600a8131e4ef706142284d2a9c5a2432d6b05311fbfa628e0d3b1a8059360b5a5ee4879bd058dad017630f837219ee821dbda7bc4a8d0')
+b2sums=('SKIP'
+        '81fafd3adcaf3b690d8d4791693e68c7ae921d103ebfd70e8d0ae15cd05ecde5e6672ae43c3a7875686d883c1f5b82d2c8b37b40aee8dcb0563913f9dd6469b6')
