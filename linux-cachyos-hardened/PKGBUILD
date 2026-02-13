@@ -154,8 +154,7 @@ _stable=${_major}.${_minor}
 #_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srctag=cachyos-${_major}.${_minor}-${pkgrel}
-_srcname=linux
-#_srcname=linux-${_major}
+_srcname=linux-${_srctag}
 pkgdesc='Linux BORE scheduler and hardened Kernel by CachyOS with other patches and improvements'
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
@@ -167,7 +166,6 @@ makedepends=(
   bc
   cpio
   gettext
-  git
   libelf
   pahole
   perl
@@ -185,7 +183,7 @@ _nv_ver=590.48.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "git+https://github.com/CachyOS/linux.git#tag=${_srctag}"
+    "https://github.com/CachyOS/linux/archive/refs/tags/${_srctag}.tar.gz"
     "config")
 
 # LLVM makedepends

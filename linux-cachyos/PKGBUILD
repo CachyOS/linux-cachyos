@@ -179,8 +179,7 @@ pkgrel=1
 _stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srctag=cachyos-${_major}.${_minor}-${pkgrel}
-_srcname=linux
-#_srcname=linux-${_major}
+_srcname=linux-${_srctag}
 pkgdesc='Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
@@ -192,7 +191,6 @@ makedepends=(
   bc
   cpio
   gettext
-  git
   libelf
   pahole
   perl
@@ -210,7 +208,7 @@ _nv_ver=590.48.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "git+https://github.com/CachyOS/linux.git#tag=${_srctag}"
+    "https://github.com/CachyOS/linux/archive/refs/tags/${_srctag}.tar.gz"
     "config")
 
 # LLVM makedepends
@@ -809,6 +807,6 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('9413689f86a18a22d601e8fb019d3a6b1ba4535650dce036cc85368291c10c6adba55655506c4960972b3ca2cc21d054113e280bc6e8efd8a23fbe682ff32918'
+b2sums=('9589df223b0a291852cb405cecdbf248cd936986e77013dee9cdb133c41413250903249b0523e4ae8232b1eb55991a0e36df2d8de14ca40e714b1a5cd16e222f'
         '823b738621a81fa74ed94795004c19ca9e3a17c77ba18f7d83ac3801c2688725c3d8576c83cee99d42e178b95f54c8b4932b321cb15c8209ea965d914600b488'
         'ea26c88950fc06b6ffab93b30e3beacc7d26571a70262334ca8b001dc7899bf96b47d703fbaa7f4e47765c3dafccc23c58a4d4da2169b8ee50012afcb7a1dd96')
