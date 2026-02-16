@@ -6,6 +6,8 @@ find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization:=yes/_use
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs:=no/_build_zfs:=yes/" {}
 ## Enable Open NVIDIA module
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia_open:=no/_build_nvidia_open:=yes/" {}
+## Enable r8125 module
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_r8125:=no/_build_r8125:=yes/" {}
 
 files=$(find . -name "PKGBUILD")
 
