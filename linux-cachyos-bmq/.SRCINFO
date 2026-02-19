@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-bmq
 	pkgdesc = Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 6.19.2
+	pkgver = 6.19.3
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,14 +21,14 @@ pkgbase = linux-cachyos-bmq
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.19.2.tar.xz
+	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.19.3.tar.xz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/sched/0001-prjc-cachy.patch
-	b2sums = cbd50ebd08bd10ac95397b61757a330bf670ab32949350e8ed69d82f1b663b37315e31e289b8eb2fea23be9f19c79c2e3b90beadd9349a1c1f8cb0644a699367
+	b2sums = a6026d06097726bfafc19c83c94949c15bee5578bb7a872612a13a9ddbbdc871e18395832da27350aa476ba947c7e8904b1161c455b8bdf4a5fe9127c32c6818
 	b2sums = 3c42413a19aa5c51d25c1dd414d21a2cd9fe9dbc904ad8679927a8dd1c733e0d62e2f74290c02faae3f04eac70a4e3caff0870b65c44647f3f523ee8d187b18f
-	b2sums = 8b65a9bc99ba9578a2ada61b036b0f78fa49152c726145a30159ec21de46be5c22697c37fb00c874b25648ead309ad08ffb071ec3d237ab1024ec01e34e0ceba
-	b2sums = 9d1dc917bf4853c1f0677d21da3373159e5d34397879c825119b8a1b7a88ed5f6e9a322df1cb3fd1844beaff2f4384fa5c85a355ab22549816e140c99b414b9b
+	b2sums = d2ff199e5bbc87379f44738058ffa16290077f89bf5d4f5a91e6b4df9b88fdeeae7492e15fd0bec1356a3d5280384fb872f1a637070eb6e49a3bca57658667b3
+	b2sums = ed4b307a2d2a7d08e210c38f7667a7bed509e80ee4faf2fdaddd40bd89554f9a97d20df24fac6466be3b8459b2cdd622dcc0ef72aa5c4875a65b83f48c322069
 
 pkgname = linux-cachyos-bmq
 	pkgdesc = The Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements kernel and modules
