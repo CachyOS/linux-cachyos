@@ -21,12 +21,10 @@ pkgbase = linux-cachyos-lts
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.13.tar.xz
+	source = https://github.com/CachyOS/linux/archive/refs/tags/cachyos-6.18.13-1.tar.gz
 	source = config
-	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.18/all/0001-cachyos-base-all.patch
-	b2sums = 1b97badce04dcc6a9e674a646e1eec5b2fa31a442856af748de730946113b2549d31ccf24417d0702142bdbde6636d874db7dd6f274f513f973c97e0866a3c34
+	b2sums = 1cb3377fb61a1b920913537d256ea0bd7f575dc9911c31e81f28792a97ff20fc097f93eadf7788216d8a69ab5c2ed07ee2fe6c4979acd11e7c69a4b9a9d87275
 	b2sums = 81fafd3adcaf3b690d8d4791693e68c7ae921d103ebfd70e8d0ae15cd05ecde5e6672ae43c3a7875686d883c1f5b82d2c8b37b40aee8dcb0563913f9dd6469b6
-	b2sums = f8b35beeb3a02cb9712600a8131e4ef706142284d2a9c5a2432d6b05311fbfa628e0d3b1a8059360b5a5ee4879bd058dad017630f837219ee821dbda7bc4a8d0
 
 pkgname = linux-cachyos-lts
 	pkgdesc = The Linux BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service kernel and modules
