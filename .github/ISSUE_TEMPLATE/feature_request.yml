@@ -2,6 +2,7 @@ name: Feature Request / Patch Submission
 description: Suggest a new patch, config change, or feature for a CachyOS kernel variant
 title: "[FEATURE] "
 labels: ["enhancement"]
+assignees: [ptr1337, sir_lucjan, 1Naim, ventureoo]
 body:
   - type: checkboxes
     id: preflight

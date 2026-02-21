@@ -2,6 +2,7 @@ name: Bug Report
 description: Report a bug or regression in a CachyOS kernel
 title: "[BUG] "
 labels: ["bug"]
+assignees: [ptr1337, sir_lucjan, 1Naim, ventureoo]
 body:
   - type: checkboxes
     id: preflight
