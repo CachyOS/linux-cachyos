@@ -1,0 +1,156 @@
+name: Bug Report
+description: Report a bug or regression in a CachyOS kernel
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight checklist
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have searched existing issues and this is not a duplicate.
+          required: true
+        - label: I have read the [Contributing Guidelines](https://github.com/CachyOS/linux-cachyos/blob/master/CONTRIBUTING.md).
+          required: true
+        - label: I have verified the issue is reproducible with the latest available CachyOS kernel.
+          required: true
+
+  - type: dropdown
+    id: upstream_check
+    attributes:
+      label: Upstream / vanilla kernel check
+      description: Have you tested with an unmodified upstream kernel to determine if this is CachyOS-specific?
+      options:
+        - I tested with a vanilla/upstream kernel and the issue does NOT reproduce there (CachyOS-specific bug)
+        - I tested with a vanilla/upstream kernel and the issue ALSO reproduces there (upstream bug — please report upstream)
+        - I was unable to test with a vanilla/upstream kernel
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kernel_variant
+    attributes:
+      label: Kernel variant
+      description: Which CachyOS kernel package are you using?
+      options:
+        - linux-cachyos (EEVDF, GCC)
+        - linux-cachyos-bore (BORE, GCC)
+        - linux-cachyos-eevdf (EEVDF, GCC)
+        - linux-cachyos-bmq (BMQ, GCC)
+        - linux-cachyos-hardened
+        - linux-cachyos-lts
+        - linux-cachyos-rt-bore
+        - linux-cachyos-server
+        - linux-cachyos-deckify
+        - linux-cachyos-rc
+        - linux-cachyos-lto (Clang + ThinLTO)
+        - Other (specify in description)
+    validations:
+      required: true
+
+  - type: input
+    id: kernel_version
+    attributes:
+      label: Kernel version
+      description: Full kernel version string (output of `uname -r`)
+      placeholder: "e.g. 6.14.3-2-cachyos"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: architecture
+    attributes:
+      label: CPU architecture / optimization level
+      description: Which architecture package are you running? (check all that apply)
+      options:
+        - label: x86-64 (generic baseline)
+        - label: x86-64-v3
+        - label: x86-64-v4
+        - label: znver4 (Zen 4 optimized)
+
+  - type: input
+    id: cpu_model
+    attributes:
+      label: CPU model
+      description: Output of `grep 'model name' /proc/cpuinfo | head -1`
+      placeholder: "e.g. AMD Ryzen 9 7950X"
+    validations:
+      required: true
+
+  - type: input
+    id: gpu_model
+    attributes:
+      label: GPU model & driver (if relevant)
+      description: GPU model and driver in use (e.g. NVIDIA 570.xx, amdgpu, i915)
+      placeholder: "e.g. NVIDIA RTX 4090, driver 570.86.16"
+
+  - type: dropdown
+    id: scheduler
+    attributes:
+      label: Active CPU scheduler (sched_ext / SCX)
+      description: Are you using an scx userspace scheduler on top of the kernel scheduler?
+      options:
+        - No SCX scheduler — using the kernel's built-in scheduler only
+        - scx_lavd
+        - scx_bpfland
+        - scx_rusty
+        - scx_flash
+        - scx_p2dq
+        - Other SCX scheduler (specify in description)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe the problem…
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps needed to trigger the issue.
+      placeholder: |
+        1. …
+        2. …
+        3. …
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / stack traces
+      description: |
+        Paste relevant kernel logs here (`dmesg`, `journalctl -b`, oops/panic output, etc.).
+        Wrap large outputs in a `<details>` block if needed.
+      render: text
+
+  - type: textarea
+    id: system_info
+    attributes:
+      label: Additional system information
+      description: |
+        Any other relevant info (RAM amount, desktop environment, init system, etc.).
+        Output of `inxi -Fxxxz` or `neofetch` is helpful.
