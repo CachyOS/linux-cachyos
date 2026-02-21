@@ -56,7 +56,7 @@ jobs:
         key: ccache-${{ matrix.toolchain }}-${{ github.run_id }}
         restore-keys: |
           ccache-${{ matrix.toolchain }}
-    - name: Build package (${{ matrix.toolchain }})
+    -     - name: Build package (${{ matrix.toolchain }})
       id: makepkg
       env:
         _build_zfs: yes
@@ -64,7 +64,20 @@ jobs:
         _use_llvm_lto: ${{ matrix.toolchain == 'gcc' && 'none' || 'thin' }}
       run: |
           cd "linux-cachyos"
-          sudo -H -E -u builder makepkg --skipchecksums --syncdeps --noconfirm
+          
+         
+          sudo -u builder makepkg --syncdeps --noconfirm --nobuild
+
+         
+          cd src/linux-* 
+          echo "Applying Android Configs..."
+          ./scripts/config -e ANDROID -e ANDROID_BINDER_IPC -e ANDROID_BINDERFS --set-str ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
+          make olddefconfig
+          cd ../..
+
+         
+          sudo -H -E -u builder makepkg --skipchecksums --noconfirm -e
+
     - name: Upload package to artifacts
       id: upload
       uses: actions/upload-artifact@v4
