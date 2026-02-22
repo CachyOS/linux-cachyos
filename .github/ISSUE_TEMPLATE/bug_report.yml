@@ -35,7 +35,7 @@ body:
       label: Kernel variant
       description: Which CachyOS kernel package are you using?
       options:
-        - linux-cachyos (EEVDF, GCC)
+        - linux-cachyos (EEVDF, Clang)
         - linux-cachyos-bore (BORE, GCC)
         - linux-cachyos-eevdf (EEVDF, GCC)
         - linux-cachyos-bmq (BMQ, GCC)
@@ -45,62 +45,34 @@ body:
         - linux-cachyos-server
         - linux-cachyos-deckify
         - linux-cachyos-rc
-        - linux-cachyos-lto (Clang + ThinLTO)
+        - linux-cachyos-gcc (GCC)
         - Other (specify in description)
     validations:
       required: true
 
-  - type: input
-    id: kernel_version
+  - type: textarea
+    id: bugreport
     attributes:
-      label: Kernel version
-      description: Full kernel version string (output of `uname -r`)
-      placeholder: "e.g. 6.14.3-2-cachyos"
+      label: System information (cachyos-bugreport.sh)
+      description: |
+        Please run `cachyos-bugreport.sh` and paste the output here.
+        If you are unable to run the script, provide the information manually below.
+      render: text
     validations:
       required: true
 
-  - type: checkboxes
-    id: architecture
+  - type: textarea
+    id: manual_sysinfo
     attributes:
-      label: CPU architecture / optimization level
-      description: Which architecture package are you running? (check all that apply)
-      options:
-        - label: x86-64 (generic baseline)
-        - label: x86-64-v3
-        - label: x86-64-v4
-        - label: znver4 (Zen 4 optimized)
-
-  - type: input
-    id: cpu_model
-    attributes:
-      label: CPU model
-      description: Output of `grep 'model name' /proc/cpuinfo | head -1`
-      placeholder: "e.g. AMD Ryzen 9 7950X"
-    validations:
-      required: true
-
-  - type: input
-    id: gpu_model
-    attributes:
-      label: GPU model & driver (if relevant)
-      description: GPU model and driver in use (e.g. NVIDIA 570.xx, amdgpu, i915)
-      placeholder: "e.g. NVIDIA RTX 4090, driver 570.86.16"
-
-  - type: dropdown
-    id: scheduler
-    attributes:
-      label: Active CPU scheduler (sched_ext / SCX)
-      description: Are you using an scx userspace scheduler on top of the kernel scheduler?
-      options:
-        - No SCX scheduler — using the kernel's built-in scheduler only
-        - scx_lavd
-        - scx_bpfland
-        - scx_rusty
-        - scx_flash
-        - scx_p2dq
-        - Other SCX scheduler (specify in description)
-    validations:
-      required: true
+      label: Manual system information (if cachyos-bugreport.sh is unavailable)
+      description: |
+        If you cannot run `cachyos-bugreport.sh`, please provide manually:
+        - Kernel version (`uname -r`)
+        - CPU model
+        - GPU model & driver (if relevant)
+        - Architecture (x86-64, x86-64-v3, x86-64-v4, znver4)
+        - Active SCX scheduler (if any)
+      render: text
 
   - type: textarea
     id: description
