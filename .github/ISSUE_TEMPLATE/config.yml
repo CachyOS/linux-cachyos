@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: CachyOS Discord
+    url: https://discord.gg/qJqj94uFwE
+    about: Chat with the community for general questions and support.
+  - name: CachyOS Telegram
+    url: https://t.me/+zCzPX4cAFjk1MTYy
+    about: Join the Telegram group for real-time support.
+  - name: CachyOS Wiki
+    url: https://wiki.cachyos.org/features/kernel
+    about: Read the kernel documentation and FAQ before opening an issue.
+  - name: CachyOS Forum
+    url: https://discuss.cachyos.org
+    about: Ask general usage questions on the forum.

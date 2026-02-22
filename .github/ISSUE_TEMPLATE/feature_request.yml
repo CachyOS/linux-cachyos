@@ -1,0 +1,68 @@
+name: Feature Request / Patch Submission
+description: Suggest a new patch, config change, or feature for a CachyOS kernel variant
+title: "[FEATURE] "
+labels: ["enhancement"]
+assignees: [ptr1337, sir_lucjan, 1Naim, ventureoo]
+body:
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight checklist
+      options:
+        - label: I have searched existing issues/PRs and this has not been requested before.
+          required: true
+        - label: I have read the [Contributing Guidelines](https://github.com/CachyOS/linux-cachyos/blob/master/CONTRIBUTING.md).
+          required: true
+
+  - type: checkboxes
+    id: request_type
+    attributes:
+      label: Request type
+      description: What kind of change are you requesting? (check all that apply)
+      options:
+        - label: New patch / patchset inclusion
+        - label: Kernel config change (enable/disable option)
+        - label: New kernel variant
+        - label: Scheduler tuning / addition
+        - label: Compiler / LTO / PGO optimization
+        - label: Security hardening
+        - label: Driver or hardware enablement
+        - label: Other
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A concise description of the feature or patch you are requesting.
+      placeholder: What should be added or changed, and why?
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / use case
+      description: Why is this useful? What problem does it solve or what performance/security benefit does it bring?
+    validations:
+      required: true
+
+  - type: textarea
+    id: patch_link
+    attributes:
+      label: Patch / upstream reference (if available)
+      description: |
+        Link to the upstream commit, mailing list thread, GitHub PR, or patch file.
+        If you have a patch ready, you can attach it or open a Pull Request directly.
+      placeholder: "https://lore.kernel.org/… or https://github.com/…"
+
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing / benchmarks
+      description: Have you tested this patch or config change? Share benchmark results, test logs, or observations.
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Anything else that might be relevant (dependencies, conflicts with existing patches, etc.).

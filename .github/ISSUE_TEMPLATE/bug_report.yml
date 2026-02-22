@@ -1,0 +1,129 @@
+name: Bug Report
+description: Report a bug or regression in a CachyOS kernel
+title: "[BUG] "
+labels: ["bug"]
+assignees: [ptr1337, sir_lucjan, 1Naim, ventureoo]
+body:
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight checklist
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have searched existing issues and this is not a duplicate.
+          required: true
+        - label: I have read the [Contributing Guidelines](https://github.com/CachyOS/linux-cachyos/blob/master/CONTRIBUTING.md).
+          required: true
+        - label: I have verified the issue is reproducible with the latest available CachyOS kernel.
+          required: true
+
+  - type: dropdown
+    id: upstream_check
+    attributes:
+      label: Upstream / vanilla kernel check
+      description: Have you tested with an unmodified upstream kernel to determine if this is CachyOS-specific?
+      options:
+        - I tested with a vanilla/upstream kernel and the issue does NOT reproduce there (CachyOS-specific bug)
+        - I tested with a vanilla/upstream kernel and the issue ALSO reproduces there (upstream bug — please report upstream)
+        - I was unable to test with a vanilla/upstream kernel
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kernel_variant
+    attributes:
+      label: Kernel variant
+      description: Which CachyOS kernel package are you using?
+      options:
+        - linux-cachyos (EEVDF, Clang)
+        - linux-cachyos-bore (BORE, GCC)
+        - linux-cachyos-eevdf (EEVDF, GCC)
+        - linux-cachyos-bmq (BMQ, GCC)
+        - linux-cachyos-hardened
+        - linux-cachyos-lts
+        - linux-cachyos-rt-bore
+        - linux-cachyos-server
+        - linux-cachyos-deckify
+        - linux-cachyos-rc
+        - linux-cachyos-gcc (GCC)
+        - Other (specify in description)
+    validations:
+      required: true
+
+  - type: textarea
+    id: bugreport
+    attributes:
+      label: System information (cachyos-bugreport.sh)
+      description: |
+        Please run `cachyos-bugreport.sh` and paste the output here.
+        If you are unable to run the script, provide the information manually below.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: manual_sysinfo
+    attributes:
+      label: Manual system information (if cachyos-bugreport.sh is unavailable)
+      description: |
+        If you cannot run `cachyos-bugreport.sh`, please provide manually:
+        - Kernel version (`uname -r`)
+        - CPU model
+        - GPU model & driver (if relevant)
+        - Architecture (x86-64, x86-64-v3, x86-64-v4, znver4)
+        - Active SCX scheduler (if any)
+      render: text
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe the problem…
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps needed to trigger the issue.
+      placeholder: |
+        1. …
+        2. …
+        3. …
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / stack traces
+      description: |
+        Paste relevant kernel logs here (`dmesg`, `journalctl -b`, oops/panic output, etc.).
+        Wrap large outputs in a `<details>` block if needed.
+      render: text
+
+  - type: textarea
+    id: system_info
+    attributes:
+      label: Additional system information
+      description: |
+        Any other relevant info (RAM amount, desktop environment, init system, etc.).
+        Output of `inxi -Fxxxz` or `neofetch` is helpful.
