@@ -149,13 +149,13 @@ _minor=13
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
+pkgrel=2
 _stable=${_major}.${_minor}
 #_stable=${_major}
 #_stablerc=${_major}-${_rcver}
-_srcname=linux-${_stable}
-#_srcname=linux-${_major}
+_srctag=cachyos-${_major}.${_minor}-${pkgrel}
+_srcname=linux-${_srctag}
 pkgdesc='Linux BORE scheduler and hardened Kernel by CachyOS with other patches and improvements'
-pkgrel=2
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -183,9 +183,8 @@ _nv_ver=590.48.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.xz"
-    "config"
-    "${_patchsource}/all/0001-cachyos-base-all.patch")
+    "https://github.com/CachyOS/linux/archive/refs/tags/${_srctag}.tar.gz"
+    "config")
 
 # LLVM makedepends
 if _is_lto_kernel; then
@@ -725,8 +724,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('96a9975fa0541b2225cd6f4422691ed2f145f4e41772be64b062022b0faf005e04ec94d966a015f5cab85f71aeac809b68cc0c1fc3d8d02cdd62699874938859'
+b2sums=('2e8d3a738e2f5e8aa5aa0032640b97ef8ebecdc33cacf0f1576774d358b87a94d92b9ede88b51667f66e65ec0fa413f2e1395f25918ef31dd67fe86378018ef6'
         '93e0bd13bbf3791c94f92da102039dbca8c4e53f55f2cc2e9d1b4f75bcdf2d9472350be25e5b4ddfed987f78b18c2e77195657552441410f34bd00387beb5097'
-        '7ba41d1a6974cf293c627052863358d1722eb627d81cb9c8167f1ec7ec875fc1c83a607feef0a438796e72af538bfd809009f585350adb065aa489ab69b22c94'
         '966b8059310169dd0806bfad95d01b8587258113962064e3f0d7ee429bc010e62aaf201666a0c6ab7feb5f50b5aabe08b9e99cbac033c29140799bc5cb6178be'
         '21c0b8c538d602a3bf4ef2e0ff8538430522b2cb11fc3bc42ee20c99d23c44a8921cece50a3147e6993c0be325883fd0e4e309e0ba31ca95d5244b28510b59c8')

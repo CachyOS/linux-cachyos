@@ -21,14 +21,12 @@ pkgbase = linux-cachyos-rt-bore
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.19.3.tar.xz
+	source = https://github.com/CachyOS/linux/archive/refs/tags/cachyos-6.19.3-1.tar.gz
 	source = config
-	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/all/0001-cachyos-base-all.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/sched/0001-bore-cachy.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/misc/0001-rt-i915.patch
-	b2sums = a6026d06097726bfafc19c83c94949c15bee5578bb7a872612a13a9ddbbdc871e18395832da27350aa476ba947c7e8904b1161c455b8bdf4a5fe9127c32c6818
+	b2sums = 456dc2d0d04f8829f7542a4d963d5a49f6e96e46e352d7e192d32f23cad8ca1e0ae9627eaa57b483a2a1fd483ae3862bc05a4195874ce7a3b02f48f9a7fd94e1
 	b2sums = 3c42413a19aa5c51d25c1dd414d21a2cd9fe9dbc904ad8679927a8dd1c733e0d62e2f74290c02faae3f04eac70a4e3caff0870b65c44647f3f523ee8d187b18f
-	b2sums = d2ff199e5bbc87379f44738058ffa16290077f89bf5d4f5a91e6b4df9b88fdeeae7492e15fd0bec1356a3d5280384fb872f1a637070eb6e49a3bca57658667b3
 	b2sums = 226c64dd989ec0c4c444d048707e5d56be4a7ffa59ada31f197015c65a87e7935c8a0a1d6a9d35947e60f90505e5cffb3df9824aec71b2f188bcaa2e89403e0b
 	b2sums = afd56b3b85363a611a012e2b27f241a6fb402414f358f66fe89d1974c77832dc19f8f058b5a3060dc0b742016ab807fbde9d74776b9cc6e459831eaad38cae04
 
