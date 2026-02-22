@@ -29,7 +29,7 @@
 CachyOS provides a collection of enhanced Linux kernels designed for improved performance across different workloads. Our kernels feature multiple CPU schedulers, advanced compiler optimizations, and carefully selected patches to deliver better responsiveness and throughput.
 
 > [!NOTE]
-> All CachyOS kernels are available in multiple architecture optimizations: `x86-64`, `x86-64-v3`, `x86-64-v4`, and `znver4`. The default `linux-cachyos` kernel is compiled with GCC due a bug at the NVIDIA Driver.
+> All CachyOS kernels are available in multiple architecture optimizations: `x86-64`, `x86-64-v3`, `x86-64-v4`, and `znver4`. The default `linux-cachyos` kernel is compiled with GCC due to a bug with the NVIDIA Driver.
 
 ## Kernel Variants & Schedulers
 
