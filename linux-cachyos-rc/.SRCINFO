@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate
-	pkgver = 7.rc1
+	pkgver = 7.0.rc1
 	pkgrel = 2
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -29,7 +29,7 @@ pkgbase = linux-cachyos-rc
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.0/misc/dkms-clang.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.0/sched/0001-bore-cachy.patch
 	b2sums = 4481052eed14653ef91df56644fdaf87f7a121fc496bc20c3a375e9e3d7e24914555fa2d1cd8a10916c5052b087a1b35bb42d3108b37d15a12d2e625992a5c9a
-	b2sums = 823b738621a81fa74ed94795004c19ca9e3a17c77ba18f7d83ac3801c2688725c3d8576c83cee99d42e178b95f54c8b4932b321cb15c8209ea965d914600b488
+	b2sums = ae792abb13c35bfd32cd37159beba1a3031acce092b24f74083032fcbfb4701143a771a60549f00960800e370504e0bc0dc81e5ffaeb584cd2ce40cd9ebb18d6
 	b2sums = c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e
 	b2sums = 4abee3fe78bcfee79751396c9c8a4826b7831a0136a95778a416b1450f503de9ae6fb69de9331959368c522dc0dcfe37332c9042606ef50799658a4b3e29075f
 
