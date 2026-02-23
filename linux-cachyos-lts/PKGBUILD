@@ -149,11 +149,12 @@ _minor=13
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
+_tagrel=1
 pkgrel=1
 _stable=${_major}.${_minor}
 #_stable=${_major}
 #_stablerc=${_major}-${_rcver}
-_srctag=cachyos-${_major}.${_minor}-${pkgrel}
+_srctag=cachyos-${_major}.${_minor}-${_tagrel}
 _srcname=linux-${_srctag}
 pkgdesc='Linux BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service'
 _kernver="$pkgver-$pkgrel"
@@ -183,7 +184,7 @@ _nv_ver=590.48.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "https://github.com/CachyOS/linux/archive/refs/tags/${_srctag}.tar.gz"
+    "https://github.com/CachyOS/linux/releases/download/${_srctag}/${_srctag}.tar.gz"
     "config")
 
 # LLVM makedepends

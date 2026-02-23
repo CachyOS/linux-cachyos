@@ -91,4 +91,27 @@ git tag -s "$TAG" -m "CachyOS Linux ${VERSION}-${PKGREL}"
 
 echo ""
 echo "Tag '$TAG' created."
-echo "Push with: git push origin $TAG"
+
+read -rp "Push tag and create GitHub release? [y/N] " push_confirm
+if [[ "$push_confirm" == [yY] ]]; then
+    git push origin "$TAG"
+
+    echo "Generating source tarball..."
+    TARBALL="${TAG}.tar.gz"
+    git archive --format=tar.gz --prefix="${TAG}/" "$TAG" > "$TARBALL"
+
+    echo "Creating GitHub release and uploading tarball..."
+    REPO_URL=$(git remote get-url origin)
+    REPO_SLUG=$(echo "$REPO_URL" | sed -E 's#(https://github\.com/|git@github\.com:)##;s#\.git$##')
+    gh release create "$TAG" "$TARBALL" \
+        --repo "$REPO_SLUG" \
+        --title "CachyOS Linux ${VERSION}-${PKGREL}" \
+        --notes "CachyOS Linux ${VERSION}-${PKGREL}" --verify-tag
+
+    rm -f "$TARBALL"
+    echo ""
+    echo "Release created with uploaded tarball (served via GitHub's CDN)."
+    echo "Download URL: https://github.com/CachyOS/linux/releases/download/${TAG}/${TARBALL}"
+else
+    echo "Push with: git push origin $TAG"
+fi

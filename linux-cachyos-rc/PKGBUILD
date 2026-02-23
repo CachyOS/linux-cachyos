@@ -169,16 +169,17 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=7.0
+_major=7
 _minor=0
 #_minorc=$((_minor+1))
 _rcver=rc1
 pkgver=${_major}.${_rcver}
-pkgrel=1
+_tagrel=2
+pkgrel=2
 #_stable=${_major}.${_minor}
 #_stable=${_major}
 _stable=${_major}-${_rcver}
-_srctag=cachyos-${_major}-${_rcver}-${pkgrel}
+_srctag=cachyos-${_major}.${_minor}-${_rcver}-${_tagrel}
 _srcname=linux-${_srctag}
 pkgdesc='Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate'
 _kernver="$pkgver-$pkgrel"
@@ -203,12 +204,12 @@ makedepends=(
   zstd
 )
 
-_patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
+_patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}.${_minor}"
 _nv_ver=590.48.01
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "https://github.com/CachyOS/linux/archive/refs/tags/${_srctag}.tar.gz"
+    "https://github.com/CachyOS/linux/releases/download/${_srctag}/${_srctag}.tar.gz"
     "config")
 
 # LLVM makedepends
@@ -802,7 +803,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('SKIP'
+b2sums=('4481052eed14653ef91df56644fdaf87f7a121fc496bc20c3a375e9e3d7e24914555fa2d1cd8a10916c5052b087a1b35bb42d3108b37d15a12d2e625992a5c9a'
         '823b738621a81fa74ed94795004c19ca9e3a17c77ba18f7d83ac3801c2688725c3d8576c83cee99d42e178b95f54c8b4932b321cb15c8209ea965d914600b488'
-        'ea26c88950fc06b6ffab93b30e3beacc7d26571a70262334ca8b001dc7899bf96b47d703fbaa7f4e47765c3dafccc23c58a4d4da2169b8ee50012afcb7a1dd96'
-        '226c64dd989ec0c4c444d048707e5d56be4a7ffa59ada31f197015c65a87e7935c8a0a1d6a9d35947e60f90505e5cffb3df9824aec71b2f188bcaa2e89403e0b')
+        'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e'
+        '4abee3fe78bcfee79751396c9c8a4826b7831a0136a95778a416b1450f503de9ae6fb69de9331959368c522dc0dcfe37332c9042606ef50799658a4b3e29075f')
