@@ -145,17 +145,17 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=6.18
-_minor=13
+_minor=14
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=2
+_tagrel=1
 pkgrel=1
 _stable=${_major}.${_minor}
 #_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srctag=cachyos-${_major}.${_minor}-${_tagrel}
-_srcname=linux-${_srctag}
+_srcname=${_srctag}
 pkgdesc='Linux BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service'
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
@@ -207,7 +207,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=3bf17cf5387fa5e0044a6321e663aead38b45969")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=1c702dda346a59e05cfd3029569bbb1d5d91c54b")
 fi
 
 
@@ -734,5 +734,5 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('ad679c40f5e630a9887cd2f379936e91f1444262611eee151586fe685c151b8e04b06b8498742acd6818fb9e3769725d950fa52d62ff0754ca3dc46240dd8ae8'
+b2sums=('596ee7428ed274f5307980b97e236631487bc4631cc4355a497ad805255c9e5c021f3fabb328877158bc8d99c38cea063029e19144ce7ba8f8a144d66f90bd3d'
         '81fafd3adcaf3b690d8d4791693e68c7ae921d103ebfd70e8d0ae15cd05ecde5e6672ae43c3a7875686d883c1f5b82d2c8b37b40aee8dcb0563913f9dd6469b6')

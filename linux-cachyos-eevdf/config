@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.19.0-rc6 Kernel Configuration
+# Linux/x86 6.19.4 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 15.2.1 20260103"
 CONFIG_CC_IS_GCC=y
@@ -6657,7 +6657,7 @@ CONFIG_VIDEO_MEM2MEM_DEINTERLACE=m
 #
 # Allegro DVT media platform drivers
 #
-CONFIG_AMD_ISP4=m
+CONFIG_VIDEO_AMD_ISP4_CAPTURE=m
 
 #
 # Amlogic media platform drivers
