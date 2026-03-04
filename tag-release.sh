@@ -72,22 +72,117 @@ fi
 
 TAG="cachyos-${VERSION}-${PKGREL}"
 
+# Extract major.minor (e.g. "6.19" from "6.19.3" or "6.19-rc8")
+MAJOR_MINOR=$(echo "$VERSION" | grep -oP '^\d+\.\d+')
+
 # Check if tag already exists
 if git tag -l "$TAG" | grep -q .; then
     echo "Error: tag '$TAG' already exists"
     exit 1
 fi
 
-# Show current state for confirmation
+# ---------------------------------------------------------------------------
+# Changelog generation
+# ---------------------------------------------------------------------------
+
+# Find the most recent cachyos-* tag that is an ancestor of HEAD
+find_prev_tag() {
+    git describe --tags --abbrev=0 --match "cachyos-*" 2>/dev/null || true
+}
+
+# Find the "Linux X.Y.Z" base commit in the current branch history
+find_upstream_commit() {
+    local version="$1"
+    git log --format="%H %s" HEAD | while read -r hash subject; do
+        if [[ "$subject" == "Linux ${version}" ]]; then
+            echo "$hash"
+            return
+        fi
+    done
+}
+
+# Generate a markdown changelog for the full set of patches applied on top of
+# the upstream kernel base.  Every branch squash commit present on HEAD is
+# listed with all of its individual commits (including short hash).
+generate_changelog() {
+    local prev_tag="$1"
+    local version="$2"
+    local pkgrel="$3"
+    local major_minor="$4"
+
+    local upstream_commit
+    upstream_commit=$(find_upstream_commit "$version")
+
+    # Always show all branches on top of upstream, not just the delta since
+    # the previous tag.
+    local squash_commits
+    squash_commits=$(git log "${upstream_commit}..HEAD" --format="%H %s" --no-merges --reverse 2>/dev/null || true)
+
+    {
+        echo "## CachyOS Linux ${version}-${pkgrel}"
+        echo ""
+        echo "Based on Linux ${version}"
+        [[ -n "$prev_tag" ]] && echo "Previous release: \`${prev_tag}\`"
+        echo ""
+
+        while IFS= read -r line; do
+            [[ -z "$line" ]] && continue
+            local hash="${line%% *}"
+            local branch_name="${line#* }"
+
+            # Skip upstream commits that contain spaces (e.g. "Linux 6.19.4",
+            # "Merge tag ...", individual stable fixes between pkgrel bumps)
+            [[ "$branch_name" == *" "* ]] && continue
+
+            echo "### ${branch_name}"
+
+            local branch_ref="origin/${major_minor}/${branch_name}"
+            if [[ -n "$upstream_commit" ]] && git rev-parse --verify "$branch_ref" &>/dev/null 2>&1; then
+                local commits
+                commits=$(git log "${upstream_commit}..${branch_ref}" \
+                    --format="- %h %s" --no-merges --reverse 2>/dev/null || true)
+                if [[ -n "$commits" ]]; then
+                    echo "$commits"
+                else
+                    echo "- (no individual commits found)"
+                fi
+            else
+                # Fallback: show a file-change summary from the squash commit
+                local stat
+                stat=$(git diff-tree --stat "$hash" 2>/dev/null | tail -1 | xargs || true)
+                [[ -n "$stat" ]] && echo "- ${hash:0:12} ${stat}" || echo "- (see git show ${hash})"
+            fi
+            echo ""
+        done <<< "$squash_commits"
+    }
+}
+
+# ---------------------------------------------------------------------------
+# Main flow
+# ---------------------------------------------------------------------------
+
+PREV_TAG=$(find_prev_tag)
+
 echo ""
 echo "Tag:    $TAG"
 echo "Branch: $(git branch --show-current)"
 echo "Commit: $(git log -1 --oneline)"
+[[ -n "$PREV_TAG" ]] && echo "Prev:   $PREV_TAG"
 echo ""
+
+echo "Generating changelog..."
+CHANGELOG=$(generate_changelog "$PREV_TAG" "$VERSION" "$PKGREL" "$MAJOR_MINOR")
+
+echo ""
+echo "=== Changelog Preview ==="
+echo "$CHANGELOG"
+echo "========================="
+echo ""
+
 read -rp "Create signed tag? [y/N] " confirm
 [[ "$confirm" == [yY] ]] || { echo "Aborted."; exit 0; }
 
-git tag -s "$TAG" -m "CachyOS Linux ${VERSION}-${PKGREL}"
+git tag -s "$TAG" -m "$CHANGELOG"
 
 echo ""
 echo "Tag '$TAG' created."
@@ -100,15 +195,20 @@ if [[ "$push_confirm" == [yY] ]]; then
     TARBALL="${TAG}.tar.gz"
     git archive --format=tar.gz --prefix="${TAG}/" "$TAG" > "$TARBALL"
 
+    # Write changelog to a temp file so gh can read it
+    NOTES_FILE=$(mktemp --suffix=.md)
+    echo "$CHANGELOG" > "$NOTES_FILE"
+
     echo "Creating GitHub release and uploading tarball..."
     REPO_URL=$(git remote get-url origin)
     REPO_SLUG=$(echo "$REPO_URL" | sed -E 's#(https://github\.com/|git@github\.com:)##;s#\.git$##')
     gh release create "$TAG" "$TARBALL" \
         --repo "$REPO_SLUG" \
         --title "CachyOS Linux ${VERSION}-${PKGREL}" \
-        --notes "CachyOS Linux ${VERSION}-${PKGREL}" --verify-tag
+        --notes-file "$NOTES_FILE" \
+        --verify-tag
 
-    rm -f "$TARBALL"
+    rm -f "$TARBALL" "$NOTES_FILE"
     echo ""
     echo "Release created with uploaded tarball (served via GitHub's CDN)."
     echo "Download URL: https://github.com/CachyOS/linux/releases/download/${TAG}/${TARBALL}"
