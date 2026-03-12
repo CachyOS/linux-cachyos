@@ -144,13 +144,13 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.17
-_minor=13
+_major=6.18
+_minor=17
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=4
-pkgrel=2
+_tagrel=1
+pkgrel=1
 _stable=${_major}.${_minor}
 #_stable=${_major}
 #_stablerc=${_major}-${_rcver}
@@ -222,7 +222,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+    bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
@@ -481,6 +481,10 @@ build() {
     cd "$_srcname"
     make "${BUILD_FLAGS[@]}" -j"$(nproc)" all
 
+    if ! _is_ci_build; then
+        make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
+    fi
+
     local MODULE_FLAGS=(
        KERNEL_UNAME="${_kernuname}"
        IGNORE_PREEMPT_RT_PRESENCE=1
@@ -555,6 +559,11 @@ _package-headers() {
     echo "Installing build files..."
     install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
         localversion.* version vmlinux
+
+    if ! _is_ci_build; then
+        install -Dt "$builddir" -m644 tools/bpf/bpftool/vmlinux.h
+    fi
+
     install -Dt "$builddir/kernel" -m644 kernel/Makefile
     install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
     cp -t "$builddir" -a scripts
@@ -723,7 +732,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('b06f1d30e688ecb6df1f0eac6ef878804fa53cf11685b09247d025c8918bdd43f7b63854d18d043c03baea4630cbc896b39efd1a511c1b6f5cd02611397c6db4'
-        '93e0bd13bbf3791c94f92da102039dbca8c4e53f55f2cc2e9d1b4f75bcdf2d9472350be25e5b4ddfed987f78b18c2e77195657552441410f34bd00387beb5097'
-        '966b8059310169dd0806bfad95d01b8587258113962064e3f0d7ee429bc010e62aaf201666a0c6ab7feb5f50b5aabe08b9e99cbac033c29140799bc5cb6178be'
-        '21c0b8c538d602a3bf4ef2e0ff8538430522b2cb11fc3bc42ee20c99d23c44a8921cece50a3147e6993c0be325883fd0e4e309e0ba31ca95d5244b28510b59c8')
+b2sums=('e1e26f6100b5b02d894f3cd8dd6ec55ae99ba66080d34ab876c540aa9971affbb5c459785dbe60b6afc565cd79eba9981afe6d3052c34aca6b5bfa23c1b021d7'
+        'b48517bffb202bf70736be5e4b6fe74d8dddf884344c4ac0e369a04836b174577b5188f1eb6d8cbd9f12a492870e558a3d2c1d9eb52e8891786b19609159d1b9'
+        '452d57751b27c3fee1c402dd4c6102cbbfd85fb054ce52a6e8fc8d1c7c2cc6f2292213dc9c93561552b4755933c04857ba6d8057ad10d2942f7c422dbeddde7a'
+        '2fd424067788dff90a45c5d94ad0bc853ad2d11f45cc65c5a6065e499f1c7904b653262d0e3271dce93ae5f42e2cde26ab688946618e7a170815c0898b43ff18')
