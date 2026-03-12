@@ -615,6 +615,7 @@ _package() {
 _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
     depends=('pahole' "${pkgbase}")
+    provides=(LINUX-HEADERS)
 
     if _is_lto_kernel; then
         depends+=(clang llvm lld)

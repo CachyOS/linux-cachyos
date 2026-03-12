@@ -47,3 +47,4 @@ pkgname = linux-cachyos-lts-headers
 	pkgdesc = Headers and scripts for building modules for the Linux BORE + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service kernel
 	depends = pahole
 	depends = linux-cachyos-lts
+	provides = LINUX-HEADERS

@@ -51,3 +51,4 @@ pkgname = linux-cachyos-hardened-headers
 	pkgdesc = Headers and scripts for building modules for the Linux BORE scheduler and hardened Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
 	depends = linux-cachyos-hardened
+	provides = LINUX-HEADERS

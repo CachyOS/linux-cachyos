@@ -51,3 +51,4 @@ pkgname = linux-cachyos-rt-bore-headers
 	pkgdesc = Headers and scripts for building modules for the Linux BORE-RT + Cachy Sauce Kernel by CachyOS with other patches and improvements kernel
 	depends = pahole
 	depends = linux-cachyos-rt-bore
+	provides = LINUX-HEADERS

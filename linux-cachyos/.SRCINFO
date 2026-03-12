@@ -57,5 +57,6 @@ pkgname = linux-cachyos-headers
 	depends = clang
 	depends = llvm
 	depends = lld
+	provides = LINUX-HEADERS
 	provides = linux-cachyos-lto-headers=6.19.7-1
 	replaces = linux-cachyos-lto-headers

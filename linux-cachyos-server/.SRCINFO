@@ -47,3 +47,4 @@ pkgname = linux-cachyos-server-headers
 	pkgdesc = Headers and scripts for building modules for the Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads kernel
 	depends = pahole
 	depends = linux-cachyos-server
+	provides = LINUX-HEADERS
