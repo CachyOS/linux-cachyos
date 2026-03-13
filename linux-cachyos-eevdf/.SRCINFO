@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-eevdf
 	pkgdesc = Linux EEVDF scheduler + Cachy Sauce Kernel by CachyOS with other patches and improvements
-	pkgver = 6.19.7
+	pkgver = 6.19.8
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,9 +21,9 @@ pkgbase = linux-cachyos-eevdf
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.19.7-1/cachyos-6.19.7-1.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.19.8-1/cachyos-6.19.8-1.tar.gz
 	source = config
-	b2sums = 682d5d710fe2d06f97fe2062afead540a49607aabb0a9da740defa2054ac1bd1dbf7c5fa90c154b78b2a9eee0204e2a059e6fc97af1051e60f03f4c7b3ebb754
+	b2sums = d8c96783843a65b20cb466faf6f3ede6d661e5b2485aadee938c4c65c1cadf490479fd711e41b8dcd1e12334362788987ad1b62b32b3834176fd3940edba1c49
 	b2sums = b55556d1ebec83a529359f74e7231d48d85066be80a472591c3e8c8f258050ce3132e277e367f793d0d93896224ec4bd6e0ebf3fdb0ae674b23141d66802dc16
 
 pkgname = linux-cachyos-eevdf
