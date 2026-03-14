@@ -81,13 +81,14 @@
 # - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
 : "${_processor_opt:=}"
 
-# Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
-# ATTENTION - one of three predefined values should be selected!
-# "full: uses 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains."
-# "thin: uses multiple threads, faster and uses less memory, may have a lower runtime performance than Full."
-# "thin-dist: Similar to thin, but uses a distributed model rather than in-process: https://discourse.llvm.org/t/rfc-distributed-thinlto-build-for-kernel/85934"
-# "none: disable LTO
-: "${_use_llvm_lto:=thin}"
+# Compiler and LTO selection - options are "none", "clang", "thin", "thin-dist" or "full".
+# ATTENTION - one of the predefined values should be selected!
+# "none": use GCC with LTO disabled.
+# "clang": use Clang as compiler but with LTO disabled.
+# "thin": use Clang with ThinLTO - multiple threads, faster and uses less memory, may have a lower runtime performance than Full.
+# "thin-dist": use Clang with distributed ThinLTO - https://discourse.llvm.org/t/rfc-distributed-thinlto-build-for-kernel/85934
+# "full": use Clang with Full LTO - 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains.
+: "${_use_llvm:=thin}"
 
 # Use suffix -lto only when requested by the user
 # yes - enable -lto suffix
@@ -151,7 +152,12 @@
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
-    [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full"  || "$_use_llvm_lto" = "thin-dist" ]]
+    [[ "$_use_llvm" = "thin" || "$_use_llvm" = "full"  || "$_use_llvm" = "thin-dist" ]]
+    return $?
+}
+
+_is_clang_build() {
+    _is_lto_kernel || [[ "$_use_llvm" = "clang" ]]
     return $?
 }
 
@@ -162,7 +168,7 @@ _is_ci_build() {
 
 if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
     _pkgsuffix=cachyos-lto
-elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
+elif ! _is_clang_build && [ "$_use_gcc_suffix" = "yes" ]; then
     _pkgsuffix=cachyos-gcc
 else
     _pkgsuffix=cachyos
@@ -213,7 +219,7 @@ source=(
     "config")
 
 # LLVM makedepends
-if _is_lto_kernel; then
+if _is_clang_build; then
     makedepends+=(clang llvm lld)
     source+=("${_patchsource}/misc/dkms-clang.patch")
     BUILD_FLAGS=(
@@ -339,18 +345,18 @@ prepare() {
     fi
 
     ### Select LLVM level
-    case "$_use_llvm_lto" in
+    case "$_use_llvm" in
         thin) scripts/config -e LTO_CLANG_THIN;;
         thin-dist) scripts/config -e LTO_CLANG_THIN_DIST;;
         full) scripts/config -e LTO_CLANG_FULL;;
-        none) scripts/config -e LTO_NONE;;
-        *) _die "The value '$_use_llvm_lto' is invalid. Choose the correct one again.";;
+        clang|none) scripts/config -e LTO_NONE;;
+        *) _die "The value '$_use_llvm' is invalid. Choose the correct one again.";;
     esac
 
-    echo "Selecting '$_use_llvm_lto' LLVM level..."
+    echo "Selecting '$_use_llvm' LLVM level..."
 
     if ! _is_lto_kernel; then
-        echo "Enabling QR Code Panic for GCC Kernels"
+        echo "Enabling QR Code Panic for non-LTO Kernels"
         scripts/config --set-str DRM_PANIC_SCREEN qr_code -e DRM_PANIC_SCREEN_QR_CODE \
             --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
             --set-val CONFIG_DRM_PANIC_SCREEN_QR_VERSION 40
@@ -527,7 +533,7 @@ _sign_modules() {
     local sign_cert="${srcdir}/${_srcname}/certs/signing_key.x509"
     local hash_algo="$(grep -Po 'CONFIG_MODULE_SIG_HASH="\K[^"]*' "${srcdir}/${_srcname}/.config")"
 
-    if [ "$_use_llvm_lto" != "none" ]; then
+    if [ "$_use_llvm" != "none" ]; then
         local strip_bin="llvm-strip"
     else
         local strip_bin="strip"
@@ -563,7 +569,7 @@ build() {
         cd ${srcdir}/"zfs"
 
         local CONFIGURE_FLAGS=()
-        [ "$_use_llvm_lto" != "none" ] && CONFIGURE_FLAGS+=("KERNEL_LLVM=1")
+        [ "$_use_llvm" != "none" ] && CONFIGURE_FLAGS+=("KERNEL_LLVM=1")
 
         ./autogen.sh
         sed -i "s|\$(uname -r)|${_kernuname}|g" configure
@@ -623,6 +629,8 @@ _package-headers() {
     if _is_lto_kernel; then
         provides+=(linux-cachyos-lto-headers=$_kernver)
         replaces=(linux-cachyos-lto-headers)
+    fi
+    if _is_clang_build; then
         depends+=(clang llvm lld)
     fi
 
