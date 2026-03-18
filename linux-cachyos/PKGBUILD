@@ -353,7 +353,7 @@ prepare() {
         echo "Enabling QR Code Panic for GCC Kernels"
         scripts/config --set-str DRM_PANIC_SCREEN qr_code -e DRM_PANIC_SCREEN_QR_CODE \
             --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
-            --set-val CONFIG_DRM_PANIC_SCREEN_QR_VERSION 40
+            --set-val DRM_PANIC_SCREEN_QR_VERSION 40
     fi
 
     ### Select tick rate
@@ -428,8 +428,8 @@ prepare() {
             --set-str DEFAULT_TCP_CONG bbr \
             -m NET_SCH_FQ_CODEL \
             -e NET_SCH_FQ \
-            -d CONFIG_DEFAULT_FQ_CODEL \
-            -e CONFIG_DEFAULT_FQ
+            -d DEFAULT_FQ_CODEL \
+            -e DEFAULT_FQ
     fi
 
     ### Select THP
