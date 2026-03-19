@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-rt-bore
 	pkgdesc = Linux BORE-RT + Cachy Sauce Kernel by CachyOS with other patches and improvements
-	pkgver = 6.19.8
+	pkgver = 6.19.9
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -21,13 +21,13 @@ pkgbase = linux-cachyos-rt-bore
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.19.8-1/cachyos-6.19.8-1.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.19.9-1/cachyos-6.19.9-1.tar.gz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/sched/0001-bore-cachy.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/misc/0001-rt-i915.patch
-	b2sums = d8c96783843a65b20cb466faf6f3ede6d661e5b2485aadee938c4c65c1cadf490479fd711e41b8dcd1e12334362788987ad1b62b32b3834176fd3940edba1c49
+	b2sums = 8a7650304ef95ebdba8dca6f161e6e6dc98d8d9edde4d34507e2f69bafa099b656d6334cd57cfc96681c896ed60d8373e19f53b5c58d5b0b67ab43cac92b2b9e
 	b2sums = b55556d1ebec83a529359f74e7231d48d85066be80a472591c3e8c8f258050ce3132e277e367f793d0d93896224ec4bd6e0ebf3fdb0ae674b23141d66802dc16
-	b2sums = 1f19f560470887c3236c33a7ed23f43e05a4c1ff7f3cd939e01979596bf8504926a9c30dda2470b72fde3f05d6eeae834128e9fb4cc63dde2f839005cddcf7c3
+	b2sums = d22b4d57707bfd94469e006ee6b43f09fc3b52bf41463b8ec33d1de14d71cea7fc8b3df8d5d9db57aacf69711209bc602a7868939e553f4972e0c6753e734333
 	b2sums = afd56b3b85363a611a012e2b27f241a6fb402414f358f66fe89d1974c77832dc19f8f058b5a3060dc0b742016ab807fbde9d74776b9cc6e459831eaad38cae04
 
 pkgname = linux-cachyos-rt-bore
