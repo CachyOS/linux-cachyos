@@ -144,15 +144,15 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=6.18
-_minor=17
+_major=6.19
+_minor=9
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
 _tagrel=1
 pkgrel=1
-_stable=${_major}.${_minor}
-#_stable=${_major}
+#_stable=${_major}.${_minor}
+_stable=${_major}
 #_stablerc=${_major}-${_rcver}
 _srctag=cachyos-${_major}.${_minor}-${_tagrel}
 _srcname=${_srctag}
@@ -726,7 +726,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('e1e26f6100b5b02d894f3cd8dd6ec55ae99ba66080d34ab876c540aa9971affbb5c459785dbe60b6afc565cd79eba9981afe6d3052c34aca6b5bfa23c1b021d7'
-        'b48517bffb202bf70736be5e4b6fe74d8dddf884344c4ac0e369a04836b174577b5188f1eb6d8cbd9f12a492870e558a3d2c1d9eb52e8891786b19609159d1b9'
-        '452d57751b27c3fee1c402dd4c6102cbbfd85fb054ce52a6e8fc8d1c7c2cc6f2292213dc9c93561552b4755933c04857ba6d8057ad10d2942f7c422dbeddde7a'
-        '2fd424067788dff90a45c5d94ad0bc853ad2d11f45cc65c5a6065e499f1c7904b653262d0e3271dce93ae5f42e2cde26ab688946618e7a170815c0898b43ff18')
+b2sums=('8a7650304ef95ebdba8dca6f161e6e6dc98d8d9edde4d34507e2f69bafa099b656d6334cd57cfc96681c896ed60d8373e19f53b5c58d5b0b67ab43cac92b2b9e'
+        '89cf6dd9e2de286a03d0232864a9d8a6637f5addb5d37b46d93f9a42299e734d4e61891375985370925ef6ff52cc61f21df3ea7e85689cc37024851f3c6ef718'
+        'd22b4d57707bfd94469e006ee6b43f09fc3b52bf41463b8ec33d1de14d71cea7fc8b3df8d5d9db57aacf69711209bc602a7868939e553f4972e0c6753e734333'
+        '192030654eac6dd366d193f213bd3e724f412b79545b5e0a3b1b104c91ade511192d237067ecef7abeae2f11c27cfdd540a1db3ac02a9cec289c0f39a4c372f6')
