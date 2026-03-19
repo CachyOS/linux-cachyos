@@ -293,15 +293,17 @@ prepare() {
     echo "${pkgbase#linux}" > localversion.20-pkgname
 
     local src
-    for src in "${source[@]}"; do
-        src="${src%%::*}"
-        # Skip nvidia patches
-        [[ "$src" == "${_patchsource}"/misc/nvidia/*.patch ]] && continue
-        src="${src##*/}"
+    for patch in "${source[@]}"; do
+        patch="${patch%%::*}"
+        src="${patch##*/}"
         src="${src%.zst}"
         [[ $src = *.patch ]] || continue
         echo "Applying patch $src..."
-        patch -Np1 < "../$src"
+        if [[ "$patch" == "${_patchsource}"/misc/nvidia/* ]]; then
+            patch -Np1 < "../$src" -d "${srcdir}/${_nv_open_pkg}"
+        else
+            patch -Np1 < "../$src"
+        fi
     done
 
     echo "Setting config..."
@@ -517,11 +519,6 @@ prepare() {
     echo "Save configuration for later reuse..."
     local basedir="$(dirname "$(readlink "${srcdir}/config")")"
     cat .config > "${basedir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
-
-    if [ "$_build_nvidia_open" = "yes" ]; then
-        patch -Np1 -i "${srcdir}/0002-Add-IBT-support.patch" -d "${srcdir}/${_nv_open_pkg}/"
-        patch -Np1 -i "${srcdir}/0004-HACK-kernel-open-Makefile-Remove-PAHOLE_VARIABLE.patch" -d "${srcdir}/${_nv_open_pkg}/"
-    fi
 }
 
 _sign_modules() {
