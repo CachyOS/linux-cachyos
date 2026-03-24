@@ -708,7 +708,7 @@ _package-r8125() {
 
     # Blacklist r8169 so that r8125 is used instead
     install -dm755 "${pkgdir}/usr/lib/modprobe.d"
-    echo "blacklist r8169" > "${pkgdir}/usr/lib/modprobe.d/${pkgname}.conf"
+    echo "install r8169 /usr/bin/modprobe r8125 || /usr/bin/modprobe --ignore-install r8169" > "${pkgdir}/usr/lib/modprobe.d/${pkgname}.conf"
 }
 
 pkgname=("$pkgbase")
