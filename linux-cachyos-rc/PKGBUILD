@@ -178,10 +178,10 @@ pkgbase="linux-$_pkgsuffix"
 _major=7.0
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc5
+_rcver=rc6
 pkgver=${_major}.${_rcver}
-_tagrel=2
-pkgrel=2
+_tagrel=1
+pkgrel=1
 #_stable=${_major}.${_minor}
 #_stable=${_major}
 _stable=${_major}-${_rcver}
@@ -472,9 +472,6 @@ prepare() {
         echo "Propeller profile has been found..."
         BUILD_FLAGS+=(CLANG_PROPELLER_PROFILE_PREFIX="${srcdir}/propeller")
     fi
-
-    echo "Enable USER_NS_UNPRIVILEGED"
-    scripts/config -e USER_NS
 
     ### Optionally use running kernel's config
     # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
@@ -805,7 +802,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('f49d78d9e0c714ee9343d4668e9a0af35c587c9de001db11d585207771be2a1f7ed0d24154a67886f66310cc80f4a00cd132cbe8570b637983478060981a5321'
-        '63080f26a9fe24e065e7ce6ec3d417af365e5b2e97e942eeb3a8a45ae6f19e933a5eebaa664c164d360dca563e08ff1b7fe69ad9f47984d44b54215246b11139'
+b2sums=('ae0ae6286b3483bb3b85ba2a12740a714cf84aeef2d21a1f61f0e6970bcb3bfa68075969a52d7067ab7717f5e2cde67acce3f91ac5a68c9112c82f3497d35e3d'
+        '5e9e94269fab41747772feac491fb912324b434d5f0d9490f0605073bbd724656ce37c6a7e93a7bd4afdfef6f042518ed11b215271bf67260521b46a06d83b11'
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e'
         '786f91e6946bfb654c95659721ea37a0ad004691cca797132f2a8722e7e8f6514d72d2a3547dbb6f4ebba48a40bd4c333d4632b47c21f593813e738fdf0ba4db')
