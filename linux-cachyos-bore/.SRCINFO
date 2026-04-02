@@ -21,10 +21,10 @@ pkgbase = linux-cachyos-bore
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.19.11-1/cachyos-6.19.11-1.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.19.11-2/cachyos-6.19.11-2.tar.gz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/sched/0001-bore-cachy.patch
-	b2sums = 25ae8f738ecc08116f141dbaa441d8cb0bbb1aacd194ddbf7d930a04e643f46a379ba8f2a10c0dac6c194f836df0893fcee8f32967b1121e1cd2323b2b68194c
+	b2sums = b38be031a72888d32ffd1c95ac36417836e373e95d7f86d33d9e32f4583b4acc86de19c6e62294a1836d8ebb8410e27c714b5580f2101b4b0e88ba2d9eecb13b
 	b2sums = c5a9e9c21351a31201f790a6c2389938e593d9228043aa031897537d3da17a149886acb2de73fbb7c1e8ffecfd71bf548ca800ee87b02ca306b92bf38a4e74a8
 	b2sums = d22b4d57707bfd94469e006ee6b43f09fc3b52bf41463b8ec33d1de14d71cea7fc8b3df8d5d9db57aacf69711209bc602a7868939e553f4972e0c6753e734333
 
