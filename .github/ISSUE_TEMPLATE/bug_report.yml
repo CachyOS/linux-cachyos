@@ -16,6 +16,8 @@ body:
           required: true
         - label: I have verified the issue is reproducible with the latest available CachyOS kernel.
           required: true
+        - label: I have tried to reproduce the issue on Arch Linux's `linux` kernel.
+          required: true
 
   - type: dropdown
     id: upstream_check
@@ -23,9 +25,9 @@ body:
       label: Upstream / vanilla kernel check
       description: Have you tested with an unmodified upstream kernel to determine if this is CachyOS-specific?
       options:
+        - I have not tested with a vanilla/upstream kernel
         - I tested with a vanilla/upstream kernel and the issue does NOT reproduce there (CachyOS-specific bug)
         - I tested with a vanilla/upstream kernel and the issue ALSO reproduces there (upstream bug — please report upstream)
-        - I was unable to test with a vanilla/upstream kernel
     validations:
       required: true
 
