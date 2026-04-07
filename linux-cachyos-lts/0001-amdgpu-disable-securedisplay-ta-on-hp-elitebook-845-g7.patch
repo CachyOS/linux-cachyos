@@ -1,0 +1,60 @@
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c
+@@ -20,6 +20,7 @@
+  * OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
++#include <linux/dmi.h>
+ #include <linux/firmware.h>
+ #include <linux/module.h>
+ #include "amdgpu.h"
+@@ -42,11 +43,28 @@
+ /* address block */
+ #define smnMP1_FIRMWARE_FLAGS		0x3010024
+ 
++static const struct dmi_system_id psp_v12_0_securedisplay_quirk_table[] = {
++	{
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "HP"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "HP EliteBook 845 G7"),
++		},
++	},
++	{}
++};
++
++static bool psp_v12_0_securedisplay_quirk_active(struct amdgpu_device *adev)
++{
++	return (adev->apu_flags & AMD_APU_IS_RENOIR) &&
++		dmi_first_match(psp_v12_0_securedisplay_quirk_table);
++}
++
+ static int psp_v12_0_init_microcode(struct psp_context *psp)
+ {
+ 	struct amdgpu_device *adev = psp->adev;
+ 	char ucode_prefix[30];
+ 	int err = 0;
++	bool disable_securedisplay;
+ 	DRM_DEBUG("\n");
+ 
+ 	amdgpu_ucode_ip_version_decode(adev, MP0_HWIP, ucode_prefix, sizeof(ucode_prefix));
+@@ -59,9 +77,15 @@
+ 	if (err)
+ 		return err;
+ 
+-	/* only supported on renoir */
+-	if (!(adev->apu_flags & AMD_APU_IS_RENOIR))
++	/* SECUREDISPLAY is optional and known to break resume on some Renoir laptops. */
++	disable_securedisplay = !(adev->apu_flags & AMD_APU_IS_RENOIR) ||
++		psp_v12_0_securedisplay_quirk_active(adev);
++	if (disable_securedisplay) {
++		if (adev->apu_flags & AMD_APU_IS_RENOIR)
++			dev_info(adev->dev,
++				 "PSP: disabling SECUREDISPLAY TA on HP EliteBook 845 G7\n");
+ 		adev->psp.securedisplay_context.context.bin_desc.size_bytes = 0;
++		adev->psp.hdcp_context.context.bin_desc.size_bytes = 0;
++		adev->psp.dtm_context.context.bin_desc.size_bytes = 0;
++		adev->psp.rap_context.context.bin_desc.size_bytes = 0;
++	}
+ 
+ 	return 0;
+ }

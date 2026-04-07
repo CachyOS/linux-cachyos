@@ -1,0 +1,66 @@
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+@@ -25,6 +25,7 @@
+ #include <linux/pci.h>
+ #include <linux/acpi.h>
+ #include <linux/backlight.h>
++#include <linux/dmi.h>
+ #include <linux/slab.h>
+ #include <linux/xarray.h>
+ #include <linux/power_supply.h>
+@@ -1483,12 +1484,51 @@ void amdgpu_acpi_release(void)
+ 
+ #if IS_ENABLED(CONFIG_SUSPEND)
++
++/*
++ * Some Renoir laptops have broken GPU S0ix - the SoC hardware state machine
++ * deadlocks when the GPU driver performs its own suspend handling alongside
++ * the platform s2idle transition. On these systems we force S3-style full
++ * GPU suspend so all IP blocks are properly shut down before s2idle entry.
++ * The amd_pmc driver still handles the platform-level S0i3 transition.
++ */
++static const struct dmi_system_id amdgpu_s0ix_disable_quirk_table[] = {
++	{
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "HP"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "HP EliteBook 845 G7"),
++		},
++	},
++	{}
++};
++
+ /**
+  * amdgpu_acpi_is_s3_active
+  *
+  * @adev: amdgpu_device_pointer
+  *
+  * returns true if supported, false if not.
+  */
+ bool amdgpu_acpi_is_s3_active(struct amdgpu_device *adev)
+ {
++	/*
++	 * Force S3-style full GPU suspend on platforms where S0ix handling
++	 * is broken. This ensures all IP blocks are properly shut down
++	 * before the platform enters s2idle, giving SMU a clean state.
++	 */
++	if ((adev->flags & AMD_IS_APU) &&
++	    dmi_first_match(amdgpu_s0ix_disable_quirk_table)) {
++		dev_info_once(adev->dev,
++			      "Forcing S3-style GPU suspend for s2idle due to platform quirk\n");
++		return true;
++	}
++
+ 	return !(adev->flags & AMD_IS_APU) ||
+ 		(pm_suspend_target_state == PM_SUSPEND_MEM);
+ }
+@@ -1510,6 +1550,10 @@ bool amdgpu_acpi_is_s0ix_active(struct amdgpu_device *adev)
+ 	if (!(adev->pm.pp_feature & PP_GFXOFF_MASK))
+ 		return false;
+ 
++	/* Disable amdgpu S0ix on platforms with broken GPU suspend */
++	if (dmi_first_match(amdgpu_s0ix_disable_quirk_table))
++		return false;
++
+ 	/*
+ 	 * If ACPI_FADT_LOW_POWER_S0 is not set in the FADT, it is generally
+ 	 * risky to do any special firmware-related preparations for entering

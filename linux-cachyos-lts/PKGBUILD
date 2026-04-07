@@ -185,7 +185,9 @@ _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
     "https://github.com/CachyOS/linux/releases/download/${_srctag}/${_srctag}.tar.gz"
-    "config")
+    "config"
+    "0001-amdgpu-disable-securedisplay-ta-on-hp-elitebook-845-g7.patch"
+    "0003-amdgpu-disable-s0ix-on-hp-elitebook-845-g7.patch")
 
 # LLVM makedepends
 if _is_lto_kernel; then
@@ -732,4 +734,6 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('524902b34e87a4093972c52eefb0347935fe43623459694ac6d4d00481d45e301df9d0c8d3b7b709d4e50aa85162221b1361f8414adec2a0b9b7c9c545511057'
-        '81fafd3adcaf3b690d8d4791693e68c7ae921d103ebfd70e8d0ae15cd05ecde5e6672ae43c3a7875686d883c1f5b82d2c8b37b40aee8dcb0563913f9dd6469b6')
+        '81fafd3adcaf3b690d8d4791693e68c7ae921d103ebfd70e8d0ae15cd05ecde5e6672ae43c3a7875686d883c1f5b82d2c8b37b40aee8dcb0563913f9dd6469b6'
+        '1b527ff75886f16c880e64e3f3292713495acdfb328c730e4574f9f2aa82aa961b2358eebbaaca3bbf95b66f829d2f0f474e3e2cbb432056d6822e1aae5e3a84'
+        'c1ea99b4cf24bc4b0860c1448374fd4004fe4be1d3428f843cc3f7df415c448e903679d5367068eb4f99fc9fe0e46b490f74c0b63b1d921102f7d06c7938f174')
