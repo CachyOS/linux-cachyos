@@ -334,7 +334,7 @@ prepare() {
 
     ### Selecting the CPU scheduler
     case "$_cpusched" in
-        bore|hardened) scripts/config -e SCHED_BORE;;
+        cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_RT;;
