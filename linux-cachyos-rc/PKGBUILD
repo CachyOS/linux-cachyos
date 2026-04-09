@@ -180,14 +180,14 @@ _minor=0
 #_minorc=$((_minor+1))
 _rcver=rc7
 pkgver=${_major}.${_rcver}
-_tagrel=2
-pkgrel=1
+_tagrel=3
+pkgrel=2
 #_stable=${_major}.${_minor}
 #_stable=${_major}
 _stable=${_major}-${_rcver}
 _srctag=cachyos-${_major}-${_rcver}-${_tagrel}
 _srcname=${_srctag}
-pkgdesc='Linux BORE + LTO + AutoFDO + Propeller + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate'
+pkgdesc='Linux Clang ThinLTO + AutoFDO  + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate'
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -238,7 +238,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=6132f5bc08f2b3f86677ac9f3a12a688eb984d11")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=0829cf892b5d7b3a0e8aa76cc7aca02b84f62557")
 fi
 
 
@@ -272,7 +272,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+    bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
@@ -334,7 +334,7 @@ prepare() {
 
     ### Selecting the CPU scheduler
     case "$_cpusched" in
-        cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
+        bore|hardened) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_RT;;
@@ -802,7 +802,6 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('b71424d4ab6caedeb8a0642091d8f86e2d90d377431f1a3de1c45e63363bb908940467f6693ee3ff8349372b08c736606cf1bb877e4c061f3648f3bd22713d90'
+b2sums=('83a22300c3aca33fc4ba63171546d1ae1f1a3126553a61d45aa656e06a6d0b11a05a417f0854c75bf8570d9fd165765789af939c352388c57344b85de157cfad'
         'f31abd75b2551c74aa86e8dd3f31e959dab2592e20ec52ffae5505b4baad2eef12757a77908fba3e95391c074b68da4d9ef6f213dc6ba224ae1872cd6ca457eb'
-        'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e'
-        '786f91e6946bfb654c95659721ea37a0ad004691cca797132f2a8722e7e8f6514d72d2a3547dbb6f4ebba48a40bd4c333d4632b47c21f593813e738fdf0ba4db')
+        'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e')
