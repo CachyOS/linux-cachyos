@@ -36,6 +36,9 @@ Notes:
   - Requires a GPG signing key configured via 'git config user.signingkey'
     or signing enabled globally with 'git config tag.gpgSign true'
   - Run this script from a checkout of github.com/CachyOS/linux
+  - Topic branches must be merged (not squashed) into the release branch.
+    The changelog is built from first-parent merge commits on top of the
+    upstream base commit ("Linux X.Y.Z").
 EOF
 }
 
@@ -52,19 +55,16 @@ if [[ -z "$VERSION" ]]; then
     exit 1
 fi
 
-# Validate we're in a git repo
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
     echo "Error: not inside a git repository"
     exit 1
 fi
 
-# Validate version format: X.Y.Z or X.Y-rcN
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+(\.[0-9]+|-rc[0-9]+)$ ]]; then
     echo "Error: version must be X.Y.Z or X.Y-rcN (got: $VERSION)"
     exit 1
 fi
 
-# Validate pkgrel is a positive integer
 if ! [[ "$PKGREL" =~ ^[0-9]+$ ]]; then
     echo "Error: pkgrel must be a positive integer (got: $PKGREL)"
     exit 1
@@ -72,96 +72,134 @@ fi
 
 TAG="cachyos-${VERSION}-${PKGREL}"
 
-# Extract major.minor (e.g. "6.19" from "6.19.3" or "6.19-rc8")
-MAJOR_MINOR=$(echo "$VERSION" | grep -oP '^\d+\.\d+')
+# Extract major.minor ("6.19" from "6.19.3" or "6.19-rc8")
+[[ "$VERSION" =~ ^([0-9]+\.[0-9]+) ]]
+MAJOR_MINOR="${BASH_REMATCH[1]}"
 
-# Check if tag already exists
 if git tag -l "$TAG" | grep -q .; then
     echo "Error: tag '$TAG' already exists"
     exit 1
 fi
 
 # ---------------------------------------------------------------------------
-# Changelog generation
+# Changelog helpers
 # ---------------------------------------------------------------------------
 
-# Find the most recent cachyos-* tag that is an ancestor of HEAD
-find_prev_tag() {
-    git describe --tags --abbrev=0 --match "cachyos-*" 2>/dev/null || true
+# Hash of the "Linux X.Y.Z" commit reachable from <ref>.
+find_upstream_commit() {
+    local version="$1" ref="$2"
+    git log --format="%H %s" "$ref" 2>/dev/null \
+        | awk -v tgt="Linux $version" '$0 ~ "^[0-9a-f]+ "tgt"$" {print $1; exit}'
 }
 
-# Find the "Linux X.Y.Z" base commit in the current branch history
-find_upstream_commit() {
-    local version="$1"
-    git log --format="%H %s" HEAD | while read -r hash subject; do
-        if [[ "$subject" == "Linux ${version}" ]]; then
-            echo "$hash"
-            return
-        fi
+# Most recent cachyos-<major.minor>-* tag. Works across stable rebases
+# because it sorts by version name, not by ancestry.
+find_prev_tag() {
+    local major_minor="$1"
+    git tag -l "cachyos-${major_minor}*" --sort=-v:refname 2>/dev/null | head -n1
+}
+
+# Extract the kernel version out of a "cachyos-<ver>-<pkgrel>" tag.
+tag_to_version() {
+    sed -E 's/^cachyos-(.+)-[0-9]+$/\1/' <<< "$1"
+}
+
+# Enumerate first-parent merge commits of topic branches on top of <upstream>
+# reachable from <ref>. Emits "<merge-hash>\t<branch-name>" per line.
+list_branch_merges() {
+    local upstream="$1" ref="$2"
+    [[ -z "$upstream" ]] && return 0
+    git log --first-parent --merges --format="%H%x09%s" \
+        "${upstream}..${ref}" 2>/dev/null \
+        | sed -n "s/^\\([0-9a-f]\\+\\)\\t[Mm]erge branch '\\([^']\\+\\)'.*/\\1\\t\\2/p"
+}
+
+# Commits introduced by a merge (branch side), oldest first: "<short-hash> <subject>".
+merge_side_commits() {
+    git log --format="%h %s" --no-merges --reverse "${1}^1..${1}^2" 2>/dev/null
+}
+
+# Snapshot of branch composition at <ref>: "<branch>\t<subject>" lines.
+# Used to diff two releases without relying on hashes (survives rebases).
+snapshot_branches() {
+    local upstream="$1" ref="$2"
+    list_branch_merges "$upstream" "$ref" | while IFS=$'\t' read -r mhash branch; do
+        merge_side_commits "$mhash" | while read -r _ subject; do
+            printf '%s\t%s\n' "$branch" "$subject"
+        done
     done
 }
 
-# Generate a markdown changelog for the full set of patches applied on top of
-# the upstream kernel base.  Every branch squash commit present on HEAD is
-# listed with all of its individual commits (including short hash).
 generate_changelog() {
-    local prev_tag="$1"
-    local version="$2"
-    local pkgrel="$3"
-    local major_minor="$4"
+    local version="$1" pkgrel="$2" major_minor="$3" prev_tag="$4"
 
-    local upstream_commit
-    upstream_commit=$(find_upstream_commit "$version")
+    local upstream_hash
+    upstream_hash=$(find_upstream_commit "$version" "HEAD")
 
-    # Always show all branches on top of upstream, not just the delta since
-    # the previous tag.
-    local squash_commits
-    squash_commits=$(git log "${upstream_commit}..HEAD" --format="%H %s" --no-merges --reverse 2>/dev/null || true)
+    echo "## CachyOS Linux ${version}-${pkgrel}"
+    echo ""
+    echo "Based on Linux ${version}"
+    [[ -n "$prev_tag" ]] && echo "Previous release: \`${prev_tag}\`"
+    echo ""
 
-    {
-        echo "## CachyOS Linux ${version}-${pkgrel}"
+    # --- Diff vs. previous release -----------------------------------------
+    if [[ -n "$prev_tag" ]]; then
+        local prev_version prev_upstream prev_snap cur_snap
+        prev_version=$(tag_to_version "$prev_tag")
+        prev_upstream=$(find_upstream_commit "$prev_version" "$prev_tag")
+        prev_snap=$(snapshot_branches "$prev_upstream" "$prev_tag")
+        cur_snap=$(snapshot_branches "$upstream_hash" "HEAD")
+
+        local prev_branches cur_branches
+        prev_branches=$(cut -f1 <<< "$prev_snap" | sort -u | sed '/^$/d')
+        cur_branches=$(cut -f1 <<< "$cur_snap"  | sort -u | sed '/^$/d')
+
+        echo "### Changes since \`${prev_tag}\`"
         echo ""
-        echo "Based on Linux ${version}"
-        [[ -n "$prev_tag" ]] && echo "Previous release: \`${prev_tag}\`"
-        echo ""
 
-        while IFS= read -r line; do
-            [[ -z "$line" ]] && continue
-            local hash="${line%% *}"
-            local branch_name="${line#* }"
+        if [[ "$prev_version" != "$version" ]]; then
+            echo "- Rebased to upstream: \`${prev_version}\` → \`${version}\`"
+        fi
 
-            # Skip upstream commits that contain spaces (e.g. "Linux 6.19.4",
-            # "Merge tag ...", individual stable fixes between pkgrel bumps)
-            [[ "$branch_name" == *" "* ]] && continue
+        comm -13 <(echo "$prev_branches") <(echo "$cur_branches") \
+            | sed '/^$/d;s/^/- Added branch: **/;s/$/**/'
+        comm -23 <(echo "$prev_branches") <(echo "$cur_branches") \
+            | sed '/^$/d;s/^/- Removed branch: **/;s/$/**/'
 
-            echo "### ${branch_name}"
-
-            local branch_ref="origin/${major_minor}/${branch_name}"
-            if [[ -n "$upstream_commit" ]] && git rev-parse --verify "$branch_ref" &>/dev/null 2>&1; then
-                local commits
-                commits=$(git log "${upstream_commit}..${branch_ref}" \
-                    --format="- %h %s" --no-merges --reverse 2>/dev/null || true)
-                if [[ -n "$commits" ]]; then
-                    echo "$commits"
-                else
-                    echo "- (no individual commits found)"
-                fi
-            else
-                # Fallback: show a file-change summary from the squash commit
-                local stat
-                stat=$(git diff-tree --stat "$hash" 2>/dev/null | tail -1 | xargs || true)
-                [[ -n "$stat" ]] && echo "- ${hash:0:12} ${stat}" || echo "- (see git show ${hash})"
+        while read -r b; do
+            [[ -z "$b" ]] && continue
+            local prev_set cur_set added dropped
+            prev_set=$(awk -F'\t' -v B="$b" '$1==B {print $2}' <<< "$prev_snap" | sort)
+            cur_set=$(awk -F'\t' -v B="$b" '$1==B {print $2}' <<< "$cur_snap"  | sort)
+            added=$(comm -13 <(echo "$prev_set") <(echo "$cur_set") | sed '/^$/d')
+            dropped=$(comm -23 <(echo "$prev_set") <(echo "$cur_set") | sed '/^$/d')
+            if [[ -n "$added" || -n "$dropped" ]]; then
+                echo "- Updated branch: **${b}**"
+                [[ -n "$added"   ]] && sed 's/^/    - `+` /' <<< "$added"
+                [[ -n "$dropped" ]] && sed 's/^/    - `-` /' <<< "$dropped"
             fi
-            echo ""
-        done <<< "$squash_commits"
-    }
+        done < <(comm -12 <(echo "$prev_branches") <(echo "$cur_branches"))
+
+        echo ""
+    fi
+
+    # --- Full branch listing -----------------------------------------------
+    echo "### Applied branches"
+    echo ""
+    list_branch_merges "$upstream_hash" "HEAD" | while IFS=$'\t' read -r mhash branch; do
+        echo "#### ${branch}"
+        merge_side_commits "$mhash" | while read -r chash subject; do
+            echo "- \`${chash}\` ${subject}"
+        done
+        echo ""
+    done
 }
 
 # ---------------------------------------------------------------------------
 # Main flow
 # ---------------------------------------------------------------------------
 
-PREV_TAG=$(find_prev_tag)
+PREV_TAG=$(find_prev_tag "$MAJOR_MINOR")
 
 echo ""
 echo "Tag:    $TAG"
@@ -171,7 +209,7 @@ echo "Commit: $(git log -1 --oneline)"
 echo ""
 
 echo "Generating changelog..."
-CHANGELOG=$(generate_changelog "$PREV_TAG" "$VERSION" "$PKGREL" "$MAJOR_MINOR")
+CHANGELOG=$(generate_changelog "$VERSION" "$PKGREL" "$MAJOR_MINOR" "$PREV_TAG")
 
 echo ""
 echo "=== Changelog Preview ==="
@@ -195,7 +233,6 @@ if [[ "$push_confirm" == [yY] ]]; then
     TARBALL="${TAG}.tar.gz"
     git archive --format=tar.gz --prefix="${TAG}/" "$TAG" > "$TARBALL"
 
-    # Write changelog to a temp file so gh can read it
     NOTES_FILE=$(mktemp --suffix=.md)
     echo "$CHANGELOG" > "$NOTES_FILE"
 

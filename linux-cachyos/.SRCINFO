@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.
-	pkgver = 6.19.11
+	pkgver = 6.19.12
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -24,10 +24,10 @@ pkgbase = linux-cachyos
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.19.11-2/cachyos-6.19.11-2.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.19.12-2/cachyos-6.19.12-2.tar.gz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/6.19/misc/dkms-clang.patch
-	b2sums = b38be031a72888d32ffd1c95ac36417836e373e95d7f86d33d9e32f4583b4acc86de19c6e62294a1836d8ebb8410e27c714b5580f2101b4b0e88ba2d9eecb13b
+	b2sums = fcc2e23cd0bc55ad638216e5326b8a823f6091bde09388b9933dda6be37237ffb9193d0bdc6d2540ce7d1bfc21ccb9b4901b86543c2c4c4c3aef761b1069c645
 	b2sums = c5a9e9c21351a31201f790a6c2389938e593d9228043aa031897537d3da17a149886acb2de73fbb7c1e8ffecfd71bf548ca800ee87b02ca306b92bf38a4e74a8
 	b2sums = ea26c88950fc06b6ffab93b30e3beacc7d26571a70262334ca8b001dc7899bf96b47d703fbaa7f4e47765c3dafccc23c58a4d4da2169b8ee50012afcb7a1dd96
 
@@ -47,7 +47,7 @@ pkgname = linux-cachyos
 	provides = NTSYNC-MODULE
 	provides = VHBA-MODULE
 	provides = ADIOS-MODULE
-	provides = linux-cachyos-lto=6.19.11-1
+	provides = linux-cachyos-lto=6.19.12-1
 	replaces = linux-cachyos-lto
 
 pkgname = linux-cachyos-headers
@@ -58,5 +58,5 @@ pkgname = linux-cachyos-headers
 	depends = llvm
 	depends = lld
 	provides = LINUX-HEADERS
-	provides = linux-cachyos-lto-headers=6.19.11-1
+	provides = linux-cachyos-lto-headers=6.19.12-1
 	replaces = linux-cachyos-lto-headers
