@@ -196,9 +196,13 @@ license=('GPL-2.0-only')
 options=('!strip' '!debug' '!lto')
 makedepends=(
   bc
+  binutils
   cpio
   gettext
+  glibc
   libelf
+  libgcc
+  openssl
   pahole
   perl
   python
@@ -206,7 +210,9 @@ makedepends=(
   rust-bindgen
   rust-src
   tar
+  xxhash
   xz
+  zlib
   zstd
 )
 
@@ -587,7 +593,16 @@ build() {
 
 _package() {
     pkgdesc="The $pkgdesc kernel and modules"
-    depends=('coreutils' 'kmod' 'initramfs')
+    depends=(binutils
+      glibc
+      libelf
+      libgcc
+      openssl
+      pahole
+      xxhash
+      zlib
+      zstd
+     "${pkgbase}")
     optdepends=('wireless-regdb: to set the correct wireless channels of your country'
                 'linux-firmware: firmware images needed for some devices'
                 'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
@@ -803,5 +818,5 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('83a22300c3aca33fc4ba63171546d1ae1f1a3126553a61d45aa656e06a6d0b11a05a417f0854c75bf8570d9fd165765789af939c352388c57344b85de157cfad'
-        'f31abd75b2551c74aa86e8dd3f31e959dab2592e20ec52ffae5505b4baad2eef12757a77908fba3e95391c074b68da4d9ef6f213dc6ba224ae1872cd6ca457eb'
+        'b247fa1ddea7d6124348fa66438715b1eb7afe279fd0d073cf9a366deecd322dbfea3843de0c61356f0d88b242cec42dbb6b2b2344d4ae9042335118c0c31e81'
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e')

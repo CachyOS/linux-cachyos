@@ -165,9 +165,13 @@ license=('GPL-2.0-only')
 options=('!strip' '!debug' '!lto')
 makedepends=(
   bc
+  binutils
   cpio
   gettext
+  glibc
   libelf
+  libgcc
+  openssl
   pahole
   perl
   python
@@ -175,7 +179,9 @@ makedepends=(
   rust-bindgen
   rust-src
   tar
+  xxhash
   xz
+  zlib
   zstd
 )
 
@@ -546,7 +552,16 @@ _package() {
 
 _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-    depends=('pahole' "${pkgbase}")
+    depends=(binutils
+      glibc
+      libelf
+      libgcc
+      openssl
+      pahole
+      xxhash
+      zlib
+      zstd
+     "${pkgbase}")
     provides=(LINUX-HEADERS)
 
     cd "${_srcname}"
