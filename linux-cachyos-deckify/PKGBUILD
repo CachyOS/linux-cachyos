@@ -166,9 +166,13 @@ license=('GPL-2.0-only')
 options=('!strip' '!debug' '!lto')
 makedepends=(
   bc
+  binutils
   cpio
   gettext
+  glibc
   libelf
+  libgcc
+  openssl
   pahole
   perl
   python
@@ -176,7 +180,9 @@ makedepends=(
   rust-bindgen
   rust-src
   tar
+  xxhash
   xz
+  zlib
   zstd
 )
 
@@ -570,7 +576,16 @@ _package() {
 
 _package-headers() {
     pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-    depends=('pahole' "${pkgbase}")
+    depends=(binutils
+      glibc
+      libelf
+      libgcc
+      openssl
+      pahole
+      xxhash
+      zlib
+      zstd
+     "${pkgbase}")
     provides=(LINUX-HEADERS)
 
     cd "${_srcname}"
@@ -752,8 +767,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('fcc2e23cd0bc55ad638216e5326b8a823f6091bde09388b9933dda6be37237ffb9193d0bdc6d2540ce7d1bfc21ccb9b4901b86543c2c4c4c3aef761b1069c645'
-        'ce0807a020329980eab2412b9ab067c1e2bda01f9a82d43ba3c733c73305ba443c00f2831aa935de2cd40e4761ad5733af04f420fc70e9a76a6e105b62694b68'
+b2sums=('40fefc434872c4ec8af8c780b2926d959ad74f1a3d94ad454d0f889caa67ab913cac3e5109f28c69c27acc4fc033c6c478128ba799447edbb207252923a63943'
+        'b247fa1ddea7d6124348fa66438715b1eb7afe279fd0d073cf9a366deecd322dbfea3843de0c61356f0d88b242cec42dbb6b2b2344d4ae9042335118c0c31e81'
         'ddaf90fd846e13cb213fb343f9599447d377dd51111cd2cbfbda2334836ba7c6925a28453353017a785163dbd1d5d44f1c7eca036c611a8dcf2cecab7d35c2de'
-        'a756cc68d6557113c6b4817b1d8ef75415541c52f765c1506e460104a7a0efb233f42662f4a591d114bca2767f415dd2003da559da5338566b5c7448fd21708b'
-        'd22b4d57707bfd94469e006ee6b43f09fc3b52bf41463b8ec33d1de14d71cea7fc8b3df8d5d9db57aacf69711209bc602a7868939e553f4972e0c6753e734333')
+        'b2083fdba47db86a75b2395de3294dcec91bb0732a8df8833146315e7a1bfc69d8a91423ae641fa8bd663cdd17ee68bf92a090ea7edd136eec0a9b760e1b7cd5'
+        '9dc1a5a46d8ecf606323926f22b4ce0aaf910dc47fd9ab9b8d08d1600e0bb45109babf7098f390562d8d8456239bb44b7db13b175fe2f529b9784a603dc11fbe')
