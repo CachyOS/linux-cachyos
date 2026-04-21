@@ -54,7 +54,7 @@ Historical precedents of this pattern in Russia's IT sector:
 | Person / Company | What happened |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | **Ilya Sachkov / Group-IB** | CEO arrested for "state treason" after sharing data on Russian hackers with foreign agencies. Sentenced to **14 years** in prison. |
-| **NGINX / Igor Sysoev** | After acquisition by F5 Networks for $670M, Russian security services raided the Moscow office to seize intellectual property. |
+| **Igor Sysoev / NGINX** | After acquisition by F5 Networks for $670M, Russian security services raided the Moscow office to seize intellectual property. |
 | **Pavel Durov / VKontakte and Telegram** | Forced out of his own company after refusing to hand over data on Ukrainian Euromaidan organizers to the FSB. |
 
 > In authoritarian states, **apoliticism is not neutrality** — it is a form of passive compliance with the regime. A developer who stays silent while their country wages war, and who legally cannot refuse FSB demands, cannot guarantee the independence of their project.
