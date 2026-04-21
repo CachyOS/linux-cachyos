@@ -3,6 +3,7 @@
   <br/>
   <h1 align="center">CachyOS Linux Kernels</h1>
   <p align="center">Enhanced Linux kernels with improved performance, multiple CPU schedulers, and advanced optimizations.</p>
+  <p align="center">AVOID THIS DISTRO! (Details below)</p>
 </div>
 
 ## Table of Contents
@@ -31,16 +32,121 @@ CachyOS provides a collection of enhanced Linux kernels designed for improved pe
 > [!NOTE]
 > All CachyOS kernels are available in multiple architecture optimizations: `x86-64`, `x86-64-v3`, `x86-64-v4`, and `znver4`.
 
+---
+
+## ⚠️ Security & Trust Concerns
+
+> [!CAUTION]
+> **Before installing CachyOS, please read this section carefully.** The following concerns have been raised by the security and open-source community and are worth considering before trusting this distribution on your system.
+
+### 🔐 Key Developer Residency in Russia
+
+The co-founder and infrastructure maintainer of CachyOS, **Vladyslav Nipohodin**, currently resides in the **Russian Federation**. He has direct access to the **build servers**, signing keys, and repository infrastructure.
+
+Under Russian law — specifically the **Yarovaya Law** and the **SORM (System of Operative Investigative Measures)** framework — any person classified as an "information distribution organizer" is legally required to:
+
+- Store metadata and encryption keys
+- Provide them to the **FSB on demand**, without a court order
+
+This means the maintainer of this project may be operating under **legal compulsion** to cooperate with Russian intelligence services, with no ability to disclose this publicly — or face imprisonment.
+
+Historical precedents of this pattern in Russia's IT sector:
+| Person / Company | What happened |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **Ilya Sachkov / Group-IB** | CEO arrested for "state treason" after sharing data on Russian hackers with foreign agencies. Sentenced to **14 years** in prison. |
+| **NGINX / Igor Sysoev** | After acquisition by F5 Networks for $670M, Russian security services raided the Moscow office to seize intellectual property. |
+| **Pavel Durov / VKontakte and Telegram** | Forced out of his own company after refusing to hand over data on Ukrainian Euromaidan organizers to the FSB. |
+
+> In authoritarian states, **apoliticism is not neutrality** — it is a form of passive compliance with the regime. A developer who stays silent while their country wages war, and who legally cannot refuse FSB demands, cannot guarantee the independence of their project.
+
+---
+
+### 🏗️ No Reproducible Builds — The Build Server Problem
+
+> [!WARNING]
+> CachyOS **does not implement reproducible builds**, unlike Arch Linux.
+
+This is a critical distinction. The source code visible on GitHub and the binary packages you install are **not verifiably identical**. Vladyslav has direct access to the build server and can:
+
+- Modify compilation scripts
+- Inject code during the build phase — code that would **never appear on GitHub**
+
+You cannot compile the source yourself and verify you get a byte-identical binary. This makes the build server a **perfect silent attack vector**.
+
+A relevant precedent: the **XZ Utils backdoor (CVE-2024-3094)** demonstrated that even in fully open-source projects, malicious code can be hidden in test binary files, activated only at compile time, and remain undetected for over two years — discovered entirely **by accident** when a Microsoft engineer noticed SSH login was 0.5 seconds slower.
+
+> If a state actor compels the injection of a malicious patch into the CachyOS kernel, that backdoor gains **ring-0 (kernel-level) access** to your system — able to read memory, log keystrokes, and exfiltrate data silently.
+
+---
+
+### ⚡ Real Performance vs. Marketing Claims
+
+The distribution markets itself heavily on performance gains. The engineering reality is more nuanced:
+
+**Where optimizations have negligible impact:**
+
+- Web browsing, messaging, document editing — bottleneck is the network and JavaScript engine, not AVX-512 instruction sets
+- The difference between CachyOS and stock Arch Linux is **within margin of error** for typical desktop workloads
+
+**Why the BORE scheduler is a double-edged sword:**
+The scheduler aggressively prioritizes the most active process. In practice, this causes background processes to starve of resources — resulting in **frametime spikes**. Stable 120 FPS is a smoother experience than fluctuating 130 FPS.
+
+**Experimentally patched technology:**
+
+- **NTSYNC** — a new Windows sync primitive implementation for Linux gaming. Valve and Wine developers have been working on it for years but have **not merged it into the stable kernel** because it can cause system deadlocks and memory corruption under load. CachyOS ships it enabled by default.
+- **Patches from kernel 7.0 backported to 6.x** — these patches are designed for a different kernel infrastructure. They can cause kernel panics and data loss at any time.
+
+> These are the exact patches that **Valve's Proton team and Wine/Proton developers have explicitly rejected** from their own builds due to instability risk.
+
+**On "being first" with new technologies:**
+When CachyOS claims to be "first" with new hardware support (e.g., Panther Lake architecture), the support was already present in Ubuntu 26 Unstable months earlier. The patches themselves are written by **Intel engineers** and submitted to the upstream kernel mailing list — CachyOS merely applies them before they pass full audit and stabilization.
+
+---
+
+### 💰 Financial Considerations for Ukrainian & International Users
+
+CachyOS actively collects donations via Patreon and Open Collective. Mirrors are hosted on Russian infrastructure, including Yandex-facilitated servers.
+
+For users in Ukraine or those concerned about the war in Ukraine:
+
+When donating to or promoting CachyOS:
+
+- Payments go to developers residing in Russia
+- Under Russian tax law, **13% income tax (NDFL)** on all personal income goes to the federal budget
+- **20% VAT** applies to all purchases made with that income
+- Russia's official military budget constitutes **40% of the federal budget** — exceeding the combined spending on education, healthcare, social policy, and the national economy
+
+> Using and promoting this OS means participating in a financial chain that, through the Russian tax system, contributes to the military budget of a country currently conducting military operations in Ukraine.
+
+---
+
+### 🔄 Recommended Alternatives
+
+If you're looking for what CachyOS provides, consider these alternatives that do not carry these concerns:
+
+| Your Goal                             | Recommended Alternative                                                                                                     |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Arch Linux with a graphical installer | **[EndeavourOS](https://endeavouros.com)** — pure Arch base, Calamares installer, official repos only, no modified packages |
+| Gaming kernel with BORE scheduler     | Install `linux-zen` or build any custom kernel from the **AUR** yourself — same result, full control                        |
+| Optimized packages                    | Use standard Arch with `makepkg` and compile with your own `-march=native` flags                                            |
+
+EndeavourOS in particular offers the same Arch foundation with a welcome app, AUR helper, and Nvidia driver management — without patching any packages, without modifying upstream libraries, and without a build server you cannot audit.
+
+#### Analysis based on research by Pavlo Kozlenko. [Source video (UA)](https://youtu.be/stKrgHcyr8Q)
+
+---
+
 ## Kernel Variants & Schedulers
 
 Each scheduler is optimized for different use cases. We recommend testing each one to find the best fit for your specific requirements.
 
 ### Available Schedulers
-| Scheduler | Full Name | Package(s) | Best for... | Developer |
-| :--- | :--- | :--- | :--- | :--- |
-| **[BORE](https://github.com/firelzrd/bore-scheduler)** | **B**urst-**O**riented **R**esponse **E**nhancer | `linux-cachyos-bore` | Interactive workloads & gaming | [firelzrd](https://github.com/firelzrd) |
-| **[EEVDF](https://lwn.net/Articles/927530/)** | **E**arliest **E**ligible **V**irtual **D**eadline **F**irst | `linux-cachyos`, `linux-cachyos-eevdf` | General-purpose computing | Peter Zijlstra |
-| **[BMQ](https://gitlab.com/alfredchen/linux-prjc)** | **B**it**M**ap **Q**ueue CPU Scheduler | `linux-cachyos-bmq` | N/A | [Alfred Chen](https://gitlab.com/alfredchen) |
+
+| Scheduler                                              | Full Name                                                    | Package(s)                             | Best for...                    | Developer                                    |
+| :----------------------------------------------------- | :----------------------------------------------------------- | :------------------------------------- | :----------------------------- | :------------------------------------------- |
+| **[BORE](https://github.com/firelzrd/bore-scheduler)** | **B**urst-**O**riented **R**esponse **E**nhancer             | `linux-cachyos-bore`                   | Interactive workloads & gaming | [firelzrd](https://github.com/firelzrd)      |
+| **[EEVDF](https://lwn.net/Articles/927530/)**          | **E**arliest **E**ligible **V**irtual **D**eadline **F**irst | `linux-cachyos`, `linux-cachyos-eevdf` | General-purpose computing      | Peter Zijlstra                               |
+| **[BMQ](https://gitlab.com/alfredchen/linux-prjc)**    | **B**it**M**ap **Q**ueue CPU Scheduler                       | `linux-cachyos-bmq`                    | N/A                            | [Alfred Chen](https://gitlab.com/alfredchen) |
 
 ### Specialized Variants
 
@@ -81,7 +187,7 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 ### Filesystem & Memory
 
 - **ZFS Support**: Built-in ZFS filesystem support with pre-compiled modules
-- **NVIDIA Integration**: 
+- **NVIDIA Integration**:
   - Proprietary NVIDIA driver modules with patches
   - Open-source NVIDIA driver support
   - Ready-to-use modules in repository
@@ -95,12 +201,14 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 ### Additional Features
 
 #### Hardware Support
+
 - **Gaming Hardware**: Steam Deck patches (Audio, HW Quirks, HID) and ROG Ally support
 - **Apple Hardware**: T2 MacBook support included by default
 - **ASUS Hardware**: Extended ASUS hardware compatibility patches
 - **Graphics**: HDR support enabled, AMDGPU min_powercap override (`amdgpu_ignore_min_pcap`)
 
 #### System Enhancements
+
 - **Multimedia**: v4l2loopback modules included by default
 - **Virtualization**: ACS Override support for VFIO/GPU passthrough
 - **Upstream Integration**: Cherry-picked patches from Clear Linux and linux-next
@@ -114,12 +222,12 @@ Our [repositories](https://mirror.cachyos.org/) contain optimized Arch Linux and
 
 ### Available Repository Tiers
 
-| Repository | Target CPUs | Package Coverage | Optimization Level |
-|------------|-------------|------------------|--------------------|
-| `znver4` | AMD Zen 4 & Zen 5 | Full package set | Zen4-specific optimizations |
+| Repository  | Target CPUs             | Package Coverage | Optimization Level               |
+| ----------- | ----------------------- | ---------------- | -------------------------------- |
+| `znver4`    | AMD Zen 4 & Zen 5       | Full package set | Zen4-specific optimizations      |
 | `x86-64-v4` | Intel Xeon / Intel 11th | Full package set | AVX, AVX2, AVX512, SSE4.2, SSSE3 |
-| `x86-64-v3` | 2012 or newer | Full package set | AVX, AVX2, SSE4.2, SSSE3 |
-| `x86-64` | All x86-64 CPUs | Kernels only | Basic optimizations |
+| `x86-64-v3` | 2012 or newer           | Full package set | AVX, AVX2, SSE4.2, SSSE3         |
+| `x86-64`    | All x86-64 CPUs         | Kernels only     | Basic optimizations              |
 
 ### Quick Installation
 
@@ -137,6 +245,7 @@ sudo ./cachyos-repo.sh
 ```
 
 **What the script does:**
+
 - Auto-detects your CPU architecture support
 - Configures appropriate repository tiers
 - Backs up your existing `pacman.conf`
@@ -198,6 +307,7 @@ Look for the `(supported, searched)` indicators:
 - ❌ **`x86-64-v4`** (without parentheses) = CPU does NOT support v4
 
 **Example Output for Compatible CPU:**
+
 ```
 $ /lib/ld-linux-x86-64.so.2 --help | grep supported
   x86-64-v4 (supported, searched)
@@ -206,6 +316,7 @@ $ /lib/ld-linux-x86-64.so.2 --help | grep supported
 ```
 
 **Instruction Set Requirements:**
+
 - **x86-64-v4**: Intel Haswell (2013+) / AMD Excavator (2015+)
 - **x86-64-v3**: Intel Nehalem (2008+) / AMD Bulldozer (2011+)
 - **x86-64-v2**: Intel Core 2 (2006+) / AMD K8 (2003+)
@@ -219,6 +330,7 @@ sudo nano /etc/pacman.conf
 ```
 
 **For x86-64 (Basic) Support:**
+
 ```ini
 # CachyOS repositories
 [cachyos]
@@ -226,6 +338,7 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
 **For x86-64-v3 Support:**
+
 ```ini
 # CachyOS repositories (add in this order)
 [cachyos-v3]
@@ -239,6 +352,7 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
 **For x86-64-v4 Support:**
+
 ```ini
 # CachyOS repositories (add in this order)
 [cachyos-v4]
@@ -252,6 +366,7 @@ Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
 **For AMD Zen4 CPUs:**
+
 ```ini
 # CachyOS repositories (Zen4 optimized)
 [cachyos-znver4]
@@ -315,7 +430,7 @@ emaint sync -r CachyOS-kernels
 COPR repository with multiple kernel variants:
 
 - `linux-cachyos-bore`
-- `linux-cachyos-rt-bore` 
+- `linux-cachyos-rt-bore`
 - `linux-cachyos-bore-lto`
 - `linux-cachyos-lts`
 
@@ -332,6 +447,7 @@ Precompiled kernels available through the xddxdd/nix-cachyos-kernel repository:
 ## Support & Community
 
 ### Get Help
+
 - **Discord:** [CachyOS Community](https://discord.gg/cachyos-862292009423470592)
 - **Forum:** [discuss.cachyos.org](https://discuss.cachyos.org)
 - **Telegram:** [CachyOS Group](https://t.me/+zCzPX4cAFjk1MTYy)
