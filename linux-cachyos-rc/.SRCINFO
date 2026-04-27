@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos-rc
 	pkgdesc = Linux Clang ThinLTO + AutoFDO + Cachy Sauce Kernel by CachyOS with other patches and improvements - Release Candidate
-	pkgver = 7.0.rc7
-	pkgrel = 2
+	pkgver = 7.1.rc1
+	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -30,11 +30,11 @@ pkgbase = linux-cachyos-rc
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.0-rc7-3/cachyos-7.0-rc7-3.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.1-rc1-2/cachyos-7.1-rc1-2.tar.gz
 	source = config
-	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.0/misc/dkms-clang.patch
-	b2sums = 83a22300c3aca33fc4ba63171546d1ae1f1a3126553a61d45aa656e06a6d0b11a05a417f0854c75bf8570d9fd165765789af939c352388c57344b85de157cfad
-	b2sums = b247fa1ddea7d6124348fa66438715b1eb7afe279fd0d073cf9a366deecd322dbfea3843de0c61356f0d88b242cec42dbb6b2b2344d4ae9042335118c0c31e81
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.1/misc/dkms-clang.patch
+	b2sums = c06d41134766233158368b699dd03e89e9adbe3be7762c1278c1e0f58cd948b10b03ec9e7dfe154a5e8f6e3d80736b6e1ac9f592d85f765a66a1bc580070be1d
+	b2sums = 2489dc698b9656960745b282ac0292ce35fb2572b863e35f6707a6ee149397118bf50f6bc1d3a4e4694e4be8a23c51d5f0c15f515041c5f3fd3c2e6fc36d787f
 	b2sums = c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e
 
 pkgname = linux-cachyos-rc
