@@ -176,11 +176,11 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=7.0
-_minor=1
+_minor=2
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=2
+_tagrel=1
 pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
@@ -820,6 +820,6 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('dae09018438025ff879cdcc79376bbbb45250125dd1912b2d6185993d0a7ff44967f4f79b94d9e61ee52f9b17dcdd6359fd521245faada042d735d4bf72a8b6f'
-        'b247fa1ddea7d6124348fa66438715b1eb7afe279fd0d073cf9a366deecd322dbfea3843de0c61356f0d88b242cec42dbb6b2b2344d4ae9042335118c0c31e81'
+b2sums=('3fa5512aad7edeaf30007b67d2d9dad3f350177cfe5a282da20cfde0862e6aeb9c25d6bb3eeee0957545001be5dc1de596bbf17cab339da4ae7b6e921832c1a6'
+        '7f8a46c3718d14dff0f983303cd748a06cea9f301d2faa63ff5672f4dfda2ed6854f58cb8ad18879c2ec705e04ec2ab79833ec91c995c80d581cce9ed6b0d996'
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e')
