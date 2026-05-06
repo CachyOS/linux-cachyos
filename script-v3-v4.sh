@@ -1,4 +1,20 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
+run_kernelbuild() {
+    local image="$1"
+    local status
+
+    if time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v "$PWD":/pkg "$image"; then
+        status=0
+    else
+        status=$?
+    fi
+
+    docker rm kernelbuild >/dev/null 2>&1 || true
+    return "$status"
+}
+
 ## Enable ZFS
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs:=no/_build_zfs:=yes/" {}
 ## Enable Generic v3
@@ -19,8 +35,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
-    docker rm kernelbuild
+    run_kernelbuild pttrr/docker-makepkg-v3
     cd ..
 done
 
@@ -33,8 +48,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
-    docker rm kernelbuild
+    run_kernelbuild pttrr/docker-makepkg-v3
     cd ..
 done
 
@@ -54,8 +68,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v4
-    docker rm kernelbuild
+    run_kernelbuild pttrr/docker-makepkg-v4
     cd ..
 done
 
@@ -68,8 +81,7 @@ for f in $files
 do
     d=$(dirname $f)
     cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v4
-    docker rm kernelbuild
+    run_kernelbuild pttrr/docker-makepkg-v4
     cd ..
 done
 
