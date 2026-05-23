@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-server
 	pkgdesc = Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads
-	pkgver = 7.0.9
+	pkgver = 7.0.10
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -27,9 +27,9 @@ pkgbase = linux-cachyos-server
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.0.9-1/cachyos-7.0.9-1.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.0.10-1/cachyos-7.0.10-1.tar.gz
 	source = config
-	b2sums = ffa4da16bbd6313fb85b916a770383df817a43f8e1135f8c4c4a5d29d8cc692e3ecb4f71ecba4bc51173c10f88e8d7a9c159a5ffd6bd21d23382916ffe28b3f6
+	b2sums = 72162fbcc9e1698841e44a4cbdd61c2908cc282de6581f87ac43ffd42467f4608dfd76493472baa104b317892a7f810ebb1fb6f13dcc966b44292dc93ef7b577
 	b2sums = 7bb5113dbc67e8e2ce5c5473ae1b08973af5adba0a6a14c64a213bb116e5a172d40b7c274b85ad15553511484ee1f120e0372251e242c6f87ce6920235f0c136
 
 pkgname = linux-cachyos-server

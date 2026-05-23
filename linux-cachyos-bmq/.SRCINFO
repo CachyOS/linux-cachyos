@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-bmq
 	pkgdesc = Linux BMQ + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements
-	pkgver = 7.0.9
+	pkgver = 7.0.10
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -27,12 +27,12 @@ pkgbase = linux-cachyos-bmq
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.0.9-1/cachyos-7.0.9-1.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.0.10-1/cachyos-7.0.10-1.tar.gz
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.0/sched/0001-prjc-cachy.patch
-	b2sums = ffa4da16bbd6313fb85b916a770383df817a43f8e1135f8c4c4a5d29d8cc692e3ecb4f71ecba4bc51173c10f88e8d7a9c159a5ffd6bd21d23382916ffe28b3f6
+	b2sums = 72162fbcc9e1698841e44a4cbdd61c2908cc282de6581f87ac43ffd42467f4608dfd76493472baa104b317892a7f810ebb1fb6f13dcc966b44292dc93ef7b577
 	b2sums = 7bb5113dbc67e8e2ce5c5473ae1b08973af5adba0a6a14c64a213bb116e5a172d40b7c274b85ad15553511484ee1f120e0372251e242c6f87ce6920235f0c136
-	b2sums = b17ea638c0c8327a48cb6d08738018474ef2834904b46910e6a79ad33a666a61ef6c409838e499f203cb233590b0227f00c6f514b4fa8938eff6c330614c3c69
+	b2sums = b8dfe543d70e595b5a88bacd0473c1a9eb7fce63596c2945cbe196cc784dd4fabd70ecb857088c2f7512191f76e3c504b65d49793a2b420f7c1aa0ed8c4e528b
 
 pkgname = linux-cachyos-bmq
 	pkgdesc = The Linux BMQ + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements kernel and modules
