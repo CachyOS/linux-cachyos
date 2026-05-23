@@ -1,5 +1,5 @@
 pkgbase = linux-cachyos-bmq
-	pkgdesc = Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements
+	pkgdesc = Linux BMQ + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements
 	pkgver = 7.0.9
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
@@ -35,7 +35,7 @@ pkgbase = linux-cachyos-bmq
 	b2sums = b17ea638c0c8327a48cb6d08738018474ef2834904b46910e6a79ad33a666a61ef6c409838e499f203cb233590b0227f00c6f514b4fa8938eff6c330614c3c69
 
 pkgname = linux-cachyos-bmq
-	pkgdesc = The Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements kernel and modules
+	pkgdesc = The Linux BMQ + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements kernel and modules
 	depends = coreutils
 	depends = kmod
 	depends = initramfs
@@ -52,7 +52,7 @@ pkgname = linux-cachyos-bmq
 	provides = ADIOS-MODULE
 
 pkgname = linux-cachyos-bmq-headers
-	pkgdesc = Headers and scripts for building modules for the Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements kernel
+	pkgdesc = Headers and scripts for building modules for the Linux BMQ + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements kernel
 	depends = binutils
 	depends = glibc
 	depends = libelf
