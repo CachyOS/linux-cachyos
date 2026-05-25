@@ -12,6 +12,7 @@
 - [Features](#features)
   - [Performance Optimizations](#performance-optimizations)
   - [CPU Enhancements](#cpu-enhancements)
+  - [Networking](#networking)
   - [Filesystem & Memory](#filesystem--memory)
   - [Additional Features](#additional-features)
 - [CachyOS Repositories](#cachyos-repositories)
@@ -26,7 +27,9 @@
 
 ## Overview
 
-CachyOS provides a collection of enhanced Linux kernels designed for improved performance across different workloads. Our kernels feature multiple CPU schedulers, advanced compiler optimizations, and carefully selected patches to deliver better responsiveness and throughput.
+CachyOS provides a collection of enhanced Linux kernels designed for improved performance across different workloads. Kernels are built from the [CachyOS Linux](https://github.com/CachyOS/linux) fork (currently based on **Linux 7.0**), which merges topic branches on top of upstream stable releases.
+
+Our kernels feature multiple CPU schedulers, advanced compiler optimizations, and carefully selected patches to deliver better responsiveness and throughput.
 
 > [!NOTE]
 > All CachyOS kernels are available in multiple architecture optimizations: `x86-64`, `x86-64-v3`, `x86-64-v4`, and `znver4`.
@@ -38,74 +41,91 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 ### Available Schedulers
 | Scheduler | Full Name | Package(s) | Best for... | Developer |
 | :--- | :--- | :--- | :--- | :--- |
-| **[BORE](https://github.com/firelzrd/bore-scheduler)** | **B**urst-**O**riented **R**esponse **E**nhancer | `linux-cachyos-bore` | Interactive workloads & gaming | [firelzrd](https://github.com/firelzrd) |
-| **[EEVDF](https://lwn.net/Articles/927530/)** | **E**arliest **E**ligible **V**irtual **D**eadline **F**irst | `linux-cachyos`, `linux-cachyos-eevdf` | General-purpose computing | Peter Zijlstra |
-| **[BMQ](https://gitlab.com/alfredchen/linux-prjc)** | **B**it**M**ap **Q**ueue CPU Scheduler | `linux-cachyos-bmq` | N/A | [Alfred Chen](https://gitlab.com/alfredchen) |
+| **[BORE](https://github.com/firelzrd/bore-scheduler)** | **B**urst-**O**riented **R**esponse **E**nhancer | `linux-cachyos-bore`, `linux-cachyos-deckify`, `linux-cachyos-hardened`, `linux-cachyos-rt-bore` | Interactive workloads & gaming | [firelzrd](https://github.com/firelzrd) |
+| **[EEVDF](https://lwn.net/Articles/927530/)** | **E**arliest **E**ligible **V**irtual **D**eadline **F**irst | `linux-cachyos`, `linux-cachyos-eevdf`, `linux-cachyos-lts`, `linux-cachyos-server` | General-purpose computing | Peter Zijlstra |
+| **[BMQ](https://gitlab.com/alfredchen/linux-prjc)** | **B**it**M**ap **Q**ueue CPU Scheduler | `linux-cachyos-bmq` | Throughput-oriented workloads | [Alfred Chen](https://gitlab.com/alfredchen) |
 
 ### Specialized Variants
 
-- **`linux-cachyos-hardened`** - Security-focused kernel with hardening patches
-- **`linux-cachyos-lts`** - Long Term Support version for stability
-- **`linux-cachyos-rt-bore`** - Real-time kernel with BORE scheduler
-- **`linux-cachyos-server`** - Server-optimized configuration
-- **`linux-cachyos-deckify`** - Steam Deck optimized variant
+- **`linux-cachyos`** - Default kernel: EEVDF scheduler with Clang Thin LTO and AutoFDO
+- **`linux-cachyos-rc`** - Release candidate kernel tracking the next upstream version
+- **`linux-cachyos-hardened`** - Security-focused kernel with hardening patches and the BORE scheduler
+- **`linux-cachyos-lts`** - Long Term Support version (currently 6.18) with EEVDF and Cachy Sauce
+- **`linux-cachyos-rt-bore`** - Real-time kernel with BORE scheduler integration
+- **`linux-cachyos-server`** - Server-optimized EEVDF configuration with lazy preemption
+- **`linux-cachyos-deckify`** - Handheld gaming variant with BORE scheduler, Steam Deck support, and MSI Claw driver
 
 ### Compiler Variants
 
-- **`linux-cachyos`** - Default GCC-compiled kernel with Thin LTO
-- **`linux-cachyos-lto`** - Clang and Thin LTO, utilizing AutoFDO + Propeller profiling for optimal performance.
+- **`linux-cachyos`** - Default optimized build using Clang Thin LTO with AutoFDO + Propeller profile-guided optimizations
+- **Scheduler-specific packages** (`linux-cachyos-bore`, `linux-cachyos-bmq`, `linux-cachyos-eevdf`, etc.) - GCC-compiled builds without LTO, focused on scheduler choice over compiler optimizations
 
 > [!TIP]
 > For detailed explanations of each kernel variant, visit our [Kernel Wiki](https://wiki.cachyos.org/features/kernel).
 
 ## Features
 
+The CachyOS kernel fork merges topic branches into each release. The current **Linux 7.0** base includes the following integrated branches and enhancements.
+
 ### Performance Optimizations
 
 - **Advanced Compilation**: Highly customizable PKGBUILD with support for both GCC and Clang compilers
-- **Link Time Optimization (LTO)**: Thin LTO enabled by default for better performance
-- **Profile-Guided Optimization**: AutoFDO + Propeller profiling for optimal code generation ([Learn more](https://cachyos.org/blog/2411-kernel-autofdo/))
+- **Link Time Optimization (LTO)**: Clang Thin LTO enabled by default on the main `linux-cachyos` package
+- **Distributed ThinLTO**: Support for distributed Clang ThinLTO builds to speed up kernel compilation
+- **Profile-Guided Optimization**: AutoFDO + Propeller profiling on the default kernel for optimal code generation ([Learn more](https://cachyos.org/blog/2411-kernel-autofdo/))
 - **Kernel Control Flow Integrity (kCFI)**: Available when using LLVM for enhanced security
-- **Timer Frequency Options**: Configurable between 300Hz, 500Hz, 600Hz, 750Hz, and 1000Hz (default: 1000Hz)
+- **Timer Frequency Options**: Configurable between 100Hz, 250Hz, 300Hz, 500Hz, 600Hz, 750Hz, and 1000Hz (default: 1000Hz)
 - **Architecture Optimizations**: Support for x86-64-v3, x86-64-v4, and AMD Zen4 specific builds
 - **Compiler Optimizations**: Advanced GCC flags including `-fivopts` and `-fmodulo-sched`
+- **PREEMPT_DYNAMIC**: Runtime-selectable preemption modes (full, lazy, voluntary, none)
 
 ### CPU Enhancements
 
 - **Multiple Schedulers**: BORE, EEVDF, and BMQ schedulers for different workload optimization
+- **[POC Selector](https://github.com/masahitoS/scx_cake)**: Piece-Of-Cake fast idle CPU selector inspired by scx_cake, reducing wakeup latency
+- **CachyOS Sauce**: Custom `CONFIG_CACHY` configuration with scheduler and system tweaks
 - **AMD P-State Enhancements**: Preferred Core support and latest amd-pstate improvements from linux-next
 - **Real-Time Support**: RT kernel builds available with BORE scheduler integration
-- **CachyOS Sauce**: Custom `CONFIG_CACHY` configuration with scheduler and system tweaks
 - **Low-Latency Optimizations**: Patches for improved responsiveness and reduced jitter
+- **sched/wait LIFO accept()**: Socket accept() processed in LIFO order for better cache efficiency
+
+### Networking
+
+- **[BBR3 TCP](https://github.com/google/bbr)**: BBRv3 congestion control available as a separate module alongside BBRv1
 
 ### Filesystem & Memory
 
 - **ZFS Support**: Built-in ZFS filesystem support with pre-compiled modules
+- **NTFS Improvements**: Upstream NTFS driver fixes for MFT mirror validation, attribute bounds checking, and logfile handling
+- **MGLRU Enhancements**: Improved dirty writeback handling, simplified vmscan reclaim statistics, and Cachy Sauce MM tuning (LRU-gen working set protection, compaction/watermark tweaks, hugepage reclaim)
 - **NVIDIA Integration**: 
   - Proprietary NVIDIA driver modules with patches
   - Open-source NVIDIA driver support
   - Ready-to-use modules in repository
 - **I/O Scheduler Improvements**:
   - Enhanced BFQ and mq-deadline performance
-  - Alternative [ADIOS](https://github.com/firelzrd/adios) I/O scheduler support
-- **Memory Management**:
-  - [le9uo](https://github.com/firelzrd/le9uo) patch for preventing page thrashing under memory pressure
-  - Zen-kernel memory management tweaks (compaction, watermark optimization)
+  - [ADIOS](https://github.com/firelzrd/adios) v3.2.0 multi-queue I/O scheduler support
+- **VRAM Cgroup (DMEM)**: Device memory controller for restricting GPU VRAM usage per cgroup in the DRM subsystem
 
 ### Additional Features
 
 #### Hardware Support
-- **Gaming Hardware**: Steam Deck patches (Audio, HW Quirks, HID) and ROG Ally support
-- **Apple Hardware**: T2 MacBook support included by default
+- **AMD ISP4**: New AMD ISP 4 camera driver for supported platforms
+- **Gaming Hardware**: Steam Deck patches (Audio, HW Quirks, HID), ROG Ally support, and MSI Claw HID driver (deckify)
+- **Apple Hardware**: T2 MacBook support with apple-bce driver in staging
 - **ASUS Hardware**: Extended ASUS hardware compatibility patches
+- **Lenovo Hardware**: WMI battery charge limiting, GPU/CPU tunable attributes, and capdata debugfs
+- **HP Hardware**: OMEN Slim and OMEN MAX laptop support via hp-wmi
 - **Graphics**: HDR support enabled, AMDGPU min_powercap override (`amdgpu_ignore_min_pcap`)
+- **Display**: HDMI VRR on AMD, ALLM and passive VRR connector properties, VESA DSC bits-per-pixel parsing from EDID
+- **Audio Codecs**: AW88399 and MAX98390 HDA side codec support
 
 #### System Enhancements
 - **Multimedia**: v4l2loopback modules included by default
 - **Virtualization**: ACS Override support for VFIO/GPU passthrough
 - **Upstream Integration**: Cherry-picked patches from Clear Linux and linux-next
 
-> [!INFO]
+> [!NOTE]
 > For comprehensive details about each kernel variant and their specific optimizations, visit our [Kernel Documentation](https://wiki.cachyos.org/features/kernel).
 
 ## CachyOS Repositories
