@@ -154,7 +154,7 @@ _minor=10
 #_rcver=rc8
 pkgver=${_major}.${_minor}
 _tagrel=2
-pkgrel=3
+pkgrel=4
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux BORE + Cachy Sauce + Handheld Kernel by CachyOS with other patches and improvements.'
 _kernver="$pkgver-$pkgrel"
@@ -428,7 +428,8 @@ prepare() {
         -m LEDS_VALVE \
         -e ACPI_CALL \
         -m ZOTAC_ZONE_PLATFORM \
-        -m EXTCON_STEAMDECK
+        -m EXTCON_STEAMDECK \
+        -m HID_MSI
 
     ### Optionally use running kernel's config
     # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
