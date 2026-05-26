@@ -60,7 +60,7 @@ jobs:
         pacman-key --init
         pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
         pacman-key --lsign-key F3B607488DB35A47
-        pacman -Syu --noconfirm --needed ccache
+        pacman -Syu --noconfirm --needed git ccache base-devel
 
         # Setup builder user
         useradd builder -m
@@ -71,7 +71,7 @@ jobs:
         sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc) -l$(nproc)"/g' /etc/makepkg.conf
 
         # Setup a packager name to indicate that kernel has built with CI
-        sed -i 's/#PACKAGER=".*"/PACKAGER="CachyOS Kernel Builder"/g' /etc/makepkg.conf
+        sed -i 's/#PACKAGER=".*"/PACKAGER="CachyOS Kernel Builder <builder@localhost>"/g' /etc/makepkg.conf
 
         # Setup ccache
         sed -i 's|!ccache|ccache|' /etc/makepkg.conf
