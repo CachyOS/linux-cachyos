@@ -1,83 +1,117 @@
-name: Build Kernel
+name: Build Kernel (BORE)
 
 on:
   workflow_dispatch:
     inputs:
-      cpu_opt:
-        description: 'CPU Optimization (znver5 for Ryzen 9000)'
+      processor_opt:
+        description: 'CPU optimization (native, zen4, generic)'
         required: true
-        default: 'znver5'
+        default: 'generic'
         type: choice
         options:
-          - znver5
-          - znver4
-          - znver3
-          - x86-64-v4
-          - x86-64-v3
+          - native
+          - zen4
           - generic
+      llvm_lto:
+        description: 'LLVM LTO mode (none, thin, full)'
+        required: true
+        default: 'none'
+        type: choice
+        options:
+          - none
+          - thin
+          - full
+      build_zfs:
+        description: 'Build ZFS module'
+        required: false
+        default: 'no'
+        type: boolean
+      build_nvidia_open:
+        description: 'Build NVIDIA Open module (Turing+ GPU)'
+        required: false
+        default: 'no'
+        type: boolean
+      build_r8125:
+        description: 'Build r8125 module'
+        required: false
+        default: 'no'
+        type: boolean
+
+env:
+  CCACHE_DIR: /home/builder/.ccache
 
 jobs:
   build:
+    name: linux-cachyos-bore
     runs-on: ubuntu-latest
     container: archlinux:base-devel
-    
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Install Dependencies & LLVM
-        run: |
-          pacman -Syu --noconfirm \
-            git base-devel ccache clang llvm lld elfutils \
-            pahole kmod libelf perl python requests xmlto \
-            bc openssl flex bison wget rsync zstd
-
-      - name: Configure Git & Ccache
-        run: |
-          git config --global user.email "builder@localhost"
-          git config --global user.name "Builder"
-          echo "CCACHE_DIR=${{ github.workspace }}/.ccache" >> $GITHUB_ENV
-          echo "CC=clang" >> $GITHUB_ENV
-          echo "CXX=clang++" >> $GITHUB_ENV
-          echo "LD=ld.lld" >> $GITHUB_ENV
-
-      - name: Restore Ccache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ runner.os }}-${{ github.sha }}
-          restore-keys: |
-            ccache-${{ runner.os }}-
-
-      - name: Prepare Build Environment
-        run: |
-          # Настройка переменных окружения для архитектуры
-          echo "_arch=${{ inputs.cpu_opt }}" >> $GITHUB_ENV
-          
-          # Если в PKGBUILD есть переменная _march, заменяем её
-          if grep -q "^_march=" PKGBUILD; then
-            sed -i "s/^_march=.*/_march=\"${{ inputs.cpu_opt }}\"/" PKGBUILD
-          fi
-          
-          # Включаем Clang LTO если поддерживается
-          echo "LTO_FLAGS=\"--lto=thin\"" >> $GITHUB_ENV
-
-      - name: Build Kernel
-        run: |
-          # Запуск сборки через makepkg
-          # Используем --noconfirm и отключаем проверку подписей для CI
-          makepkg -s --noconfirm --skippgpcheck \
-            --config <(cat /etc/makepkg.conf \
-              <(echo "CC=clang") \
-              <(echo "CXX=clang++") \
-              <(echo "CFLAGS=\${CFLAGS} -O3") \
-              <(echo "LDFLAGS=\${LDFLAGS} -flto=thin"))
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-cachyos-bore-packages
-          path: |
-            *.pkg.tar.zst
-            *.sig
-          retention-days: 7
+    - name: Setup build environment
+      run: |
+        # Use CachyOS repository
+        cat << 'EOF' >> /etc/pacman.conf
+        [cachyos]
+        Server = https://mirror.cachyos.org/repo/x86_64/cachyos
+        EOF
+        pacman-key --init
+        pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
+        pacman-key --lsign-key F3B607488DB35A47
+        pacman -Syu --noconfirm --needed git ccache base-devel
+        # Setup builder user
+        useradd builder -m
+        echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+        chmod -R a+rw .
+        # Use all threads for building
+        sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc) -l$(nproc)"/g' /etc/makepkg.conf
+        # Setup a packager name to indicate that kernel has built with CI
+        sed -i 's/#PACKAGER=".*"/PACKAGER="CachyOS Kernel Builder <builder@localhost>"/g' /etc/makepkg.conf
+        # Setup ccache
+        sed -i 's|!ccache|ccache|' /etc/makepkg.conf
+        sudo -u builder mkdir -p ${{ env.CCACHE_DIR }}
+    - name: Setup ccache
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.CCACHE_DIR }}
+        key: ccache-bore-${{ github.run_id }}
+        restore-keys: |
+          ccache-bore
+    - name: Configure PKGBUILD
+      run: |
+        cd "linux-cachyos-bore"
+        
+        # Set CPU optimization
+        sed -i "s/: \"\${_processor_opt:=}\"/: \"\${_processor_opt:=${{ inputs.processor_opt }}}\"/" PKGBUILD
+        
+        # Set LLVM LTO mode
+        sed -i "s/: \"\${_use_llvm_lto:=none}\"/: \"\${_use_llvm_lto:=${{ inputs.llvm_lto }}}\"/" PKGBUILD
+        
+        # Enable ZFS if requested
+        if [ "${{ inputs.build_zfs }}" = "true" ]; then
+          sed -i "s/: \"\${_build_zfs:=no}\"/: \"\${_build_zfs:=yes}\"/" PKGBUILD
+        fi
+        
+        # Enable NVIDIA Open if requested
+        if [ "${{ inputs.build_nvidia_open }}" = "true" ]; then
+          sed -i "s/: \"\${_build_nvidia_open:=no}\"/: \"\${_build_nvidia_open:=yes}\"/" PKGBUILD
+        fi
+        
+        # Enable r8125 if requested
+        if [ "${{ inputs.build_r8125 }}" = "true" ]; then
+          sed -i "s/: \"\${_build_r8125:=no}\"/: \"\${_build_r8125:=yes}\"/" PKGBUILD
+        fi
+    - name: Build kernel package
+      id: makepkg
+      run: |
+        cd "linux-cachyos-bore"
+        sudo -H -E -u builder makepkg --skipchecksums --syncdeps --noconfirm
+    - name: Upload kernel package
+      id: upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-cachyos-bore
+        path: linux-cachyos-bore/*.pkg.tar.zst*
+        retention-days: 14
