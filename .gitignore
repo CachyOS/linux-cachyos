@@ -1,4 +1,13 @@
 ```
 # CI/CD
-.github/workflows/
+.github/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+*.env.*
 ```
