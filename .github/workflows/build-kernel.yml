@@ -1,0 +1,83 @@
+name: Build Kernel
+
+on:
+  workflow_dispatch:
+    inputs:
+      cpu_opt:
+        description: 'CPU Optimization (znver5 for Ryzen 9000)'
+        required: true
+        default: 'znver5'
+        type: choice
+        options:
+          - znver5
+          - znver4
+          - znver3
+          - x86-64-v4
+          - x86-64-v3
+          - generic
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies & LLVM
+        run: |
+          pacman -Syu --noconfirm \
+            git base-devel ccache clang llvm lld elfutils \
+            pahole kmod libelf perl python requests xmlto \
+            bc openssl flex bison wget rsync zstd
+
+      - name: Configure Git & Ccache
+        run: |
+          git config --global user.email "builder@localhost"
+          git config --global user.name "Builder"
+          echo "CCACHE_DIR=${{ github.workspace }}/.ccache" >> $GITHUB_ENV
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+          echo "LD=ld.lld" >> $GITHUB_ENV
+
+      - name: Restore Ccache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            ccache-${{ runner.os }}-
+
+      - name: Prepare Build Environment
+        run: |
+          # Настройка переменных окружения для архитектуры
+          echo "_arch=${{ inputs.cpu_opt }}" >> $GITHUB_ENV
+          
+          # Если в PKGBUILD есть переменная _march, заменяем её
+          if grep -q "^_march=" PKGBUILD; then
+            sed -i "s/^_march=.*/_march=\"${{ inputs.cpu_opt }}\"/" PKGBUILD
+          fi
+          
+          # Включаем Clang LTO если поддерживается
+          echo "LTO_FLAGS=\"--lto=thin\"" >> $GITHUB_ENV
+
+      - name: Build Kernel
+        run: |
+          # Запуск сборки через makepkg
+          # Используем --noconfirm и отключаем проверку подписей для CI
+          makepkg -s --noconfirm --skippgpcheck \
+            --config <(cat /etc/makepkg.conf \
+              <(echo "CC=clang") \
+              <(echo "CXX=clang++") \
+              <(echo "CFLAGS=\${CFLAGS} -O3") \
+              <(echo "LDFLAGS=\${LDFLAGS} -flto=thin"))
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-cachyos-bore-packages
+          path: |
+            *.pkg.tar.zst
+            *.sig
+          retention-days: 7
