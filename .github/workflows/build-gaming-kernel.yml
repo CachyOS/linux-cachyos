@@ -60,7 +60,7 @@ jobs:
         pacman-key --init
         pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
         pacman-key --lsign-key F3B607488DB35A47
-        pacman -Syu --noconfirm --needed git ccache base-devel
+        pacman -Syu --noconfirm --needed git ccache base-devel llvm clang lld compiler-rt
 
         # Setup builder user
         useradd builder -m
@@ -76,6 +76,11 @@ jobs:
         # Setup ccache
         sed -i 's|!ccache|ccache|' /etc/makepkg.conf
         sudo -u builder mkdir -p ${{ env.CCACHE_DIR }}
+
+        # Set Clang as default compiler
+        echo "CC=clang" >> /etc/makepkg.conf
+        echo "CXX=clang++" >> /etc/makepkg.conf
+        echo "LD=ld.lld" >> /etc/makepkg.conf
 
     - name: Setup ccache
       id: cache
