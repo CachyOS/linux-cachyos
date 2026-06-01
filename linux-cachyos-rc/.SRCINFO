@@ -35,6 +35,7 @@ pkgbase = linux-cachyos-rc
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.1/misc/dkms-clang.patch
 	validpgpkeys = E18447AC260021D31F3FF6C4C8A2A4774B8B63C4
+	validpgpkeys = E8B9AA39F054E30E8290D492C3C4820857F654FE
 	b2sums = 2b74cc4fbd9d7ebedda83c05abc71564ce2ee5fd225b147dcd15cee66e47638f37b566bfe6db7231642380407699e084560beaef9ed482ae21a7d7296d8ac7fe
 	b2sums = SKIP
 	b2sums = 74ec907cbafb6dc0971ceb700d2e39ace932474aac92d7b73a39df30cbb673070e42b8770ce6c52570275c2310bc374f082363a6ba6cad443998da5a2ed74cd0
