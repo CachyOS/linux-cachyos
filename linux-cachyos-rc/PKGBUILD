@@ -177,10 +177,10 @@ pkgbase="linux-$_pkgsuffix"
 _major=7.1
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc5
+_rcver=rc6
 pkgver=${_major}.${_rcver}
-_tagrel=2
-pkgrel=2
+_tagrel=1
+pkgrel=1
 #_stable=${_major}.${_minor}
 #_stable=${_major}
 _stable=${_major}-${_rcver}
@@ -220,8 +220,12 @@ _nv_ver=610.43.02
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "https://github.com/CachyOS/linux/releases/download/${_srctag}/${_srctag}.tar.gz"
-    "config")
+    "https://github.com/CachyOS/linux/releases/download/${_srctag}/${_srctag}.tar.gz"{,.asc}
+    "config"
+)
+validpgpkeys=(
+  E18447AC260021D31F3FF6C4C8A2A4774B8B63C4  # Eric Naim <dnaim@cachyos.org>
+)
 
 # LLVM makedepends
 if _is_lto_kernel; then
@@ -810,6 +814,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('b6734750e412140b728a6d18938c74a36bda5f2fb8f8658e3fb23b6cf13688d2f1c76fbf4d5337a80891ef77ade1fd70a80e8b7e4b5474f3b4c0cf4c3f3ff7cb'
-        '3f4afd2643d5248805e28baac898c224c2db41c0ebaea118dea6ceeb81a12329062a9068a409aaf793631cc71005fd9047f198d2d572ef449d41ee338d757ff7'
+b2sums=('2b74cc4fbd9d7ebedda83c05abc71564ce2ee5fd225b147dcd15cee66e47638f37b566bfe6db7231642380407699e084560beaef9ed482ae21a7d7296d8ac7fe'
+        'SKIP'
+        '74ec907cbafb6dc0971ceb700d2e39ace932474aac92d7b73a39df30cbb673070e42b8770ce6c52570275c2310bc374f082363a6ba6cad443998da5a2ed74cd0'
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e')
