@@ -28,9 +28,13 @@ pkgbase = linux-cachyos-bore
 	options = !debug
 	options = !lto
 	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.0.10-2/cachyos-7.0.10-2.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.0.10-2/cachyos-7.0.10-2.tar.gz.asc
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.0/sched/0001-bore-cachy.patch
+	validpgpkeys = E18447AC260021D31F3FF6C4C8A2A4774B8B63C4
+	validpgpkeys = E8B9AA39F054E30E8290D492C3C4820857F654FE
 	b2sums = 299e4476751b4c5caa6a34824ef017fb638f5eff811057058118fae70bda4cedbd7e856da5436f0cc32a3a73a27676f9340186b2aad324f7474edf6db73ce66a
+	b2sums = SKIP
 	b2sums = 7bb5113dbc67e8e2ce5c5473ae1b08973af5adba0a6a14c64a213bb116e5a172d40b7c274b85ad15553511484ee1f120e0372251e242c6f87ce6920235f0c136
 	b2sums = 9dc1a5a46d8ecf606323926f22b4ce0aaf910dc47fd9ab9b8d08d1600e0bb45109babf7098f390562d8d8456239bb44b7db13b175fe2f529b9784a603dc11fbe
 

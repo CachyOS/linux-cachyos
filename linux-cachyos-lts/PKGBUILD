@@ -190,8 +190,13 @@ _nv_ver=610.43.02
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
-    "https://github.com/CachyOS/linux/releases/download/${_srctag}/${_srctag}.tar.gz"
-    "config")
+    "https://github.com/CachyOS/linux/releases/download/${_srctag}/${_srctag}.tar.gz"{,.asc}
+    "config"
+)
+validpgpkeys=(
+  E18447AC260021D31F3FF6C4C8A2A4774B8B63C4  # Eric Naim <dnaim@cachyos.org>
+  E8B9AA39F054E30E8290D492C3C4820857F654FE  # Peter Jung <admin@ptr1337.dev>
+)
 
 # LLVM makedepends
 if _is_lto_kernel; then
@@ -746,4 +751,5 @@ for _p in "${pkgname[@]}"; do
 done
 
 b2sums=('873a086320f63463b48e619b79b7d5014e542c5113ef4fefb4ddc77387c144a410393b2453bf52a770eb1f551a399bf194cae73948d38a1926fdd54fa830e4f1'
+        'SKIP'
         '81fafd3adcaf3b690d8d4791693e68c7ae921d103ebfd70e8d0ae15cd05ecde5e6672ae43c3a7875686d883c1f5b82d2c8b37b40aee8dcb0563913f9dd6469b6')
