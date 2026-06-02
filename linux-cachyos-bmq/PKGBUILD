@@ -150,12 +150,12 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=7.0
-_minor=10
+_minor=11
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=2
-pkgrel=2
+_tagrel=1
+pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux BMQ + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements'
 _kernver="$pkgver-$pkgrel"
@@ -746,7 +746,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('299e4476751b4c5caa6a34824ef017fb638f5eff811057058118fae70bda4cedbd7e856da5436f0cc32a3a73a27676f9340186b2aad324f7474edf6db73ce66a'
+b2sums=('e37b762176e39b36bb607bd34817ed1579055c4c59edfabd377064ac8321503d0cdad6777aead4eb93f390561ab02a55da02d812a8a42f4785a5061fd1e38fc8'
         'SKIP'
         '7bb5113dbc67e8e2ce5c5473ae1b08973af5adba0a6a14c64a213bb116e5a172d40b7c274b85ad15553511484ee1f120e0372251e242c6f87ce6920235f0c136'
-        'b8dfe543d70e595b5a88bacd0473c1a9eb7fce63596c2945cbe196cc784dd4fabd70ecb857088c2f7512191f76e3c504b65d49793a2b420f7c1aa0ed8c4e528b')
+        '8188b406df9f65ab253b44db9822c20a3215d1a1b00cb8520f343a687cfa70e31c4ad233a608fe07acf4c1e5d757fd954ada7d9cf17517dbea22f68ecc8abb11')
