@@ -224,7 +224,9 @@ fi
 
 
 if [ "$_build_nvidia_open" = "yes" ]; then
-    source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz")
+    source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
+             "${_patchsource}/misc/nvidia/0002-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
+             "${_patchsource}/misc/nvidia/0004-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
 fi
 
 if [ "$_build_r8125" = "yes" ]; then
