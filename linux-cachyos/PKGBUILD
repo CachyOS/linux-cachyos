@@ -179,7 +179,7 @@ _minor=12
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=1
+_tagrel=2
 pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
@@ -818,7 +818,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('d3aa0ac4d37e3f8f2f888fc07db7f07b4d6b10b389ab7f75a59d7eada9656e9ef078668d76f9db528c6086b9ab53cd80ad95d36bdbfa5ca1c76c3cd7c452713c'
+b2sums=('2dbc9e0b4fd361ea2622d134ceb25e540ce8385a401a73e28a911192ff847e061800d9b791dd409cd6d1794026f950963d7df501d5b8d73b2f197d12807b66fd'
         'SKIP'
         '7bb5113dbc67e8e2ce5c5473ae1b08973af5adba0a6a14c64a213bb116e5a172d40b7c274b85ad15553511484ee1f120e0372251e242c6f87ce6920235f0c136'
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e')
