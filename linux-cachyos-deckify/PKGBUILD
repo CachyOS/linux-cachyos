@@ -148,12 +148,12 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=7.0
-_minor=12
+_major=7.1
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=2
+_tagrel=1
 pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux BORE + Cachy Sauce + Handheld Kernel by CachyOS with other patches and improvements.'

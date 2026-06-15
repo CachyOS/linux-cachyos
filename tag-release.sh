@@ -35,6 +35,7 @@ Examples:
 Notes:
   - Requires a GPG signing key configured via 'git config user.signingkey'
     or signing enabled globally with 'git config tag.gpgSign true'
+  - The release tarball is signed with the same GPG key (produces .tar.gz.asc)
   - Run this script from a checkout of github.com/CachyOS/linux
   - Topic branches must be merged (not squashed) into the release branch.
     The changelog is built from first-parent merge commits on top of the
@@ -86,10 +87,17 @@ fi
 # ---------------------------------------------------------------------------
 
 # Hash of the "Linux X.Y.Z" commit reachable from <ref>.
+# Upstream tags the first release of a series as "Linux X.Y" (no ".0"),
+# so fall back to the stripped form when "Linux X.Y.0" isn't found.
 find_upstream_commit() {
-    local version="$1" ref="$2"
-    git log --format="%H %s" "$ref" 2>/dev/null \
-        | awk -v tgt="Linux $version" '$0 ~ "^[0-9a-f]+ "tgt"$" {print $1; exit}'
+    local version="$1" ref="$2" hash
+    hash=$(git log --format="%H %s" "$ref" 2>/dev/null \
+        | awk -v tgt="Linux $version" '$0 ~ "^[0-9a-f]+ "tgt"$" {print $1; exit}')
+    if [[ -z "$hash" && "$version" == *.0 ]]; then
+        hash=$(git log --format="%H %s" "$ref" 2>/dev/null \
+            | awk -v tgt="Linux ${version%.0}" '$0 ~ "^[0-9a-f]+ "tgt"$" {print $1; exit}')
+    fi
+    printf '%s' "$hash"
 }
 
 # Most recent cachyos-<major.minor>-* tag. Works across stable rebases
@@ -233,22 +241,31 @@ if [[ "$push_confirm" == [yY] ]]; then
     TARBALL="${TAG}.tar.gz"
     git archive --format=tar.gz --prefix="${TAG}/" "$TAG" > "$TARBALL"
 
+    SIGNING_KEY=$(git config --get user.signingkey || true)
+    echo "Signing tarball with GPG..."
+    if [[ -n "$SIGNING_KEY" ]]; then
+        gpg --local-user "$SIGNING_KEY" --armor --detach-sign -o "${TARBALL}.asc" "$TARBALL"
+    else
+        gpg --armor --detach-sign -o "${TARBALL}.asc" "$TARBALL"
+    fi
+
     NOTES_FILE=$(mktemp --suffix=.md)
     echo "$CHANGELOG" > "$NOTES_FILE"
 
-    echo "Creating GitHub release and uploading tarball..."
+    echo "Creating GitHub release and uploading tarball + signature..."
     REPO_URL=$(git remote get-url origin)
     REPO_SLUG=$(echo "$REPO_URL" | sed -E 's#(https://github\.com/|git@github\.com:)##;s#\.git$##')
-    gh release create "$TAG" "$TARBALL" \
+    gh release create "$TAG" "$TARBALL" "${TARBALL}.asc" \
         --repo "$REPO_SLUG" \
         --title "CachyOS Linux ${VERSION}-${PKGREL}" \
         --notes-file "$NOTES_FILE" \
         --verify-tag
 
-    rm -f "$TARBALL" "$NOTES_FILE"
+    rm -f "$TARBALL" "${TARBALL}.asc" "$NOTES_FILE"
     echo ""
-    echo "Release created with uploaded tarball (served via GitHub's CDN)."
+    echo "Release created with uploaded tarball and GPG signature."
     echo "Download URL: https://github.com/CachyOS/linux/releases/download/${TAG}/${TARBALL}"
+    echo "Signature:    https://github.com/CachyOS/linux/releases/download/${TAG}/${TARBALL}.asc"
 else
     echo "Push with: git push origin $TAG"
 fi
