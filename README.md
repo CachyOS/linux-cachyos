@@ -27,7 +27,7 @@
 
 ## Overview
 
-CachyOS provides a collection of enhanced Linux kernels designed for improved performance across different workloads. Kernels are built from the [CachyOS Linux](https://github.com/CachyOS/linux) fork (currently based on **Linux 7.0**), which merges topic branches on top of upstream stable releases.
+CachyOS provides a collection of enhanced Linux kernels designed for improved performance across different workloads. Kernels are built from the [CachyOS Linux](https://github.com/CachyOS/linux) fork (currently based on **Linux 7.1**), which merges topic branches on top of upstream stable releases.
 
 Our kernels feature multiple CPU schedulers, advanced compiler optimizations, and carefully selected patches to deliver better responsiveness and throughput.
 
@@ -65,12 +65,12 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 
 ## Features
 
-The CachyOS kernel fork merges topic branches into each release. The current **Linux 7.0** base includes the following integrated branches and enhancements.
+The CachyOS kernel fork merges topic branches into each release. The current **Linux 7.1** base integrates fifteen topic branches (`amd-isp4`, `bbr3`, `cachy`, `cgroup-vram`, `drm-fair`, `fixes`, `hdmi`, `lenovo-wmi`, `mglru`, `preempt-ipi`, `sched-cluster`, `snd-codecs`, `t2`, `vesa-dsc-bpp`, and `vmalloc-free`) on top of upstream stable.
 
 ### Performance Optimizations
 
 - **Advanced Compilation**: Highly customizable PKGBUILD with support for both GCC and Clang compilers
-- **Link Time Optimization (LTO)**: Clang Thin LTO enabled by default on the main `linux-cachyos` package
+- **Link Time Optimization (LTO)**: Clang Thin LTO (v12) enabled by default on the main `linux-cachyos` package
 - **Distributed ThinLTO**: Support for distributed Clang ThinLTO builds to speed up kernel compilation
 - **Profile-Guided Optimization**: AutoFDO + Propeller profiling on the default kernel for optimal code generation ([Learn more](https://cachyos.org/blog/2411-kernel-autofdo/))
 - **Kernel Control Flow Integrity (kCFI)**: Available when using LLVM for enhanced security
@@ -78,16 +78,20 @@ The CachyOS kernel fork merges topic branches into each release. The current **L
 - **Architecture Optimizations**: Support for x86-64-v3, x86-64-v4, and AMD Zen4 specific builds
 - **Compiler Optimizations**: Advanced GCC flags including `-fivopts` and `-fmodulo-sched`
 - **PREEMPT_DYNAMIC**: Runtime-selectable preemption modes (full, lazy, voluntary, none)
+- **vmalloc Optimizations**: Bulk page freeing in `vfree()`, improved `vrealloc()` shrink/grow paths, and optimized contiguous range freeing
 
 ### CPU Enhancements
 
 - **Multiple Schedulers**: BORE, EEVDF, and BMQ schedulers for different workload optimization
-- **[POC Selector](https://github.com/masahitoS/scx_cake)**: Piece-Of-Cake fast idle CPU selector inspired by scx_cake, reducing wakeup latency
+- **[POC Selector](https://github.com/masahitoS/scx_cake) v2.6.2**: Piece-Of-Cake fast idle CPU selector inspired by scx_cake, reducing wakeup latency
+- **Cluster-Aware Scheduling**: Improved load balancing for CPU clusters, including balancing between CPUs of identical capacity on hybrid architectures
+- **Preempt-IPI Optimizations**: Lower-latency SMP/IPI paths with preemption re-enabled before TLB flushes and streamlined `smp_call_function()` handling
 - **CachyOS Sauce**: Custom `CONFIG_CACHY` configuration with scheduler and system tweaks
 - **AMD P-State Enhancements**: Preferred Core support and latest amd-pstate improvements from linux-next
 - **Real-Time Support**: RT kernel builds available with BORE scheduler integration
 - **Low-Latency Optimizations**: Patches for improved responsiveness and reduced jitter
 - **sched/wait LIFO accept()**: Socket accept() processed in LIFO order for better cache efficiency
+- **Wakeup CPU Affinity**: Prefer the previous CPU for task wakeups to improve cache locality
 
 ### Networking
 
@@ -97,7 +101,8 @@ The CachyOS kernel fork merges topic branches into each release. The current **L
 
 - **ZFS Support**: Built-in ZFS filesystem support with pre-compiled modules
 - **NTFS Improvements**: Upstream NTFS driver fixes for MFT mirror validation, attribute bounds checking, and logfile handling
-- **MGLRU Enhancements**: Improved dirty writeback handling, simplified vmscan reclaim statistics, and Cachy Sauce MM tuning (LRU-gen working set protection, compaction/watermark tweaks, hugepage reclaim)
+- **MGLRU Enhancements**: Unified writeback reclaim statistics, simplified vmscan accounting, improved dirty writeback reactivation, and Cachy Sauce MM tuning (LRU-gen working set protection, compaction/watermark tweaks, hugepage reclaim)
+- **Transparent Hugepages**: `ADVISE` mode for shmem/tmpfs transparent hugepages
 - **NVIDIA Integration**: 
   - Proprietary NVIDIA driver modules with patches
   - Open-source NVIDIA driver support
@@ -105,19 +110,20 @@ The CachyOS kernel fork merges topic branches into each release. The current **L
 - **I/O Scheduler Improvements**:
   - Enhanced BFQ and mq-deadline performance
   - [ADIOS](https://github.com/firelzrd/adios) v3.2.0 multi-queue I/O scheduler support
-- **VRAM Cgroup (DMEM)**: Device memory controller for restricting GPU VRAM usage per cgroup in the DRM subsystem
+- **VRAM Cgroup (DMEM)**: Device memory controller for restricting GPU VRAM usage per cgroup, with protection limits, common-ancestor pool sharing, and Nouveau DMEM support
 
 ### Additional Features
 
 #### Hardware Support
-- **AMD ISP4**: New AMD ISP 4 camera driver for supported platforms
-- **Gaming Hardware**: Steam Deck patches (Audio, HW Quirks, HID), ROG Ally support, and MSI Claw HID driver (deckify)
+- **AMD ISP4**: AMD ISP 4 camera driver for supported platforms
+- **Gaming Hardware**: Steam Deck patches (Audio, HW Quirks, HID), ROG Ally support, MSI Claw HID driver (deckify), and EasySMX 05 Pro gamepad support
 - **Apple Hardware**: T2 MacBook support with apple-bce driver in staging
-- **ASUS Hardware**: Extended ASUS hardware compatibility patches
-- **Lenovo Hardware**: WMI battery charge limiting, GPU/CPU tunable attributes, and capdata debugfs
-- **HP Hardware**: OMEN Slim and OMEN MAX laptop support via hp-wmi
-- **Graphics**: HDR support enabled, AMDGPU min_powercap override (`amdgpu_ignore_min_pcap`)
-- **Display**: HDMI VRR on AMD, ALLM and passive VRR connector properties, VESA DSC bits-per-pixel parsing from EDID
+- **ASUS Hardware**: Extended ASUS hardware compatibility patches, including ACP audio fixes for Vivobook 18 and TUF Gaming A14 (2026)
+- **Lenovo Hardware**: WMI battery charge limiting, GPU/CPU tunable attributes, capdata debugfs, and AMD PMC suspend delay for improved sleep/resume
+- **HP Hardware**: OMEN Slim (including 16t-an000) and OMEN MAX laptop support via hp-wmi
+- **Samsung Hardware**: Galaxy Book 4/5 series audio fixes via MAX98390 HDA codec support
+- **Graphics**: HDR support enabled, AMDGPU min_powercap override (`amdgpu_ignore_min_pcap`), and DRM fair GPU scheduling favoring interactive clients
+- **Display**: HDMI VRR on AMD (including PCON path and freesync-on-desktop), ALLM and passive VRR connector properties, VESA DSC bits-per-pixel parsing from EDID
 - **Audio Codecs**: AW88399 and MAX98390 HDA side codec support
 
 #### System Enhancements
