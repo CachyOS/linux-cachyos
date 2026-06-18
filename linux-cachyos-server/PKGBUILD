@@ -149,12 +149,12 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=7.0
-_minor=12
+_major=7.1
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=2
+_tagrel=1
 pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux EEVDF scheduler Kernel by CachyOS targeted for Servers workloads'
@@ -219,7 +219,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=6330a45b06d20125de679aae5f63ba14082671ef")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=c681af76c5a6a15caada25eb13090e41218c7831")
 fi
 
 
@@ -746,6 +746,6 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('2dbc9e0b4fd361ea2622d134ceb25e540ce8385a401a73e28a911192ff847e061800d9b791dd409cd6d1794026f950963d7df501d5b8d73b2f197d12807b66fd'
+b2sums=('652178167b7d164d8b503fea25d68be3b4c24d28fcec6454656303132ef2f21e38f5e5b7af5d286c619344577bc6227389f4bd750a0e882ce7352ca7adb4f4ac'
         'SKIP'
-        '7bb5113dbc67e8e2ce5c5473ae1b08973af5adba0a6a14c64a213bb116e5a172d40b7c274b85ad15553511484ee1f120e0372251e242c6f87ce6920235f0c136')
+        '6bea8dff89f6d03ee5e7c6b76934e4ffaa3511cebd9c8f9986bf6c11816dcbd88f55c9c686fca6f176c35746f3fa7fc3c286218144d38289ec6f2079f5ce8b42')

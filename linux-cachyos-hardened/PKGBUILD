@@ -219,7 +219,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=6330a45b06d20125de679aae5f63ba14082671ef")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=c681af76c5a6a15caada25eb13090e41218c7831")
 fi
 
 
@@ -744,6 +744,6 @@ done
 
 b2sums=('2dbc9e0b4fd361ea2622d134ceb25e540ce8385a401a73e28a911192ff847e061800d9b791dd409cd6d1794026f950963d7df501d5b8d73b2f197d12807b66fd'
         'SKIP'
-        '8a1e3f5a81326fa17d028afb3cdd3f73ce61af1dafbea6da353732606b52cef8bffd2a4935a6baf31f4aa4a4a0835458497b1ccf4b4c80589750e104851a53db'
+        'f1f137975a325bebc30d2d7841ae1ffb2a7581db61ab495c1054f5cc66dd7f16d24b2dbdeef0e002db3066c1a4f4f561c2254bc5a6393f615d221f10d97773fe'
         '9dc1a5a46d8ecf606323926f22b4ce0aaf910dc47fd9ab9b8d08d1600e0bb45109babf7098f390562d8d8456239bb44b7db13b175fe2f529b9784a603dc11fbe'
         '3bdc77767deefaecb7c623117ca82db5ee47ac55e3378d5e13afe5a3e43e132c0f5d618812470dc9086205cd3eea9f111db975103a285120469534d947759da4')
