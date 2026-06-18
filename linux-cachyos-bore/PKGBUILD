@@ -149,12 +149,12 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=7.0
-_minor=12
+_major=7.1
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=2
+_tagrel=1
 pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements'
@@ -219,7 +219,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=6330a45b06d20125de679aae5f63ba14082671ef")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=c681af76c5a6a15caada25eb13090e41218c7831")
 fi
 
 
@@ -746,7 +746,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('2dbc9e0b4fd361ea2622d134ceb25e540ce8385a401a73e28a911192ff847e061800d9b791dd409cd6d1794026f950963d7df501d5b8d73b2f197d12807b66fd'
+b2sums=('652178167b7d164d8b503fea25d68be3b4c24d28fcec6454656303132ef2f21e38f5e5b7af5d286c619344577bc6227389f4bd750a0e882ce7352ca7adb4f4ac'
         'SKIP'
-        '5f2324dd52712d52ba982e02a6fbdf74ac4d2318581dfa7f861fd69fd9d181b2f72dd34005a244eab9beb6116c0f9b2bb6da7a71a37e3be422966fe8353be3d9'
-        '9dc1a5a46d8ecf606323926f22b4ce0aaf910dc47fd9ab9b8d08d1600e0bb45109babf7098f390562d8d8456239bb44b7db13b175fe2f529b9784a603dc11fbe')
+        '6bea8dff89f6d03ee5e7c6b76934e4ffaa3511cebd9c8f9986bf6c11816dcbd88f55c9c686fca6f176c35746f3fa7fc3c286218144d38289ec6f2079f5ce8b42'
+        '5a2311d5b672ad36a67d7f83b2ae1d5cbd6878386d502c6093f8e7ba37c5392152095ae737bf0c1dfdf4efb513c2bd0d6ebed2f29e212225a2494e6f18cb103f')
