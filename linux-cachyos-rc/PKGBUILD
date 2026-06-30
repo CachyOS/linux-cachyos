@@ -179,8 +179,8 @@ _minor=0
 #_minorc=$((_minor+1))
 _rcver=rc1
 pkgver=${_major}.${_rcver}
-_tagrel=2
-pkgrel=1
+_tagrel=3
+pkgrel=2
 #_stable=${_major}.${_minor}
 #_stable=${_major}
 _stable=${_major}-${_rcver}
@@ -816,7 +816,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('78e0b19f3fed607b345bdf45dadc25d7a157e4309d5024d6f4c117bda1b8209cbcc0294f23a14b4b670331af84e19194a2bde4e973db99f6374193ee17043dab'
+b2sums=('f0788cde8499df9cc6308cff246971a7d7f8c1420b7a53b2a30eb14f079f6face2e8698670beda2e51b67cb9ec69d3f8410b615dbaaab562394945e5cde4b372'
         'SKIP'
-        '11e2c34da05a56c1b82eba77e45fa2312918d258d9bc2e6b4dfaecf608a80af0fb1cbedc5332de92a69a8e244913c2adb49ddcd924e76e29828bcca40065dc18'
+        '9d4e9ae4379ea2ef7d1848917cbbfe2b10c633de8286009e08a1da4f5a08424de42ec546e0f8b98f30eb8aec61cf3c6ff400122faac54a5d0116459d6b3dd9a5'
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e')
