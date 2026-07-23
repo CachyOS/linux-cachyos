@@ -8,8 +8,6 @@
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null or choose proper variable to enable them
 
-### Selecting CachyOS config
-: "${_cachy_config:=yes}"
 
 ### Selecting the CPU scheduler
 # ATTENTION - only one of the following values can be selected:
@@ -152,7 +150,9 @@
 : "${_propeller_profiles:=no}"
 
 # Features delimited by whitespaces to configure the kernel.
-: "${_features:=}"
+# Valid values are:
+# - cachy: Enables CONFIG_CACHY
+: "${_features:=cachy}"
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
@@ -340,7 +340,7 @@ prepare() {
     fi
 
     ### Selecting CachyOS config
-    if [ "$_cachy_config" = "yes" ]; then
+    if has_feature "cachy"; then
         echo "Enabling CachyOS config..."
         scripts/config -e CACHY
     fi
