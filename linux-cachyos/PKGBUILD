@@ -151,6 +151,9 @@
 # Enable this after the profiles have been generated
 : "${_propeller_profiles:=no}"
 
+# Features delimited by whitespaces to configure the kernel.
+: "${_features:=}"
+
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
     [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full"  || "$_use_llvm_lto" = "thin-dist" ]]
@@ -160,6 +163,14 @@ _is_lto_kernel() {
 _is_ci_build() {
     [[ -n "$CI" || -n "$GITHUB_RUN_ID" ]]
     return $?
+}
+
+has_feature() {
+    local feature
+    for feature in $_features; do
+        [[ $feature == "$1" ]] && return 0
+    done
+    return 1
 }
 
 if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
