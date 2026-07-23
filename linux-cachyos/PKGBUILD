@@ -186,7 +186,32 @@ pkgver=${_major}.${_minor}
 _tagrel=2
 pkgrel=2
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
-pkgdesc='Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
+pkgdesc='Linux CachyOS'
+_pkgdesc_features=()
+
+case "$_cpusched" in
+    cachyos|eevdf) _pkgdesc_features+=("EEVDF");;
+    bore|hardened) _pkgdesc_features+=("BORE");;
+    bmq) _pkgdesc_features+=("BMQ");;
+esac
+
+if _is_lto_kernel; then
+    if [[ "$_use_llvm_lto" == "thin" || "$_use_llvm_lto" == "thin-dist" ]]; then
+        _pkgdesc_features+=("ThinLTO")
+    else
+        _pkgdesc_features+=("LTO")
+    fi
+fi
+
+[[ "$_autofdo" == "yes" ]] && _pkgdesc_features+=("AutoFDO")
+[[ "$_propeller" == "yes" ]] && _pkgdesc_features+=("Propeller")
+has_feature rt && _pkgdesc_features+=("PREEMPT_RT")
+has_feature kcfi && _pkgdesc_features+=("kCFI")
+
+_kernel_pkgdesc="$pkgdesc"
+if ((${#_pkgdesc_features[@]})); then
+    _kernel_pkgdesc+=" ($(IFS=', '; echo "${_pkgdesc_features[*]}"))"
+fi
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -593,7 +618,7 @@ build() {
 }
 
 _package() {
-    pkgdesc="The $pkgdesc kernel and modules"
+    pkgdesc="The ${_kernel_pkgdesc} kernel and modules"
     depends=('coreutils' 'kmod' 'initramfs')
     optdepends=('wireless-regdb: to set the correct wireless channels of your country'
                 'linux-firmware: firmware images needed for some devices'
