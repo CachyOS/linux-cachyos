@@ -17,8 +17,6 @@
 # 'bmq' - select 'BMQ Scheduler'
 # 'cachyos' - select 'CachyOS Default Scheduler (EEVDF)'
 # 'eevdf' - select 'EEVDF Scheduler'
-# 'rt' - select EEVDF, but includes a series of realtime patches
-# 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
 : "${_cpusched:=cachyos}"
 
 ### Tweak kernel options prior to a build via nconfig
@@ -63,12 +61,13 @@
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 : "${_tickrate:=full}"
 
-## Choose between full, lazy or dynamic
+## Choose between full, lazy, rt or dynamic
 # Full: Makes all non-critical kernel code preemptible to reduce latency
 # Lazy: Same as full but instead of preempting immediately it waits for signals from the scheduler
 #       in an attempt to boost throughput.
 #       In practice, this doesn't seem to perform well as both throughput and latency suffer
 #       compared to full.
+# RT: Real-time kernel with additional patches.
 : "${_preempt:=full}"
 
 ### Transparent Hugepages
@@ -280,8 +279,10 @@ if _is_lto_kernel; then
     )
 fi
 
-# WARNING The ZFS module doesn't build with selected RT sched due to licensing issues.
-if [[ "$_cpusched" = "rt" || "$_cpusched" = "rt-bore" ]]; then
+if [ "$_preempt" = "rt" ]; then
+    source+=("${_patchsource}/misc/0001-rt-i915.patch")
+
+    # WARNING: ZFS module doesn't build with selected RT sched due to licensing issues.
     unset _build_zfs
 fi
 
@@ -326,12 +327,10 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    bore|rt-bore) ## Burst-Oriented Response Enhancer (BORE) scheduler
+    bore) ## Burst-Oriented Response Enhancer (BORE) scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
-    rt|rt-bore) ## RT patches
-        source+=("${_patchsource}/misc/0001-rt-i915.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
@@ -388,8 +387,6 @@ prepare() {
         bore) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         cachyos|eevdf) ;;
-        rt) scripts/config -e PREEMPT_RT;;
-        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -450,16 +447,14 @@ prepare() {
 
     ### Select preempt type
 
-    # We should not set up the PREEMPT for RT kernels
-    if [[ "$_cpusched" != "rt" && "$_cpusched" != "rt-bore" ]]; then
-        case "$_preempt" in
-            full) scripts/config -e PREEMPT -d PREEMPT_LAZY;;
-            lazy) scripts/config -d PREEMPT -e PREEMPT_LAZY;;
-            *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
-        esac
+    case "$_preempt" in
+        full) scripts/config -e PREEMPT -d PREEMPT_LAZY;;
+        lazy) scripts/config -d PREEMPT -e PREEMPT_LAZY;;
+        rt) scripts/config -e PREEMPT_RT;;
+        *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
+    esac
 
-        echo "Selecting '$_preempt' preempt type..."
-    fi
+    echo "Selecting '$_preempt' preempt type..."
 
     ### Enable O3
     if [ "$_cc_harder" = "yes" ]; then
