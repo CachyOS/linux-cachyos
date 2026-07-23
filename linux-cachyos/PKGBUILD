@@ -154,6 +154,14 @@
 # Enable this after the profiles have been generated
 : "${_propeller_profiles:=no}"
 
+# Ready-to-use named options preset
+: "${_flavor:="cachyos"}"
+
+_die() {
+    error "$@"
+    exit 1
+}
+
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
     [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full"  || "$_use_llvm_lto" = "thin-dist" ]]
@@ -165,12 +173,50 @@ _is_ci_build() {
     return $?
 }
 
+case "${_flavor}" in
+    cachyos)
+        _flavor_desc="Linux kernel with EEVDF scheduler + LTO + AutoFDO + Propeller and Cachy sauce"
+        _cpusched="cachyos"
+        ;;
+    cachyos-bmq)
+        _flavor_desc="Linux kernel with BMQ scheduler and Cachy sauce"
+        _cpusched=bmq
+        ;;
+    cachyos-rt-bore)
+        _flavor_desc="Linux kernel with BORE scheduler, PREEMPT_RT and Cachy sauce"
+        _cpusched=bore
+        _preempt=rt
+        ;;
+    cachyos-bore)
+        _flavor_desc="Linux kernel with BORE scheduler and Cachy sauce"
+        _cpusched=bore
+        ;;
+    cachyos-deckify)
+        _flavor_desc="Linux kernel for handhelds with BORE scheduler and Cachy sauce"
+        _cpusched=bore
+        ;;
+    cachyos-eevdf)
+        _flavor_desc="Linux kernel with EEVDF scheduler and Cachy sauce"
+        _cpusched=eevdf
+        ;;
+    cachyos-server)
+        _flavor_desc="Linux kernel with EEVDF scheduler targeted for servers workloads"
+        _preempt=lazy
+        _HZ_ticks=300
+        _cpusched=eevdf
+        _cachy_config=no
+        ;;
+    *)
+        _die "Invalid preset: ${_flavor}"
+        ;;
+esac
+
 if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
-    _pkgsuffix=cachyos-lto
+    _pkgsuffix=${_flavor}-lto
 elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
-    _pkgsuffix=cachyos-gcc
+    _pkgsuffix=${_flavor}-gcc
 else
-    _pkgsuffix=cachyos
+    _pkgsuffix=${_flavor}
 fi
 
 pkgbase="linux-$_pkgsuffix"
@@ -182,7 +228,7 @@ pkgver=${_major}.${_minor}
 _tagrel=1
 pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
-pkgdesc='Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
+pkgdesc="${_flavor_desc} by CachyOS with other patches and improvements"
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -254,6 +300,13 @@ if [ "$_build_nvidia_open" = "yes" ]; then
              "${_patchsource}/misc/nvidia/0003-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
 fi
 
+if [ "$_flavor" = "cachyos-deckify" ]; then
+    source+=(
+        "${_patchsource}/misc/0001-acpi-call.patch"
+        "${_patchsource}/misc/0001-handheld.patch"
+    )
+fi
+
 # Use generated AutoFDO Profile
 if [ "$_autofdo" = "yes" ] && [ -n "$_autofdo_profile_name" ]; then
     if [ -e "$_autofdo_profile_name" ]; then
@@ -275,7 +328,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+    bore|rt-bore|hardened) ## Burst-Oriented Response Enhancer (BORE) scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
@@ -289,7 +342,6 @@ export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER="$pkgbase"
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
 
-_die() { error "$@" ; exit 1; }
 
 prepare() {
     cd "$_srcname"
@@ -453,6 +505,27 @@ prepare() {
     esac
 
     echo "Selecting '$_hugepage' TRANSPARENT_HUGEPAGE config..."
+
+    if [ "$_flavor" = "cachyos-deckify" ]; then
+        echo "Enabling handheld configs"
+        scripts/config \
+            -d RCU_LAZY_DEFAULT_OFF \
+            -e AMD_PRIVATE_COLOR \
+            -m SENSORS_STEAMDECK \
+            -m MFD_STEAMDECK \
+            -m SND_SOC_AW87XXX \
+            -m HID_ASUS_ALLY \
+            -m HID_LENOVO_GO \
+            -m HID_LENOVO_GO_S \
+            -m HID_MSI_CLAW \
+            -m ZOTAC_ZONE_HID \
+            -m LEDS_STEAMDECK \
+            -m LEDS_VALVE \
+            -e ACPI_CALL \
+            -m ZOTAC_ZONE_PLATFORM \
+            -m EXTCON_STEAMDECK \
+            -m HID_MSI
+    fi
 
     # Enable Clang AutoFDO
     # Add additonal check if Thin or Full LTO is enabled otherwise die
