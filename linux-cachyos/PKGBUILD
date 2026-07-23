@@ -135,6 +135,7 @@
 # - kcfi: Enables kCFI when building with LLVM
 # - rt: Enables PREEMPT_RT for realtime kernel
 # - handheld: Add the handheld patchset to the kernel
+# - server: Configure the kernel for server workloads. This will override some build options.
 : "${_features:=cachy o3}"
 
 # ATTENTION: Do not modify after this line
@@ -160,6 +161,11 @@ _pkgsuffix='cachyos'
 
 if has_feature handheld; then
     _pkgsuffix+='-deckify'
+elif has_feature server; then
+    _pkgsuffix+='-server'
+    _features="${_features//cachy/}"
+    _HZ_ticks=300
+    _preempt=lazy
 else
     has_feature rt && _pkgsuffix+='-rt'
     [[ "$_cpusched" != "cachyos"  ]] && _pkgsuffix+="-$_cpusched"
