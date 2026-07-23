@@ -59,8 +59,7 @@ jobs:
     - name: Build package (${{ matrix.toolchain }})
       id: makepkg
       env:
-        _build_zfs: yes
-        _build_nvidia_open: yes
+        _modules: 'zfs nvidia'
         _use_llvm_lto: ${{ matrix.toolchain == 'gcc' && 'none' || 'thin' }}
       run: |
           cd "linux-cachyos"

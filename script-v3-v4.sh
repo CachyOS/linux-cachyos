@@ -7,9 +7,7 @@ build_pkg() {
     shift 2
     time docker run --rm --name kernelbuild \
         -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 \
-        -e _build_zfs=yes \
-        -e _build_nvidia_open=yes \
-        -e _build_r8125=yes \
+        -e _modules="zfs nvidia r8125" \
         "$@" \
         -v "$PWD/$dir:/pkg" \
         "$image"

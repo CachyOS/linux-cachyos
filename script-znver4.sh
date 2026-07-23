@@ -7,9 +7,7 @@ build_pkg() {
     time docker run --rm --name kernelbuild \
         -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 \
         -e _processor_opt=zen4 \
-        -e _build_zfs=yes \
-        -e _build_nvidia_open=yes \
-        -e _build_r8125=yes \
+        -e _modules="zfs nvidia r8125" \
         "$@" \
         -v "$PWD/$dir:/pkg" \
         pttrr/docker-makepkg-znver4

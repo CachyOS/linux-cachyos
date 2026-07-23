@@ -81,19 +81,12 @@
 # - gcc: Adds -gcc suffix when building with GCC.
 : "${_package_suffix:=gcc}"
 
-# Build the zfs module in to the kernel
-# WARNING: The ZFS module doesn't build with selected RT sched due to licensing issues.
-# If you use ZFS, refrain from building the RT kernel
-: "${_build_zfs:=no}"
-
-# Builds the open nvidia module and package it into a own base
-# This does replace the requirement of nvidia-open-dkms
-# Use this only if you have Turing+ GPU
-: "${_build_nvidia_open:=no}"
-
-# Builds the r8125 module and package it into its own package
-# Replaces requirement for r8125-dkms
-: "${_build_r8125:=no}"
+# Optional external modules delimited by whitespaces.
+# Valid values are:
+# - zfs: Build and package the ZFS module
+# - nvidia: Build and package NVIDIA open kernel modules
+# - r8125: Build and package the Realtek r8125 module
+: "${_modules:=}"
 
 # Build a debug package with non-stripped vmlinux
 : "${_build_debug:=no}"
@@ -150,6 +143,14 @@ has_feature() {
     local feature
     for feature in $_features; do
         [[ $feature == "$1" ]] && return 0
+    done
+    return 1
+}
+
+has_module() {
+    local module
+    for module in $_modules; do
+        [[ $module == "$1" ]] && return 0
     done
     return 1
 }
@@ -274,17 +275,17 @@ fi
 if has_feature "rt"; then
     source+=("${_patchsource}/misc/0001-rt-i915.patch")
     # WARNING The ZFS module doesn't build with selected RT sched due to licensing issues.
-    unset _build_zfs
+    _modules="${_modules//zfs/}"
 fi
 
 # ZFS support
-if [ "$_build_zfs" = "yes" ]; then
+if has_module zfs; then
     makedepends+=(git)
     source+=("git+https://github.com/cachyos/zfs.git#commit=c681af76c5a6a15caada25eb13090e41218c7831")
 fi
 
 
-if [ "$_build_nvidia_open" = "yes" ]; then
+if has_module nvidia; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0002-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
              "${_patchsource}/misc/nvidia/0004-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
@@ -305,7 +306,7 @@ if [ "$_propeller" = "yes" ] && [ "$_propeller_profiles" = "yes" ]; then
              propeller_ld_profile.txt)
 fi
 
-if [ "$_build_r8125" = "yes" ]; then
+if has_module r8125; then
     source+=("git+https://github.com/aravance/r8125.git")
 fi
 
@@ -586,13 +587,13 @@ build() {
        SYSOUT="${srcdir}/${_srcname}"
     )
 
-    if [ "$_build_nvidia_open" = "yes" ]; then
+    if has_module nvidia; then
         cd "${srcdir}/${_nv_open_pkg}"
         MODULE_FLAGS+=(IGNORE_CC_MISMATCH=yes)
         CFLAGS= CXXFLAGS= LDFLAGS= make "${BUILD_FLAGS[@]}" "${MODULE_FLAGS[@]}" -j"$(nproc)" modules
     fi
 
-    if [ "$_build_zfs" = "yes" ]; then
+    if has_module zfs; then
         cd ${srcdir}/"zfs"
 
         local CONFIGURE_FLAGS=()
@@ -607,7 +608,7 @@ build() {
         make "${BUILD_FLAGS[@]}"
     fi
 
-    if [ "$_build_r8125" = "yes" ]; then
+    if has_module r8125; then
         cd "${srcdir}/r8125"
         make "${BUILD_FLAGS[@]}" KERNELDIR="$srcdir/$_srcname" modules
     fi
@@ -827,9 +828,9 @@ _package-r8125() {
 pkgname=("$pkgbase")
 [ "$_build_debug" = "yes" ] && pkgname+=("$pkgbase-dbg")
 pkgname+=("$pkgbase-headers")
-[ "$_build_zfs" = "yes" ] && pkgname+=("$pkgbase-zfs")
-[ "$_build_nvidia_open" = "yes" ] && pkgname+=("$pkgbase-nvidia-open")
-[ "$_build_r8125" = "yes" ] && pkgname+=("$pkgbase-r8125")
+has_module zfs && pkgname+=("$pkgbase-zfs")
+has_module nvidia && pkgname+=("$pkgbase-nvidia-open")
+has_module r8125 && pkgname+=("$pkgbase-r8125")
 for _p in "${pkgname[@]}"; do
     eval "package_$_p() {
     $(declare -f "_package${_p#$pkgbase}")
