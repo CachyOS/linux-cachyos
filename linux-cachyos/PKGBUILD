@@ -9,6 +9,17 @@
 # Set these variables to ANYTHING that is not null or choose proper variable to enable them
 
 
+# Features delimited by whitespaces to configure the kernel.
+# Valid values are:
+# - cachy: Enables CONFIG_CACHY
+# - use_current: Use .config of running kernel
+# - o3: Builds the kernel with -O3 for more aggressive optimizations
+# - kcfi: Enables kCFI when building with LLVM
+# - rt: Enables PREEMPT_RT for realtime kernel
+# - handheld: Add the handheld patchset to the kernel
+# - server: Configure the kernel for server workloads. This will override some build options.
+: "${_features:=cachy o3}"
+
 ### Selecting the CPU scheduler
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
@@ -116,16 +127,6 @@
 # Enable this after the profiles have been generated
 : "${_propeller_profiles:=no}"
 
-# Features delimited by whitespaces to configure the kernel.
-# Valid values are:
-# - cachy: Enables CONFIG_CACHY
-# - use_current: Use .config of running kernel
-# - o3: Builds the kernel with -O3 for more aggressive optimizations
-# - kcfi: Enables kCFI when building with LLVM
-# - rt: Enables PREEMPT_RT for realtime kernel
-# - handheld: Add the handheld patchset to the kernel
-# - server: Configure the kernel for server workloads. This will override some build options.
-: "${_features:=cachy o3}"
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
