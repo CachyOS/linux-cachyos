@@ -39,16 +39,6 @@
 # Path to the list of used modules
 : "${_localmodcfg_path:="$HOME/.config/modprobed.db"}"
 
-# Use the current kernel's .config file
-# Enabling this option will use the .config of the RUNNING kernel rather than
-# the ARCH defaults. Useful when the package gets updated and you already went
-# through the trouble of customizing your config options.  NOT recommended when
-# a new kernel is released, but again, convenient for package bumps.
-: "${_use_current:=no}"
-
-### Enable KBUILD_CFLAGS -O3
-: "${_cc_harder:=yes}"
-
 ### Set performance governor as default
 : "${_per_gov:=no}"
 
@@ -152,7 +142,9 @@
 # Features delimited by whitespaces to configure the kernel.
 # Valid values are:
 # - cachy: Enables CONFIG_CACHY
-: "${_features:=cachy}"
+# - use_current: Use .config of running kernel
+# - o3: Builds the kernel with -O3 for more aggressive optimizations
+: "${_features:=cachy o3}"
 
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
@@ -424,7 +416,7 @@ prepare() {
     fi
 
     ### Enable O3
-    if [ "$_cc_harder" = "yes" ]; then
+    if has_feature "o3"; then
         echo "Enabling KBUILD_CFLAGS -O3..."
         scripts/config -d CC_OPTIMIZE_FOR_PERFORMANCE \
             -e CC_OPTIMIZE_FOR_PERFORMANCE_O3
@@ -473,7 +465,7 @@ prepare() {
 
     ### Optionally use running kernel's config
     # code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
-    if [ "$_use_current" = "yes" ]; then
+    if has_feature "use_current"; then
         if [[ -s /proc/config.gz ]]; then
             echo "Extracting config from /proc/config.gz..."
             # modprobe configs
