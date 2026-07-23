@@ -86,13 +86,6 @@
 # Enabled by default to show the difference between LTO kernels and GCC kernels
 : "${_use_gcc_suffix:=yes}"
 
-# KCFI is a proposed forward-edge control-flow integrity scheme for
-# Clang, which is more suitable for kernel use than the existing CFI
-# scheme used by CONFIG_CFI_CLANG. kCFI doesn't require LTO, doesn't
-# alter function references to point to a jump table, and won't break
-# function address equality.
-: "${_use_kcfi:=no}"
-
 # Build the zfs module in to the kernel
 # WARNING: The ZFS module doesn't build with selected RT sched due to licensing issues.
 # If you use ZFS, refrain from building the RT kernel
@@ -141,6 +134,7 @@
 # - cachy: Enables CONFIG_CACHY
 # - use_current: Use .config of running kernel
 # - o3: Builds the kernel with -O3 for more aggressive optimizations
+# - kcfi: Enables kCFI when building with LLVM
 : "${_features:=cachy o3}"
 
 # ATTENTION: Do not modify after this line
@@ -347,9 +341,9 @@ prepare() {
     echo "Selecting ${_cpusched^^} CPU scheduler..."
 
     ### Enable KCFI
-    if [ "$_use_kcfi" = "yes" ]; then
+    if has_feature "kcfi"; then
         echo "Enabling kCFI"
-        scripts/config -e ARCH_SUPPORTS_CFI_CLANG -e CFI_CLANG -e CFI_AUTO_DEFAULT
+        scripts/config -e CFI_CLANG -e CFI_AUTO_DEFAULT
     fi
 
     ### Select LLVM level
