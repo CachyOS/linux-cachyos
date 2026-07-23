@@ -59,12 +59,11 @@ jobs:
     - name: Build package (${{ matrix.toolchain }})
       id: makepkg
       env:
-        _build_zfs: yes
-        _build_nvidia_open: yes
+        _modules: 'zfs nvidia'
         _use_llvm_lto: ${{ matrix.toolchain == 'gcc' && 'none' || 'thin' }}
       run: |
           cd "linux-cachyos"
-          sudo -H -E -u builder makepkg --skipchecksums --syncdeps --noconfirm
+          sudo -H -E -u builder makepkg --skipinteg --syncdeps --noconfirm
     - name: Upload package to artifacts
       id: upload
       uses: actions/upload-artifact@v4
