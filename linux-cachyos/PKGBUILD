@@ -15,7 +15,6 @@
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'bmq' - select 'BMQ Scheduler'
-# 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 # 'cachyos' - select 'CachyOS Default Scheduler (EEVDF)'
 # 'eevdf' - select 'EEVDF Scheduler'
 # 'rt' - select EEVDF, but includes a series of realtime patches
@@ -327,12 +326,10 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    bore|rt-bore|hardened) ## Burst-Oriented Response Enhancer (BORE) scheduler
+    bore|rt-bore) ## Burst-Oriented Response Enhancer (BORE) scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
-    hardened) ## Hardened Patches
-        source+=("${_patchsource}/misc/0001-hardened.patch");;
     rt|rt-bore) ## RT patches
         source+=("${_patchsource}/misc/0001-rt-i915.patch");;
 esac
@@ -388,9 +385,9 @@ prepare() {
 
     ### Selecting the CPU scheduler
     case "$_cpusched" in
-        cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
+        bore) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
-        eevdf) ;;
+        cachyos|eevdf) ;;
         rt) scripts/config -e PREEMPT_RT;;
         rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
