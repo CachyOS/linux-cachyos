@@ -664,11 +664,6 @@ _package() {
                 'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
                 'scx-scheds: to use sched-ext schedulers')
     provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE V4L2LOOPBACK-MODULE NTSYNC-MODULE VHBA-MODULE ADIOS-MODULE)
-    # Replace LTO kernel with the default kernel
-    if _is_lto_kernel; then
-        provides+=(linux-cachyos-lto=$_kernver)
-        replaces=(linux-cachyos-lto)
-    fi
 
     cd "$_srcname"
 
@@ -703,12 +698,6 @@ _package-headers() {
       zstd
      "${pkgbase}")
     provides=(LINUX-HEADERS)
-
-    if _is_lto_kernel; then
-        provides+=(linux-cachyos-lto-headers=$_kernver)
-        replaces=(linux-cachyos-lto-headers)
-        depends+=(clang llvm lld)
-    fi
 
     cd "${_srcname}"
     local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
