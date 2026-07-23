@@ -134,6 +134,7 @@
 # - o3: Builds the kernel with -O3 for more aggressive optimizations
 # - kcfi: Enables kCFI when building with LLVM
 # - rt: Enables PREEMPT_RT for realtime kernel
+# - handheld: Add the handheld patchset to the kernel
 : "${_features:=cachy o3}"
 
 # ATTENTION: Do not modify after this line
@@ -157,8 +158,12 @@ has_feature() {
 
 _pkgsuffix='cachyos'
 
-has_feature rt && _pkgsuffix+='-rt'
-[[ "$_cpusched" != "cachyos"  ]] && _pkgsuffix+="-$_cpusched"
+if has_feature handheld; then
+    _pkgsuffix+='-deckify'
+else
+    has_feature rt && _pkgsuffix+='-rt'
+    [[ "$_cpusched" != "cachyos"  ]] && _pkgsuffix+="-$_cpusched"
+fi
 
 if _is_lto_kernel && [[ "$_use_lto_suffix" == "yes" ]]; then
     _pkgsuffix+="-lto"
@@ -228,6 +233,13 @@ if _is_lto_kernel; then
         LD=ld.lld
         LLVM=1
         LLVM_IAS=1
+    )
+fi
+
+if has_feature "handheld"; then
+    source+=(
+        "${_patchsource}/misc/0001-acpi-call.patch"
+        "${_patchsource}/misc/handheld/0001-handheld.patch"
     )
 fi
 
@@ -444,6 +456,28 @@ prepare() {
     if [ "$_propeller" = "yes" ] && [ "$_propeller_profiles" = "yes" ]; then
         echo "Propeller profile has been found..."
         BUILD_FLAGS+=(CLANG_PROPELLER_PROFILE_PREFIX="${srcdir}/propeller")
+    fi
+
+    # Handheld configs
+    if has_feature "handheld"; then
+        echo "Enabling handheld configs"
+        scripts/config \
+            -d RCU_LAZY_DEFAULT_OFF \
+            -e AMD_PRIVATE_COLOR \
+            -m SENSORS_STEAMDECK \
+            -m MFD_STEAMDECK \
+            -m SND_SOC_AW87XXX \
+            -m HID_ASUS_ALLY \
+            -m HID_LENOVO_GO \
+            -m HID_LENOVO_GO_S \
+            -m HID_MSI_CLAW \
+            -m ZOTAC_ZONE_HID \
+            -m LEDS_STEAMDECK \
+            -m LEDS_VALVE \
+            -e ACPI_CALL \
+            -m ZOTAC_ZONE_PLATFORM \
+            -m EXTCON_STEAMDECK \
+            -m HID_MSI
     fi
 
     ### Optionally use running kernel's config
