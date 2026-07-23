@@ -261,6 +261,7 @@ _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${
 _nv_ver=610.57.04
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
+_strip_bin=strip
 source=(
     "https://github.com/CachyOS/linux/releases/download/${_srcname}/${_srcname}.tar.gz"{,.asc}
     "config"
@@ -274,6 +275,7 @@ validpgpkeys=(
 if _is_lto_kernel; then
     makedepends+=(clang llvm lld)
     source+=("${_patchsource}/misc/dkms-clang.patch")
+    _strip_bin=llvm-strip
     BUILD_FLAGS=(
         CC=clang
         LD=ld.lld
@@ -606,14 +608,8 @@ _sign_modules() {
     local sign_cert="${srcdir}/${_srcname}/certs/signing_key.x509"
     local hash_algo="$(grep -Po 'CONFIG_MODULE_SIG_HASH="\K[^"]*' "${srcdir}/${_srcname}/.config")"
 
-    if [ "$_use_llvm_lto" != "none" ]; then
-        local strip_bin="llvm-strip"
-    else
-        local strip_bin="strip"
-    fi
-
     find "$1" -type f -name '*.ko' -print \
-        -exec "${strip_bin}" --strip-debug '{}' \; \
+        -exec "${_strip_bin}" --strip-debug '{}' \; \
         -exec "${sign_script}" "${hash_algo}" "${sign_key}" "${sign_cert}" '{}' \;
 }
 
@@ -793,21 +789,22 @@ _package-headers() {
 
     echo "Stripping build tools..."
     local file
+
     while read -rd '' file; do
         case "$(file -Sib "$file")" in
             application/x-sharedlib\;*)      # Libraries (.so)
-                strip -v $STRIP_SHARED "$file" ;;
+                "${_strip_bin}" $STRIP_SHARED "$file" ;;
             application/x-archive\;*)        # Libraries (.a)
-                strip -v $STRIP_STATIC "$file" ;;
+                "${_strip_bin}" $STRIP_STATIC "$file" ;;
             application/x-executable\;*)     # Binaries
-                strip -v $STRIP_BINARIES "$file" ;;
+                "${_strip_bin}" $STRIP_BINARIES "$file" ;;
             application/x-pie-executable\;*) # Relocatable binaries
-                strip -v $STRIP_SHARED "$file" ;;
+                "${_strip_bin}" $STRIP_SHARED "$file" ;;
         esac
     done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
 
     echo "Stripping vmlinux..."
-    strip -v $STRIP_STATIC "$builddir/vmlinux"
+    "${_strip_bin}" $STRIP_STATIC "$builddir/vmlinux"
 
     echo "Adding symlink..."
     mkdir -p "$pkgdir/usr/src"
