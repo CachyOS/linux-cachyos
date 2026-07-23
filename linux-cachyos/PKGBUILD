@@ -94,15 +94,12 @@
 # "none: disable LTO
 : "${_use_llvm_lto:=thin}"
 
-# Use suffix -lto only when requested by the user
-# yes - enable -lto suffix
-# no - disable -lto suffix
-# https://github.com/CachyOS/linux-cachyos/issues/36
-: "${_use_lto_suffix:=no}"
-
-# Use suffix -gcc when requested by the user
-# Enabled by default to show the difference between LTO kernels and GCC kernels
-: "${_use_gcc_suffix:=yes}"
+# Package suffix for toolchain used
+# Valid values are:
+# - none: No suffix at all
+# - lto: Adds -lto suffix when building with LLVM LTO
+# - gcc: Adds -gcc suffix when building with GCC.
+: "${_package_suffix:=gcc}"
 
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
@@ -211,9 +208,9 @@ case "${_flavor}" in
         ;;
 esac
 
-if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
+if _is_lto_kernel && [[ "$_package_suffix" == "lto" ]]; then
     _pkgsuffix=${_flavor}-lto
-elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
+elif ! _is_lto_kernel && [[ "$_package_suffix" == "gcc" ]]; then
     _pkgsuffix=${_flavor}-gcc
 else
     _pkgsuffix=${_flavor}
