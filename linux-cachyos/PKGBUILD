@@ -156,12 +156,13 @@ has_feature() {
     return 1
 }
 
-if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
-    _pkgsuffix=cachyos-lto
-elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
-    _pkgsuffix=cachyos-gcc
-else
-    _pkgsuffix=cachyos
+_pkgsuffix='cachyos'
+[[ "$_cpusched" != "cachyos" ]] && _pkgsuffix+="-$_cpusched"
+
+if _is_lto_kernel && [[ "$_use_lto_suffix" == "yes" ]]; then
+    _pkgsuffix+="-lto"
+elif ! _is_lto_kernel && [[ "$_use_gcc_suffix" == "yes" ]]; then
+    _pkgsuffix+="-gcc"
 fi
 
 pkgbase="linux-$_pkgsuffix"
