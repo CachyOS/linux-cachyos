@@ -15,9 +15,8 @@
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'bmq' - select 'BMQ Scheduler'
-# 'cachyos' - select 'CachyOS Default Scheduler (EEVDF)'
 # 'eevdf' - select 'EEVDF Scheduler'
-: "${_cpusched:=cachyos}"
+: "${_cpusched:=eevdf}"
 
 ### Tweak kernel options prior to a build via nconfig
 : "${_makenconfig:=no}"
@@ -194,7 +193,6 @@ _generate_build_desc() {
 
 case "${_flavor}" in
     cachyos)
-        _cpusched="cachyos"
         ;;
     cachyos-bmq)
         _cpusched=bmq
@@ -403,7 +401,7 @@ prepare() {
     case "$_cpusched" in
         bore) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
-        cachyos|eevdf) ;;
+        eevdf) ;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
