@@ -8,7 +8,6 @@
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null or choose proper variable to enable them
-
 ### Selecting CachyOS config
 : "${_cachy_config:=yes}"
 
@@ -169,34 +168,51 @@ _is_ci_build() {
     return $?
 }
 
+_generate_build_desc() {
+    local -A _options_desc_map=(
+        ["_autofdo"]="AutoFDO"
+        ["_propeller"]="Propeller"
+        ["_use_llvm_lto"]="${_use_llvm_lto^} LTO"
+        ["_cpusched"]="${_cpusched^^} scheduler"
+        ["_cachy_config"]="Cachy sauce"
+        ["_use_kcfi"]="kCFI"
+        ["_preempt"]="${_preempt^^} PREEMPT"
+    )
+    local option option_desc
+    local build_desc=""
+
+    while IFS= read -r option; do
+        option_desc="${_options_desc_map[$option]}"
+        [[ -z "$option_desc" ]] && continue
+        if [[ "${!option}" != "no" && "${!option}" != "none" ]]; then
+            build_desc+="$option_desc, "
+        fi
+    done < <(compgen -A variable | grep "^_")
+
+    echo "${build_desc%, }"
+}
+
 case "${_flavor}" in
     cachyos)
-        _flavor_desc="Linux kernel with EEVDF scheduler + LTO + AutoFDO + Propeller and Cachy sauce"
         _cpusched="cachyos"
         ;;
     cachyos-bmq)
-        _flavor_desc="Linux kernel with BMQ scheduler and Cachy sauce"
         _cpusched=bmq
         ;;
     cachyos-rt-bore)
-        _flavor_desc="Linux kernel with BORE scheduler, PREEMPT_RT and Cachy sauce"
         _cpusched=bore
         _preempt=rt
         ;;
     cachyos-bore)
-        _flavor_desc="Linux kernel with BORE scheduler and Cachy sauce"
         _cpusched=bore
         ;;
     cachyos-deckify)
-        _flavor_desc="Linux kernel for handhelds with BORE scheduler and Cachy sauce"
         _cpusched=bore
         ;;
     cachyos-eevdf)
-        _flavor_desc="Linux kernel with EEVDF scheduler and Cachy sauce"
         _cpusched=eevdf
         ;;
     cachyos-server)
-        _flavor_desc="Linux kernel with EEVDF scheduler targeted for servers workloads"
         _preempt=lazy
         _HZ_ticks=300
         _cpusched=eevdf
@@ -224,7 +240,7 @@ pkgver=${_major}.${_minor}
 _tagrel=1
 pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
-pkgdesc="${_flavor_desc} by CachyOS with other patches and improvements"
+pkgdesc="Linux kernel by CachyOS with patches and improvements ($(_generate_build_desc))"
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
