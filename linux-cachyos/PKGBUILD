@@ -8,6 +8,41 @@
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null or choose proper variable to enable them
+
+### Ready-to-use named options preset
+: "${_flavor:="cachyos"}"
+
+case "${_flavor}" in
+    cachyos)
+        ;;
+    cachyos-bmq)
+        _cpusched="${_cpusched:="bmq"}"
+        ;;
+    cachyos-rt-bore)
+        _cpusched="${_cpusched:="bore"}"
+        _preempt="${_preempt:="rt"}"
+        ;;
+    cachyos-bore)
+        _cpusched="${_cpusched:="bore"}"
+        ;;
+    cachyos-deckify)
+        _cpusched="${_cpusched:="bore"}"
+        ;;
+    cachyos-eevdf)
+        _cpusched="${_cpusched:="eevdf"}"
+        ;;
+    cachyos-server)
+        _preempt="${_preempt:="lazy"}"
+        _HZ_ticks="${_HZ_ticks:=300}"
+        _cpusched="${_cpusched:="eevdf"}"
+        _cachy_config="${_cachy_config:="no"}"
+        ;;
+    *)
+        error "Invalid preset: ${_flavor}"
+        exit 1
+        ;;
+esac
+
 ### Selecting CachyOS config
 : "${_cachy_config:=yes}"
 
@@ -148,9 +183,6 @@
 # Enable this after the profiles have been generated
 : "${_propeller_profiles:=no}"
 
-# Ready-to-use named options preset
-: "${_flavor:="cachyos"}"
-
 _die() {
     error "$@"
     exit 1
@@ -190,36 +222,6 @@ _generate_build_desc() {
 
     echo "${build_desc%, }"
 }
-
-case "${_flavor}" in
-    cachyos)
-        ;;
-    cachyos-bmq)
-        _cpusched=bmq
-        ;;
-    cachyos-rt-bore)
-        _cpusched=bore
-        _preempt=rt
-        ;;
-    cachyos-bore)
-        _cpusched=bore
-        ;;
-    cachyos-deckify)
-        _cpusched=bore
-        ;;
-    cachyos-eevdf)
-        _cpusched=eevdf
-        ;;
-    cachyos-server)
-        _preempt=lazy
-        _HZ_ticks=300
-        _cpusched=eevdf
-        _cachy_config=no
-        ;;
-    *)
-        _die "Invalid preset: ${_flavor}"
-        ;;
-esac
 
 if _is_lto_kernel && [[ "$_package_suffix" == "lto" ]]; then
     _pkgsuffix=${_flavor}-lto
