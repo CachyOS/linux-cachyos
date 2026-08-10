@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.
-	pkgver = 7.1.6
+	pkgver = 7.1.8
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -30,13 +30,13 @@ pkgbase = linux-cachyos
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.1.6-1/cachyos-7.1.6-1.tar.gz
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.1.6-1/cachyos-7.1.6-1.tar.gz.asc
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.1.8-1/cachyos-7.1.8-1.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.1.8-1/cachyos-7.1.8-1.tar.gz.asc
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.1/misc/dkms-clang.patch
 	validpgpkeys = E18447AC260021D31F3FF6C4C8A2A4774B8B63C4
 	validpgpkeys = E8B9AA39F054E30E8290D492C3C4820857F654FE
-	b2sums = d1a694cb55a5bf013987022b7d87d8430142f26686d52eaa33928685ec9116dd238dd6fa33eb91364e68bc33ca120ce82db35c1dc247d68f5556111aeff11537
+	b2sums = 6a198c07f5b3ff24e35972c0c25a30f4ec72ec4b986a926ec57aa3fa045bd72dc15845a3651b134715a1cd5efb62a1bb8800a19dc80cef2e0de70d01245e5eb0
 	b2sums = SKIP
 	b2sums = a81b1a49b7fd277a8a1395e38696c435489808399527dc49436c9b36940d5c652c523622efe68d34dd191669d8838ab4c041000331279ccf77cdc11dc4baaca2
 	b2sums = c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e
@@ -57,7 +57,7 @@ pkgname = linux-cachyos
 	provides = NTSYNC-MODULE
 	provides = VHBA-MODULE
 	provides = ADIOS-MODULE
-	provides = linux-cachyos-lto=7.1.6-1
+	provides = linux-cachyos-lto=7.1.8-1
 	replaces = linux-cachyos-lto
 
 pkgname = linux-cachyos-headers
@@ -76,5 +76,5 @@ pkgname = linux-cachyos-headers
 	depends = llvm
 	depends = lld
 	provides = LINUX-HEADERS
-	provides = linux-cachyos-lto-headers=7.1.6-1
+	provides = linux-cachyos-lto-headers=7.1.8-1
 	replaces = linux-cachyos-lto-headers
