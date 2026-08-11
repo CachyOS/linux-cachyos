@@ -366,7 +366,6 @@ Precompiled kernels available through the xddxdd/nix-cachyos-kernel repository:
 
 Help us maintain repositories and build infrastructure:
 
-- **PayPal:** [paypal.me/pttrr](https://paypal.me/pttrr)
 - **Patreon:** [patreon.com/CachyOS](https://www.patreon.com/CachyOS)
 - **BTC:** `bc1qmwglfchlc335du6pcu6w64cexu7cck0mzhyw42`
 - **ETH:** `0xc2dc77327F78A7B85Db3941Eb49e74F41E961649`
