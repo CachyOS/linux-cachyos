@@ -543,7 +543,7 @@ _sign_modules() {
     local sign_cert="${srcdir}/${_srcname}/certs/signing_key.x509"
     local hash_algo="$(grep -Po 'CONFIG_MODULE_SIG_HASH="\K[^"]*' "${srcdir}/${_srcname}/.config")"
 
-    if [ "$_use_llvm" != "none" ]; then
+    if _is_clang_build; then
         local strip_bin="llvm-strip"
     else
         local strip_bin="strip"
@@ -579,7 +579,9 @@ build() {
         cd ${srcdir}/"zfs"
 
         local CONFIGURE_FLAGS=()
-        [ "$_use_llvm" != "none" ] && CONFIGURE_FLAGS+=("KERNEL_LLVM=1")
+        if _is_clang_build; then
+            CONFIGURE_FLAGS+=("KERNEL_LLVM=1")
+        fi
 
         ./autogen.sh
         sed -i "s|\$(uname -r)|${_kernuname}|g" configure
