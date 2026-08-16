@@ -5,8 +5,7 @@ set_llvm_level() {
     local new_level=$2
 
     find . -name "PKGBUILD" -exec sed -i \
-        -e "s/_use_llvm:=${old_level}/_use_llvm:=${new_level}/" \
-        -e "s/_use_llvm_lto:=${old_level}/_use_llvm_lto:=${new_level}/" {} +
+        -e "s/_use_llvm:=${old_level}/_use_llvm:=${new_level}/" {} +
 }
 
 ## Enable ZFS
