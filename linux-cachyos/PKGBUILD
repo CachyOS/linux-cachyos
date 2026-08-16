@@ -93,7 +93,7 @@
 # "thin": use Clang with ThinLTO - multiple threads, faster and uses less memory, may have a lower runtime performance than Full.
 # "thin-dist": use Clang with distributed ThinLTO - https://discourse.llvm.org/t/rfc-distributed-thinlto-build-for-kernel/85934
 # "full": use Clang with Full LTO - 1 thread for Linking, slow and uses more memory, theoretically with the highest performance gains.
-: "${_use_llvm:=thin}"
+: "${_use_llvm:=clang}"
 
 # Use suffix -lto only when requested by the user
 # yes - enable -lto suffix
