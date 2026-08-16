@@ -327,7 +327,7 @@ prepare() {
 
     echo "Selecting '$_use_llvm' LLVM level..."
 
-    if ! _is_lto_kernel; then
+    if [[ "$_use_llvm" = "none" || "$_use_llvm" = "clang" ]]; then
         echo "Enabling QR Code Panic for non-LTO Kernels"
         scripts/config --set-str DRM_PANIC_SCREEN qr_code -e DRM_PANIC_SCREEN_QR_CODE \
             --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
