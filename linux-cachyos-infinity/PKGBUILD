@@ -331,7 +331,8 @@ case "$_cpusched" in
                  "https://github.com/galpt/infinity-scheduler/raw/refs/heads/v4.8-gpu/patches/cachyos/7.1/0045-v4.8-gpu-drop-the-dead-stats-row-and-fix-the-RT-labe.patch"
                  "https://github.com/galpt/infinity-scheduler/raw/refs/heads/v4.8-gpu/patches/cachyos/7.1/0046-v4.8-gpu-pair-the-remaining-lockless-infinity_ctx-re.patch"
                  "https://github.com/galpt/infinity-scheduler/raw/refs/heads/v4.8-gpu/patches/cachyos/7.1/0047-v4.8-gpu-correct-the-stats-note-and-GPU-comments.patch"
-                 "https://github.com/galpt/infinity-scheduler/raw/refs/heads/v4.8-gpu/patches/arch/7.1/0048-v4.8-gpu-move-the-infinity_stats-rows-to-a-heap-allo.patch");;
+                 "https://github.com/galpt/infinity-scheduler/raw/refs/heads/v4.8-gpu/patches/cachyos/7.1/0048-v4.8-gpu-move-the-infinity_stats-rows-to-a-heap-allo.patch"
+                 "https://github.com/galpt/infinity-scheduler/raw/refs/heads/v4.8-gpu/patches/cachyos/7.1/0049-v4.8-gpu-bound-the-weight-index-and-simplify-the-IPC.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
@@ -920,4 +921,5 @@ b2sums=('6a198c07f5b3ff24e35972c0c25a30f4ec72ec4b986a926ec57aa3fa045bd72dc15845a
         '2e704f3417de5d5a4a5ad26757b7e50aaabddfcc9440554852e5369b5da51eb3653f34b41fec5d34ec7c8b2bdf8f8a6664d942c9e3d70f527e77589514be54fd'
         '2397ebb21dedbc63fa4e6bf09569cb1f547cbbbe7247cee46d27cae972eb88a10268f52b7b4454253626a2fa880d248185022f85649bb14ff0f26a5308b7f98a'
         '875aedc827e928d15a6464da84b3be92ea086426207399d251ed5f496eabc74efc033ab21f08829b0db88351e863374d4666c29dfeed605cd9aed49c85180a15'
-        '74f517a20e2f75ce3c88713c1c0e9addee35d8c27ce123655b3871436b34c22bbd675531ab95bf161a51309aeb575d2d5871e0327b64a9e3aa7920f160cd0c65')
+        '74f517a20e2f75ce3c88713c1c0e9addee35d8c27ce123655b3871436b34c22bbd675531ab95bf161a51309aeb575d2d5871e0327b64a9e3aa7920f160cd0c65'
+        '0308d2adce8f84ab846997d27ab3e769e80493b775e1d149e2ec515c8e3b60601ce1ab279f6fb4909bd54bb4b0ada94718ee8b399611e5d79e36b239d2091f72')
