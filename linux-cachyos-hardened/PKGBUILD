@@ -149,13 +149,13 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=7.0
-_minor=12
+_major=7.1
+_minor=8
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
 _tagrel=1
-pkgrel=3
+pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux BORE scheduler and hardened Kernel by CachyOS with other patches and improvements'
 _kernver="$pkgver-$pkgrel"
@@ -225,8 +225,8 @@ fi
 
 if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
-             "${_patchsource}/misc/nvidia/0003-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
-             "${_patchsource}/misc/nvidia/0005-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
+             "${_patchsource}/misc/nvidia/0002-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
+             "${_patchsource}/misc/nvidia/0004-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
 fi
 
 if [ "$_build_r8125" = "yes" ]; then
@@ -744,8 +744,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('d3aa0ac4d37e3f8f2f888fc07db7f07b4d6b10b389ab7f75a59d7eada9656e9ef078668d76f9db528c6086b9ab53cd80ad95d36bdbfa5ca1c76c3cd7c452713c'
+b2sums=('6a198c07f5b3ff24e35972c0c25a30f4ec72ec4b986a926ec57aa3fa045bd72dc15845a3651b134715a1cd5efb62a1bb8800a19dc80cef2e0de70d01245e5eb0'
         'SKIP'
-        'f1f137975a325bebc30d2d7841ae1ffb2a7581db61ab495c1054f5cc66dd7f16d24b2dbdeef0e002db3066c1a4f4f561c2254bc5a6393f615d221f10d97773fe'
-        '9dc1a5a46d8ecf606323926f22b4ce0aaf910dc47fd9ab9b8d08d1600e0bb45109babf7098f390562d8d8456239bb44b7db13b175fe2f529b9784a603dc11fbe'
-        '3bdc77767deefaecb7c623117ca82db5ee47ac55e3378d5e13afe5a3e43e132c0f5d618812470dc9086205cd3eea9f111db975103a285120469534d947759da4')
+        '82733c4af6e47cfdb84820247c7ea9bc1d7361f18aa0de8112ecf6913a10c8723d13743d15944e64f4372a46ebbcf5969bc8d62952fc28939b0e9b81901eafe2'
+        'c7b49a1ea71f1d837027680bb79688a201940101fdec1efa2cf9f103ba301530fdb0b82da465fa1f0ff095836640491d8e18fe7a732a6a3a75095d784eb4689d'
+        '7c9e4fdd3ffee4809137e9bdccb0559a0b21606a70608f87ca03e85c374d3815de601375802153a5292c0ca5799a1df93ddca7130ea016c0c831ae5aa3abd34d')
