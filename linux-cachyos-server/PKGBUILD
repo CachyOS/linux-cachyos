@@ -149,8 +149,8 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=7.1
-_minor=8
+_major=7.2
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -219,14 +219,14 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=c681af76c5a6a15caada25eb13090e41218c7831")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=92163c55454ad016a4f5be0baca98f95229227df")
 fi
 
 
 if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0002-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
-             "${_patchsource}/misc/nvidia/0004-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
+             "${_patchsource}/misc/nvidia/0003-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
 fi
 
 if [ "$_build_r8125" = "yes" ]; then
@@ -748,6 +748,6 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('6a198c07f5b3ff24e35972c0c25a30f4ec72ec4b986a926ec57aa3fa045bd72dc15845a3651b134715a1cd5efb62a1bb8800a19dc80cef2e0de70d01245e5eb0'
+b2sums=('31474ec81ba911c6c65646695b052b77032742973a3b4d61a212c07431a7d3e952ade31f2864ffcba133d8b2a2d0359bb048ae7154147b9272689e7b4485cb36'
         'SKIP'
-        'a81b1a49b7fd277a8a1395e38696c435489808399527dc49436c9b36940d5c652c523622efe68d34dd191669d8838ab4c041000331279ccf77cdc11dc4baaca2')
+        '21343697f5f1647aadbdec8a4aa477b10622e5ae04fa07fcf6f9bab67dece7180872676bdc49a90de5d273c2c13127c5812a7ca67dbd9edce3e26e8c38d358d1')
