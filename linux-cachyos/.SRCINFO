@@ -72,9 +72,6 @@ pkgname = linux-cachyos-headers
 	depends = zlib
 	depends = zstd
 	depends = linux-cachyos
-	depends = clang
-	depends = llvm
-	depends = lld
 	provides = LINUX-HEADERS
 	provides = linux-cachyos-lto-headers=7.2.0-1
 	replaces = linux-cachyos-lto-headers
