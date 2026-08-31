@@ -1,12 +1,47 @@
 # Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev>
 # Maintainer: Piotr Gorski <piotrgorski@cachyos.org>
 # Maintainer: Vasiliy Stelmachenok <ventureo@cachyos.org>
+# Maintainer: Eric Naim <dnaim@cachyos.org>
 # Contributor: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
 # Contributor: Tobias Powalowski <tpowa@archlinux.org>
 # Contributor: Thomas Baechler <thomas@archlinux.org>
 
 ### BUILD OPTIONS
 # Set these variables to ANYTHING that is not null or choose proper variable to enable them
+
+### Ready-to-use named options preset
+: "${_flavor:="cachyos"}"
+
+case "${_flavor}" in
+    cachyos)
+        ;;
+    cachyos-bmq)
+        _cpusched="${_cpusched:="bmq"}"
+        ;;
+    cachyos-rt-bore)
+        _cpusched="${_cpusched:="bore"}"
+        _preempt="${_preempt:="rt"}"
+        ;;
+    cachyos-bore)
+        _cpusched="${_cpusched:="bore"}"
+        ;;
+    cachyos-deckify)
+        _cpusched="${_cpusched:="bore"}"
+        ;;
+    cachyos-eevdf)
+        _cpusched="${_cpusched:="eevdf"}"
+        ;;
+    cachyos-server)
+        _preempt="${_preempt:="lazy"}"
+        _HZ_ticks="${_HZ_ticks:=300}"
+        _cpusched="${_cpusched:="eevdf"}"
+        _cachy_config="${_cachy_config:="no"}"
+        ;;
+    *)
+        error "Invalid preset: ${_flavor}"
+        exit 1
+        ;;
+esac
 
 ### Selecting CachyOS config
 : "${_cachy_config:=yes}"
@@ -15,12 +50,8 @@
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'bmq' - select 'BMQ Scheduler'
-# 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
-# 'cachyos' - select 'CachyOS Default Scheduler (EEVDF)'
 # 'eevdf' - select 'EEVDF Scheduler'
-# 'rt' - select EEVDF, but includes a series of realtime patches
-# 'rt-bore' - select Burst-Oriented Response Enhancer, but includes a series of realtime patches
-: "${_cpusched:=cachyos}"
+: "${_cpusched:=eevdf}"
 
 ### Tweak kernel options prior to a build via nconfig
 : "${_makenconfig:=no}"
@@ -64,12 +95,13 @@
 ### Full tickless can give higher performances in various cases but, depending on hardware, lower consistency.
 : "${_tickrate:=full}"
 
-## Choose between full, lazy or dynamic
+## Choose between full, lazy, rt or dynamic
 # Full: Makes all non-critical kernel code preemptible to reduce latency
 # Lazy: Same as full but instead of preempting immediately it waits for signals from the scheduler
 #       in an attempt to boost throughput.
 #       In practice, this doesn't seem to perform well as both throughput and latency suffer
 #       compared to full.
+# RT: Real-time kernel with additional patches.
 : "${_preempt:=full}"
 
 ### Transparent Hugepages
@@ -94,15 +126,12 @@
 # "none: disable LTO
 : "${_use_llvm_lto:=thin}"
 
-# Use suffix -lto only when requested by the user
-# yes - enable -lto suffix
-# no - disable -lto suffix
-# https://github.com/CachyOS/linux-cachyos/issues/36
-: "${_use_lto_suffix:=no}"
-
-# Use suffix -gcc when requested by the user
-# Enabled by default to show the difference between LTO kernels and GCC kernels
-: "${_use_gcc_suffix:=yes}"
+# Package suffix for toolchain used
+# Valid values are:
+# - none: No suffix at all
+# - lto: Adds -lto suffix when building with LLVM LTO
+# - gcc: Adds -gcc suffix when building with GCC.
+: "${_package_suffix:=gcc}"
 
 # KCFI is a proposed forward-edge control-flow integrity scheme for
 # Clang, which is more suitable for kernel use than the existing CFI
@@ -154,6 +183,11 @@
 # Enable this after the profiles have been generated
 : "${_propeller_profiles:=no}"
 
+_die() {
+    error "$@"
+    exit 1
+}
+
 # ATTENTION: Do not modify after this line
 _is_lto_kernel() {
     [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full"  || "$_use_llvm_lto" = "thin-dist" ]]
@@ -165,12 +199,36 @@ _is_ci_build() {
     return $?
 }
 
-if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
-    _pkgsuffix=cachyos-lto
-elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
-    _pkgsuffix=cachyos-gcc
+_generate_build_desc() {
+    local -A _options_desc_map=(
+        ["_autofdo"]="AutoFDO"
+        ["_propeller"]="Propeller"
+        ["_use_llvm_lto"]="${_use_llvm_lto^} LTO"
+        ["_cpusched"]="${_cpusched^^} scheduler"
+        ["_cachy_config"]="Cachy sauce"
+        ["_use_kcfi"]="kCFI"
+        ["_preempt"]="${_preempt^^} PREEMPT"
+    )
+    local option option_desc
+    local build_desc=""
+
+    while IFS= read -r option; do
+        option_desc="${_options_desc_map[$option]}"
+        [[ -z "$option_desc" ]] && continue
+        if [[ "${!option}" != "no" && "${!option}" != "none" ]]; then
+            build_desc+="$option_desc, "
+        fi
+    done < <(compgen -A variable | grep "^_")
+
+    echo "${build_desc%, }"
+}
+
+if _is_lto_kernel && [[ "$_package_suffix" == "lto" ]]; then
+    _pkgsuffix=${_flavor}-lto
+elif ! _is_lto_kernel && [[ "$_package_suffix" == "gcc" ]]; then
+    _pkgsuffix=${_flavor}-gcc
 else
-    _pkgsuffix=cachyos
+    _pkgsuffix=${_flavor}
 fi
 
 pkgbase="linux-$_pkgsuffix"
@@ -182,7 +240,7 @@ pkgver=${_major}.${_minor}
 _tagrel=1
 pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
-pkgdesc='Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
+pkgdesc="Linux kernel by CachyOS with patches and improvements ($(_generate_build_desc))"
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -215,6 +273,7 @@ _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${
 _nv_ver=610.57.04
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
+_strip_bin=strip
 source=(
     "https://github.com/CachyOS/linux/releases/download/${_srcname}/${_srcname}.tar.gz"{,.asc}
     "config"
@@ -228,6 +287,7 @@ validpgpkeys=(
 if _is_lto_kernel; then
     makedepends+=(clang llvm lld)
     source+=("${_patchsource}/misc/dkms-clang.patch")
+    _strip_bin=llvm-strip
     BUILD_FLAGS=(
         CC=clang
         LD=ld.lld
@@ -236,8 +296,10 @@ if _is_lto_kernel; then
     )
 fi
 
-# WARNING The ZFS module doesn't build with selected RT sched due to licensing issues.
-if [[ "$_cpusched" = "rt" || "$_cpusched" = "rt-bore" ]]; then
+if [ "$_preempt" = "rt" ]; then
+    source+=("${_patchsource}/misc/0001-rt-i915.patch")
+
+    # WARNING: ZFS module doesn't build with selected RT sched due to licensing issues.
     unset _build_zfs
 fi
 
@@ -252,6 +314,13 @@ if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0002-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
              "${_patchsource}/misc/nvidia/0003-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
+fi
+
+if [ "$_flavor" = "cachyos-deckify" ]; then
+    source+=(
+        "${_patchsource}/misc/0001-acpi-call.patch"
+        "${_patchsource}/misc/0001-handheld.patch"
+    )
 fi
 
 # Use generated AutoFDO Profile
@@ -275,21 +344,16 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+    bore) ## Burst-Oriented Response Enhancer (BORE) scheduler
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
-    hardened) ## Hardened Patches
-        source+=("${_patchsource}/misc/0001-hardened.patch");;
-    rt|rt-bore) ## RT patches
-        source+=("${_patchsource}/misc/0001-rt-i915.patch");;
 esac
 
 export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER="$pkgbase"
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
 
-_die() { error "$@" ; exit 1; }
 
 prepare() {
     cd "$_srcname"
@@ -337,11 +401,9 @@ prepare() {
 
     ### Selecting the CPU scheduler
     case "$_cpusched" in
-        cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
+        bore) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
         eevdf) ;;
-        rt) scripts/config -e PREEMPT_RT;;
-        rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_RT;;
         *) _die "The value $_cpusched is invalid. Choose the correct one again.";;
     esac
 
@@ -402,16 +464,14 @@ prepare() {
 
     ### Select preempt type
 
-    # We should not set up the PREEMPT for RT kernels
-    if [[ "$_cpusched" != "rt" && "$_cpusched" != "rt-bore" ]]; then
-        case "$_preempt" in
-            full) scripts/config -e PREEMPT -d PREEMPT_LAZY;;
-            lazy) scripts/config -d PREEMPT -e PREEMPT_LAZY;;
-            *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
-        esac
+    case "$_preempt" in
+        full) scripts/config -e PREEMPT -d PREEMPT_LAZY;;
+        lazy) scripts/config -d PREEMPT -e PREEMPT_LAZY;;
+        rt) scripts/config -e PREEMPT_RT;;
+        *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
+    esac
 
-        echo "Selecting '$_preempt' preempt type..."
-    fi
+    echo "Selecting '$_preempt' preempt type..."
 
     ### Enable O3
     if [ "$_cc_harder" = "yes" ]; then
@@ -453,6 +513,27 @@ prepare() {
     esac
 
     echo "Selecting '$_hugepage' TRANSPARENT_HUGEPAGE config..."
+
+    if [ "$_flavor" = "cachyos-deckify" ]; then
+        echo "Enabling handheld configs"
+        scripts/config \
+            -d RCU_LAZY_DEFAULT_OFF \
+            -e AMD_PRIVATE_COLOR \
+            -m SENSORS_STEAMDECK \
+            -m MFD_STEAMDECK \
+            -m SND_SOC_AW87XXX \
+            -m HID_ASUS_ALLY \
+            -m HID_LENOVO_GO \
+            -m HID_LENOVO_GO_S \
+            -m HID_MSI_CLAW \
+            -m ZOTAC_ZONE_HID \
+            -m LEDS_STEAMDECK \
+            -m LEDS_VALVE \
+            -e ACPI_CALL \
+            -m ZOTAC_ZONE_PLATFORM \
+            -m EXTCON_STEAMDECK \
+            -m HID_MSI
+    fi
 
     # Enable Clang AutoFDO
     # Add additonal check if Thin or Full LTO is enabled otherwise die
@@ -533,14 +614,8 @@ _sign_modules() {
     local sign_cert="${srcdir}/${_srcname}/certs/signing_key.x509"
     local hash_algo="$(grep -Po 'CONFIG_MODULE_SIG_HASH="\K[^"]*' "${srcdir}/${_srcname}/.config")"
 
-    if [ "$_use_llvm_lto" != "none" ]; then
-        local strip_bin="llvm-strip"
-    else
-        local strip_bin="strip"
-    fi
-
     find "$1" -type f -name '*.ko' -print \
-        -exec "${strip_bin}" --strip-debug '{}' \; \
+        -exec "${_strip_bin}" --strip-debug '{}' \; \
         -exec "${sign_script}" "${hash_algo}" "${sign_key}" "${sign_cert}" '{}' \;
 }
 
@@ -595,11 +670,6 @@ _package() {
                 'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig'
                 'scx-scheds: to use sched-ext schedulers')
     provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE V4L2LOOPBACK-MODULE NTSYNC-MODULE VHBA-MODULE ADIOS-MODULE)
-    # Replace LTO kernel with the default kernel
-    if _is_lto_kernel; then
-        provides+=(linux-cachyos-lto=$_kernver)
-        replaces=(linux-cachyos-lto)
-    fi
 
     cd "$_srcname"
 
@@ -634,12 +704,6 @@ _package-headers() {
       zstd
      "${pkgbase}")
     provides=(LINUX-HEADERS)
-
-    if _is_lto_kernel; then
-        provides+=(linux-cachyos-lto-headers=$_kernver)
-        replaces=(linux-cachyos-lto-headers)
-        depends+=(clang llvm lld)
-    fi
 
     cd "${_srcname}"
     local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
@@ -720,21 +784,22 @@ _package-headers() {
 
     echo "Stripping build tools..."
     local file
+
     while read -rd '' file; do
         case "$(file -Sib "$file")" in
             application/x-sharedlib\;*)      # Libraries (.so)
-                strip -v $STRIP_SHARED "$file" ;;
+                "${_strip_bin}" $STRIP_SHARED "$file" ;;
             application/x-archive\;*)        # Libraries (.a)
-                strip -v $STRIP_STATIC "$file" ;;
+                "${_strip_bin}" $STRIP_STATIC "$file" ;;
             application/x-executable\;*)     # Binaries
-                strip -v $STRIP_BINARIES "$file" ;;
+                "${_strip_bin}" $STRIP_BINARIES "$file" ;;
             application/x-pie-executable\;*) # Relocatable binaries
-                strip -v $STRIP_SHARED "$file" ;;
+                "${_strip_bin}" $STRIP_SHARED "$file" ;;
         esac
     done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
 
     echo "Stripping vmlinux..."
-    strip -v $STRIP_STATIC "$builddir/vmlinux"
+    "${_strip_bin}" $STRIP_STATIC "$builddir/vmlinux"
 
     echo "Adding symlink..."
     mkdir -p "$pkgdir/usr/src"
