@@ -64,7 +64,7 @@ jobs:
         _use_llvm_lto: ${{ matrix.toolchain == 'gcc' && 'none' || 'thin' }}
       run: |
           cd "linux-cachyos"
-          sudo -H -E -u builder makepkg --skipchecksums --syncdeps --noconfirm
+          sudo -H -E -u builder makepkg --skipinteg --syncdeps --noconfirm
     - name: Upload package to artifacts
       id: upload
       uses: actions/upload-artifact@v4

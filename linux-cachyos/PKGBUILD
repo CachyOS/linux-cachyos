@@ -638,7 +638,6 @@ _package-headers() {
     if _is_lto_kernel; then
         provides+=(linux-cachyos-lto-headers=$_kernver)
         replaces=(linux-cachyos-lto-headers)
-        depends+=(clang llvm lld)
     fi
 
     cd "${_srcname}"
