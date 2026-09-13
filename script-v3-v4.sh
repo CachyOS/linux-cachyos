@@ -17,11 +17,12 @@ files=$(find . -name "PKGBUILD")
 
 for f in $files
 do
-    d=$(dirname $f)
-    cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
-    docker rm kernelbuild
-    cd ..
+    d=$(dirname "$f")
+    (
+        cd "$d" || exit 1
+        time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v "$PWD":/pkg pttrr/docker-makepkg-v3
+        docker rm kernelbuild
+    )
 done
 
 ## LLVM ThinLTO v3 Kernel
@@ -31,11 +32,12 @@ files=$(find . -name "PKGBUILD")
 
 for f in $files
 do
-    d=$(dirname $f)
-    cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v3
-    docker rm kernelbuild
-    cd ..
+    d=$(dirname "$f")
+    (
+        cd "$d" || exit 1
+        time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v "$PWD":/pkg pttrr/docker-makepkg-v3
+        docker rm kernelbuild
+    )
 done
 
 echo "move kernels to the repo"
@@ -52,11 +54,12 @@ files=$(find . -name "PKGBUILD")
 
 for f in $files
 do
-    d=$(dirname $f)
-    cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v4
-    docker rm kernelbuild
-    cd ..
+    d=$(dirname "$f")
+    (
+        cd "$d" || exit 1
+        time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v "$PWD":/pkg pttrr/docker-makepkg-v4
+        docker rm kernelbuild
+    )
 done
 
 ## LLVM ThinLTO v4 Kernel
@@ -66,11 +69,12 @@ files=$(find . -name "PKGBUILD")
 
 for f in $files
 do
-    d=$(dirname $f)
-    cd $d
-    time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v $PWD:/pkg pttrr/docker-makepkg-v4
-    docker rm kernelbuild
-    cd ..
+    d=$(dirname "$f")
+    (
+        cd "$d" || exit 1
+        time docker run --name kernelbuild -e EXPORT_PKG=1 -e SYNC_DATABASE=1 -e CHECKSUMS=1 -v "$PWD":/pkg pttrr/docker-makepkg-v4
+        docker rm kernelbuild
+    )
 done
 
 echo "move kernels to the repo"
