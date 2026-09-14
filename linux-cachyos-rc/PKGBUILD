@@ -222,6 +222,9 @@ _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 source=(
     "https://github.com/CachyOS/linux/releases/download/${_srctag}/${_srctag}.tar.gz"{,.asc}
     "config"
+    # drm/gud: bound the TV mode loop so FORTIFY accepts it with clang>=22 at -O3
+    # (build fix for issue #1031, drop once the bound lands upstream)
+    "0001-drm-gud-bound-tv-mode-loop.patch"
 )
 validpgpkeys=(
   E18447AC260021D31F3FF6C4C8A2A4774B8B63C4  # Eric Naim <dnaim@cachyos.org>
@@ -822,4 +825,5 @@ done
 b2sums=('328e413ec7bafe60ddf28f5c1ca64a6d7c04c395946599f79eb00f2c300cbb2361a28678e5b750aac1d476d9629a60910a13858162dfaba642232a76f3cf8fe6'
         'SKIP'
         '1f78f7c94d7c0642e20a75852c025b73157d224143d30bdf0a4779f04281960663aac4c9a69a1239b852f77041e404dbd50d12fbfe8c35bdbdd6175d73a2ed68'
+        '46faf81ca838b438478e3a9817251fd393d6e6a174538cea894a1ae0b524f601c1cefe8bbf44f31ed2154753a0490b85f2210dc72a1ee0850265574da5446dcd'
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e')
