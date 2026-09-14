@@ -1,0 +1,55 @@
+From: Mayank Mohan <18081415+mayankmohan1992@users.noreply.github.com>
+Subject: [PATCH] drm/gud: bound the TV mode loop so FORTIFY accepts it at -O3
+
+gud_connector_add_tv_mode() derives num_modes from the length of the GUD reply
+and then walks both modes[] (GUD_CONNECTOR_TV_MODE_MAX_NUM entries) and a buffer
+of GUD_CONNECTOR_TV_MODE_MAX_NUM * GUD_CONNECTOR_TV_MODE_NAME_LEN bytes with
+that value. The runtime invariant ret <= buf_len - the reply is capped by the
+buffer length handed to gud_usb_get() - is invisible to the compiler, so since
+upstream commit da1ea35fea67 ("drm/gud: validate TV mode names before creating
+enum property") the fortified memchr() in that loop is a provable out-of-bounds
+read for the optimizer, and clang 22 at -O3 rejects it:
+
+  ld.lld: error: call to __read_overflow marked "dontcall-error": detected
+  read beyond size of object (1st parameter)
+
+Without LTO the same thing is reported by the front end instead:
+
+  include/linux/fortify-string.h:686:3: error: call to '__read_overflow'
+  declared with 'error' attribute: detected read beyond size of object
+
+Reject replies that claim more modes than the protocol defines - which also keeps
+drm_mode_create_tv_properties_legacy() from walking uninitialised modes[] entries
+- and make the loop bound explicit. Both parts are needed: the check alone still
+trips the trap, and the bound alone would leave the property creation reading
+modes[] past the number of valid entries.
+
+Verified with this package's default build options (clang 22.1.8, ThinLTO,
+CONFIG_FORTIFY_SOURCE=y, KBUILD_CFLAGS -O3, CONFIG_DRM_GUD=m): the patched tree
+builds drivers/gpu/drm/gud/ clean, the unpatched tree fails with the ld.lld error
+above, and GCC -O3 (LTO=none) builds clean before and after.
+
+Carry as a local workaround until an equivalent bound lands upstream.
+
+Link: https://github.com/CachyOS/linux-cachyos/issues/1031
+Signed-off-by: Mayank Mohan <18081415+mayankmohan1992@users.noreply.github.com>
+---
+ drivers/gpu/drm/gud/gud_connector.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/drivers/gpu/drm/gud/gud_connector.c
++++ b/drivers/gpu/drm/gud/gud_connector.c
+@@ -396,7 +396,12 @@
+ 	}
+ 
+ 	num_modes = ret / GUD_CONNECTOR_TV_MODE_NAME_LEN;
+-	for (i = 0; i < num_modes; i++) {
++	if (num_modes > GUD_CONNECTOR_TV_MODE_MAX_NUM) {
++		ret = -EIO;
++		goto free;
++	}
++
++	for (i = 0; i < num_modes && i < GUD_CONNECTOR_TV_MODE_MAX_NUM; i++) {
+ 		char *mode = &buf[i * GUD_CONNECTOR_TV_MODE_NAME_LEN];
+ 
+ 		if (!memchr(mode, '\0', GUD_CONNECTOR_TV_MODE_NAME_LEN)) {
