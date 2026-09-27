@@ -39,7 +39,8 @@
 : "${_localmodcfg:=no}"
 
 # Path to the list of used modules
-: "${_localmodcfg_path:="$HOME/.config/modprobed.db"}"
+: "${_localmodcfg_path:="$XDG_DATA_HOME/modprobed-db/modprobed.db"}"
+
 
 # Use the current kernel's .config file
 # Enabling this option will use the .config of the RUNNING kernel rather than
