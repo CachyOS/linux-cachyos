@@ -15,6 +15,7 @@
 # ATTENTION - only one of the following values can be selected:
 # 'bore' - select 'Burst-Oriented Response Enhancer'
 # 'bmq' - select 'BMQ Scheduler'
+# 'muqss' - select 'MuQSS Scheduler'
 # 'hardened' - select 'BORE Scheduler hardened' ## kernel with hardened config and hardening patches with the bore scheduler
 # 'cachyos' - select 'CachyOS Default Scheduler (EEVDF)'
 # 'eevdf' - select 'EEVDF Scheduler'
@@ -280,6 +281,8 @@ case "$_cpusched" in
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
+    muqss) ## MuQSS Scheduler
+        source+=("${_patchsource}/sched/0001-muqss-cachy.patch");;
     hardened) ## Hardened Patches
         source+=("${_patchsource}/misc/0001-hardened.patch");;
     rt|rt-bore) ## RT patches
@@ -340,6 +343,7 @@ prepare() {
     case "$_cpusched" in
         cachyos|bore|hardened) scripts/config -e SCHED_BORE;;
         bmq) scripts/config -e SCHED_ALT -e SCHED_BMQ;;
+        muqss) scripts/config -e SCHED_MUQSS;;
         eevdf) ;;
         rt) scripts/config -e PREEMPT_RT;;
         rt-bore) scripts/config -e SCHED_BORE -e PREEMPT_RT;;
@@ -375,9 +379,9 @@ prepare() {
     ### Select tick rate
     case "$_HZ_ticks" in
         100|250|500|600|750|1000)
-            scripts/config -d HZ_300 -e "HZ_${_HZ_ticks}" --set-val HZ "${_HZ_ticks}";;
+            scripts/config -d HZ_300 -d HZ_300_NODEF -e "HZ_${_HZ_ticks}" -e "HZ_${_HZ_ticks}_NODEF" --set-val HZ "${_HZ_ticks}";;
         300)
-            scripts/config -e HZ_300 --set-val HZ 300;;
+            scripts/config -e HZ_300 -e HZ_300_NODEF --set-val HZ 300;;
         *)
             _die "The value $_HZ_ticks is invalid. Choose the correct one again."
     esac
@@ -393,9 +397,9 @@ prepare() {
 
     ### Select tick type
     case "$_tickrate" in
-        periodic) scripts/config -d NO_HZ_IDLE -d NO_HZ_FULL -d NO_HZ -d NO_HZ_COMMON -e HZ_PERIODIC;;
-        idle) scripts/config -d HZ_PERIODIC -d NO_HZ_FULL -e NO_HZ_IDLE  -e NO_HZ -e NO_HZ_COMMON;;
-        full) scripts/config -d HZ_PERIODIC -d NO_HZ_IDLE -d CONTEXT_TRACKING_FORCE -e NO_HZ_FULL_NODEF -e NO_HZ_FULL -e NO_HZ -e NO_HZ_COMMON -e CONTEXT_TRACKING;;
+        periodic) scripts/config -d NO_HZ_IDLE -d NO_HZ_IDLE_NODEF -d NO_HZ_FULL -d NO_HZ_FULL_NODEF -d NO_HZ -d NO_HZ_COMMON -e HZ_PERIODIC -e HZ_PERIODIC_NODEF;;
+        idle) scripts/config -d HZ_PERIODIC -d HZ_PERIODIC_NODEF -d NO_HZ_FULL -d NO_HZ_FULL_NODEF -e NO_HZ_IDLE -e NO_HZ_IDLE_NODEF -e NO_HZ -e NO_HZ_COMMON;;
+        full) scripts/config -d HZ_PERIODIC -d HZ_PERIODIC_NODEF -d NO_HZ_IDLE -d NO_HZ_IDLE_NODEF -d CONTEXT_TRACKING_FORCE -e NO_HZ_FULL_NODEF -e NO_HZ_FULL -e NO_HZ -e NO_HZ_COMMON -e CONTEXT_TRACKING;;
         *) _die "The value '$_tickrate' is invalid. Choose the correct one again.";;
     esac
 
@@ -406,8 +410,8 @@ prepare() {
     # We should not set up the PREEMPT for RT kernels
     if [[ "$_cpusched" != "rt" && "$_cpusched" != "rt-bore" ]]; then
         case "$_preempt" in
-            full) scripts/config -e PREEMPT -d PREEMPT_LAZY;;
-            lazy) scripts/config -d PREEMPT -e PREEMPT_LAZY;;
+            full) scripts/config -e PREEMPT -e PREEMPT_NODEF -d PREEMPT_LAZY -d PREEMPT_LAZY_NODEF;;
+            lazy) scripts/config -d PREEMPT -d PREEMPT_NODEF -e PREEMPT_LAZY -e PREEMPT_LAZY_NODEF;;
             *) _die "The value '$_preempt' is invalid. Choose the correct one again.";;
         esac
 
