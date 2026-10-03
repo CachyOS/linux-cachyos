@@ -150,13 +150,13 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=7.1
-_minor=8
+_major=7.2
+_minor=9
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=1
-pkgrel=2
+_tagrel=2
+pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux BORE scheduler and hardened Kernel by CachyOS with other patches and improvements'
 _kernver="$pkgver-$pkgrel"
@@ -227,7 +227,7 @@ fi
 if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0002-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
-             "${_patchsource}/misc/nvidia/0004-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
+             "${_patchsource}/misc/nvidia/0003-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
 fi
 
 if [ "$_build_r8125" = "yes" ]; then
@@ -745,8 +745,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('6a198c07f5b3ff24e35972c0c25a30f4ec72ec4b986a926ec57aa3fa045bd72dc15845a3651b134715a1cd5efb62a1bb8800a19dc80cef2e0de70d01245e5eb0'
+b2sums=('8a545c8da5cc1e0d803db9f761ee159733c963b40c594ba74f3723eab68abfd7e7a4ac92139a064cff65b0a0c742bf6989c5d05cd98f057a2ad9efd154c7df25'
         'SKIP'
-        '82733c4af6e47cfdb84820247c7ea9bc1d7361f18aa0de8112ecf6913a10c8723d13743d15944e64f4372a46ebbcf5969bc8d62952fc28939b0e9b81901eafe2'
-        'c7b49a1ea71f1d837027680bb79688a201940101fdec1efa2cf9f103ba301530fdb0b82da465fa1f0ff095836640491d8e18fe7a732a6a3a75095d784eb4689d'
-        '7c9e4fdd3ffee4809137e9bdccb0559a0b21606a70608f87ca03e85c374d3815de601375802153a5292c0ca5799a1df93ddca7130ea016c0c831ae5aa3abd34d')
+        'd1623bd0afd4bbf2f66e8eaa86b5bac76b53c92ce60af970d03b911b4362134754b1f1e7234a7583d1ef78c1fe9ef2a2dddeffafcccef6daa777db886defa637'
+        '03b6d236610ae00db9395819aa7578860f45ce10839fbdcee80fb8e9e9c8810896d20680c63e43c416ae23b371efd737bc0a14831e1f7d8111578c1f65bda68f'
+        '925cfab5c28b77befa1ddba97d0fbcda1b0fec53733dcc669be2178460c690b71ee62ec7fbc3482857dd6fcc9a3925a8bb9cbd161f001321cb1441ec24a8f9d7')
