@@ -151,11 +151,11 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=7.2
-_minor=8
+_minor=9
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=1
+_tagrel=2
 pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux BORE + Cachy Sauce scheduler Kernel by CachyOS with other patches and improvements'
@@ -749,7 +749,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('e9c1784d45b95872cee8a993c96659dda4174b1e42097757dcbada2f1041776a67009caefe0ed0b5af2c3d9811d0cb8f72c67b988f0aef1673ed6d38b901154b'
+b2sums=('8a545c8da5cc1e0d803db9f761ee159733c963b40c594ba74f3723eab68abfd7e7a4ac92139a064cff65b0a0c742bf6989c5d05cd98f057a2ad9efd154c7df25'
         'SKIP'
         '21343697f5f1647aadbdec8a4aa477b10622e5ae04fa07fcf6f9bab67dece7180872676bdc49a90de5d273c2c13127c5812a7ca67dbd9edce3e26e8c38d358d1'
         '03b6d236610ae00db9395819aa7578860f45ce10839fbdcee80fb8e9e9c8810896d20680c63e43c416ae23b371efd737bc0a14831e1f7d8111578c1f65bda68f')
