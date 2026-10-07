@@ -85,7 +85,7 @@
 # - "native" (use compiler autodetection)
 # - "zen4" (Use znver4 compiler optimizations)
 # - "generic" (kernel's default - to share the package between machines with different CPU µarch as long as they are x86-64)
-: "${_processor_opt:=}"
+: "${_processor_opt:=native}"
 
 # Clang LTO mode, only available with the "llvm" compiler - options are "none", "full" or "thin".
 # ATTENTION - one of three predefined values should be selected!
@@ -120,14 +120,14 @@
 # Builds the open nvidia module and package it into a own base
 # This does replace the requirement of nvidia-open-dkms
 # Use this only if you have Turing+ GPU
-: "${_build_nvidia_open:=no}"
+: "${_build_nvidia_open:=yes}"
 
 # Builds the r8125 module and package it into its own package
 # Replaces requirement for r8125-dkms
 : "${_build_r8125:=no}"
 
 # Build a debug package with non-stripped vmlinux
-: "${_build_debug:=no}"
+: "${_build_debug:=yes}"
 
 # Enable AUTOFDO_CLANG for the first compilation to create a kernel, which can be used for profiling
 # Workflow:
@@ -137,7 +137,7 @@
 # 3. Profile the kernel and convert the profile, see Generating the Profile for AutoFDO
 # 4. Put the profile into the sourcedir
 # 5. Run kernel build again with the _autofdo_profile_name path to profile specified
-: "${_autofdo:=no}"
+: "${_autofdo:=yes}"
 
 # Name for the AutoFDO profile
 : "${_autofdo_profile_name:=}"
@@ -171,7 +171,7 @@ if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
 elif ! _is_lto_kernel && [ "$_use_gcc_suffix" = "yes" ]; then
     _pkgsuffix=cachyos-gcc
 else
-    _pkgsuffix=cachyos
+    _pkgsuffix=cachyos-radean
 fi
 
 pkgbase="linux-$_pkgsuffix"
