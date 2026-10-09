@@ -1,0 +1,32 @@
+From 6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b Mon Sep 17 00:00:00 2001
+From: AMD DRM Display Team <amd-gfx@lists.freedesktop.org>
+Date: Sat, 8 Aug 2026 12:00:00 +0000
+Subject: [PATCH] drm/amd/display: reset pflip_status on vblank event completion to fix pageflip timeout
+
+Fixes a regression in amdgpu_dm where acrtc->pflip_status remained stuck in
+AMDGPU_FLIP_SUBMITTED after vblank event dispatch, causing subsequent pageflips
+to time out with:
+  kwin_wayland: Pageflip timed out! This is a bug in the amdgpu kernel driver
+  amdgpu 0000:06:00.0: [drm] *ERROR* [CRTC:369:crtc-0] flip_done timed out
+
+Fixes: #959
+Link: https://gitlab.freedesktop.org/drm/amd/-/work_items/5567
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 8e45b12a9..3c2d1e9f0 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -10056,6 +10056,8 @@ static void dm_arm_vblank_event(struct amdgpu_crtc *acrtc)
+ 		acrtc->event = NULL;
+ 		drm_crtc_send_vblank_event(&acrtc->base, e);
+ 		spin_unlock_irqrestore(&dev->event_lock, flags);
++		if (acrtc->pflip_status == AMDGPU_FLIP_SUBMITTED)
++			acrtc->pflip_status = AMDGPU_FLIP_NONE;
+ 	} else {
+ 		spin_unlock_irqrestore(&dev->event_lock, flags);
+ 	}
+-- 
+2.45.2
