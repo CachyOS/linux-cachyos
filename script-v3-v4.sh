@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
+
+set_llvm_level() {
+    local old_level=$1
+    local new_level=$2
+
+    find . -name "PKGBUILD" -exec sed -i \
+        -e "s/_use_llvm:=${old_level}/_use_llvm:=${new_level}/" {} +
+}
+
 ## Enable ZFS
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_zfs:=no/_build_zfs:=yes/" {}
 ## Enable Generic v3
@@ -8,8 +17,9 @@ find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization:=yes/_use
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia_open:=no/_build_nvidia_open:=yes/" {}
 ## Enable r8125 module
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_r8125:=no/_build_r8125:=yes/" {}
-## Disable clang-LTO
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto:=thin/_use_llvm_lto:=none/" {}
+## Select GCC without LTO
+set_llvm_level thin none
+set_llvm_level clang none
 
 ## GCC v3 Kernel
 
@@ -24,8 +34,8 @@ do
     cd ..
 done
 
-## LLVM ThinLTO v3 Kernel
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto:=none/_use_llvm_lto:=thin/" {}
+## Clang without LTO v3 Kernel
+set_llvm_level none clang
 
 files=$(find . -name "PKGBUILD")
 
@@ -45,7 +55,7 @@ RUST_LOG=trace repo-manage-util -p cachyos-v3 update
 RUST_LOG=trace repo-manage-util -p cachyos-v3 update
 
 ## GCC v4 Kernel
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto:=thin/_use_llvm_lto:=none/" {}
+set_llvm_level clang none
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_processor_opt:=GENERIC_V3/_processor_opt:=GENERIC_V4/" {}
 
 files=$(find . -name "PKGBUILD")
@@ -59,8 +69,8 @@ do
     cd ..
 done
 
-## LLVM ThinLTO v4 Kernel
-find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_llvm_lto:=none/_use_llvm_lto:=thin/" {}
+## Clang without LTO v4 Kernel
+set_llvm_level none clang
 
 files=$(find . -name "PKGBUILD")
 
