@@ -145,15 +145,6 @@
 : "${_eac_sbsign_key:=}"
 : "${_eac_sbsign_cert:=}"
 
-# OpenSSL engine for sbsign, e.g. "pkcs11" to sign with an HSM.
-# _eac_sbsign_key is then the key URI instead of a file path.
-: "${_eac_sbsign_engine:=}"
-
-# Additional PEM certificate built into the kernel's trusted keyring.
-# Allows loading modules signed with this key that are built outside of this PKGBUILD.
-# Modules built here are always signed with the ephemeral per-build key.
-: "${_eac_module_cert:=}"
-
 # Enable AUTOFDO_CLANG for the first compilation to create a kernel, which can be used for profiling
 # Workflow:
 # https://cachyos.org/blog/2411-kernel-autofdo/
@@ -190,6 +181,8 @@ _is_ci_build() {
     [[ -n "$CI" || -n "$GITHUB_RUN_ID" ]]
     return $?
 }
+
+_die() { error "$@" ; exit 1; }
 
 if _is_lto_kernel && [ "$_use_lto_suffix" = "yes"  ]; then
     _pkgsuffix=cachyos-eac-lto
@@ -296,15 +289,11 @@ if [ "$_propeller" = "yes" ] && [ "$_propeller_profiles" = "yes" ]; then
 fi
 
 if [ -n "$_eac_sbsign_key" ] && [ -n "$_eac_sbsign_cert" ]; then
+    [ -e "$_eac_sbsign_key" ] || _die "Failed to find file ${_eac_sbsign_key}"
+    [ -e "$_eac_sbsign_cert" ] || _die "Failed to find file ${_eac_sbsign_cert}"
+    _eac_sbsign_key="$(realpath "$_eac_sbsign_key")"
+    _eac_sbsign_cert="$(realpath "$_eac_sbsign_cert")"
     makedepends+=(sbsigntools)
-fi
-
-if [ -n "$_eac_module_cert" ]; then
-    if [ -e "$_eac_module_cert" ]; then
-        _eac_module_cert="$(realpath "$_eac_module_cert")"
-    else
-        _die "Failed to find file ${_eac_module_cert}"
-    fi
 fi
 
 if [ "$_build_r8125" = "yes" ]; then
@@ -327,7 +316,6 @@ export KBUILD_BUILD_HOST=cachyos
 export KBUILD_BUILD_USER="$pkgbase"
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
 
-_die() { error "$@" ; exit 1; }
 
 prepare() {
     cd "$_srcname"
@@ -511,10 +499,6 @@ prepare() {
         scripts/config -e MODULE_SIG -e MODULE_SIG_ALL -e MODULE_SIG_FORCE \
             -d INTEGRITY_MACHINE_KEYRING \
             -e SECONDARY_TRUSTED_KEYRING_SIGNED_BY_BUILTIN
-
-        if [ -n "$_eac_module_cert" ]; then
-            scripts/config --set-str SYSTEM_TRUSTED_KEYS "$_eac_module_cert"
-        fi
 
         # No kexec, it would bypass the measured boot log
         scripts/config -d LIVEUPDATE \
@@ -709,9 +693,8 @@ _package() {
     if [ -n "$_eac_sbsign_key" ] && [ -n "$_eac_sbsign_cert" ]; then
         echo "Signing boot image..."
         install -dm755 "$modulesdir"
-        local sbsign_flags=(--key "$_eac_sbsign_key" --cert "$_eac_sbsign_cert")
-        [ -n "$_eac_sbsign_engine" ] && sbsign_flags+=(--engine "$_eac_sbsign_engine")
-        sbsign "${sbsign_flags[@]}" --output "$modulesdir/vmlinuz" "$(make -s image_name)"
+        sbsign --key "$_eac_sbsign_key" --cert "$_eac_sbsign_cert" \
+            --output "$modulesdir/vmlinuz" "$(make -s image_name)"
         chmod 644 "$modulesdir/vmlinuz"
     else
         [ "$_eac" = "yes" ] && warning "The kernel image is not signed, it will not pass the Easy Anti-Cheat checks"
