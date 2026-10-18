@@ -1,0 +1,46 @@
+From d74fdb228b67be4c6d94fc85c0c924c3535b25be Mon Sep 17 00:00:00 2001
+From: triple-groove <triple-groove@users.noreply.github.com>
+Date: Sun, 22 Feb 2026 16:08:46 -0800
+Subject: [PATCH 5/5] fix(dp): add Bigscreen Beyond VR headset to WAR database
+
+Add the Bigscreen Beyond (ManufacturerID 0x2709, ProductID 0x1234)
+to the DisplayPort workaround database. Force maximum link
+configuration (4 lanes HBR2) to ensure sufficient bandwidth through
+the BSB's DP-to-optical link box converter.
+
+Without this WAR, the driver may negotiate a lower link config that
+is borderline for the BSB's 3840x1920@90Hz DSC mode, causing
+intermittent link training failures.
+
+Signed-off-by: triple-groove <triple-groove@users.noreply.github.com>
+---
+ src/common/displayport/src/dp_wardatabase.cpp | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/src/common/displayport/src/dp_wardatabase.cpp b/src/common/displayport/src/dp_wardatabase.cpp
+index 74daf1e7028e..4fafb5fc85e5 100644
+--- a/src/common/displayport/src/dp_wardatabase.cpp
++++ b/src/common/displayport/src/dp_wardatabase.cpp
+@@ -547,6 +547,19 @@ void Edid::applyEdidWorkArounds(NvU32 warFlag, const DpMonitorDenylistData *pDen
+             }
+             break;
+ 
++        // Bigscreen Beyond VR headset
++        case 0x2709:
++            if (ProductID == 0x1234)
++            {
++                //
++                // The Bigscreen Beyond connects via a link box (DP -> optical).
++                // Force 4 lanes HBR2 to ensure sufficient bandwidth.
++                //
++                this->WARFlags.forceMaxLinkConfig = true;
++                DP_PRINTF(DP_NOTICE, "DP-WAR> Force maximum link config for Bigscreen Beyond VR headset.");
++            }
++            break;
++
+         // CMN
+         case 0xAE0D:
+             if (ProductID == 0x1747)
+-- 
+2.53.0
+

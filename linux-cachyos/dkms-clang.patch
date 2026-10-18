@@ -1,0 +1,50 @@
+From 43f3ac9606e8dd2ff132478045122348dde22576 Mon Sep 17 00:00:00 2001
+From: Eric Naim <dnaim@cachyos.org>
+Date: Mon, 23 Feb 2026 12:22:31 +0800
+Subject: [PATCH] dkms-clang
+
+Signed-off-by: Eric Naim <dnaim@cachyos.org>
+---
+ scripts/Makefile.clang | 2 --
+ scripts/Makefile.warn  | 4 ----
+ 2 files changed, 6 deletions(-)
+
+diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
+index b67636b28c35..062ee0211c9c 100644
+--- a/scripts/Makefile.clang
++++ b/scripts/Makefile.clang
+@@ -34,9 +34,7 @@ endif
+ # certain optimization flags it knows it has not implemented.
+ # Make it behave more like gcc by erroring when these flags are encountered
+ # so they can be implemented or wrapped in cc-option.
+-CLANG_FLAGS	+= -Werror=unknown-warning-option
+ CLANG_FLAGS	+= -Werror=ignored-optimization-argument
+ CLANG_FLAGS	+= -Werror=option-ignored
+-CLANG_FLAGS	+= -Werror=unused-command-line-argument
+ KBUILD_CPPFLAGS	+= $(CLANG_FLAGS)
+ export CLANG_FLAGS
+diff --git a/scripts/Makefile.warn b/scripts/Makefile.warn
+index 5567da6c7dfe..439a3c126cc4 100644
+--- a/scripts/Makefile.warn
++++ b/scripts/Makefile.warn
+@@ -13,7 +13,6 @@ KBUILD_CFLAGS += -Wundef
+ KBUILD_CFLAGS += -Werror=implicit-function-declaration
+ KBUILD_CFLAGS += -Werror=implicit-int
+ KBUILD_CFLAGS += -Werror=return-type
+-KBUILD_CFLAGS += -Werror=strict-prototypes
+ KBUILD_CFLAGS += -Wno-format-security
+ KBUILD_CFLAGS += -Wno-trigraphs
+ KBUILD_CFLAGS += -Wno-frame-address
+@@ -101,9 +100,6 @@ KBUILD_CFLAGS += $(KBUILD_CFLAGS-y) $(CONFIG_CC_IMPLICIT_FALLTHROUGH)
+ # Prohibit date/time macros, which would make the build non-deterministic
+ KBUILD_CFLAGS += -Werror=date-time
+ 
+-# enforce correct pointer usage
+-KBUILD_CFLAGS += -Werror=incompatible-pointer-types
+-
+ # Require designated initializers for all marked structures
+ KBUILD_CFLAGS += $(call cc-option,-Werror=designated-init)
+ 
+-- 
+2.53.0
+
