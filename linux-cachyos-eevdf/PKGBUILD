@@ -155,8 +155,8 @@ _minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=1
-pkgrel=1
+_tagrel=2
+pkgrel=2
 #_stable=${_major}.${_minor}
 _stable=${_major}
 #_stablerc=${_major}-${_rcver}
@@ -223,7 +223,7 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=71a9f9578616a90c3c14bb59629fb4d31bfd68d1")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=fb48c76e17d3e0092fbba430a9eec1960e1b9961")
 fi
 
 
@@ -759,6 +759,6 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('76d932324e016e2ae1d7e72a0e2ad599fc92f84967a04c9c4fd8eda9f62203a88934d658c76a2145033ea2e07fb2b80cc5de9dfdfabfe0dc612af5f464762fde'
+b2sums=('de863b0d5ab80a456292e154e70c6ef5108740f15218da96e057bea8814ba0c186d3752a1fae20bb80a3e0dc7620d3a34e4a18b66385b3e634185e16faf9d8e9'
         'SKIP'
-        'ed5a42891a27bdd385eeb445234409775dd8570317322fe2dca3750548fc110bf86811e15d716632fc293644b0517766d14c9a1734c9a6813a63ac529956736a')
+        'e21485bd3d917be15837eb51ddb9aeb4a0df5fb7b18ccbf1d520aff2340833935e441f634e4ae8482a21ff38a9dec9f320bec3459aedf15087909b6eb2cff7db')
