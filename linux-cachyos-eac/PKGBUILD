@@ -195,13 +195,13 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=7.2
-_minor=10
+_major=7.3
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=1
-pkgrel=1
+_tagrel=2
+pkgrel=2
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux EEVDF + LTO Cachy Sauce Kernel by CachyOS configured for Easy Anti-Cheat Linux v2'
 _kernver="$pkgver-$pkgrel"
@@ -265,14 +265,14 @@ fi
 # ZFS support
 if [ "$_build_zfs" = "yes" ]; then
     makedepends+=(git)
-    source+=("git+https://github.com/cachyos/zfs.git#commit=71a9f9578616a90c3c14bb59629fb4d31bfd68d1")
+    source+=("git+https://github.com/cachyos/zfs.git#commit=fb48c76e17d3e0092fbba430a9eec1960e1b9961")
 fi
 
 
 if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
-             "${_patchsource}/misc/nvidia/0002-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
-             "${_patchsource}/misc/nvidia/0003-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
+             "${_patchsource}/misc/nvidia/0001-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
+             "${_patchsource}/misc/nvidia/0002-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
 fi
 
 # Use generated AutoFDO Profile
@@ -909,10 +909,10 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('fa5000924722ffbabe58ffd474fbf6f70f2453295a596d976a0da2699b349d35c968b0d3c736c8cba407f6a6104233630ecd115385a9577187414989876abb50'
+b2sums=('de863b0d5ab80a456292e154e70c6ef5108740f15218da96e057bea8814ba0c186d3752a1fae20bb80a3e0dc7620d3a34e4a18b66385b3e634185e16faf9d8e9'
         'SKIP'
-        '21343697f5f1647aadbdec8a4aa477b10622e5ae04fa07fcf6f9bab67dece7180872676bdc49a90de5d273c2c13127c5812a7ca67dbd9edce3e26e8c38d358d1'
+        'e21485bd3d917be15837eb51ddb9aeb4a0df5fb7b18ccbf1d520aff2340833935e441f634e4ae8482a21ff38a9dec9f320bec3459aedf15087909b6eb2cff7db'
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e'
         '7a73f396965056bf7ca8506e37cb7719bfcc2a79e8c44a7477a038cf39ca7630c6de96b42d8d56e23640d40b80f6fa8dde20bdb843832913de3d0f93f650ce68'
-        'f119d6eb87e5ead55845536a7a96732fffa9ab9a537e66994e0fdee303eb64b2cb445277794e4419b2281d2d7eafc40a72be395ce3239ce7316f89e27cb5f88c'
-        '870fcd01ea0b3a2bc11fe43b2333f30add0067e5f77ee820f771f8e95a0b4e9ba2f7d822e5337d0c51f4a34c843f76b2148c853614e68a024393073fff7d99da')
+        '43386fb36a975bd5215d477bd2e11d91adbdc20393b9898788ee5734834aaeb6af83e8e493a0d20f6bd7fd6ecbff124f7877ede44c3beafb007b9c7effa44fe6'
+        '8106fe252012ca17f32c56877a98e047befe15c71adc0e6c97927760e08bfe7f78a8b71721470564514328c470f26345ec81796bd9dedd47a6c330d57205fae8')
