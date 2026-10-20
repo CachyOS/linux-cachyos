@@ -1,0 +1,64 @@
+# Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev>
+
+# systemd-boot from Arch's systemd package, signed for Secure Boot.
+# Used by the Easy Anti-Cheat boot entry of linux-cachyos-eac.
+# bootctl prefers the .signed binary automatically when installing or updating.
+
+# Sign with sbsign, both are required
+: "${_eac_sbsign_key:=}"
+: "${_eac_sbsign_cert:=}"
+
+pkgname=systemd-boot-cachyos-signed
+_sdver=262.1
+_sdrel=1
+pkgver=${_sdver}_${_sdrel}
+pkgrel=1
+pkgdesc='systemd-boot signed with the CachyOS Secure Boot key'
+arch=('x86_64')
+url="https://github.com/CachyOS/linux-cachyos"
+license=('LGPL-2.1-or-later')
+depends=('systemd')
+makedepends=('sbsigntools')
+options=('!strip' '!debug')
+source=("https://archive.archlinux.org/packages/s/systemd/systemd-${_sdver}-${_sdrel}-x86_64.pkg.tar.zst"{,.sig}
+        "${pkgname}.hook"
+        "${pkgname}-update")
+noextract=("systemd-${_sdver}-${_sdrel}-x86_64.pkg.tar.zst")
+validpgpkeys=(
+  02FD1C7A934E614545849F19A6234074498E9CEE  # Christian Hesse <eworm@archlinux.org>
+)
+
+_die() { error "$@" ; exit 1; }
+
+if [ -n "$_eac_sbsign_key" ] && [ -n "$_eac_sbsign_cert" ]; then
+    [ -e "$_eac_sbsign_key" ] || _die "Failed to find file ${_eac_sbsign_key}"
+    [ -e "$_eac_sbsign_cert" ] || _die "Failed to find file ${_eac_sbsign_cert}"
+    _eac_sbsign_key="$(realpath "$_eac_sbsign_key")"
+    _eac_sbsign_cert="$(realpath "$_eac_sbsign_cert")"
+fi
+
+prepare() {
+    if [ -z "$_eac_sbsign_key" ] || [ -z "$_eac_sbsign_cert" ]; then
+        _die "_eac_sbsign_key and _eac_sbsign_cert have to be set"
+    fi
+
+
+    bsdtar -xf "systemd-${_sdver}-${_sdrel}-x86_64.pkg.tar.zst" \
+        usr/lib/systemd/boot/efi/systemd-bootx64.efi
+}
+
+package() {
+    install -dm755 "$pkgdir/usr/lib/systemd/boot/efi"
+    sbsign --key "$_eac_sbsign_key" --cert "$_eac_sbsign_cert" \
+        --output "$pkgdir/usr/lib/systemd/boot/efi/systemd-bootx64.efi.signed" \
+        usr/lib/systemd/boot/efi/systemd-bootx64.efi
+    chmod 644 "$pkgdir/usr/lib/systemd/boot/efi/systemd-bootx64.efi.signed"
+
+    install -Dm644 "${pkgname}.hook" "$pkgdir/usr/share/libalpm/hooks/95-${pkgname}.hook"
+    install -Dm755 "${pkgname}-update" "$pkgdir/usr/share/libalpm/scripts/${pkgname}-update"
+}
+
+b2sums=('805020ed719af5aab1248d973ce8c26dd473a1abda27441dca24883fba4330de0394e4e9158a30c986cfe664b0fe743991661bb54e7ffc62e788b4911fae1d30'
+        'SKIP'
+        '1c70f1f3b7de6c9c8060724740c14704db38709a888c8573088adc0acd2c810b1e17a7af1d9e9785d30a537cccc8bf69d92d128193be10d206077b8ac1db4c99'
+        '6d0b18896a71046d407e2a7e141fe50a9c08c6408d76124f392496a352cf56a832cf2dfae239723f3e42cc008aca5151b8c8e63fc35e9d7460fc9cb0459fed39')
