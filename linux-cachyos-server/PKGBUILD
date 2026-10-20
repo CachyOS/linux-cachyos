@@ -150,8 +150,8 @@ else
 fi
 
 pkgbase="linux-$_pkgsuffix"
-_major=7.2
-_minor=11
+_major=7.3
+_minor=0
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -226,8 +226,8 @@ fi
 
 if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
-             "${_patchsource}/misc/nvidia/0002-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
-             "${_patchsource}/misc/nvidia/0003-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
+             "${_patchsource}/misc/nvidia/0001-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
+             "${_patchsource}/misc/nvidia/0002-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
 fi
 
 if [ "$_build_r8125" = "yes" ]; then
@@ -756,6 +756,6 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('7d109d528db5d5d746f6c4c21e7f46ca7ade14fb7474e12fb39ce64369b71c7be92715db86b48823cdf0670b86d41d1f633a69d2e87038f2800b756d1b375842'
+b2sums=('76d932324e016e2ae1d7e72a0e2ad599fc92f84967a04c9c4fd8eda9f62203a88934d658c76a2145033ea2e07fb2b80cc5de9dfdfabfe0dc612af5f464762fde'
         'SKIP'
-        '21343697f5f1647aadbdec8a4aa477b10622e5ae04fa07fcf6f9bab67dece7180872676bdc49a90de5d273c2c13127c5812a7ca67dbd9edce3e26e8c38d358d1')
+        'ed5a42891a27bdd385eeb445234409775dd8570317322fe2dca3750548fc110bf86811e15d716632fc293644b0517766d14c9a1734c9a6813a63ac529956736a')
