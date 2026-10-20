@@ -131,10 +131,12 @@
 
 # Easy Anti-Cheat Linux v2 compatible configuration
 # https://onlineservices.epicgames.com/news/introducing-easy-anti-cheat-linux-v2
-# Forces lockdown integrity mode, compiles out kexec, disables hibernation,
-# enables the IOMMU in strict mode on Intel and AMD and enforces module signatures.
+# Forces lockdown integrity mode, disables hibernation, enables the IOMMU on
+# Intel and AMD and enforces module signatures.
 # Out-of-tree modules have to be built from this PKGBUILD (see _build_nvidia_open),
 # DKMS modules will not load.
+# kexec has to be disabled on the kernel command line of the EAC boot entry:
+#   sysctl.kernel.kexec_load_disabled=1
 : "${_eac:=yes}"
 
 # Sign the kernel image for Secure Boot with sbsign.
@@ -500,21 +502,12 @@ prepare() {
             -d INTEGRITY_MACHINE_KEYRING \
             -e SECONDARY_TRUSTED_KEYRING_SIGNED_BY_BUILTIN
 
-        # No kexec, it would bypass the measured boot log
-        scripts/config -d LIVEUPDATE \
-            -d KEXEC_HANDOVER \
-            -d CRASH_DUMP \
-            -d KEXEC \
-            -d KEXEC_FILE
-
         # Lockdown blocks hibernation anyway
         scripts/config -d HIBERNATION
 
         # IOMMU enabled with DMA translation, no passthrough
         scripts/config -e INTEL_IOMMU_DEFAULT_ON \
-            -d IOMMU_DEFAULT_PASSTHROUGH \
-            -d IOMMU_DEFAULT_DMA_LAZY \
-            -e IOMMU_DEFAULT_DMA_STRICT
+            -d IOMMU_DEFAULT_PASSTHROUGH
 
         # SBAT section for shim based Secure Boot revocation
         printf '%s\n' \
@@ -584,10 +577,10 @@ prepare() {
     if [ "$_eac" = "yes" ]; then
         local opt
         for opt in LOCK_DOWN_KERNEL_FORCE_INTEGRITY SECURITY_LOCKDOWN_LSM_EARLY BPF_LSM \
-                   MODULE_SIG_FORCE INTEL_IOMMU_DEFAULT_ON IOMMU_DEFAULT_DMA_STRICT; do
+                   MODULE_SIG_FORCE INTEL_IOMMU_DEFAULT_ON; do
             grep -q "^CONFIG_${opt}=y" .config || _die "CONFIG_${opt} is not enabled"
         done
-        for opt in KEXEC_CORE KEXEC KEXEC_FILE HIBERNATION IOMMU_DEFAULT_PASSTHROUGH INTEGRITY_MACHINE_KEYRING; do
+        for opt in HIBERNATION IOMMU_DEFAULT_PASSTHROUGH INTEGRITY_MACHINE_KEYRING; do
             if grep -q "^CONFIG_${opt}=y" .config; then
                 _die "CONFIG_${opt} is still enabled"
             fi
