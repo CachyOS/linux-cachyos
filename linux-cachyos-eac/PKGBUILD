@@ -135,7 +135,10 @@
 # Intel and AMD and enforces module signatures.
 # Out-of-tree modules have to be built from this PKGBUILD (see _build_nvidia_open),
 # DKMS modules will not load.
-# kexec has to be disabled on the kernel command line of the EAC boot entry:
+# The EAC boot entry has to set these on the kernel command line, EAC checks
+# the measured command line for them:
+#   lockdown=integrity lsm=landlock,lockdown,yama,integrity,bpf
+#   iommu.passthrough=0 intel_iommu=on module.sig_enforce=1
 #   sysctl.kernel.kexec_load_disabled=1
 : "${_eac:=yes}"
 
@@ -143,7 +146,11 @@
 # Both have to be set, otherwise the kernel image stays unsigned.
 # Only images signed with a key on Epic's well-known list pass the EAC checks.
 # The signing certificate is expected in the Secure Boot db, e.g. enrolled with
-# "sbctl enroll-keys -m -c", or as a MOK when booting via shim.
+# "sbctl enroll-keys -m -f -c", or as a MOK when booting via shim.
+# _eac_sbsign_key is either a PEM key file or a PKCS#11 URI of a key on a
+# hardware token, e.g. "pkcs11:token=CachyOS;object=signing;type=private".
+# PKCS#11 keys are loaded through libp11, PKCS11_MODULE_PATH selects the
+# token's module (default: p11-kit-proxy). The PIN is asked for on the terminal.
 : "${_eac_sbsign_key:=}"
 : "${_eac_sbsign_cert:=}"
 
@@ -290,11 +297,17 @@ if [ "$_propeller" = "yes" ] && [ "$_propeller_profiles" = "yes" ]; then
              propeller_ld_profile.txt)
 fi
 
+_eac_sbsign_args=()
 if [ -n "$_eac_sbsign_key" ] && [ -n "$_eac_sbsign_cert" ]; then
-    [ -e "$_eac_sbsign_key" ] || _die "Failed to find file ${_eac_sbsign_key}"
     [ -e "$_eac_sbsign_cert" ] || _die "Failed to find file ${_eac_sbsign_cert}"
-    _eac_sbsign_key="$(realpath "$_eac_sbsign_key")"
     _eac_sbsign_cert="$(realpath "$_eac_sbsign_cert")"
+    if [[ "$_eac_sbsign_key" = pkcs11:* ]]; then
+        _eac_sbsign_args=(--engine pkcs11)
+        makedepends+=(libp11)
+    else
+        [ -e "$_eac_sbsign_key" ] || _die "Failed to find file ${_eac_sbsign_key}"
+        _eac_sbsign_key="$(realpath "$_eac_sbsign_key")"
+    fi
     makedepends+=(sbsigntools)
 fi
 
@@ -686,7 +699,7 @@ _package() {
     if [ -n "$_eac_sbsign_key" ] && [ -n "$_eac_sbsign_cert" ]; then
         echo "Signing boot image..."
         install -dm755 "$modulesdir"
-        sbsign --key "$_eac_sbsign_key" --cert "$_eac_sbsign_cert" \
+        sbsign "${_eac_sbsign_args[@]}" --key "$_eac_sbsign_key" --cert "$_eac_sbsign_cert" \
             --output "$modulesdir/vmlinuz" "$(make -s image_name)"
         chmod 644 "$modulesdir/vmlinuz"
     else
