@@ -5,6 +5,8 @@
 # bootctl prefers the .signed binary automatically when installing or updating.
 
 # Sign with sbsign, both are required
+# _eac_sbsign_key is either a PEM key file or a PKCS#11 URI of a key on a
+# hardware token, see linux-cachyos-eac/PKGBUILD
 : "${_eac_sbsign_key:=}"
 : "${_eac_sbsign_cert:=}"
 
@@ -30,11 +32,17 @@ validpgpkeys=(
 
 _die() { error "$@" ; exit 1; }
 
+_eac_sbsign_args=()
 if [ -n "$_eac_sbsign_key" ] && [ -n "$_eac_sbsign_cert" ]; then
-    [ -e "$_eac_sbsign_key" ] || _die "Failed to find file ${_eac_sbsign_key}"
     [ -e "$_eac_sbsign_cert" ] || _die "Failed to find file ${_eac_sbsign_cert}"
-    _eac_sbsign_key="$(realpath "$_eac_sbsign_key")"
     _eac_sbsign_cert="$(realpath "$_eac_sbsign_cert")"
+    if [[ "$_eac_sbsign_key" = pkcs11:* ]]; then
+        _eac_sbsign_args=(--engine pkcs11)
+        makedepends+=(libp11)
+    else
+        [ -e "$_eac_sbsign_key" ] || _die "Failed to find file ${_eac_sbsign_key}"
+        _eac_sbsign_key="$(realpath "$_eac_sbsign_key")"
+    fi
 fi
 
 prepare() {
@@ -42,14 +50,13 @@ prepare() {
         _die "_eac_sbsign_key and _eac_sbsign_cert have to be set"
     fi
 
-
     bsdtar -xf "systemd-${_sdver}-${_sdrel}-x86_64.pkg.tar.zst" \
         usr/lib/systemd/boot/efi/systemd-bootx64.efi
 }
 
 package() {
     install -dm755 "$pkgdir/usr/lib/systemd/boot/efi"
-    sbsign --key "$_eac_sbsign_key" --cert "$_eac_sbsign_cert" \
+    sbsign "${_eac_sbsign_args[@]}" --key "$_eac_sbsign_key" --cert "$_eac_sbsign_cert" \
         --output "$pkgdir/usr/lib/systemd/boot/efi/systemd-bootx64.efi.signed" \
         usr/lib/systemd/boot/efi/systemd-bootx64.efi
     chmod 644 "$pkgdir/usr/lib/systemd/boot/efi/systemd-bootx64.efi.signed"
