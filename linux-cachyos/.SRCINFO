@@ -1,7 +1,7 @@
 pkgbase = linux-cachyos
 	pkgdesc = Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.
 	pkgver = 7.3.0
-	pkgrel = 3
+	pkgrel = 4
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
 	license = GPL-2.0-only
@@ -57,7 +57,7 @@ pkgname = linux-cachyos
 	provides = NTSYNC-MODULE
 	provides = VHBA-MODULE
 	provides = ADIOS-MODULE
-	provides = linux-cachyos-lto=7.3.0-3
+	provides = linux-cachyos-lto=7.3.0-4
 	replaces = linux-cachyos-lto
 
 pkgname = linux-cachyos-headers
@@ -76,5 +76,5 @@ pkgname = linux-cachyos-headers
 	depends = llvm
 	depends = lld
 	provides = LINUX-HEADERS
-	provides = linux-cachyos-lto-headers=7.3.0-3
+	provides = linux-cachyos-lto-headers=7.3.0-4
 	replaces = linux-cachyos-lto-headers
