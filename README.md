@@ -44,6 +44,7 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 | **[BORE](https://github.com/firelzrd/bore-scheduler)** | **B**urst-**O**riented **R**esponse **E**nhancer | `linux-cachyos-bore`, `linux-cachyos-deckify`, `linux-cachyos-hardened`, `linux-cachyos-rt-bore` | Interactive workloads & gaming | [firelzrd](https://github.com/firelzrd) |
 | **[EEVDF](https://lwn.net/Articles/927530/)** | **E**arliest **E**ligible **V**irtual **D**eadline **F**irst | `linux-cachyos`, `linux-cachyos-eevdf`, `linux-cachyos-lts`, `linux-cachyos-server` | General-purpose computing | Peter Zijlstra |
 | **[BMQ](https://gitlab.com/alfredchen/linux-prjc)** | **B**it**M**ap **Q**ueue CPU Scheduler | `linux-cachyos-bmq` | Throughput-oriented workloads | [Alfred Chen](https://gitlab.com/alfredchen) |
+| **[MuQSS](https://github.com/ckolivas/linux)** | **Mu**ltiple **Q**ueue **S**kiplist **S**cheduler | `linux-cachyos-muqss` | Desktop interactivity & low latency | [Con Kolivas](https://github.com/ckolivas) |
 
 ### Specialized Variants
 
@@ -58,7 +59,7 @@ Each scheduler is optimized for different use cases. We recommend testing each o
 ### Compiler Variants
 
 - **`linux-cachyos`** - Default optimized build using Clang Thin LTO with AutoFDO + Propeller profile-guided optimizations
-- **Scheduler-specific packages** (`linux-cachyos-bore`, `linux-cachyos-bmq`, `linux-cachyos-eevdf`, etc.) - GCC-compiled builds without LTO, focused on scheduler choice over compiler optimizations
+- **Scheduler-specific packages** (`linux-cachyos-bore`, `linux-cachyos-bmq`, `linux-cachyos-muqss`, `linux-cachyos-eevdf`, etc.) - GCC-compiled builds without LTO, focused on scheduler choice over compiler optimizations
 
 > [!TIP]
 > For detailed explanations of each kernel variant, visit our [Kernel Wiki](https://wiki.cachyos.org/features/kernel).
@@ -318,7 +319,7 @@ For complete removal instructions, see our [Uninstallation Guide](https://wiki.c
 CachyOS supports the new sched-ext (SCX) framework for userspace schedulers. For setup and configuration, see our [sched-ext Tutorial](https://wiki.cachyos.org/configuration/sched-ext/).
 
 > [!WARNING]
-> SCX schedulers are **not compatible** with the `linux-cachyos-bmq` kernel variant.
+> SCX schedulers are **not compatible** with the `linux-cachyos-bmq` and `linux-cachyos-muqss` kernel variants.
 
 ## Other Distributions
 
