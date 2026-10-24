@@ -1,0 +1,12 @@
+#!/bin/sh
+# Copy the signed systemd-boot to the ESP, if the Easy Anti-Cheat boot entry is set up.
+
+src=/usr/lib/systemd/boot/efi/systemd-bootx64.efi.signed
+
+esp="$(bootctl --print-esp-path 2>/dev/null)" || exit 0
+dir="$esp/EFI/cachyos-eac"
+[ -d "$dir" ] || exit 0
+
+install -m644 "$src" "$dir/systemd-bootx64.efi.new" || exit 1
+mv -f "$dir/systemd-bootx64.efi.new" "$dir/systemd-bootx64.efi" || exit 1
+echo "Updated $dir/systemd-bootx64.efi"
