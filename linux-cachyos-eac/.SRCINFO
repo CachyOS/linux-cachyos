@@ -38,6 +38,8 @@ pkgbase = linux-cachyos-eac
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.3/misc/nvidia/0001-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.3/misc/nvidia/0002-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch
 	source = https://us.download.nvidia.com/XFree86/Linux-x86_64/580.178.04/NVIDIA-Linux-x86_64-580.178.04.run
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.3/misc/nvidia-580xx/0001-Enable-atomic-kernel-modesetting-by-default.patch
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.3/misc/nvidia-580xx/0002-fix-hw-cursor-kde.patch
 	validpgpkeys = E18447AC260021D31F3FF6C4C8A2A4774B8B63C4
 	validpgpkeys = E8B9AA39F054E30E8290D492C3C4820857F654FE
 	b2sums = de863b0d5ab80a456292e154e70c6ef5108740f15218da96e057bea8814ba0c186d3752a1fae20bb80a3e0dc7620d3a34e4a18b66385b3e634185e16faf9d8e9
@@ -48,6 +50,8 @@ pkgbase = linux-cachyos-eac
 	b2sums = 43386fb36a975bd5215d477bd2e11d91adbdc20393b9898788ee5734834aaeb6af83e8e493a0d20f6bd7fd6ecbff124f7877ede44c3beafb007b9c7effa44fe6
 	b2sums = 8106fe252012ca17f32c56877a98e047befe15c71adc0e6c97927760e08bfe7f78a8b71721470564514328c470f26345ec81796bd9dedd47a6c330d57205fae8
 	b2sums = 53ea96e4d1342003238aaa37495df8939b0e8813b8088347ec406a4c066bdfcf9947abc71f05da9433bfbee7b04b67f8a2bfb9729423ec776c0b1e31d5ce1b77
+	b2sums = 05a3cc4954a37897d08e93e8ea1726fc395a12cfb1509f09560bdcf0ae14ed4ca518fda566a618c92db0fb6573e3ed7d02172dd76a3b145982060e060525365b
+	b2sums = e07c8366bb0c8aece1f917d60719fb365e30d5bf652abcb6bc319a08093b172f717c593f8ee108bdce951de8b4800ea4a01f9525df01e5082990327ca58f2f11
 
 pkgname = linux-cachyos-eac
 	pkgdesc = The Linux EEVDF + LTO Cachy Sauce Kernel by CachyOS configured for Easy Anti-Cheat Linux v2 kernel and modules
