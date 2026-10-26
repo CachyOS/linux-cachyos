@@ -291,7 +291,9 @@ if [ "$_build_nvidia_open" = "yes" ]; then
 fi
 
 if [ "$_build_nvidia_580xx" = "yes" ]; then
-    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_580xx_ver}/${_nv_580xx_pkg}.run")
+    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_580xx_ver}/${_nv_580xx_pkg}.run"
+             "${_patchsource}/misc/nvidia-580xx/0001-Enable-atomic-kernel-modesetting-by-default.patch"
+             "${_patchsource}/misc/nvidia-580xx/0002-fix-hw-cursor-kde.patch")
 fi
 
 # Use generated AutoFDO Profile
@@ -345,6 +347,10 @@ export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EP
 
 
 prepare() {
+    if [ "$_build_nvidia_580xx" = "yes" ]; then
+        sh "${_nv_580xx_pkg}.run" --extract-only
+    fi
+
     cd "$_srcname"
 
     echo "Setting version..."
@@ -360,6 +366,8 @@ prepare() {
         echo "Applying patch $src..."
         if [[ "$patch" == "${_patchsource}"/misc/nvidia/* ]]; then
             patch -Np1 < "../$src" -d "${srcdir}/${_nv_open_pkg}"
+        elif [[ "$patch" == "${_patchsource}"/misc/nvidia-580xx/* ]]; then
+            patch -Np1 < "../$src" -d "${srcdir}/${_nv_580xx_pkg}/kernel"
         else
             patch -Np1 < "../$src"
         fi
@@ -626,11 +634,6 @@ prepare() {
     echo "Save configuration for later reuse..."
     local basedir="$(dirname "$(readlink "${srcdir}/config")")"
     cat .config > "${basedir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
-
-    if [ "$_build_nvidia_580xx" = "yes" ]; then
-        cd "${srcdir}"
-        sh "${_nv_580xx_pkg}.run" --extract-only
-    fi
 }
 
 _sign_modules() {
@@ -971,4 +974,6 @@ b2sums=('de863b0d5ab80a456292e154e70c6ef5108740f15218da96e057bea8814ba0c186d3752
         '7a73f396965056bf7ca8506e37cb7719bfcc2a79e8c44a7477a038cf39ca7630c6de96b42d8d56e23640d40b80f6fa8dde20bdb843832913de3d0f93f650ce68'
         '43386fb36a975bd5215d477bd2e11d91adbdc20393b9898788ee5734834aaeb6af83e8e493a0d20f6bd7fd6ecbff124f7877ede44c3beafb007b9c7effa44fe6'
         '8106fe252012ca17f32c56877a98e047befe15c71adc0e6c97927760e08bfe7f78a8b71721470564514328c470f26345ec81796bd9dedd47a6c330d57205fae8'
-        '53ea96e4d1342003238aaa37495df8939b0e8813b8088347ec406a4c066bdfcf9947abc71f05da9433bfbee7b04b67f8a2bfb9729423ec776c0b1e31d5ce1b77')
+        '53ea96e4d1342003238aaa37495df8939b0e8813b8088347ec406a4c066bdfcf9947abc71f05da9433bfbee7b04b67f8a2bfb9729423ec776c0b1e31d5ce1b77'
+        '05a3cc4954a37897d08e93e8ea1726fc395a12cfb1509f09560bdcf0ae14ed4ca518fda566a618c92db0fb6573e3ed7d02172dd76a3b145982060e060525365b'
+        'e07c8366bb0c8aece1f917d60719fb365e30d5bf652abcb6bc319a08093b172f717c593f8ee108bdce951de8b4800ea4a01f9525df01e5082990327ca58f2f11')
