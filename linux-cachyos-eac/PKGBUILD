@@ -122,6 +122,11 @@
 # Use this only if you have Turing+ GPU
 : "${_build_nvidia_open:=yes}"
 
+# Builds the closed nvidia module of the 580xx legacy driver and package it into a own base
+# This does replace the requirement of nvidia-580xx-dkms
+# Use this for Maxwell, Pascal and Volta GPUs
+: "${_build_nvidia_580xx:=yes}"
+
 # Builds the r8125 module and package it into its own package
 # Replaces requirement for r8125-dkms
 : "${_build_r8125:=no}"
@@ -133,7 +138,8 @@
 # https://onlineservices.epicgames.com/news/introducing-easy-anti-cheat-linux-v2
 # Forces lockdown integrity mode, disables hibernation, enables the IOMMU on
 # Intel and AMD and enforces module signatures.
-# Out-of-tree modules have to be built from this PKGBUILD (see _build_nvidia_open),
+# Out-of-tree modules have to be built from this PKGBUILD (see _build_nvidia_open
+# and _build_nvidia_580xx),
 # DKMS modules will not load.
 # The EAC boot entry has to set these on the kernel command line, EAC checks
 # the measured command line for them:
@@ -243,6 +249,8 @@ _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${
 _nv_ver=615.78.08
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
+_nv_580xx_ver=580.178.04
+_nv_580xx_pkg="NVIDIA-Linux-x86_64-${_nv_580xx_ver}"
 source=(
     "https://github.com/CachyOS/linux/releases/download/${_srcname}/${_srcname}.tar.gz"{,.asc}
     "config"
@@ -280,6 +288,10 @@ if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0001-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
              "${_patchsource}/misc/nvidia/0002-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
+fi
+
+if [ "$_build_nvidia_580xx" = "yes" ]; then
+    source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_580xx_ver}/${_nv_580xx_pkg}.run")
 fi
 
 # Use generated AutoFDO Profile
@@ -614,6 +626,11 @@ prepare() {
     echo "Save configuration for later reuse..."
     local basedir="$(dirname "$(readlink "${srcdir}/config")")"
     cat .config > "${basedir}/config-${pkgver}-${pkgrel}${pkgbase#linux}"
+
+    if [ "$_build_nvidia_580xx" = "yes" ]; then
+        cd "${srcdir}"
+        sh "${_nv_580xx_pkg}.run" --extract-only
+    fi
 }
 
 _sign_modules() {
@@ -655,6 +672,11 @@ build() {
     if [ "$_build_nvidia_open" = "yes" ]; then
         cd "${srcdir}/${_nv_open_pkg}"
         MODULE_FLAGS+=(IGNORE_CC_MISMATCH=yes)
+        CFLAGS= CXXFLAGS= LDFLAGS= make "${BUILD_FLAGS[@]}" "${MODULE_FLAGS[@]}" -j"$(nproc)" modules
+    fi
+
+    if [ "$_build_nvidia_580xx" = "yes" ]; then
+        cd "${srcdir}/${_nv_580xx_pkg}/kernel"
         CFLAGS= CXXFLAGS= LDFLAGS= make "${BUILD_FLAGS[@]}" "${MODULE_FLAGS[@]}" -j"$(nproc)" modules
     fi
 
@@ -874,7 +896,7 @@ _package-nvidia-open(){
     pkgdesc="nvidia open modules of ${_nv_ver} driver for the ${pkgbase} kernel"
     depends=("$pkgbase=$_kernver" "nvidia-utils=${_nv_ver}" "libglvnd")
     provides=('NVIDIA-MODULE')
-    conflicts=("$pkgbase-nvidia")
+    conflicts=("$pkgbase-nvidia" "$pkgbase-nvidia-580xx")
     license=('MIT AND GPL-2.0-only')
 
     cd "$_srcname"
@@ -884,6 +906,25 @@ _package-nvidia-open(){
     install -dm755 "${modulesdir}"
     install -m644 kernel-open/*.ko "${modulesdir}"
     install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 COPYING
+
+    _sign_modules "${modulesdir}"
+    find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
+}
+
+_package-nvidia-580xx(){
+    pkgdesc="nvidia module of ${_nv_580xx_ver} driver for the ${pkgbase} kernel"
+    depends=("$pkgbase=$_kernver" "nvidia-580xx-utils=${_nv_580xx_ver}" "libglvnd")
+    provides=('NVIDIA-MODULE')
+    conflicts=("$pkgbase-nvidia-open")
+    license=('custom')
+
+    cd "$_srcname"
+    local modulesdir="$pkgdir/usr/lib/modules/$(<version)/extramodules"
+
+    cd "${srcdir}/${_nv_580xx_pkg}"
+    install -dm755 "${modulesdir}"
+    install -m644 kernel/*.ko "${modulesdir}"
+    install -Dt "$pkgdir/usr/share/licenses/${pkgname}" -m644 LICENSE
 
     _sign_modules "${modulesdir}"
     find "$pkgdir" -name '*.ko' -exec zstd --rm -19 -T0 {} +
@@ -914,6 +955,7 @@ pkgname=("$pkgbase")
 pkgname+=("$pkgbase-headers")
 [ "$_build_zfs" = "yes" ] && pkgname+=("$pkgbase-zfs")
 [ "$_build_nvidia_open" = "yes" ] && pkgname+=("$pkgbase-nvidia-open")
+[ "$_build_nvidia_580xx" = "yes" ] && pkgname+=("$pkgbase-nvidia-580xx")
 [ "$_build_r8125" = "yes" ] && pkgname+=("$pkgbase-r8125")
 for _p in "${pkgname[@]}"; do
     eval "package_$_p() {
@@ -928,4 +970,5 @@ b2sums=('de863b0d5ab80a456292e154e70c6ef5108740f15218da96e057bea8814ba0c186d3752
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e'
         '7a73f396965056bf7ca8506e37cb7719bfcc2a79e8c44a7477a038cf39ca7630c6de96b42d8d56e23640d40b80f6fa8dde20bdb843832913de3d0f93f650ce68'
         '43386fb36a975bd5215d477bd2e11d91adbdc20393b9898788ee5734834aaeb6af83e8e493a0d20f6bd7fd6ecbff124f7877ede44c3beafb007b9c7effa44fe6'
-        '8106fe252012ca17f32c56877a98e047befe15c71adc0e6c97927760e08bfe7f78a8b71721470564514328c470f26345ec81796bd9dedd47a6c330d57205fae8')
+        '8106fe252012ca17f32c56877a98e047befe15c71adc0e6c97927760e08bfe7f78a8b71721470564514328c470f26345ec81796bd9dedd47a6c330d57205fae8'
+        '53ea96e4d1342003238aaa37495df8939b0e8813b8088347ec406a4c066bdfcf9947abc71f05da9433bfbee7b04b67f8a2bfb9729423ec776c0b1e31d5ce1b77')
