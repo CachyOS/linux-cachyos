@@ -128,4 +128,4 @@ body:
       label: Additional system information
       description: |
         Any other relevant info (RAM amount, desktop environment, init system, etc.).
-        Output of `inxi -Fxxxz` or `neofetch` is helpful.
+        link from `sudo cachyos-bugreport.sh or Output from either `inxi -Fxxxz` or `fastfetch` is helpful.
