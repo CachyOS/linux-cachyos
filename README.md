@@ -277,7 +277,7 @@ Include = /etc/pacman.d/cachyos-v4-mirrorlist
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-**For AMD Zen4+ CPUs:**
+**For AMD Zen 4/5/6 CPUs:**
 ```ini
 # CachyOS repositories (Zen4 optimized)
 [cachyos-znver4]
