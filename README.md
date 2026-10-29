@@ -83,7 +83,7 @@ The CachyOS kernel fork merges topic branches into each release. The current **L
 ### CPU Enhancements
 
 - **Multiple Schedulers**: BORE, EEVDF, and BMQ schedulers for different workload optimization
-- **[POC Selector](https://github.com/masahitoS/scx_cake) v2.6.2**: Piece-Of-Cake fast idle CPU selector inspired by scx_cake, reducing wakeup latency
+- **[POC Selector](https://github.com/firelzrd/poc-selector) v2.6.3**: Piece-Of-Cake fast idle CPU selector inspired by scx_cake, reducing wakeup latency
 - **Cluster-Aware Scheduling**: Improved load balancing for CPU clusters, including balancing between CPUs of identical capacity on hybrid architectures
 - **Preempt-IPI Optimizations**: Lower-latency SMP/IPI paths with preemption re-enabled before TLB flushes and streamlined `smp_call_function()` handling
 - **CachyOS Sauce**: Custom `CONFIG_CACHY` configuration with scheduler and system tweaks
@@ -277,7 +277,7 @@ Include = /etc/pacman.d/cachyos-v4-mirrorlist
 Include = /etc/pacman.d/cachyos-mirrorlist
 ```
 
-**For AMD Zen4 CPUs:**
+**For AMD Zen 4/5/6 CPUs:**
 ```ini
 # CachyOS repositories (Zen4 optimized)
 [cachyos-znver4]
