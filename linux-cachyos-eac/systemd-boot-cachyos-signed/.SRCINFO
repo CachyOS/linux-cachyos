@@ -1,0 +1,23 @@
+pkgbase = systemd-boot-cachyos-signed
+	pkgdesc = systemd-boot signed with the CachyOS Secure Boot key
+	pkgver = 262.1_1
+	pkgrel = 1
+	url = https://github.com/CachyOS/linux-cachyos
+	arch = x86_64
+	license = LGPL-2.1-or-later
+	makedepends = sbsigntools
+	depends = systemd
+	noextract = systemd-262.1-1-x86_64.pkg.tar.zst
+	options = !strip
+	options = !debug
+	source = https://archive.archlinux.org/packages/s/systemd/systemd-262.1-1-x86_64.pkg.tar.zst
+	source = https://archive.archlinux.org/packages/s/systemd/systemd-262.1-1-x86_64.pkg.tar.zst.sig
+	source = systemd-boot-cachyos-signed.hook
+	source = systemd-boot-cachyos-signed-update
+	validpgpkeys = 02FD1C7A934E614545849F19A6234074498E9CEE
+	b2sums = 805020ed719af5aab1248d973ce8c26dd473a1abda27441dca24883fba4330de0394e4e9158a30c986cfe664b0fe743991661bb54e7ffc62e788b4911fae1d30
+	b2sums = SKIP
+	b2sums = 1c70f1f3b7de6c9c8060724740c14704db38709a888c8573088adc0acd2c810b1e17a7af1d9e9785d30a537cccc8bf69d92d128193be10d206077b8ac1db4c99
+	b2sums = 6d0b18896a71046d407e2a7e141fe50a9c08c6408d76124f392496a352cf56a832cf2dfae239723f3e42cc008aca5151b8c8e63fc35e9d7460fc9cb0459fed39
+
+pkgname = systemd-boot-cachyos-signed

@@ -1,0 +1,10 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Target = usr/lib/systemd/boot/efi/systemd-bootx64.efi.signed
+
+[Action]
+Description = Updating signed systemd-boot of the Easy Anti-Cheat boot entry...
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/systemd-boot-cachyos-signed-update
