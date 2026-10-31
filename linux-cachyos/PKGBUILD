@@ -221,7 +221,7 @@ _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${
 _nv_ver=615.78.08
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
-_nv_580xx_ver=580.178.04
+_nv_580xx_ver=580.196.07
 _nv_580xx_pkg="NVIDIA-Linux-x86_64-${_nv_580xx_ver}"
 source=(
     "https://github.com/CachyOS/linux/releases/download/${_srcname}/${_srcname}.tar.gz"{,.asc}
