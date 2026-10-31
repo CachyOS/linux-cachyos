@@ -209,12 +209,12 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=7.3
-_minor=0
+_minor=1
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=2
-pkgrel=2
+_tagrel=1
+pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux EEVDF + LTO Cachy Sauce Kernel by CachyOS configured for Easy Anti-Cheat Linux v2'
 _kernver="$pkgver-$pkgrel"
@@ -287,7 +287,8 @@ fi
 if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0001-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
-             "${_patchsource}/misc/nvidia/0002-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch")
+             "${_patchsource}/misc/nvidia/0002-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch"
+             "${_patchsource}/misc/nvidia/0004-Open-sysfs-config-from-the-userspace-root-on-7.3.patch")
 fi
 
 if [ "$_build_nvidia_580xx" = "yes" ]; then
@@ -967,13 +968,14 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('de863b0d5ab80a456292e154e70c6ef5108740f15218da96e057bea8814ba0c186d3752a1fae20bb80a3e0dc7620d3a34e4a18b66385b3e634185e16faf9d8e9'
+b2sums=('b744477e1202ae7c63020645fdd923625da6edd2bde61d01d9c7755e6d9628fc3fb00e615261f02a5c503d5c890cb9f8e1e9f068aea7ed01fda45b2d64e7216a'
         'SKIP'
         'e21485bd3d917be15837eb51ddb9aeb4a0df5fb7b18ccbf1d520aff2340833935e441f634e4ae8482a21ff38a9dec9f320bec3459aedf15087909b6eb2cff7db'
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e'
         '7a73f396965056bf7ca8506e37cb7719bfcc2a79e8c44a7477a038cf39ca7630c6de96b42d8d56e23640d40b80f6fa8dde20bdb843832913de3d0f93f650ce68'
         '43386fb36a975bd5215d477bd2e11d91adbdc20393b9898788ee5734834aaeb6af83e8e493a0d20f6bd7fd6ecbff124f7877ede44c3beafb007b9c7effa44fe6'
         '8106fe252012ca17f32c56877a98e047befe15c71adc0e6c97927760e08bfe7f78a8b71721470564514328c470f26345ec81796bd9dedd47a6c330d57205fae8'
+        '4731aa2e4bff627c27f61e9ef31a01bf33611b85085a35859b3ed5c903e9e3457ce78b1a7f471f7253b3c4f51ce8914dc299b36c552067ebbc77db091c90c502'
         '53ea96e4d1342003238aaa37495df8939b0e8813b8088347ec406a4c066bdfcf9947abc71f05da9433bfbee7b04b67f8a2bfb9729423ec776c0b1e31d5ce1b77'
         '05a3cc4954a37897d08e93e8ea1726fc395a12cfb1509f09560bdcf0ae14ed4ca518fda566a618c92db0fb6573e3ed7d02172dd76a3b145982060e060525365b'
         'e07c8366bb0c8aece1f917d60719fb365e30d5bf652abcb6bc319a08093b172f717c593f8ee108bdce951de8b4800ea4a01f9525df01e5082990327ca58f2f11')
