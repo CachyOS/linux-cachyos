@@ -1,0 +1,29 @@
+# Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev>
+
+pkgname=cachyos-eac-signing-key
+pkgver=1
+pkgrel=1
+pkgdesc='CachyOS EAC CA certificate for enrollment into the Secure Boot db'
+arch=('any')
+url="https://github.com/CachyOS/linux-cachyos"
+license=('GPL-3.0-or-later')
+makedepends=('openssl')
+optdepends=('sbctl: enroll the certificate into the Secure Boot db')
+source=("cachyos-eac-ca.crt")
+
+_fingerprint=2decb6430e3ad1221a4e6fd32000297f13be51dc76ab76f41f26fe44c5e836ad
+
+_die() { error "$@" ; exit 1; }
+
+build() {
+    openssl x509 -in cachyos-eac-ca.crt -outform DER -out cachyos-eac-ca.der
+    [ "$(sha256sum cachyos-eac-ca.der | cut -d' ' -f1)" = "$_fingerprint" ] ||
+        _die "cachyos-eac-ca.crt doesn't have the fingerprint ${_fingerprint}"
+}
+
+package() {
+    install -Dm644 -t "$pkgdir/usr/share/cachyos-eac" cachyos-eac-ca.crt cachyos-eac-ca.der
+    install -Dm644 cachyos-eac-ca.der "$pkgdir/var/lib/sbctl/keys/custom/db/cachyos-eac-ca.der"
+}
+
+b2sums=('af951c6c2e0857ec6b2a3f426269df21531ec8d1086b2ac8f5358a852a24f415ee3b65a91a056ecd6d0cc433fa7e21c2e4bd6e7fc44294d7d2135c4978ed39d1')

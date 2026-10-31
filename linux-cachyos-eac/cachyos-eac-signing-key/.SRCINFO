@@ -1,0 +1,13 @@
+pkgbase = cachyos-eac-signing-key
+	pkgdesc = CachyOS EAC CA certificate for enrollment into the Secure Boot db
+	pkgver = 1
+	pkgrel = 1
+	url = https://github.com/CachyOS/linux-cachyos
+	arch = any
+	license = GPL-3.0-or-later
+	makedepends = openssl
+	optdepends = sbctl: enroll the certificate into the Secure Boot db
+	source = cachyos-eac-ca.crt
+	b2sums = af951c6c2e0857ec6b2a3f426269df21531ec8d1086b2ac8f5358a852a24f415ee3b65a91a056ecd6d0cc433fa7e21c2e4bd6e7fc44294d7d2135c4978ed39d1
+
+pkgname = cachyos-eac-signing-key
