@@ -331,7 +331,7 @@ prepare() {
     ### Enable KCFI
     if [ "$_use_kcfi" = "yes" ]; then
         echo "Enabling kCFI"
-        scripts/config -e ARCH_SUPPORTS_CFI_CLANG -e CFI_CLANG -e CFI_AUTO_DEFAULT
+        scripts/config -e CFI
     fi
 
     ### Select LLVM level
