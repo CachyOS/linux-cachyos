@@ -234,7 +234,9 @@ validpgpkeys=(
 
 # LLVM makedepends
 if _is_lto_kernel; then
-    makedepends+=(clang llvm lld)
+    # pahole needs the --lang_exclude fix for merged LTO CUs to generate
+    # BTF for Rust modules
+    makedepends+=(clang llvm lld 'pahole>=1:1.32-2')
     source+=("${_patchsource}/misc/dkms-clang.patch")
     BUILD_FLAGS=(
         CC=clang
@@ -385,12 +387,10 @@ prepare() {
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
 
-    if ! _is_lto_kernel; then
-        echo "Enabling QR Code Panic for GCC Kernels"
-        scripts/config --set-str DRM_PANIC_SCREEN qr_code -e DRM_PANIC_SCREEN_QR_CODE \
-            --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
-            --set-val CONFIG_DRM_PANIC_SCREEN_QR_VERSION 40
-    fi
+    echo "Enabling QR Code Panic"
+    scripts/config --set-str DRM_PANIC_SCREEN qr_code -e DRM_PANIC_SCREEN_QR_CODE \
+        --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
+        --set-val CONFIG_DRM_PANIC_SCREEN_QR_VERSION 40
 
     ### Select tick rate
     case "$_HZ_ticks" in
@@ -664,7 +664,7 @@ _package-headers() {
     if _is_lto_kernel; then
         provides+=(linux-cachyos-lto-headers=$_kernver)
         replaces=(linux-cachyos-lto-headers)
-        depends+=(clang llvm lld)
+        depends+=(clang llvm lld 'pahole>=1:1.32-2')
     fi
 
     cd "${_srcname}"
