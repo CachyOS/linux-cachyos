@@ -27,6 +27,7 @@ pkgbase = linux-cachyos
 	makedepends = clang
 	makedepends = llvm
 	makedepends = lld
+	makedepends = pahole>=1:1.32-2
 	options = !strip
 	options = !debug
 	options = !lto
@@ -75,6 +76,7 @@ pkgname = linux-cachyos-headers
 	depends = clang
 	depends = llvm
 	depends = lld
+	depends = pahole>=1:1.32-2
 	provides = LINUX-HEADERS
 	provides = linux-cachyos-lto-headers=7.3.1-1
 	replaces = linux-cachyos-lto-headers
