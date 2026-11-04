@@ -6,6 +6,8 @@ find . -name "PKGBUILD" | xargs -I {} sed -i "s/_processor_opt:=/_processor_opt:
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_use_auto_optimization:=yes/_use_auto_optimization:=no/" {}
 ## Enable Open NVIDIA module
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia_open:=no/_build_nvidia_open:=yes/" {}
+## Enable NVIDIA 580xx legacy module
+find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_nvidia_580xx:=no/_build_nvidia_580xx:=yes/" {}
 ## Enable r8125 module
 find . -name "PKGBUILD" | xargs -I {} sed -i "s/_build_r8125:=no/_build_r8125:=yes/" {}
 ## Disable clang-LTO
