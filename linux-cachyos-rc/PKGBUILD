@@ -289,7 +289,8 @@ fi
 if [ "$_build_nvidia_580xx" = "yes" ]; then
     source+=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${_nv_580xx_ver}/${_nv_580xx_pkg}.run"
              "${_patchsource}/misc/nvidia-580xx/0001-Enable-atomic-kernel-modesetting-by-default.patch"
-             "${_patchsource}/misc/nvidia-580xx/0002-fix-hw-cursor-kde.patch")
+             "${_patchsource}/misc/nvidia-580xx/0002-fix-hw-cursor-kde.patch"
+             "${_patchsource}/misc/nvidia-580xx/0003-Fix-build-on-Linux-7.4.patch")
 fi
 
 if [ "$_build_r8125" = "yes" ]; then
