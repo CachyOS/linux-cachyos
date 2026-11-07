@@ -232,9 +232,9 @@ $ /lib/ld-linux-x86-64.so.2 --help | grep supported
 ```
 
 **Instruction Set Requirements:**
-- **x86-64-v4**: Intel Haswell (2013+) / AMD Excavator (2015+)
-- **x86-64-v3**: Intel Nehalem (2008+) / AMD Bulldozer (2011+)
-- **x86-64-v2**: Intel Core 2 (2006+) / AMD K8 (2003+)
+- **x86-64-v3**: Intel Haswell (2013+) / AMD Excavator (2015+)
+- **x86-64-v2**: Intel Nehalem (2008+) / AMD Bulldozer (2011+)
+- **x86-64**: Intel Core 2 (2006+) / AMD K8 (2003+)
 
 ### Repository Configuration
 
