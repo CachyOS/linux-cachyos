@@ -44,6 +44,8 @@ pkgbase = linux-cachyos-eac
 	source = https://us.download.nvidia.com/XFree86/Linux-x86_64/580.196.07/NVIDIA-Linux-x86_64-580.196.07.run
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.3/misc/nvidia-580xx/0001-Enable-atomic-kernel-modesetting-by-default.patch
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.3/misc/nvidia-580xx/0002-fix-hw-cursor-kde.patch
+	source = git+https://github.com/aravance/r8125.git#commit=7ae458895545f023fc27d8f3d1385e21b6b581cf
+	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.3/misc/r8125/0001-Remove-rtltool.patch
 	validpgpkeys = E18447AC260021D31F3FF6C4C8A2A4774B8B63C4
 	validpgpkeys = E8B9AA39F054E30E8290D492C3C4820857F654FE
 	b2sums = 15dfdf1513a06b087a9f8b9fee00a1e48fa95ee80caefc55d646a14cab1d0050a7c0c0209164fa42d79d3281143e559b148bc7c623a85328d3dd70aa01579c90
@@ -58,6 +60,8 @@ pkgbase = linux-cachyos-eac
 	b2sums = 69315e16040d32ffa922dfbc0a9dc96625ccc42306e1f724cadeb0f597d434a13e7a391e54ea88949c095c4e29a7f9af220b6722711efb4316c0220fab8fc63f
 	b2sums = 05a3cc4954a37897d08e93e8ea1726fc395a12cfb1509f09560bdcf0ae14ed4ca518fda566a618c92db0fb6573e3ed7d02172dd76a3b145982060e060525365b
 	b2sums = e07c8366bb0c8aece1f917d60719fb365e30d5bf652abcb6bc319a08093b172f717c593f8ee108bdce951de8b4800ea4a01f9525df01e5082990327ca58f2f11
+	b2sums = SKIP
+	b2sums = 9fc1c5b6a1ebc8ef1f3ae67beae3b1f3d19aae3775486659ef55574de77db5026a9c0832c137f30292609c98178458bc00e1a976993f1dd7075a0e163ab03c91
 
 pkgname = linux-cachyos-eac
 	pkgdesc = The Linux EEVDF + LTO Cachy Sauce Kernel by CachyOS configured for Easy Anti-Cheat Linux v2 kernel and modules
@@ -119,3 +123,8 @@ pkgname = linux-cachyos-eac-nvidia-580xx
 	depends = libglvnd
 	provides = NVIDIA-MODULE
 	conflicts = linux-cachyos-eac-nvidia-open
+
+pkgname = linux-cachyos-eac-r8125
+	pkgdesc = r8125 modules for the linux-cachyos-eac kernel
+	license = GPL-2.0-only
+	depends = linux-cachyos-eac=7.3.3-1
