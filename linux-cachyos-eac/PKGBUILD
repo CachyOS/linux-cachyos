@@ -209,7 +209,7 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=7.3
-_minor=1
+_minor=3
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
@@ -246,7 +246,7 @@ makedepends=(
 )
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=615.78.08
+_nv_ver=620.70.06
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 _nv_580xx_ver=580.196.07
@@ -262,7 +262,9 @@ validpgpkeys=(
 
 # LLVM makedepends
 if _is_lto_kernel; then
-    makedepends+=(clang llvm lld)
+    # pahole needs the --lang_exclude fix for merged LTO CUs to generate
+    # BTF for Rust modules
+    makedepends+=(clang llvm lld 'pahole>=1:1.32-2')
     source+=("${_patchsource}/misc/dkms-clang.patch")
     BUILD_FLAGS=(
         CC=clang
@@ -412,7 +414,7 @@ prepare() {
     ### Enable KCFI
     if [ "$_use_kcfi" = "yes" ]; then
         echo "Enabling kCFI"
-        scripts/config -e ARCH_SUPPORTS_CFI_CLANG -e CFI_CLANG -e CFI_AUTO_DEFAULT
+        scripts/config -e CFI
     fi
 
     ### Select LLVM level
@@ -426,12 +428,10 @@ prepare() {
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
 
-    if ! _is_lto_kernel; then
-        echo "Enabling QR Code Panic for GCC Kernels"
-        scripts/config --set-str DRM_PANIC_SCREEN qr_code -e DRM_PANIC_SCREEN_QR_CODE \
-            --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
-            --set-val CONFIG_DRM_PANIC_SCREEN_QR_VERSION 40
-    fi
+    echo "Enabling QR Code Panic"
+    scripts/config --set-str DRM_PANIC_SCREEN qr_code -e DRM_PANIC_SCREEN_QR_CODE \
+        --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
+        --set-val CONFIG_DRM_PANIC_SCREEN_QR_VERSION 40
 
     ### Select tick rate
     case "$_HZ_ticks" in
@@ -761,7 +761,7 @@ _package-headers() {
     provides=(LINUX-HEADERS)
 
     if _is_lto_kernel; then
-        depends+=(clang llvm lld)
+        depends+=(clang llvm lld 'pahole>=1:1.32-2')
     fi
 
     cd "${_srcname}"
@@ -970,12 +970,12 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('b744477e1202ae7c63020645fdd923625da6edd2bde61d01d9c7755e6d9628fc3fb00e615261f02a5c503d5c890cb9f8e1e9f068aea7ed01fda45b2d64e7216a'
+b2sums=('15dfdf1513a06b087a9f8b9fee00a1e48fa95ee80caefc55d646a14cab1d0050a7c0c0209164fa42d79d3281143e559b148bc7c623a85328d3dd70aa01579c90'
         'SKIP'
         'e21485bd3d917be15837eb51ddb9aeb4a0df5fb7b18ccbf1d520aff2340833935e441f634e4ae8482a21ff38a9dec9f320bec3459aedf15087909b6eb2cff7db'
         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e'
         '88c799dae2ad506c7e653436f45171d20c1374b4bcdd7af55734ab900515ea359c2ef52a75e10151fe5502331c63f31b8eb1ce550e2001e73e0fabc8f9c0608a'
-        '7a73f396965056bf7ca8506e37cb7719bfcc2a79e8c44a7477a038cf39ca7630c6de96b42d8d56e23640d40b80f6fa8dde20bdb843832913de3d0f93f650ce68'
+        'b0bb5f8a23765c73fb59febe23bf649fc10ad0cfc822ed8bcae0578915711ec24123bdca7d0c132a8196d679d350353cfad13d15b21dd9cf315c3cd074809646'
         '43386fb36a975bd5215d477bd2e11d91adbdc20393b9898788ee5734834aaeb6af83e8e493a0d20f6bd7fd6ecbff124f7877ede44c3beafb007b9c7effa44fe6'
         '8106fe252012ca17f32c56877a98e047befe15c71adc0e6c97927760e08bfe7f78a8b71721470564514328c470f26345ec81796bd9dedd47a6c330d57205fae8'
         '4731aa2e4bff627c27f61e9ef31a01bf33611b85085a35859b3ed5c903e9e3457ce78b1a7f471f7253b3c4f51ce8914dc299b36c552067ebbc77db091c90c502'
