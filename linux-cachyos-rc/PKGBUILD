@@ -183,10 +183,10 @@ pkgbase="linux-$_pkgsuffix"
 _major=7.4
 _minor=0
 #_minorc=$((_minor+1))
-_rcver=rc1
+_rcver=rc2
 pkgver=${_major}.${_rcver}
-_tagrel=1
-pkgrel=2
+_tagrel=2
+pkgrel=1
 #_stable=${_major}.${_minor}
 #_stable=${_major}
 _stable=${_major}-${_rcver}
@@ -393,11 +393,6 @@ prepare() {
     esac
 
     echo "Selecting '$_use_llvm_lto' LLVM level..."
-
-    echo "Enabling QR Code Panic"
-    scripts/config --set-str DRM_PANIC_SCREEN qr_code -e DRM_PANIC_SCREEN_QR_CODE \
-        --set-str DRM_PANIC_SCREEN_QR_CODE_URL https://panic.archlinux.org/panic_report# \
-        --set-val CONFIG_DRM_PANIC_SCREEN_QR_VERSION 40
 
     ### Select tick rate
     case "$_HZ_ticks" in
@@ -873,7 +868,7 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('2c3743453086a7b65ee40c72c64d7c199d3220ae98833b996736c625d82646abdf27af26d7766223903b27bd6238647ce934887c67d9b94e4e340f25cf9d8798'
+b2sums=('7dcac630dcbe1b267b3465f9c1ce81267ae49e7e1a5b54beaf1d06369a65ad7b50f7de5cd564868e672507e66f66391ee682bc0fc98b058e3920ce0b895c661b'
         'SKIP'
-        '2f19573d99a418f2b5cbd6e6394265afa36b62a1232097e694c91a9c387b6b2fbee304635ffa4f945e053a97a2cf97bef00b8eb337a9327b474689411c5ecbb1'
+        'c7cd48ad46fdc7c94e16164e7fd4610fc42e71262f48650da84e976a36745ab8b517c54445d04d2ee8e7c557733d6609d1cd4f09058fb8213d8a6ed4821a6914'
         'cb10d76ed978235db2f7db2de8a239331cf0b1bbf0482d32a5037e3602d6f9fb10a582a719ea49d53b7c15ff465e0f1a0594e61f3b235508336c67aa13f12bb4')
