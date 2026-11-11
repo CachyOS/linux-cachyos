@@ -151,7 +151,8 @@
 : "${_eac:=yes}"
 
 # Sign the kernel image for Secure Boot with sbsign.
-# Both have to be set, otherwise the kernel image stays unsigned.
+# Both have to be set. With _eac enabled, the build stops without them, so that
+# no unsigned EAC kernel gets packaged.
 # Only images signed with a key on Epic's well-known list pass the EAC checks.
 # The signing certificate is expected in the Secure Boot db, e.g. enrolled with
 # "sbctl enroll-keys -m -f -c", or as a MOK when booting via shim.
@@ -353,6 +354,10 @@ export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EP
 
 
 prepare() {
+    if [ "$_eac" = "yes" ] && { [ -z "$_eac_sbsign_key" ] || [ -z "$_eac_sbsign_cert" ]; }; then
+        _die "_eac_sbsign_key and _eac_sbsign_cert have to be set, an unsigned kernel does not pass the Easy Anti-Cheat checks"
+    fi
+
     if [ "$_build_nvidia_580xx" = "yes" ]; then
         sh "${_nv_580xx_pkg}.run" --extract-only
     fi
@@ -736,7 +741,8 @@ _package() {
             --output "$modulesdir/vmlinuz" "$(make -s image_name)"
         chmod 644 "$modulesdir/vmlinuz"
     else
-        [ "$_eac" = "yes" ] && warning "The kernel image is not signed, it will not pass the Easy Anti-Cheat checks"
+        # prepare() already stops here, this covers builds that skip it
+        [ "$_eac" = "yes" ] && _die "The kernel image is not signed, it does not pass the Easy Anti-Cheat checks"
         install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
     fi
 
