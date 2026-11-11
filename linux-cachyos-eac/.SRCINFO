@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-eac
 	pkgdesc = Linux EEVDF + LTO Cachy Sauce Kernel by CachyOS configured for Easy Anti-Cheat Linux v2
-	pkgver = 7.3.3
+	pkgver = 7.3.4
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -32,8 +32,8 @@ pkgbase = linux-cachyos-eac
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.3.3-1/cachyos-7.3.3-1.tar.gz
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.3.3-1/cachyos-7.3.3-1.tar.gz.asc
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.3.4-1/cachyos-7.3.4-1.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-7.3.4-1/cachyos-7.3.4-1.tar.gz.asc
 	source = config
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.3/misc/dkms-clang.patch
 	source = git+https://github.com/cachyos/zfs.git#commit=fb48c76e17d3e0092fbba430a9eec1960e1b9961
@@ -48,7 +48,7 @@ pkgbase = linux-cachyos-eac
 	source = https://raw.githubusercontent.com/cachyos/kernel-patches/master/7.3/misc/r8125/0001-Remove-rtltool.patch
 	validpgpkeys = E18447AC260021D31F3FF6C4C8A2A4774B8B63C4
 	validpgpkeys = E8B9AA39F054E30E8290D492C3C4820857F654FE
-	b2sums = 15dfdf1513a06b087a9f8b9fee00a1e48fa95ee80caefc55d646a14cab1d0050a7c0c0209164fa42d79d3281143e559b148bc7c623a85328d3dd70aa01579c90
+	b2sums = 438505cf485af55d63f82675df5d57c8f584abad72c1aacf5e126e8cdc5b2a0153e05ec017769aaf70fc081e3969ba3e83760556a6d53d3f7a0641961c71cce2
 	b2sums = SKIP
 	b2sums = e21485bd3d917be15837eb51ddb9aeb4a0df5fb7b18ccbf1d520aff2340833935e441f634e4ae8482a21ff38a9dec9f320bec3459aedf15087909b6eb2cff7db
 	b2sums = c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e
@@ -60,7 +60,7 @@ pkgbase = linux-cachyos-eac
 	b2sums = 69315e16040d32ffa922dfbc0a9dc96625ccc42306e1f724cadeb0f597d434a13e7a391e54ea88949c095c4e29a7f9af220b6722711efb4316c0220fab8fc63f
 	b2sums = 05a3cc4954a37897d08e93e8ea1726fc395a12cfb1509f09560bdcf0ae14ed4ca518fda566a618c92db0fb6573e3ed7d02172dd76a3b145982060e060525365b
 	b2sums = e07c8366bb0c8aece1f917d60719fb365e30d5bf652abcb6bc319a08093b172f717c593f8ee108bdce951de8b4800ea4a01f9525df01e5082990327ca58f2f11
-	b2sums = SKIP
+	b2sums = 150f8afcf4fc62b5078ecd29c56debe561ec7294525e187b6102a6b2fa98c4aaee9df4e9ae8e62805f4dfc149266e568fc226cd0bfcb2bec5072f980a478ca07
 	b2sums = 9fc1c5b6a1ebc8ef1f3ae67beae3b1f3d19aae3775486659ef55574de77db5026a9c0832c137f30292609c98178458bc00e1a976993f1dd7075a0e163ab03c91
 
 pkgname = linux-cachyos-eac
@@ -102,13 +102,13 @@ pkgname = linux-cachyos-eac-zfs
 	pkgdesc = zfs module for the Linux EEVDF + LTO Cachy Sauce Kernel by CachyOS configured for Easy Anti-Cheat Linux v2 kernel
 	license = CDDL
 	depends = pahole
-	depends = linux-cachyos-eac=7.3.3-1
+	depends = linux-cachyos-eac=7.3.4-1
 	provides = ZFS-MODULE
 
 pkgname = linux-cachyos-eac-nvidia-open
 	pkgdesc = nvidia open modules of 620.70.06 driver for the linux-cachyos-eac kernel
 	license = MIT AND GPL-2.0-only
-	depends = linux-cachyos-eac=7.3.3-1
+	depends = linux-cachyos-eac=7.3.4-1
 	depends = nvidia-utils=620.70.06
 	depends = libglvnd
 	provides = NVIDIA-MODULE
@@ -118,7 +118,7 @@ pkgname = linux-cachyos-eac-nvidia-open
 pkgname = linux-cachyos-eac-nvidia-580xx
 	pkgdesc = nvidia module of 580.196.07 driver for the linux-cachyos-eac kernel
 	license = custom
-	depends = linux-cachyos-eac=7.3.3-1
+	depends = linux-cachyos-eac=7.3.4-1
 	depends = nvidia-580xx-utils=580.196.07
 	depends = libglvnd
 	provides = NVIDIA-MODULE
@@ -127,4 +127,4 @@ pkgname = linux-cachyos-eac-nvidia-580xx
 pkgname = linux-cachyos-eac-r8125
 	pkgdesc = r8125 modules for the linux-cachyos-eac kernel
 	license = GPL-2.0-only
-	depends = linux-cachyos-eac=7.3.3-1
+	depends = linux-cachyos-eac=7.3.4-1
