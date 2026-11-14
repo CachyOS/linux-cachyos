@@ -158,8 +158,9 @@
 # "sbctl enroll-keys -m -f -c", or as a MOK when booting via shim.
 # _eac_sbsign_key is either a PEM key file or a PKCS#11 URI of a key on a
 # hardware token, e.g. "pkcs11:token=CachyOS;object=signing;type=private".
-# PKCS#11 keys are loaded through libp11, PKCS11_MODULE_PATH selects the
-# token's module (default: p11-kit-proxy). The PIN is asked for on the terminal.
+# PKCS#11 keys are loaded through the libp11 OpenSSL provider,
+# PKCS11_MODULE_PATH selects the token's module (default: p11-kit-proxy).
+# The PIN is asked for on the terminal.
 : "${_eac_sbsign_key:=}"
 : "${_eac_sbsign_cert:=}"
 
@@ -322,7 +323,9 @@ if [ -n "$_eac_sbsign_key" ] && [ -n "$_eac_sbsign_cert" ]; then
     [ -e "$_eac_sbsign_cert" ] || _die "Failed to find file ${_eac_sbsign_cert}"
     _eac_sbsign_cert="$(realpath "$_eac_sbsign_cert")"
     if [[ "$_eac_sbsign_key" = pkcs11:* ]]; then
-        _eac_sbsign_args=(--engine pkcs11)
+        # OpenSSL 4 dropped ENGINEs, use the libp11 provider. Loading a
+        # provider explicitly disables the implicit default one, so load both.
+        _eac_sbsign_args=(--provider default --provider pkcs11prov)
         makedepends+=(libp11)
     else
         [ -e "$_eac_sbsign_key" ] || _die "Failed to find file ${_eac_sbsign_key}"
