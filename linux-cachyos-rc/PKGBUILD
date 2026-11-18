@@ -186,7 +186,7 @@ _minor=0
 _rcver=rc3
 pkgver=${_major}.${_rcver}
 _tagrel=1
-pkgrel=1
+pkgrel=2
 #_stable=${_major}.${_minor}
 #_stable=${_major}
 _stable=${_major}-${_rcver}
@@ -222,7 +222,7 @@ makedepends=(
 )
 
 _patchsource="https://raw.githubusercontent.com/cachyos/kernel-patches/master/${_major}"
-_nv_ver=620.70.06
+_nv_ver=620.73.04
 _nv_pkg="NVIDIA-Linux-x86_64-${_nv_ver}"
 _nv_open_pkg="NVIDIA-kernel-module-source-${_nv_ver}"
 _nv_580xx_ver=580.196.07
@@ -266,8 +266,7 @@ if [ "$_build_nvidia_open" = "yes" ]; then
     source+=("https://download.nvidia.com/XFree86/${_nv_open_pkg%"-$_nv_ver"}/${_nv_open_pkg}.tar.xz"
              "${_patchsource}/misc/nvidia/0001-fix-dsc-correct-RC-parameter-tables-to-match-VESA-DS.patch"
              "${_patchsource}/misc/nvidia/0002-fix-dp-add-Bigscreen-Beyond-VR-headset-to-WAR-databa.patch"
-             "${_patchsource}/misc/nvidia/0004-Open-sysfs-config-from-the-userspace-root-on-7.3.patch"
-             "${_patchsource}/misc/nvidia/0005-Fix-build-on-Linux-7.4.patch")
+             "${_patchsource}/misc/nvidia/0004-Open-sysfs-config-from-the-userspace-root-on-7.3.patch")
 
 fi
 
