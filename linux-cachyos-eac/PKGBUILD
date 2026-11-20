@@ -552,6 +552,10 @@ prepare() {
         # Lockdown blocks hibernation anyway
         scripts/config -d HIBERNATION
 
+        # ACPI tables from the initramfs are loaded before the lockdown hook is
+        # registered, so lockdown does not stop them. The initramfs is not signed.
+        scripts/config -d ACPI_TABLE_UPGRADE
+
         # IOMMU enabled with DMA translation, no passthrough. The ACS override
         # would split IOMMU groups that the hardware does not isolate.
         scripts/config -e INTEL_IOMMU_DEFAULT_ON \
@@ -629,7 +633,8 @@ prepare() {
                    MODULE_SIG_FORCE INTEL_IOMMU_DEFAULT_ON; do
             grep -q "^CONFIG_${opt}=y" .config || _die "CONFIG_${opt} is not enabled"
         done
-        for opt in HIBERNATION IOMMU_DEFAULT_PASSTHROUGH INTEGRITY_MACHINE_KEYRING; do
+        for opt in HIBERNATION IOMMU_DEFAULT_PASSTHROUGH INTEGRITY_MACHINE_KEYRING \
+                   ACPI_TABLE_UPGRADE; do
             if grep -q "^CONFIG_${opt}=y" .config; then
                 _die "CONFIG_${opt} is still enabled"
             fi
