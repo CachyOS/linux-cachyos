@@ -41,6 +41,7 @@ body:
         - linux-cachyos-bore (BORE, GCC)
         - linux-cachyos-eevdf (EEVDF, GCC)
         - linux-cachyos-bmq (BMQ, GCC)
+        - linux-cachyos-muqss (MuQSS, GCC)
         - linux-cachyos-hardened
         - linux-cachyos-lts
         - linux-cachyos-rt-bore
