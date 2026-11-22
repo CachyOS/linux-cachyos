@@ -162,7 +162,7 @@ pkgver=${_major}.${_minor}
 _tagrel=2
 pkgrel=2
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
-pkgdesc='Linux BORE + Cachy Sauce + Handheld Kernel by CachyOS with other patches and improvements.'
+pkgdesc='Linux EEVDF + Cachy Sauce + Handheld Kernel by CachyOS with other patches and improvements.'
 _kernver="$pkgver-$pkgrel"
 _kernuname="${pkgver}-${_pkgsuffix}"
 arch=('x86_64')
@@ -252,7 +252,7 @@ fi
 
 ## List of CachyOS schedulers
 case "$_cpusched" in
-    cachyos|bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
+    bore|rt-bore|hardened) # CachyOS Scheduler (BORE)
         source+=("${_patchsource}/sched/0001-bore-cachy.patch");;&
     bmq) ## Project C Scheduler
         source+=("${_patchsource}/sched/0001-prjc-cachy.patch");;
@@ -824,5 +824,4 @@ b2sums=('34499a44a378dd7a330f2fa821ebdef10f477af461e1e40f193a85c188133627c885ddd
         'SKIP'
         'c96bc76381a6aa601ae39663dd8c21cd2f4503d6d13ee944770a5b46f70175b9280159c7ff3a2fa3d29ada7fe82cdf95ca6715d3d9489a27b044154db0355789'
         'ddaf90fd846e13cb213fb343f9599447d377dd51111cd2cbfbda2334836ba7c6925a28453353017a785163dbd1d5d44f1c7eca036c611a8dcf2cecab7d35c2de'
-        '37b05df8f46b19d5141a283069c2079c6c8066d3065a8f285cd0a4d5a2617a9557f12b00c421cea4a873b240ec022ca84133439d3d09ac4842bf2f83055d4213'
-        '355a279dea4edf0148cc6499b770bb6d07c55623ea334e6b0db52eba746454d5afafe58bbcf357c9bc53aaa1319a610cd167dba77f6c866835077aed85a2d45c')
+        '37b05df8f46b19d5141a283069c2079c6c8066d3065a8f285cd0a4d5a2617a9557f12b00c421cea4a873b240ec022ca84133439d3d09ac4842bf2f83055d4213')
