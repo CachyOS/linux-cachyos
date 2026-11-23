@@ -30,8 +30,6 @@ If you have any questions, you can contact us by email.
 
 **Peter Jung:** <admin@ptr1337.dev> <br />
 
-**Piotr Gorski:** <piotrgorski@cachyos.org> <br />
-
 You can also join the discussion on the following platforms:
 
 **Discord:** <https://discord.gg/qJqj94uFwE> <br />

@@ -1,6 +1,6 @@
 # Maintainer: Peter Jung ptr1337 <admin@ptr1337.dev>
-# Maintainer: Piotr Gorski <piotrgorski@cachyos.org>
 # Maintainer: Vasiliy Stelmachenok <ventureo@cachyos.org>
+# Contributor: Piotr Gorski <piotrgorski@cachyos.org>
 # Contributor: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
 # Contributor: Tobias Powalowski <tpowa@archlinux.org>
 # Contributor: Thomas Baechler <thomas@archlinux.org>
