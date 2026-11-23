@@ -1,6 +1,6 @@
 pkgbase = linux-cachyos-lts
 	pkgdesc = Linux EEVDF + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service
-	pkgver = 6.18.64
+	pkgver = 6.18.65
 	pkgrel = 1
 	url = https://github.com/CachyOS/linux-cachyos
 	arch = x86_64
@@ -27,14 +27,14 @@ pkgbase = linux-cachyos-lts
 	options = !strip
 	options = !debug
 	options = !lto
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.18.64-1/cachyos-6.18.64-1.tar.gz
-	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.18.64-1/cachyos-6.18.64-1.tar.gz.asc
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.18.65-1/cachyos-6.18.65-1.tar.gz
+	source = https://github.com/CachyOS/linux/releases/download/cachyos-6.18.65-1/cachyos-6.18.65-1.tar.gz.asc
 	source = config
 	validpgpkeys = E18447AC260021D31F3FF6C4C8A2A4774B8B63C4
 	validpgpkeys = E8B9AA39F054E30E8290D492C3C4820857F654FE
-	b2sums = ca10a620f3214ea030c90738b5074f1f37e7408084c3f803e95a1b79bdbc46de96e960a81930d564c9062c1b090fb7c41ab614a5617bcbe3ec35dfdeb456f029
+	b2sums = e7a85d6babad71daf926b1d4dc7c1c378f53f2d37af16750748d8f29eef9efb5decb087fb0be9913ce98ba8f2a8f68b32151b40670abb4d979689235144c3306
 	b2sums = SKIP
-	b2sums = ce16b1ba8acf0b47d212dcafe33f12c85643c57bab78e2dc9000ee495532c0c15d921d085dd778e02014cbf498ccf87efd6eb918033ee0fcc8a5850a48d96ce8
+	b2sums = 8376a3390a7651faee8a82915ac3554019f3d24460aaaaa3aa3426ad31b82e3e40c3f202d0422646c01b3e243ded856b97603b3206f7a2572c00f676716346fb
 
 pkgname = linux-cachyos-lts
 	pkgdesc = The Linux EEVDF + Cachy Sauce Kernel by CachyOS with other patches and improvements - Long Term Service kernel and modules

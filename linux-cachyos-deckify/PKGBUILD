@@ -155,12 +155,12 @@ fi
 
 pkgbase="linux-$_pkgsuffix"
 _major=7.3
-_minor=5
+_minor=6
 #_minorc=$((_minor+1))
 #_rcver=rc8
 pkgver=${_major}.${_minor}
-_tagrel=2
-pkgrel=2
+_tagrel=1
+pkgrel=1
 _srcname=cachyos-${_major}.${_minor}-${_tagrel}
 pkgdesc='Linux EEVDF + Cachy Sauce + Handheld Kernel by CachyOS with other patches and improvements.'
 _kernver="$pkgver-$pkgrel"
@@ -820,8 +820,8 @@ for _p in "${pkgname[@]}"; do
     }"
 done
 
-b2sums=('34499a44a378dd7a330f2fa821ebdef10f477af461e1e40f193a85c188133627c885ddd636693c4ec895c1e22ffe6d0378948ee6c51a6d9a36dca262784f916a'
+b2sums=('67e2a98ad5df5469afae493c34a3f2155932abb94b16c016a8782790bf3a305f91c03b126555294bd4f88d74952bb997f4839b5769980dafbcad08d0579ac7ea'
         'SKIP'
-        'c96bc76381a6aa601ae39663dd8c21cd2f4503d6d13ee944770a5b46f70175b9280159c7ff3a2fa3d29ada7fe82cdf95ca6715d3d9489a27b044154db0355789'
+        'e6fc382da6b317f14b0ffe1e22e120ea8c9efa03a95ee58360765629b7b81f89e98f04349134232215ae0ff8aa10c2200a7551a3c3aeb1e5d1fb1e4c5673f0e9'
         'ddaf90fd846e13cb213fb343f9599447d377dd51111cd2cbfbda2334836ba7c6925a28453353017a785163dbd1d5d44f1c7eca036c611a8dcf2cecab7d35c2de'
         '37b05df8f46b19d5141a283069c2079c6c8066d3065a8f285cd0a4d5a2617a9557f12b00c421cea4a873b240ec022ca84133439d3d09ac4842bf2f83055d4213')
